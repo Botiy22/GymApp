@@ -37,7 +37,7 @@
   const mus = m => (I18N[L()].mus || {})[m] || m;
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
-  const ui = { day: today(), tab: 'home', lib: { q: '', mus: '', limit: 40 }, pick: { q: '', mus: '', limit: 40 }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null };
+  const ui = { day: today(), tab: 'home', lib: { q: '', mus: '', limit: 40 }, pick: { q: '', mus: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -54,7 +54,8 @@
     pen: '<svg viewBox="0 0 24 24"><path d="M4 20l1-4L16.500 4.500l3 3L8 19z"/></svg>',
     up: '<svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg>',
     down: '<svg viewBox="0 0 24 24"><path d="M6 10l6 6 6-6"/></svg>',
-    chev: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>'
+    chev: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+    bolt: '<svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>'
   };
 
   /* ---------- history / stats ---------- */
@@ -115,29 +116,34 @@
       h += `<div class="hero"><small>${esc(t('nextUp'))}</small><strong>${esc(rName(nx))}</strong><span>${nx.sub ? esc(nx.sub[L()]) + ' · ' : ''}${nx.items.length} ${esc(t('exercises'))} · ~${estMin(nx)} ${esc(t('min'))}</span>
         <button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${esc(t('startWorkout'))}</button></div>`;
     }
-    h += `<h2>${esc(t('routines'))}</h2><div class="rlist">` + d.routines.map(r =>
+    if (!d.active) h += `<button class="qrow" data-a="w-quick"><span class="q-ic">${IC.bolt}</span><span class="rc-t"><b>${esc(t('quickWorkout'))}</b><i>${esc(t('quickSub'))}</i></span>${IC.chev}</button>`;
+    h += `<div class="h2row"><h2>${esc(t('routines'))}</h2><button class="pill" data-a="r-new">${IC.plus}${esc(t('newPlan'))}</button></div><div class="rlist">` + d.routines.map(r =>
       `<button class="rcard" data-a="r-open" data-id="${esc(r.id)}">${thumbs(r.items, 3)}<span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div>`;
-    h += `<div class="row2"><button class="btn" data-a="w-empty">${esc(t('emptyWorkout'))}</button><button class="btn" data-a="r-new">${IC.plus}${esc(t('newRoutine'))}</button></div>`;
     return h;
   }
 
   function libFilter(st) {
     const q = st.q.trim().toLowerCase().split(/\s+/).filter(Boolean), m = st.mus;
+    if (m === '*sel') return st.sel.map(id => EX[id]).filter(Boolean);            // "selected" chip: what is ticked, in the order it was ticked
     let list = window.EXERCISES.filter(e => (!m || e.p.includes(m)) && q.every(w => e.n.toLowerCase().includes(w) || (HU_NAME[e.id] || '').toLowerCase().includes(w)));
     return list.sort((a, b) => (PLAN_BY_EX[b.id] ? 1 : 0) - (PLAN_BY_EX[a.id] ? 1 : 0) || a.n.localeCompare(b.n));
   }
   function libRows(pick) {
     const st = pick ? ui.pick : ui.lib, list = libFilter(st);
     if (!list.length) return `<p class="empty">${esc(t('noResults'))}</p>`;
-    return list.slice(0, st.limit).map(e =>
-      `<button class="exrow" data-a="${pick ? 'pick' : 'ex-open'}" data-id="${esc(e.id)}"><img src="${img(e.id)}" alt="" loading="lazy"><span><b>${esc(exName(e.id))}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i></span>${pick ? IC.plus : IC.chev}</button>`).join('') +
+    return list.slice(0, st.limit).map(e => {
+      const k = pick ? st.sel.indexOf(e.id) : -1, sub = `<span><b>${esc(exName(e.id))}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i></span>`;
+      return pick                                                                     // picker: the photo opens the details, the rest of the row ticks it
+        ? `<div class="exrow pickrow${k >= 0 ? ' on' : ''}" data-id="${esc(e.id)}"><button class="pk-img" data-a="ex-open" data-id="${esc(e.id)}" aria-label="${esc(t('details'))}"><img src="${img(e.id)}" alt="" loading="lazy"></button><button class="pk-main" data-a="pick" data-id="${esc(e.id)}" aria-pressed="${k >= 0}">${sub}<em class="pk-n">${k >= 0 ? k + 1 : ''}</em></button></div>`
+        : `<button class="exrow" data-a="ex-open" data-id="${esc(e.id)}"><img src="${img(e.id)}" alt="" loading="lazy">${sub}${IC.chev}</button>`;
+    }).join('') +
       (list.length > st.limit ? `<button class="btn ghost" data-a="lib-more">${esc(t('showMore'))} (${list.length - st.limit})</button>` : '');
   }
   const MUS_ORDER = ['chest', 'lats', 'middle back', 'shoulders', 'biceps', 'triceps', 'forearms', 'abdominals', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'traps', 'lower back', 'adductors', 'abductors', 'neck'];
   function libControls(pick) {
     const st = pick ? ui.pick : ui.lib;
     return `<div class="search"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"></div>
-      <div class="chips scroll"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${MUS_ORDER.map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>`;
+      <div class="chips scroll">${pick ? `<button class="chip sel${st.mus === '*sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-mus" data-m="*sel" ${st.sel.length ? '' : 'hidden'}>${esc(t('selected'))} (<span>${st.sel.length}</span>)</button>` : ''}<button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${MUS_ORDER.map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>`;
   }
   function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div id="lib-list" class="exlist">${libRows(false)}</div>`; }
 
@@ -261,20 +267,40 @@
   function shRoutineEdit() {
     return () => {
       const r = ui.edit;
-      const h = `<label class="fld"><span>${esc(t('name'))}</span><input type="text" data-in="re-name" value="${esc(rName(r))}" autocomplete="off"></label>
+      const h = `<label class="fld"><span>${esc(t('routineName'))}</span><input type="text" data-in="re-name" value="${esc(rName(r))}" placeholder="${esc(t('routineNamePh'))}" autocomplete="off"></label>
         <div class="re-list">${r.items.map((it, i) => `<div class="re-row"><div class="re-top"><img src="${img(it.ex)}" alt=""><b>${esc(itemName(it))}</b><button class="icon-btn sm" data-a="re-up" data-i="${i}" aria-label="${esc(t('moveUp'))}" ${i ? '' : 'disabled'}>${IC.up}</button><button class="icon-btn sm" data-a="re-down" data-i="${i}" aria-label="${esc(t('moveDown'))}" ${i < r.items.length - 1 ? '' : 'disabled'}>${IC.down}</button><button class="icon-btn sm" data-a="re-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
-          <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label></div></div>`).join('')}</div>
-        <button class="btn" data-a="re-add">${IC.plus}${esc(t('addExercise'))}</button>${r._old && !r.builtin ? `<button class="btn danger" data-a="r-del">${esc(t('deleteRoutine'))}</button>` : ''}`;
+          <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label></div></div>`).join('') || `<p class="empty">${esc(t('noItems'))}</p>`}</div>
+        <button class="btn" data-a="re-add">${IC.plus}${esc(t('addExercise'))}</button>${r._old ? `<button class="btn" data-a="r-dup">${esc(t('saveCopy'))}</button>` : ''}${r._old && !r.builtin ? `<button class="btn danger" data-a="r-del">${esc(t('deleteRoutine'))}</button>` : ''}`;
       return { title: r._old ? t('editRoutine') : t('newRoutine'), html: h, foot: `<button class="btn primary" data-a="re-save">${esc(t('save'))}</button>` };
     };
   }
-  function shPicker() { return () => ({ title: t('addExercise'), html: libControls(true) + `<div id="pick-list" class="exlist">${libRows(true)}</div>` }); }
+  /* What a freshly picked exercise starts with: the plan's own numbers when the plan has that exercise, otherwise 3 × 8–12. */
+  const itemFor = id => { const p = PLAN_BY_EX[id]; return p && !p.similar && p.reps !== '21' ? { ex: id, label: null, sets: p.sets, reps: p.reps, rest: p.rest } : { ex: id, label: null, sets: 3, reps: '8–12', rest: 90 }; };
+  function cleanEdit(e) {
+    delete e._old;
+    e.items.forEach(i => { i.sets = Math.max(1, Math.min(12, Math.round(num(i.sets)) || 3)); i.rest = Math.max(0, Math.min(3600, Math.round(num(i.rest)))); i.reps = String(i.reps || '').trim().slice(0, 20) || '8–12'; });
+    if (!String(typeof e.name === 'string' ? e.name : rName(e)).trim()) { const base = t('myRoutine'), k = D().routines.filter(r => rName(r).indexOf(base) === 0).length; e.name = base + (k ? ' ' + (k + 1) : ''); }
+    return e;
+  }
+  /* Exercise picker: tick as many as you like, the number shows the order, one button adds them all. */
+  const newPick = o => Object.assign({ q: '', mus: '', limit: 40, sel: [], title: t('addExercise'), lead: '', cta: t('add'), done: null }, o);
+  function shPicker() {
+    const fn = () => { const st = ui.pick; return { title: st.title, html: (st.lead ? `<p class="lead">${esc(st.lead)}</p>` : '') + libControls(true) + `<div id="pick-list" class="exlist">${libRows(true)}</div>`,
+      foot: `<button class="btn primary" data-a="pick-done" ${st.sel.length ? '' : 'disabled'}>${esc(st.cta)}<span id="pk-count">${st.sel.length ? ' (' + st.sel.length + ')' : ''}</span></button>` }; };
+    fn.kind = 'picker'; return fn;
+  }
+  function pickSync() {                                                                // after a tick: update numbers, button and chip without redrawing (keeps scroll and keyboard)
+    const st = ui.pick, n = st.sel.length;
+    $$('#pick-list .pickrow').forEach(r => { const i = st.sel.indexOf(r.dataset.id); r.classList.toggle('on', i >= 0); $('.pk-n', r).textContent = i >= 0 ? i + 1 : ''; $('.pk-main', r).setAttribute('aria-pressed', i >= 0); });
+    const c = $('#pk-count'), b = $('#sheet [data-a="pick-done"]'), chip = $('#pk-selchip');
+    if (c) c.textContent = n ? ' (' + n + ')' : ''; if (b) b.disabled = !n; if (chip) { chip.hidden = !n; $('span', chip).textContent = n; }
+  }
 
   /* ================= ACTIVE WORKOUT ================= */
   function newEntry(it) { return { ex: it.ex, label: it.label || null, target: it.sets || 3, reps: it.reps || '8–12', rest: it.rest || 90, sets: Array.from({ length: it.sets || 3 }, () => ({ kg: '', reps: '', done: false, w: false })) }; }
-  function startWorkout(r) {
-    if (D().active && !confirm(t('replaceActive'))) return;
-    D().active = { id: uid(), rid: r ? r.id : null, name: r ? rName(r) : t('emptyWorkout'), start: Date.now(), entries: r ? r.items.map(newEntry) : [], restEnd: 0, restTotal: 0 };
+  function startWorkout(r, asked) {
+    if (!r || (!asked && D().active && !confirm(t('replaceActive')))) return;
+    D().active = { id: uid(), rid: r.id || null, name: rName(r), start: Date.now(), entries: r.items.map(newEntry), restEnd: 0, restTotal: 0 };
     Store.save(); ui.wOpen = true; closeSheet(true); wake(); render();
   }
   function hintFor(en, hst) {
@@ -324,7 +350,8 @@
       let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${fmtDur(w.end - w.start)}</b><i>${esc(t('duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><div><b>${compact(volOf(w))}</b><i>${esc(t('volume'))} kg</i></div></div>`;
       if (prs && prs.length) h += `<div class="tip pr"><b>${esc(t('newRecords'))}</b>${prs.map(p => `<span>${esc(itemName(p))}: ${r1(p.v)} kg${p.was ? ' (' + esc(t('was')) + ' ' + r1(p.was) + ')' : ''}</span>`).join('')}</div>`;
       h += w.entries.map(e => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(e.ex)}"><img src="${img(e.ex)}" alt="" loading="lazy"><span><b>${esc(itemName(e))}</b><i>${e.sets.map(s => (s.w ? 'W ' : '') + (s.kg ? s.kg + '×' : '') + s.reps).join(' · ')}</i></span>${IC.chev}</button></div>`).join('');
-      return { title: prs ? t('workoutDone') : w.name, html: h, foot: prs ? `<button class="btn primary" data-a="sheet-close">${esc(t('done'))}</button>` : `<button class="btn danger" data-a="wk-del" data-id="${esc(w.id)}">${esc(t('deleteWorkout'))}</button>` };
+      const keep = w.rid ? '' : `<button class="btn" data-a="wk-to-routine" data-id="${esc(w.id)}">${esc(t('saveAsRoutine'))}</button>`;
+      return { title: prs ? t('workoutDone') : w.name, html: h, foot: prs ? `<button class="btn primary" data-a="sheet-close">${esc(t('done'))}</button>${keep}` : `${keep}<button class="btn danger" data-a="wk-del" data-id="${esc(w.id)}">${esc(t('deleteWorkout'))}</button>` };
     };
   }
 
@@ -418,9 +445,9 @@
     const bmr = 10 * w + 6.25 * hgt - 5 * a + (p.sex === 'm' ? 5 : -161), tdee = bmr * num(p.activity);
     const kcal = Math.round(tdee * (1 + ({ cut: -0.18, maintain: 0, bulk: 0.1 }[p.goal] || 0)) / 10) * 10;
     const pr = Math.round(w * (p.goal === 'cut' ? 2.0 : 1.8)), fat = Math.round(Math.max(w * 0.8, kcal * 0.25 / 9));
-    return { bmr: Math.round(bmr), tdee: Math.round(tdee), kcal, p: pr, c: Math.max(0, Math.round((kcal - pr * 4 - fat * 9) / 4)), f: fat };
+    return { bmr: Math.round(bmr / 10) * 10, tdee: Math.round(tdee / 10) * 10, kcal, p: pr, c: Math.max(0, Math.round((kcal - pr * 4 - fat * 9) / 4)), f: fat };
   }
-  const tgOut = c => c ? `<div class="kpis"><div><b>${c.bmr}</b><i>${esc(t('bmr'))}</i></div><div><b>${c.tdee}</b><i>${esc(t('tdee'))}</i></div><div><b>${c.kcal}</b><i>${esc(t('targetKcal'))}</i></div></div>` : `<p class="empty">${esc(t('fillProfile'))}</p>`;
+  const tgOut = (c, p) => c ? `<div class="kpis"><div><b>${c.bmr}</b><i>${esc(t('bmr'))}</i></div><div><b>${c.tdee}</b><i>${esc(t('tdee'))}</i></div><div class="hl"><b>${c.kcal}</b><i>${esc(t('tg_' + (p.goal || 'maintain')))}</i></div></div>` : `<p class="empty">${esc(t('fillProfile'))}</p>`;
   function shTargets() {
     return () => {
       const s = ui.tg, p = s.profile, v = s.vals || {};
@@ -431,7 +458,7 @@
         <div class="grid3">${fld('age', t('age'))}${fld('height', t('height'))}${fld('weight', t('weight'))}</div>
         <label class="fld"><span>${esc(t('activity'))}</span><select data-in="tg-p" data-k="activity">${ACT.map(([val, k]) => `<option value="${val}" ${+p.activity === val ? 'selected' : ''}>${esc(t(k))}</option>`).join('')}</select></label>
         <fieldset><legend>${esc(t('goal'))}</legend>${radio('goal', [['cut', t('cut')], ['maintain', t('maintain')], ['bulk', t('bulk')]])}</fieldset>
-        <div id="tg-out">${tgOut(calcTargets(p))}</div><h3>${esc(t('dailyTargets'))}</h3><div class="grid2">${out('kcal')}${out('p')}</div><div class="grid2">${out('c')}${out('f')}</div><p class="cap">${esc(t('targetsCap'))}</p>`,
+        <div id="tg-out">${tgOut(calcTargets(p), p)}</div><h3>${esc(t('dailyTargets'))}</h3><div class="grid2">${out('kcal')}${out('p')}</div><div class="grid2">${out('c')}${out('f')}</div><p class="cap">${esc(t('targetsCap'))}</p>`,
         foot: `<button class="btn primary" data-a="tg-save">${esc(t('save'))}</button>` };
     };
   }
@@ -459,7 +486,7 @@
         <section class="card"><h3>${esc(t('nutrition'))}</h3><button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t('dataExplain'))} ${kb} kB. ${esc(ui.persisted ? t('persistYes') : t('persistNo'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div></section>
         <section class="card"><h3>${esc(t('installTitle'))}</h3><ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol><p class="cap">${esc(standalone ? t('installedYes') : t('installedNo'))}</p></section>
-        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p><p class="cap">GymApp 1.1 · ${window.EXERCISES.length} ${esc(t('exercises'))}</p></section>` };
+        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p><p class="cap">GymApp 1.2 · ${window.EXERCISES.length} ${esc(t('exercises'))}</p></section>` };
     };
   }
   async function exportData() {
@@ -477,7 +504,12 @@
     lang(el) { D().settings.lang = el.dataset.v; Store.save(); render(); refreshSheet(); },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
-    'w-start'(el) { startWorkout(getR(el.dataset.id)); }, 'w-empty'() { startWorkout(null); }, 'w-finish'() { finishWorkout(); },
+    'w-start'(el) { startWorkout(getR(el.dataset.id)); }, 
+    'w-quick'() {
+      if (D().active && !confirm(t('replaceActive'))) return;
+      ui.pick = newPick({ title: t('quickWorkout'), lead: t('quickLead'), cta: t('startWorkout'), done: ids => startWorkout({ id: null, name: t('quickWorkout'), items: ids.map(itemFor) }, true) });
+      openSheet(shPicker());
+    }, 'w-finish'() { finishWorkout(); },
     'w-cancel'() { if (confirm(t('cancelConfirm'))) { D().active = null; Store.save(); ui.wOpen = false; unwake(); render(); } },
     'w-check'(el) {
       audio(); const a = D().active, en = a.entries[+el.dataset.i], s = en.sets[+el.dataset.j], row = el.closest('.set');
@@ -496,26 +528,39 @@
     'w-up'(el) { const e = D().active.entries, i = +el.dataset.i; e.splice(i - 1, 0, e.splice(i, 1)[0]); ui.wTools = i - 1; Store.saveActive(); renderWorkout(); },
     'w-down'(el) { const e = D().active.entries, i = +el.dataset.i; e.splice(i + 1, 0, e.splice(i, 1)[0]); ui.wTools = i + 1; Store.saveActive(); renderWorkout(); },
     'w-delex'(el) { if (confirm(t('removeConfirm'))) { D().active.entries.splice(+el.dataset.i, 1); ui.wTools = null; Store.saveActive(); renderWorkout(); } },
-    'w-addex'() { ui.pick = { q: '', mus: '', limit: 40 }; ui.pickCb = id => { D().active.entries.push(newEntry({ ex: id, label: null })); Store.saveActive(); closeSheet(true); renderWorkout(); const b = $('#workout .w-body'); b.scrollTop = b.scrollHeight; }; openSheet(shPicker()); },
+    'w-addex'() {
+      ui.pick = newPick({ done: ids => { ids.forEach(id => D().active.entries.push(newEntry(itemFor(id)))); Store.saveActive(); closeSheet(true); renderWorkout(); const b = $('#workout .w-body'); b.scrollTop = b.scrollHeight; } });
+      openSheet(shPicker());
+    },
     'rest-add'(el) { const a = D().active; if (!a || !a.restEnd) return; a.restEnd += +el.dataset.s * 1000; a.restTotal = Math.max(1, a.restTotal + +el.dataset.s); Store.saveActive(); tick(); },
     'rest-skip'() { const a = D().active; if (a) { a.restEnd = 0; Store.saveActive(); tick(); } },
     /* routines */
     'r-open'(el) { openSheet(shRoutine(el.dataset.id)); },
-    'r-new'() { ui.edit = { id: uid(), name: L() === 'hu' ? 'Új edzésterv' : 'New routine', items: [], _old: false }; openSheet(shRoutineEdit()); },
+    'r-new'() {                                                                      // first tick the exercises, then name it and set the numbers
+      ui.pick = newPick({ title: t('newRoutine'), lead: t('newRoutineLead'), cta: t('next'), done: ids => { ui.edit = { id: uid(), name: '', items: ids.map(itemFor), _old: false }; ui.sheets = []; openSheet(shRoutineEdit()); } });
+      openSheet(shPicker());
+    },
     'r-edit'(el) { const r = getR(el.dataset.id); ui.edit = JSON.parse(JSON.stringify(r)); ui.edit._old = true; openSheet(shRoutineEdit()); },
     'r-del'() { if (confirm(t('deleteRoutineConfirm'))) { D().routines = D().routines.filter(r => r.id !== ui.edit.id); Store.save(); closeSheet(true); render(); } },
     're-up'(el) { const e = ui.edit.items, i = +el.dataset.i; e.splice(i - 1, 0, e.splice(i, 1)[0]); refreshSheet(); },
     're-down'(el) { const e = ui.edit.items, i = +el.dataset.i; e.splice(i + 1, 0, e.splice(i, 1)[0]); refreshSheet(); },
     're-del'(el) { ui.edit.items.splice(+el.dataset.i, 1); refreshSheet(); },
-    're-add'() { ui.pick = { q: '', mus: '', limit: 40 }; ui.pickCb = id => { ui.edit.items.push({ ex: id, sets: 3, reps: '8–12', rest: 90 }); closeSheet(); }; openSheet(shPicker()); },
-    're-save'() {
-      const e = ui.edit, old = e._old; delete e._old;
-      e.items.forEach(i => { i.sets = Math.max(1, Math.min(12, Math.round(num(i.sets)) || 3)); i.rest = Math.max(0, Math.round(num(i.rest))); i.reps = String(i.reps || '').trim() || '8–12'; });
-      if (!String(typeof e.name === 'string' ? e.name : rName(e)).trim()) e.name = t('newRoutine');
-      const rs = D().routines, k = rs.findIndex(r => r.id === e.id); if (k >= 0) rs[k] = e; else rs.push(e);
-      Store.save(); closeSheet(true); render(); toast(t('saved')); void old;
+    're-add'() { ui.pick = newPick({ done: ids => { ids.forEach(id => ui.edit.items.push(itemFor(id))); closeSheet(); } }); openSheet(shPicker()); },
+    'r-dup'() {                                                                      // keeps the original, saves what is on screen as a new routine
+      const c = cleanEdit(JSON.parse(JSON.stringify(ui.edit))), src = getR(ui.edit.id); c.id = uid(); c.builtin = false; c.sub = null;
+      if (src && rName(c) === rName(src)) c.name = t('copyOf', rName(src));
+      D().routines.push(c); Store.save(); closeSheet(true); render(); toast(t('saved'));
     },
-    pick(el) { if (ui.pickCb && EX[el.dataset.id]) ui.pickCb(el.dataset.id); },
+    're-save'() {
+      const e = cleanEdit(ui.edit), rs = D().routines, k = rs.findIndex(r => r.id === e.id); if (k >= 0) rs[k] = e; else rs.push(e);
+      Store.save(); closeSheet(true); render(); toast(t('saved'));
+    },
+    pick(el) {
+      const id = el.dataset.id, st = ui.pick; if (!EX[id]) return;
+      const k = st.sel.indexOf(id); if (k >= 0) st.sel.splice(k, 1); else st.sel.push(id);
+      if (st.mus === '*sel') { if (!st.sel.length) st.mus = ''; refreshSheet(); } else pickSync();
+    },
+    'pick-done'() { const st = ui.pick; if (st.sel.length && st.done) st.done(st.sel.slice()); },
     /* exercises */
     'ex-open'(el) {
       let item = null; const a = D().active;
@@ -532,6 +577,12 @@
     prog(el) { if (ui.prog !== el.dataset.v) ui.anim = 'tab'; ui.prog = el.dataset.v; ui.histLimit = 60; render(); },
     'hist-more'() { ui.histLimit = (ui.histLimit || 60) + 120; rerender(); },
     'wk-open'(el) { openSheet(shWorkout(el.dataset.id, null)); },
+    'wk-to-routine'(el) {
+      const w = D().workouts.find(x => x.id === el.dataset.id); if (!w) return;
+      ui.edit = { id: uid(), name: '', _old: false,
+        items: w.entries.map(e => { const d = itemFor(e.ex), n = e.sets.filter(s => !s.w).length || e.sets.length; return { ex: e.ex, label: e.label || null, sets: Math.max(1, Math.min(12, n)), reps: d.reps, rest: d.rest }; }) };
+      openSheet(shRoutineEdit());
+    },
     'wk-del'(el) { if (confirm(t('deleteWorkoutConfirm'))) { D().workouts = D().workouts.filter(w => w.id !== el.dataset.id); Store.save(); closeSheet(true); rerender(); } },
     /* food */
     'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.foodDate = ymd(d); ui.anim = +el.dataset.d < 0 ? 'back' : 'fwd'; render(); } },
@@ -554,7 +605,7 @@
       toast(t(r === 'ok' ? 'keyOk' : 'keyUnchecked')); if (topIs('settings')) refreshSheet();
     },
     'key-remove'() { if (!confirm(t('keyRemoveConfirm'))) return; const st = D().settings; st.apiKey = ''; st.keyState = ''; Store.save(); ui.keyDraft = ''; refreshSheet(); },
-    targets() { const s = D().settings; ui.tg = { profile: Object.assign({}, s.profile), vals: s.targets ? Object.assign({}, s.targets) : (calcTargets(s.profile) || {}), manual: !!s.targets }; openSheet(shTargets()); },
+    targets() { const s = D().settings; ui.tg = { profile: Object.assign({}, s.profile), vals: s.targets ? Object.assign({}, s.targets) : (calcTargets(s.profile) || {}) }; openSheet(shTargets()); },
     'tg-save'() { const v = ui.tg.vals, s = D().settings; if (!(num(v.kcal) > 0)) { toast(t('fillProfile')); return; } s.profile = ui.tg.profile; s.targets = { kcal: Math.round(num(v.kcal)), p: Math.round(num(v.p)), c: Math.round(num(v.c)), f: Math.round(num(v.f)) }; Store.save(); closeSheet(); render(); toast(t('saved')); },
     /* data */
     export() { exportData(); },
@@ -586,10 +637,10 @@
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
     'tg-p'(el) {
       if (el.type === 'radio' && !el.checked) return;
-      ui.tg.profile[el.dataset.k] = el.value; const c = calcTargets(ui.tg.profile); $('#tg-out').innerHTML = tgOut(c);
-      if (c && !ui.tg.manual) { ui.tg.vals = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; ['kcal', 'p', 'c', 'f'].forEach(k => { $('#tg-' + k).value = c[k]; }); }
+      ui.tg.profile[el.dataset.k] = el.value; const c = calcTargets(ui.tg.profile); $('#tg-out').innerHTML = tgOut(c, ui.tg.profile);
+      if (c) { ui.tg.vals = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; ['kcal', 'p', 'c', 'f'].forEach(k => { $('#tg-' + k).value = c[k]; }); }
     },
-    'tg-v'(el) { ui.tg.manual = true; ui.tg.vals[el.dataset.k] = el.value; }
+    'tg-v'(el) { ui.tg.vals[el.dataset.k] = el.value; }
   };
   document.addEventListener('input', e => { const el = e.target, k = el.dataset && el.dataset.in; if (k && IN[k] && el.type !== 'file') IN[k](el); });
   document.addEventListener('change', async e => {

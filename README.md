@@ -6,8 +6,10 @@ It is a web app (PWA): plain HTML, CSS and JavaScript, no build step. All your d
 ## What is in it
 
 - **Workout**: the five ULPPL routines (35 exercises), live logging of kg and reps per set, previous
-  session shown next to each set, automatic rest timer, warm-up sets, add/remove/reorder exercises,
-  your own routines.
+  session shown next to each set, automatic rest timer, warm-up sets, add/remove/reorder exercises.
+  **Free workout**: tick the exercises you want and start; at the end it can be saved as a routine.
+  **Your own routines**: tick the exercises in one go, then name the routine and set sets/reps/rest.
+  Any routine can be saved as a copy and changed, the built-in ones stay as they are.
 - **Exercises**: 876 exercises, 873 of them with start/end photos, muscle map, instructions, your record and
   progress chart per exercise.
 - **Progress**: weekly sets per muscle group against the 10–20 target zone, body weight, records,
@@ -57,6 +59,13 @@ the key into any file in this folder: the folder is published publicly.
 The photo is shrunk to 1024 px on the phone and sent straight to the Claude API; usage is billed to
 your account. Before other people use the app, this call has to move to a server of yours so no key
 is ever on a user's device.
+
+## Look
+
+Glass style: a soft coloured glow behind everything, translucent cards, and frosted blur on the things
+that float over moving content (tab bar, panels, workout header, rest timer). It is all in the
+"glass" block of `css/app.css`; the colours of the glow are the `--ambient` line. With "Reduce
+Transparency" switched on in iOS the surfaces turn solid (where the browser reports that setting).
 
 ## Animations
 
