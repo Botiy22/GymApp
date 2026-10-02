@@ -18,7 +18,7 @@ window.Store = (function () {
   function fresh() {
     return {
       v: 1,
-      settings: { lang: null, restAuto: true, sound: true, apiKey: '', model: MODELS[0],
+      settings: { lang: null, restAuto: true, sound: true, apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: []
     };
@@ -41,6 +41,7 @@ window.Store = (function () {
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
       restAuto: s.restAuto !== false, sound: s.sound !== false,
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
+      keyState: s.keyState === 'ok' || s.keyState === 'bad' ? s.keyState : '',   // '' = saved but not checked yet
       model: MODELS.indexOf(s.model) >= 0 ? s.model : MODELS[0],
       profile: {
         sex: p.sex === 'f' ? 'f' : 'm', age: numStr(p.age), height: numStr(p.height), weight: numStr(p.weight),
@@ -50,6 +51,7 @@ window.Store = (function () {
       targets: num(tg.kcal, 1, 20000, 0) > 0
         ? { kcal: int(tg.kcal, 1, 20000, 2000), p: int(tg.p, 0, 2000, 0), c: int(tg.c, 0, 3000, 0), f: int(tg.f, 0, 2000, 0) } : null
     };
+    if (!out.settings.apiKey) out.settings.keyState = '';
     const item = i => { i = obj(i); return EXID.test(str(i.ex, 90)) ? { ex: i.ex, label: pair(i.label), sets: int(i.sets, 1, 12, 3), reps: str(i.reps, 20) || '8–12', rest: int(i.rest, 0, 3600, 90) } : null; };
     out.routines = arr(r.routines).slice(0, 100).map(x => {
       x = obj(x);
@@ -125,8 +127,8 @@ window.Store = (function () {
     set onFail(fn) { onFail = fn; },
     MODELS, load, save, saveActive, clean,
     /* a backup never carries the API key in, and never carries it out */
-    replace(o) { data = clean(o, data ? data.settings.apiKey : ''); return save(); },
-    exportJSON() { const copy = JSON.parse(JSON.stringify(data)); copy.settings.apiKey = ''; return JSON.stringify({ app: 'gymapp', exported: new Date().toISOString(), data: copy }, null, 1); },
+    replace(o) { const k = data ? data.settings : { apiKey: '', keyState: '' }; data = clean(o, k.apiKey); data.settings.keyState = k.apiKey ? k.keyState : ''; return save(); },
+    exportJSON() { const copy = JSON.parse(JSON.stringify(data)); copy.settings.apiKey = ''; copy.settings.keyState = ''; return JSON.stringify({ app: 'gymapp', exported: new Date().toISOString(), data: copy }, null, 1); },
     resetRoutines() { data.routines = seedRoutines().concat(data.routines.filter(r => !r.builtin)); save(); },
     bytes() { try { return (localStorage.getItem(KEY) || '').length + (localStorage.getItem(AKEY) || '').length; } catch (e) { return 0; } }
   };

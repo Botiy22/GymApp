@@ -261,3 +261,70 @@ body.w-on #restbar{bottom:calc(var(--sb) + 10px)}
 #toast{position:fixed;inset:calc(var(--st) + 12px) auto auto 50%;margin:0;border:0;width:max-content;max-width:calc(100% - 32px);transform:translate(-50%,-90px);opacity:0;z-index:40;background:var(--ink);color:#111;padding:10px 16px;border-radius:18px;font-size:.9rem;font-weight:600;text-align:center;transition:transform .25s,opacity .25s;pointer-events:none}
 #toast.on{transform:translate(-50%,0);opacity:1}
 @media (min-width:600px){#view{padding-top:24px}}
+
+/* ---------- AI status in Settings ---------- */
+.ai-on{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.ai-on svg{width:38px;height:38px;padding:9px;border-radius:50%;background:var(--acc);color:var(--acc-ink);fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ai-on.wait svg{background:var(--raised);color:var(--mut)}
+.ai-on b{display:block;font-weight:700}
+.ai-on i{display:block;font-style:normal;color:var(--mut);font-size:.84rem;line-height:1.35}
+.card>.cap+.fld{margin-top:12px}
+.btn.busy::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:spin .8s linear infinite;flex:none}
+dialog#sheet.closing{pointer-events:none}
+
+/* ---------- motion ----------
+   Everything here is decoration: with "Reduce Motion" switched on in iOS none of it runs and the app behaves as before.
+   Only transform and opacity are animated, so it stays smooth on the phone. */
+@keyframes sheet-in{from{transform:translateY(100%)}}
+@keyframes sheet-out{to{transform:translateY(100%)}}
+@keyframes fade-in{from{opacity:0}}
+@keyframes fade-out{to{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes nav-fwd{from{opacity:0;transform:translateX(14px)}}
+@keyframes nav-back{from{opacity:0;transform:translateX(-14px)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.16)}100%{transform:scale(1)}}
+@keyframes grow{from{transform:scaleX(0)}}
+@keyframes rb-in{from{opacity:0;transform:translateY(22px) scale(.96)}}
+@keyframes tint{0%{box-shadow:0 0 0 0 rgba(215,255,58,.55)}100%{box-shadow:0 0 0 9px rgba(215,255,58,0)}}
+@media (prefers-reduced-motion:no-preference){
+  /* pressing: the thing under the finger gives way a little */
+  .btn,.rcard,.exrow,.wrow,.chip,.icon-btn,.hero.resume,.note[data-a],.set-ok,.set-n,.seg button,.prrow,.link,.wex-img,.radios span{transition:transform .14s cubic-bezier(.2,.7,.3,1),filter .14s,background-color .18s,border-color .18s,color .18s,opacity .18s}
+  .btn:not(:disabled):active{transform:scale(.97)}
+  .btn.sm:not(:disabled):active,.chip:active,.icon-btn:not(:disabled):active,.set-ok:active,.set-n:active,.seg button:active,.wex-img:active,.radios label:active span{transform:scale(.93)}
+  .rcard:active,.exrow:active,.wrow:active,.hero.resume:active,.note[data-a]:active,.prrow:active{transform:scale(.98)}
+  .icon-btn:not(:disabled):active,.set-ok:active,.set-n:active,.seg button:active,.hero.resume:active,.note[data-a]:active,.prrow:active{filter:brightness(1.25)}
+  .link:active{opacity:.55}
+  #tabbar svg{transition:transform .16s cubic-bezier(.2,.7,.3,1)}
+  #tabbar button:active svg{transform:scale(.82)}
+  #tabbar .on svg{animation:pop .34s cubic-bezier(.3,1.4,.5,1)}
+  input[type=text],input[type=password],textarea,select,.search input{transition:border-color .16s,background-color .2s}
+
+  /* a new screen: its blocks rise in one after the other */
+  #view[data-anim="tab"]>*{animation:rise .3s cubic-bezier(.2,.8,.2,1) backwards}
+  #view[data-anim="tab"]>:nth-child(2){animation-delay:.03s}
+  #view[data-anim="tab"]>:nth-child(3){animation-delay:.06s}
+  #view[data-anim="tab"]>:nth-child(4){animation-delay:.09s}
+  #view[data-anim="tab"]>:nth-child(5){animation-delay:.12s}
+  #view[data-anim="tab"]>:nth-child(n+6){animation-delay:.15s}
+  /* previous / next day: the content comes from the side you are moving to */
+  #view[data-anim="fwd"]>:not(.top):not(.datenav){animation:nav-fwd .26s cubic-bezier(.2,.8,.2,1) backwards}
+  #view[data-anim="back"]>:not(.top):not(.datenav){animation:nav-back .26s cubic-bezier(.2,.8,.2,1) backwards}
+  #view[data-anim] .meter i,#view[data-anim] .hb-f{transform-origin:left center;animation:grow .6s cubic-bezier(.2,.8,.2,1) .12s backwards}
+
+  /* panels slide up from the bottom and back down */
+  dialog#sheet[open]{animation:sheet-in .32s cubic-bezier(.2,.85,.25,1)}
+  dialog#sheet[open]::backdrop{animation:fade-in .26s ease-out}
+  dialog#sheet.closing{animation:sheet-out .2s cubic-bezier(.4,0,1,1) forwards}
+  dialog#sheet.closing::backdrop{animation:fade-out .2s ease-in forwards}
+  dialog#sheet[data-nav="fwd"] .sheet-body,dialog#sheet[data-nav="fwd"] .sheet-head h2,dialog#sheet[data-nav="fwd"] .sheet-foot{animation:nav-fwd .24s cubic-bezier(.2,.8,.2,1)}
+  dialog#sheet[data-nav="back"] .sheet-body,dialog#sheet[data-nav="back"] .sheet-head h2,dialog#sheet[data-nav="back"] .sheet-foot{animation:nav-back .24s cubic-bezier(.2,.8,.2,1)}
+  .ai-on:not(.wait) svg{animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+
+  /* live workout */
+  #workout{animation:sheet-in .34s cubic-bezier(.2,.85,.25,1)}
+  #workout.closing{animation:sheet-out .21s cubic-bezier(.4,0,1,1) forwards;pointer-events:none}
+  .set.pop .set-ok{animation:pop .36s cubic-bezier(.3,1.4,.5,1),tint .5s ease-out}
+  .set.in,.wex-tools.in{animation:rise .24s cubic-bezier(.2,.8,.2,1)}
+  #restbar .rb-in{animation:rb-in .34s cubic-bezier(.2,.9,.3,1.1)}
+  #rb-fill{transition:width .5s linear}
+}

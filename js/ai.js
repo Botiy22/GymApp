@@ -68,8 +68,20 @@ window.FoodAI = (function () {
       img.src = url;
     });
   }
+  /* Ask the API whether it accepts this key. Listing models is free: no tokens are used.
+     'ok' = accepted, 'bad' = rejected, 'offline' = could not reach the service, 'unknown' = some other answer. */
+  async function check(apiKey) {
+    const ctl = window.AbortController ? new AbortController() : null, timer = ctl ? setTimeout(() => ctl.abort(), 12000) : 0;
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/models?limit=1', {
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        signal: ctl ? ctl.signal : undefined
+      });
+      return res.ok ? 'ok' : res.status === 401 ? 'bad' : 'unknown';
+    } catch (e) { return 'offline'; } finally { clearTimeout(timer); }
+  }
   return {
-    shrink, parse,
+    shrink, parse, check,
     fromPhoto: (key, model, base64, lang, hint) => call(key, model, [
       { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
       { type: 'text', text: prompt(lang, hint, true) }]),

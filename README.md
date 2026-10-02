@@ -45,10 +45,24 @@ rename or delete files, so the old copies are cleared from phones.
 
 ## AI food recognition
 
-Settings → AI food recognition → paste an Anthropic API key (console.anthropic.com). The photo is
-shrunk to 1024 px on the phone and sent straight to the Claude API; usage is billed to your account.
-The key is stored only on the phone and is never written into a backup file. Before other people
-use the app, this call has to move to a server of yours so no key is ever on a user's device.
+Settings → AI food recognition → paste an Anthropic API key (console.anthropic.com) → Save key.
+The app asks the API whether the key is accepted (a free request, no tokens used). Once it is, the
+key field disappears and Settings only shows "AI is switched on". The field comes back by itself if
+the API ever rejects the key, or when you tap "Remove the key from this device".
+
+The key is stored only in the browser storage of the device where you entered it, and is never
+written into a backup file. So each device (phone, PC) needs the same key entered once. Do not put
+the key into any file in this folder: the folder is published publicly.
+
+The photo is shrunk to 1024 px on the phone and sent straight to the Claude API; usage is billed to
+your account. Before other people use the app, this call has to move to a server of yours so no key
+is ever on a user's device.
+
+## Animations
+
+Buttons give way when pressed, panels slide up and down, screens fade in when you switch tabs.
+All of it is in the last block of `css/app.css`. If "Reduce Motion" is switched on in iOS
+(Settings → Accessibility → Motion), none of it runs.
 
 ## Your data
 

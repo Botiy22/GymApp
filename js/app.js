@@ -19,6 +19,13 @@
   const weekStart = d => { d = new Date(d); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; };
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
+  const calm = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  /* play an element's leaving animation (class "closing"), then run done() */
+  function leave(el, ms, done) {
+    if (calm()) { done(); return; }
+    if (el.classList.contains('closing')) return;
+    el.classList.add('closing'); setTimeout(() => { el.classList.remove('closing'); done(); }, ms);
+  }
 
   const EX = {}; window.EXERCISES.forEach(e => { EX[e.id] = e; });
   const PLAN_BY_EX = {}; const HU_NAME = {};
@@ -176,10 +183,13 @@
   }
   const VIEWS = { home: vHome, lib: vLib, prog: vProg, food: vFood };
 
+  let animT = 0;
   function render() {
     document.documentElement.lang = L();
     const y = ui.keepScroll ? window.scrollY : 0; ui.keepScroll = false;
-    $('#view').innerHTML = VIEWS[ui.tab]();
+    const v = $('#view'); v.dataset.anim = ui.anim || ''; ui.anim = '';
+    clearTimeout(animT); if (v.dataset.anim) animT = setTimeout(() => { v.dataset.anim = ''; }, 600);
+    v.innerHTML = VIEWS[ui.tab]();
     $$('#tabbar button').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); b.querySelector('span').textContent = t('tab' + b.dataset.tab[0].toUpperCase() + b.dataset.tab.slice(1)); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     window.scrollTo(0, y);
     renderWorkout();
@@ -188,15 +198,31 @@
 
   /* ================= SHEETS (bottom dialogs, stacked) ================= */
   const dlg = () => $('#sheet');
-  function drawSheet() {
+  function drawSheet(nav) {
     const fn = ui.sheets[ui.sheets.length - 1]; if (!fn) return;
     const s = fn(), d = dlg(), old = $('.sheet-body', d), y = old && ui.sheetKeep ? old.scrollTop : 0; ui.sheetKeep = false;
+    d.dataset.nav = nav || '';                                   // fwd / back: the new content slides in from that side
     d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title">${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
     $('.sheet-body', d).scrollTop = y;
   }
-  function openSheet(fn) { if (!dlg().showModal) { toast(t('oldIOS')); return; } ui.sheets.push(fn); drawSheet(); if (!dlg().open) dlg().showModal(); }
+  let closeT = 0;
+  function openSheet(fn) {
+    const d = dlg(); if (!d.showModal) { toast(t('oldIOS')); return; }
+    const nested = d.open && !closeT;
+    clearTimeout(closeT); closeT = 0; d.classList.remove('closing');          // a sheet that was sliding away is reused
+    ui.sheets.push(fn); drawSheet(nested ? 'fwd' : ''); if (!d.open) d.showModal();
+  }
   function refreshSheet() { ui.sheetKeep = true; drawSheet(); }
-  function closeSheet(all) { if (all) ui.sheets = []; else ui.sheets.pop(); if (ui.sheets.length) drawSheet(); else if (dlg().open) dlg().close(); }
+  function closeSheet(all) {
+    if (all) ui.sheets = []; else ui.sheets.pop();
+    const d = dlg();
+    if (ui.sheets.length) { drawSheet('back'); return; }
+    if (!d.open || closeT) return;
+    if (calm()) { d.close(); return; }
+    d.classList.add('closing');                                               // slide down first, then really close
+    closeT = setTimeout(() => { closeT = 0; d.classList.remove('closing'); if (d.open && !ui.sheets.length) d.close(); }, 200);
+  }
+  const topIs = kind => { const f = ui.sheets[ui.sheets.length - 1]; return !!f && f.kind === kind; };
 
   /* ---------- exercise detail ---------- */
   function shEx(id, item) {
@@ -268,18 +294,18 @@
       <div class="w-body">${a.entries.map((en, i) => {
         const hst = exHistory(en.ex), prev = hst.length ? hst[hst.length - 1].sets : [];
         return `<section class="wex"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${img(en.ex)}" alt=""></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
-          ${ui.wTools === i ? `<div class="wex-tools"><button class="btn sm" data-a="w-up" data-i="${i}" ${i ? '' : 'disabled'}>${IC.up}${esc(t('moveUp'))}</button><button class="btn sm" data-a="w-down" data-i="${i}" ${i < a.entries.length - 1 ? '' : 'disabled'}>${IC.down}${esc(t('moveDown'))}</button><button class="btn sm danger" data-a="w-delex" data-i="${i}">${esc(t('remove'))}</button></div>` : ''}
+          ${ui.wTools === i ? `<div class="wex-tools${ui.fx === 'tools' ? ' in' : ''}"><button class="btn sm" data-a="w-up" data-i="${i}" ${i ? '' : 'disabled'}>${IC.up}${esc(t('moveUp'))}</button><button class="btn sm" data-a="w-down" data-i="${i}" ${i < a.entries.length - 1 ? '' : 'disabled'}>${IC.down}${esc(t('moveDown'))}</button><button class="btn sm danger" data-a="w-delex" data-i="${i}">${esc(t('remove'))}</button></div>` : ''}
           <p class="hint">${esc(hintFor(en, hst))}</p>
           <div class="sets"><div class="set set-hd"><span>#</span><span>${esc(t('prev'))}</span><span>kg</span><span>${esc(t('reps'))}</span><span></span></div>
           ${en.sets.map((s, j) => { const p = prev[j];
-            return `<div class="set${s.done ? ' done' : ''}"><button class="set-n${s.w ? ' w' : ''}" data-a="w-warm" data-i="${i}" data-j="${j}" aria-label="${esc(t('warmToggle'))}">${s.w ? 'W' : j + 1 - en.sets.slice(0, j).filter(x => x.w).length}</button><span class="prev">${p ? (p.kg ? p.kg + '×' : '') + p.reps : '–'}</span>
+            return `<div class="set${s.done ? ' done' : ''}${ui.fx === 'pop' + i + '-' + j ? ' pop' : ''}${ui.fx === 'new' + i + '-' + j ? ' in' : ''}"><button class="set-n${s.w ? ' w' : ''}" data-a="w-warm" data-i="${i}" data-j="${j}" aria-label="${esc(t('warmToggle'))}">${s.w ? 'W' : j + 1 - en.sets.slice(0, j).filter(x => x.w).length}</button><span class="prev">${p ? (p.kg ? p.kg + '×' : '') + p.reps : '–'}</span>
               <input type="text" inputmode="decimal" data-in="w-kg" data-i="${i}" data-j="${j}" value="${esc(s.kg)}" placeholder="${p && p.kg ? p.kg : ''}" aria-label="kg" autocomplete="off" enterkeyhint="next">
               <input type="text" inputmode="numeric" data-in="w-reps" data-i="${i}" data-j="${j}" value="${esc(s.reps)}" placeholder="${p ? p.reps : ''}" aria-label="${esc(t('reps'))}" autocomplete="off" enterkeyhint="done">
               <button class="set-ok" data-a="w-check" data-i="${i}" data-j="${j}" aria-label="${esc(t('setDone'))}" aria-pressed="${s.done}">${IC.check}</button></div>`; }).join('')}</div>
           <div class="wex-f"><button class="link" data-a="w-addset" data-i="${i}">+ ${esc(t('set'))}</button>${en.sets.length > 1 ? `<button class="link mut" data-a="w-delset" data-i="${i}">− ${esc(t('set'))}</button>` : ''}</div></section>`; }).join('')}
         ${a.entries.length ? '' : `<p class="empty">${esc(t('emptyHint'))}</p>`}
         <button class="btn" data-a="w-addex">${IC.plus}${esc(t('addExercise'))}</button><button class="btn danger ghost" data-a="w-cancel">${esc(t('cancelWorkout'))}</button></div>`;
-    $('.w-body', el).scrollTop = y; tick();
+    $('.w-body', el).scrollTop = y; ui.fx = ''; tick();
   }
   function finishWorkout() {
     const a = D().active; if (!a) return;
@@ -347,9 +373,9 @@
   }
   function shFoodAI() {
     return () => {
-      const s = ui.ai, key = D().settings.apiKey;
+      const s = ui.ai, st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad;
       let h = '';
-      if (!key) h += `<button class="note warn" data-a="settings"><b>${esc(t('needKey'))}</b><span>${esc(t('needKeySub'))}</span></button>`;
+      if (!key) h += `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'needKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`;
       if (s.res) {
         const tot = s.res.items.reduce((a, i) => a + num(i.kcal), 0);
         h += `${s.img ? `<img class="ai-prev sm" src="${s.img}" alt="">` : ''}<p class="lead"><span class="chip on">${esc(t('conf_' + s.res.confidence))}</span> ${esc(s.res.notes)}</p>`;
@@ -359,7 +385,7 @@
         return { title: t('aiResult'), html: h, foot: (s.res.items.length ? `<button class="btn primary wide" data-a="ai-add">${esc(t('add'))} · <span id="ai-tot">${Math.round(tot)}</span> kcal</button>` : '') + `<button class="btn" data-a="ai-reset">${esc(t('again'))}</button>` };
       }
       if (s.loading) return { title: t('analyzing'), html: `${s.img ? `<img class="ai-prev" src="${s.img}" alt="">` : ''}<p class="empty spin">${esc(t('analyzingSub'))}</p>` };
-      if (s.err) h += `<div class="note warn"><b>${esc(t('err_' + s.err.code))}</b>${s.err.msg ? `<span>${esc(s.err.msg)}</span>` : ''}</div>`;
+      if (s.err && !(bad && s.err.code === 'auth')) h += `<div class="note warn"><b>${esc(t('err_' + s.err.code))}</b>${s.err.msg ? `<span>${esc(s.err.msg)}</span>` : ''}</div>`;
       if (s.mode === 'photo') {
         h += s.img ? `<img class="ai-prev" src="${s.img}" alt="${esc(t('yourPhoto'))}"><label class="fld"><span>${esc(t('aiHint'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiHintPh'))}" autocomplete="off"></label>`
           : `<p class="lead">${esc(t('aiPhotoLead'))}</p><div class="row2"><label class="btn primary big">${IC.cam}${esc(t('takePhoto'))}<input class="sr" type="file" accept="image/*" capture="environment" data-in="ai-file"></label><label class="btn big">${esc(t('fromGallery'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label></div><p class="cap">${esc(t('aiTips'))}</p>`;
@@ -368,6 +394,13 @@
       return { title: s.mode === 'photo' ? t('scanPhoto') : t('describe'), html: h, foot: ready ? `<button class="btn primary" data-a="ai-go" ${key ? '' : 'disabled'}>${esc(t('analyze'))}</button>${s.img ? `<button class="btn" data-a="ai-reset">${esc(t('otherPhoto'))}</button>` : ''}` : '' };
     };
   }
+  /* remember what the API said about the saved key: a rejected key brings the key field back in Settings */
+  function keyResult(state) { const st = D().settings; if (st.apiKey && st.keyState !== state) { st.keyState = state; Store.save(); } }
+  async function checkSavedKey() {
+    const st = D().settings, k = st.apiKey; if (!k || st.keyState || !FoodAI.check) return;
+    const r = await FoodAI.check(k); if (D().settings.apiKey !== k || (r !== 'ok' && r !== 'bad')) return;
+    keyResult(r); if (topIs('settings')) refreshSheet();
+  }
   async function aiGo() {
     const s = ui.ai, st = D().settings;
     if (s.mode === 'text' && !s.text.trim()) { toast(t('describePh')); return; }
@@ -375,8 +408,8 @@
     try {
       const r = s.mode === 'photo' ? await FoodAI.fromPhoto(st.apiKey, st.model, s.b64, L(), s.hint) : await FoodAI.fromText(st.apiKey, st.model, s.text, L());
       r.items.forEach(i => { i._b = { grams: i.grams, kcal: i.kcal, p: i.p, c: i.c, f: i.f }; });
-      s.res = r;
-    } catch (e) { s.err = { code: e.code || 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; }
+      s.res = r; keyResult('ok');
+    } catch (e) { s.err = { code: e.code || 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; if (e.code === 'auth') keyResult('bad'); }
     s.loading = false; if (ui.ai === s && ui.sheets.length) refreshSheet();
   }
   const ACT = [[1.2, 'act1'], [1.375, 'act2'], [1.55, 'act3'], [1.725, 'act4'], [1.9, 'act5']];
@@ -406,17 +439,27 @@
   /* ================= SETTINGS ================= */
   const MODEL_NAMES = { 'claude-haiku-4-5-20251001': 'Claude Haiku 4.5', 'claude-sonnet-5-5': 'Claude Sonnet 5.5', 'claude-opus-5-5': 'Claude Opus 5.5' };
   const MODELS = Store.MODELS.map(m => [m, MODEL_NAMES[m] || m]);
+  function aiCard(s) {
+    const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`;
+    if (s.apiKey && s.keyState !== 'bad')                                    // a key is saved and nothing says it is wrong: no key field at all
+      return `<p class="ai-on${s.keyState === 'ok' ? '' : ' wait'}">${IC.check}<span><b>${esc(t(s.keyState === 'ok' ? 'aiOn' : 'aiSaved'))}</b><i>${esc(t(s.keyState === 'ok' ? 'aiOnSub' : 'aiSavedSub'))}</i></span></p>${model}<button class="link mut" data-a="key-remove">${esc(t('keyRemove'))}</button>`;
+    return (s.keyState === 'bad' ? `<div class="note warn"><b>${esc(t('keyBad'))}</b><span>${esc(t('keyBadNew'))}</span></div>` : '') +
+      `<p class="cap">${esc(t('aiExplain'))}</p><label class="fld"><span>${esc(t('apiKey'))}</span><input type="password" data-in="key-draft" value="${esc(ui.keyDraft || '')}" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" ${ui.keyBusy ? 'disabled' : ''}></label>
+      <button class="btn primary${ui.keyBusy ? ' busy' : ''}" data-a="key-save" ${ui.keyBusy || !(ui.keyDraft || '').trim() ? 'disabled' : ''}>${esc(t(ui.keyBusy ? 'keyChecking' : 'keySave'))}</button>`;
+  }
   function shSettings() {
+    const fn = shSettingsBody(); fn.kind = 'settings'; return fn;
+  }
+  function shSettingsBody() {
     return () => {
       const s = D().settings, kb = Math.round(Store.bytes() / 1024);
       return { title: t('settings'), html: `<section class="card"><h3>${esc(t('language'))}</h3><div class="seg"><button class="${L() === 'hu' ? 'on' : ''}" data-a="lang" data-v="hu">Magyar</button><button class="${L() === 'en' ? 'on' : ''}" data-a="lang" data-v="en">English</button></div></section>
         <section class="card"><h3>${esc(t('workout'))}</h3><label class="sw"><input type="checkbox" data-in="set-rest" ${s.restAuto ? 'checked' : ''}><span>${esc(t('restAuto'))}</span></label><label class="sw"><input type="checkbox" data-in="set-sound" ${s.sound ? 'checked' : ''}><span>${esc(t('restSound'))}</span></label><button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
-        <section class="card"><h3>${esc(t('aiTitle'))}</h3><p class="cap">${esc(t('aiExplain'))}</p><label class="fld"><span>${esc(t('apiKey'))}</span><input type="password" data-in="set-key" value="${esc(s.apiKey)}" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
-          <label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><button class="btn" data-a="ai-test" ${s.apiKey ? '' : 'disabled'}>${esc(t('testKey'))}</button></section>
+        <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}</section>
         <section class="card"><h3>${esc(t('nutrition'))}</h3><button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t('dataExplain'))} ${kb} kB. ${esc(ui.persisted ? t('persistYes') : t('persistNo'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div></section>
         <section class="card"><h3>${esc(t('installTitle'))}</h3><ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol><p class="cap">${esc(standalone ? t('installedYes') : t('installedNo'))}</p></section>
-        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p><p class="cap">GymApp 1.0 · ${window.EXERCISES.length} ${esc(t('exercises'))}</p></section>` };
+        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p><p class="cap">GymApp 1.1 · ${window.EXERCISES.length} ${esc(t('exercises'))}</p></section>` };
     };
   }
   async function exportData() {
@@ -427,13 +470,13 @@
 
   /* ================= ACTIONS ================= */
   const A = {
-    tab(el) { ui.tab = el.dataset.tab; render(); },
-    settings() { openSheet(shSettings()); },
-    'install-help'() { openSheet(shSettings()); },
+    tab(el) { if (ui.tab !== el.dataset.tab) ui.anim = 'tab'; ui.tab = el.dataset.tab; render(); },
+    settings() { ui.keyDraft = ''; openSheet(shSettings()); checkSavedKey(); },
+    'install-help'() { ui.keyDraft = ''; openSheet(shSettings()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v; Store.save(); render(); refreshSheet(); },
     /* workout */
-    'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { ui.wOpen = false; render(); },
+    'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
     'w-start'(el) { startWorkout(getR(el.dataset.id)); }, 'w-empty'() { startWorkout(null); }, 'w-finish'() { finishWorkout(); },
     'w-cancel'() { if (confirm(t('cancelConfirm'))) { D().active = null; Store.save(); ui.wOpen = false; unwake(); render(); } },
     'w-check'(el) {
@@ -442,14 +485,14 @@
         const kgI = $('[data-in="w-kg"]', row), rpI = $('[data-in="w-reps"]', row);
         if (s.kg === '' && kgI.placeholder) s.kg = kgI.placeholder; if (s.reps === '' && rpI.placeholder) s.reps = rpI.placeholder;
         if (!(num(s.reps) > 0 && num(s.reps) <= 1000) || num(s.kg) < 0 || num(s.kg) > 2000) { rpI.focus(); row.classList.add('shake'); setTimeout(() => row.classList.remove('shake'), 400); toast(t('needReps')); return; }
-        s.done = true; if (!s.w) startRest(en.rest);
+        s.done = true; ui.fx = 'pop' + el.dataset.i + '-' + el.dataset.j; if (!s.w) startRest(en.rest);
       }
       Store.saveActive(); renderWorkout();
     },
     'w-warm'(el) { const s = D().active.entries[+el.dataset.i].sets[+el.dataset.j]; s.w = !s.w; Store.saveActive(); renderWorkout(); },
-    'w-addset'(el) { const en = D().active.entries[+el.dataset.i], l = en.sets[en.sets.length - 1]; en.sets.push({ kg: l ? l.kg : '', reps: '', done: false, w: false }); Store.saveActive(); renderWorkout(); },
+    'w-addset'(el) { const en = D().active.entries[+el.dataset.i], l = en.sets[en.sets.length - 1]; en.sets.push({ kg: l ? l.kg : '', reps: '', done: false, w: false }); ui.fx = 'new' + el.dataset.i + '-' + (en.sets.length - 1); Store.saveActive(); renderWorkout(); },
     'w-delset'(el) { const en = D().active.entries[+el.dataset.i]; en.sets.pop(); Store.saveActive(); renderWorkout(); },
-    'w-tools'(el) { ui.wTools = ui.wTools === +el.dataset.i ? null : +el.dataset.i; renderWorkout(); },
+    'w-tools'(el) { ui.wTools = ui.wTools === +el.dataset.i ? null : +el.dataset.i; ui.fx = 'tools'; renderWorkout(); },
     'w-up'(el) { const e = D().active.entries, i = +el.dataset.i; e.splice(i - 1, 0, e.splice(i, 1)[0]); ui.wTools = i - 1; Store.saveActive(); renderWorkout(); },
     'w-down'(el) { const e = D().active.entries, i = +el.dataset.i; e.splice(i + 1, 0, e.splice(i, 1)[0]); ui.wTools = i + 1; Store.saveActive(); renderWorkout(); },
     'w-delex'(el) { if (confirm(t('removeConfirm'))) { D().active.entries.splice(+el.dataset.i, 1); ui.wTools = null; Store.saveActive(); renderWorkout(); } },
@@ -486,12 +529,12 @@
     'lib-mus'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.mus = el.dataset.m; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
     'lib-more'(el) { const pk = !!el.closest('#sheet'); (pk ? ui.pick : ui.lib).limit += 60; if (pk) refreshSheet(); else rerender(); },
     /* progress */
-    prog(el) { ui.prog = el.dataset.v; ui.histLimit = 60; render(); },
+    prog(el) { if (ui.prog !== el.dataset.v) ui.anim = 'tab'; ui.prog = el.dataset.v; ui.histLimit = 60; render(); },
     'hist-more'() { ui.histLimit = (ui.histLimit || 60) + 120; rerender(); },
     'wk-open'(el) { openSheet(shWorkout(el.dataset.id, null)); },
     'wk-del'(el) { if (confirm(t('deleteWorkoutConfirm'))) { D().workouts = D().workouts.filter(w => w.id !== el.dataset.id); Store.save(); closeSheet(true); rerender(); } },
     /* food */
-    'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.foodDate = ymd(d); render(); } },
+    'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.foodDate = ymd(d); ui.anim = +el.dataset.d < 0 ? 'back' : 'fwd'; render(); } },
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
     'food-manual'() { ui.manual = null; openSheet(shFoodManual()); },
     'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); refreshSheet(); },
@@ -500,7 +543,17 @@
     'ai-reset'() { const m = ui.ai.mode; ui.ai = { mode: m, img: null, b64: null, hint: '', text: ui.ai.text, loading: false, res: null, err: null }; refreshSheet(); },
     'ai-del'(el) { ui.ai.res.items.splice(+el.dataset.i, 1); refreshSheet(); },
     'ai-add'() { addFood(ui.ai.res.items.map(i => ({ name: i.name, g: i.grams, kcal: i.kcal, p: i.p, c: i.c, f: i.f })), 'ai'); closeSheet(true); rerender(); toast(t('added')); },
-    async 'ai-test'() { const s = D().settings; toast(t('testing')); try { await FoodAI.fromText(s.apiKey, s.model, 'one boiled egg', 'en'); toast(t('keyOk')); } catch (e) { toast(t('err_' + (e.code || 'api')) + (e.code === 'api' || e.code === 'model' ? ': ' + e.message : '')); } },
+    async 'key-save'() {
+      const k = (ui.keyDraft || '').replace(/[^\x21-\x7e]/g, ''); if (!k || ui.keyBusy) return;
+      ui.keyBusy = true; refreshSheet();
+      const r = FoodAI.check ? await FoodAI.check(k) : 'unknown';
+      ui.keyBusy = false;
+      if (r === 'bad') { toast(t('err_auth')); if (topIs('settings')) refreshSheet(); return; }      // a rejected key is never stored
+      const st = D().settings; st.apiKey = k; st.keyState = r === 'ok' ? 'ok' : ''; Store.save(); ui.keyDraft = '';
+      if (ui.ai && ui.ai.err && ui.ai.err.code === 'auth') ui.ai.err = null;                           // the old 'key rejected' message no longer applies
+      toast(t(r === 'ok' ? 'keyOk' : 'keyUnchecked')); if (topIs('settings')) refreshSheet();
+    },
+    'key-remove'() { if (!confirm(t('keyRemoveConfirm'))) return; const st = D().settings; st.apiKey = ''; st.keyState = ''; Store.save(); ui.keyDraft = ''; refreshSheet(); },
     targets() { const s = D().settings; ui.tg = { profile: Object.assign({}, s.profile), vals: s.targets ? Object.assign({}, s.targets) : (calcTargets(s.profile) || {}), manual: !!s.targets }; openSheet(shTargets()); },
     'tg-save'() { const v = ui.tg.vals, s = D().settings; if (!(num(v.kcal) > 0)) { toast(t('fillProfile')); return; } s.profile = ui.tg.profile; s.targets = { kcal: Math.round(num(v.kcal)), p: Math.round(num(v.p)), c: Math.round(num(v.c)), f: Math.round(num(v.f)) }; Store.save(); closeSheet(); render(); toast(t('saved')); },
     /* data */
@@ -513,7 +566,6 @@
   });
 
   /* ---------- typing ---------- */
-  let saveT; const lazySave = () => { clearTimeout(saveT); saveT = setTimeout(() => Store.save(), 250); };
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
     'lib-q'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.q = el.value; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
@@ -529,7 +581,7 @@
       if (k === 'grams' && it._b && it._b.grams > 0) { const f = it.grams / it._b.grams; ['kcal', 'p', 'c', 'f'].forEach(m => { it[m] = m === 'kcal' ? Math.round(it._b[m] * f) : r1(it._b[m] * f); const inp = $(`[data-in="ai-f"][data-k="${m}"][data-i="${el.dataset.i}"]`); if (inp) inp.value = it[m]; }); }
       const tot = $('#ai-tot'); if (tot) tot.textContent = Math.round(ui.ai.res.items.reduce((a, i) => a + num(i.kcal), 0));
     },
-    'set-key'(el) { D().settings.apiKey = el.value.trim(); lazySave(); const b = $('[data-a="ai-test"]'); if (b) b.disabled = !el.value.trim(); },
+    'key-draft'(el) { ui.keyDraft = el.value; const b = $('[data-a="key-save"]'); if (b) b.disabled = !el.value.trim(); },
     'set-model'(el) { if (Store.MODELS.indexOf(el.value) >= 0) { D().settings.model = el.value; Store.save(); } },
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
     'tg-p'(el) {
@@ -565,6 +617,8 @@
   Store.load();
   let failT = 0; Store.onFail = () => { if (Date.now() - failT > 4000) { failT = Date.now(); setTimeout(() => toast(t('saveFailed')), 0); } };
   dlg().addEventListener('close', () => { ui.sheets = []; });
+  dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
+  document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);
   $('#tabbar').innerHTML = [['home', IC.home], ['lib', IC.lib], ['prog', IC.prog], ['food', IC.food]].map(([k, ic]) => `<button data-a="tab" data-tab="${k}">${ic}<span></span></button>`).join('');
