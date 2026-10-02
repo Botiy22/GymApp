@@ -1,5 +1,5 @@
 :root{
-  --bg:#0e0f11; --card:#18191d; --raised:#212228; --line:#2c2d34; --ink:#f3f1ea; --mut:#a3a097; --acc:#d7ff3a; --acc-ink:#14150f;
+  --bg:#0e0f11; --card:#18191d; --raised:#212228; --line:#2c2d34; --ink:#f5f5f7; --mut:rgba(235,235,245,.64); --acc:#d7ff3a; --acc-rgb:215,255,58; --acc-ink:#14150f;
   --hi:#ff5d3b; --warn:#ffd166; --tab:58px; --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
   color-scheme:dark;
 }
@@ -110,10 +110,10 @@ span.chip{min-height:28px;font-size:.8rem}
 .hb-row{display:grid;grid-template-columns:104px 1fr 30px;align-items:center;gap:10px;font-size:.84rem}
 .hb-l{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hb-t{position:relative;height:12px;border-radius:4px;background:var(--raised);display:block}
-.hb-band{position:absolute;top:-3px;bottom:-3px;background:rgba(215,255,58,.13);border-left:1px solid rgba(215,255,58,.5);border-right:1px solid rgba(215,255,58,.5)}
+.hb-band{position:absolute;top:-3px;bottom:-3px;background:rgba(var(--acc-rgb),.13);border-left:1px solid rgba(var(--acc-rgb),.5);border-right:1px solid rgba(var(--acc-rgb),.5)}
 .hb-f{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:0 4px 4px 0;min-width:2px}
 .hb-v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
-.band-key{display:inline-block;width:18px;height:10px;background:rgba(215,255,58,.13);border-left:1px solid rgba(215,255,58,.5);border-right:1px solid rgba(215,255,58,.5);margin-right:7px;vertical-align:-1px}
+.band-key{display:inline-block;width:18px;height:10px;background:rgba(var(--acc-rgb),.13);border-left:1px solid rgba(var(--acc-rgb),.5);border-right:1px solid rgba(var(--acc-rgb),.5);margin-right:7px;vertical-align:-1px}
 .meter{display:block;height:10px;border-radius:5px;background:#3a4416;overflow:hidden;margin-top:10px}
 .meter i{display:block;height:100%;background:var(--acc);border-radius:0 5px 5px 0}
 .meter.thin{height:6px;margin-top:6px}
@@ -266,7 +266,7 @@ body.w-on #restbar{bottom:calc(var(--sb) + 10px)}
 .qrow{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;margin-top:10px;min-height:66px;border-radius:18px}
 .qrow>svg{color:var(--mut);width:18px;height:18px}
 .qrow i{white-space:normal;line-height:1.3}
-.q-ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(215,255,58,.14);color:var(--acc);flex:none}
+.q-ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(var(--acc-rgb),.14);color:var(--acc);flex:none}
 .q-ic svg{width:22px;height:22px;fill:currentColor}
 .h2row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 10px}
 .h2row h2{margin:0}
@@ -287,18 +287,28 @@ body.w-on #restbar{bottom:calc(var(--sb) + 10px)}
    moving content: tab bar, panels, workout header, rest timer, messages. The blur is kept at 12px on purpose: larger values
    did not render reliably on panels in testing, and the surfaces are opaque enough to stay readable even where blur is missing. */
 :root{
-  --glass:rgba(255,255,255,.06); --glass-2:rgba(255,255,255,.1); --edge:rgba(255,255,255,.1); --shine:inset 0 1px 0 rgba(255,255,255,.09);
-  --panel:rgba(22,23,29,.76); --bar:rgba(26,27,34,.62); --frost:blur(12px) saturate(170%); --tab:62px; --tabb:max(10px,calc(var(--sb) - 12px));
-  --ambient:radial-gradient(115% 55% at 0% 0%,rgba(215,255,58,.11),transparent 62%),radial-gradient(95% 55% at 105% 22%,rgba(64,118,255,.2),transparent 64%),radial-gradient(110% 55% at 0% 105%,rgba(255,93,59,.13),transparent 62%);
+  --glass:linear-gradient(140deg,rgba(255,255,255,.14),rgba(255,255,255,.06) 42%,rgba(255,255,255,.085)); --glass-2:rgba(255,255,255,.14); --edge:rgba(255,255,255,.17);
+  --shine:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.05),0 10px 28px rgba(0,0,0,.2); --shine-s:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(255,255,255,.04);
+  --panel:rgba(30,30,42,.72); --bar:rgba(44,44,58,.5); --frost:blur(12px) saturate(180%); --tab:62px; --tabb:max(10px,calc(var(--sb) - 12px));
+  /* the "wallpaper": large soft colour fields, like an iOS dark wallpaper seen through frosted glass */
+  --ambient:radial-gradient(85% 55% at 8% 4%,rgba(94,92,230,.58),transparent 62%),radial-gradient(75% 50% at 100% 16%,rgba(10,132,255,.42),transparent 64%),radial-gradient(90% 55% at 92% 96%,rgba(191,90,242,.36),transparent 62%),radial-gradient(80% 50% at 0% 88%,rgba(var(--acc-rgb),.15),transparent 60%);
 }
+:root[data-bg="deep"]{--ambient:radial-gradient(115% 55% at 0% 0%,rgba(var(--acc-rgb),.11),transparent 62%),radial-gradient(95% 55% at 105% 22%,rgba(64,118,255,.2),transparent 64%),radial-gradient(110% 55% at 0% 105%,rgba(255,93,59,.13),transparent 62%)}
+:root[data-bg="plain"]{--ambient:none}
+:root[data-accent="sky"]{--acc:#5ac8fa;--acc-rgb:90,200,250;--acc-ink:#03202d}
+:root[data-accent="orange"]{--acc:#ff9f0a;--acc-rgb:255,159,10;--acc-ink:#2a1700}
+:root[data-accent="pink"]{--acc:#ff6b9a;--acc-rgb:255,107,154;--acc-ink:#2d0816}
+:root[data-accent="mint"]{--acc:#63e6be;--acc-rgb:99,230,190;--acc-ink:#04261b}
+html{background:#07080d}
 body{background:transparent}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--ambient);pointer-events:none}
-body::after{content:"";position:fixed;top:0;left:0;right:0;height:var(--st);z-index:9;background:rgba(14,15,17,.6);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);pointer-events:none}   /* keeps text from showing through under the iPhone clock */
+body::after{content:"";position:fixed;top:0;left:0;right:0;height:var(--st);z-index:9;background:rgba(7,8,13,.55);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);pointer-events:none}   /* keeps text from showing through under the iPhone clock */
 
 .card,.hero,.rcard,.exrow,.wrow,.frow,.note,.wex,.re-row,.ai-item,.tip,.qrow,.seg,.kpis div,.week b,.icon-btn,.chip,.radios span,.btn,.pill{background:var(--glass);border:1px solid var(--edge);box-shadow:var(--shine)}
+.seg,.kpis div,.week b,.icon-btn,.chip,.radios span,.btn,.pill,.frow{box-shadow:var(--shine-s)}
 .card .kpis div,.sheet-body .kpis div,.icon-btn.sm,.set-n,.set-ok,.lastlist span,.seg .on,.anim{background:var(--glass-2)}
-.kpis div.hl{background:rgba(215,255,58,.12);border-color:rgba(215,255,58,.45)}
-.hero{border-radius:26px;background:radial-gradient(130% 120% at 0% 0%,rgba(215,255,58,.13),transparent 58%),var(--glass)}
+.kpis div.hl{background:rgba(var(--acc-rgb),.12);border-color:rgba(var(--acc-rgb),.45)}
+.hero{border-radius:26px;background:radial-gradient(130% 120% at 0% 0%,rgba(var(--acc-rgb),.13),transparent 58%),var(--glass)}
 .hero.resume{border-color:var(--acc)}
 .card,.wex{border-radius:22px}
 .rcard,.exrow,.wrow,.re-row,.ai-item{border-radius:18px}
@@ -306,7 +316,7 @@ body::after{content:"";position:fixed;top:0;left:0;right:0;height:var(--st);z-in
 .btn{border-radius:15px}
 .btn.big{border-radius:18px}
 .btn.sm{border-radius:11px}
-.btn.primary{background:var(--acc);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 22px rgba(215,255,58,.16)}
+.btn.primary{background:var(--acc);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 22px rgba(var(--acc-rgb),.16)}
 .btn.ghost{background:none;box-shadow:none}
 .icon-btn{border-radius:14px}
 .sheet-head .icon-btn{background:none;border-color:transparent;box-shadow:none}
@@ -316,20 +326,20 @@ body::after{content:"";position:fixed;top:0;left:0;right:0;height:var(--st);z-in
 .week .now b{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
 .week .on b{background:var(--acc);border-color:transparent;box-shadow:none}
 .radios input:checked+span{background:var(--ink);color:#111;border-color:var(--ink);box-shadow:none}
-.pickrow.on{background:rgba(215,255,58,.09);border-color:rgba(215,255,58,.42)}
+.pickrow.on{background:rgba(var(--acc-rgb),.09);border-color:rgba(var(--acc-rgb),.42)}
 .thumbs img{border-color:#1a1b21}
 .ch-end{stroke:#1a1b21}
 .hb-t{background:rgba(255,255,255,.08)}
-.meter{background:rgba(215,255,58,.16)}
+.meter{background:rgba(var(--acc-rgb),.16)}
 .meter.over{background:rgba(255,138,112,.2)}
 input[type=text],input[type=password],textarea,select,.search input{background-color:rgba(0,0,0,.3);border-color:var(--edge)}
-.set.done input{background-color:rgba(215,255,58,.1);border-color:rgba(215,255,58,.32)}
+.set.done input{background-color:rgba(var(--acc-rgb),.1);border-color:rgba(var(--acc-rgb),.32)}
 
 /* floating tab bar */
-#view::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(var(--tab) + var(--tabb) + 40px);z-index:9;background:linear-gradient(rgba(14,15,17,0),rgba(14,15,17,.9) 70%);pointer-events:none}   /* list fades out as it nears the floating bar */
+#view::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(var(--tab) + var(--tabb) + 40px);z-index:9;background:linear-gradient(rgba(7,8,13,0),rgba(7,8,13,.88) 70%);pointer-events:none}   /* list fades out as it nears the floating bar */
 #tabbar{left:12px;right:12px;bottom:var(--tabb);max-width:440px;margin:0 auto;padding:5px;gap:2px;border:1px solid var(--edge);border-radius:32px;background:var(--bar);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:0 12px 34px rgba(0,0,0,.5),var(--shine)}
 #tabbar button{height:52px;border-radius:27px}
-#tabbar .on{background:rgba(255,255,255,.1)}
+#tabbar .on{background:rgba(255,255,255,.14);box-shadow:var(--shine-s)}
 #restbar{bottom:calc(var(--tab) + var(--tabb) + 10px)}
 
 /* panels */
@@ -339,7 +349,7 @@ dialog#sheet::backdrop{background:rgba(0,0,0,.5)}
 .sheet-foot{background:none;border-top-color:var(--edge)}
 
 /* live workout: the list scrolls under a frosted header */
-#workout{background:var(--ambient),var(--bg)}
+#workout{background:var(--ambient),#07080d}
 .w-head{position:absolute;top:0;left:0;right:0;z-index:2;background:var(--bar);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);border-bottom-color:var(--edge)}
 .w-body{padding-top:calc(var(--st) + 72px)}
 
@@ -361,6 +371,46 @@ dialog#sheet::backdrop{background:rgba(0,0,0,.5)}
   .rb-in,#toast{background:var(--ink)}
   body::after{background:var(--bg)}
 }
+/* the same, switched on in the settings of the app */
+:root[data-solid]{--panel:#16171c;--bar:#16171c;--glass:#191a1f;--glass-2:#24252c}
+:root[data-solid] #tabbar,:root[data-solid] dialog#sheet,:root[data-solid] .w-head,:root[data-solid] .rb-in,:root[data-solid] #toast,:root[data-solid] body::after{-webkit-backdrop-filter:none;backdrop-filter:none}
+:root[data-solid] .rb-in,:root[data-solid] #toast{background:var(--ink)}
+:root[data-solid] body::after{background:var(--bg)}
+
+/* ---------- food search, recipes, settings controls ---------- */
+.goal{font-size:.84rem;color:var(--mut);margin:-6px 0 14px;text-align:center}
+.goal b{color:var(--ink);font-variant-numeric:tabular-nums}
+.goal.ok b{color:var(--acc)}
+.fhit{width:100%;min-height:60px}
+.fhit b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}
+.fhit>svg{width:18px;height:18px;color:var(--mut);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.fs-more{margin-top:18px;display:grid;gap:8px}
+.fs-more .cap{margin:0}
+.fa-name{font-size:1.2rem;font-weight:750;line-height:1.25;letter-spacing:-.01em}
+.fa-name+.en{margin:2px 0 0}
+.sheet-body>.cap+.fld,.sheet-body>.note+.fld{margin-top:14px}
+.kpis.k4{grid-template-columns:repeat(4,1fr);gap:6px}
+.kpis.k4 b{font-size:1.05rem}
+#fa-out{margin:14px 0 4px}
+.ing{list-style:none;margin:0;padding:0}
+.ing li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--edge);font-size:.94rem}
+.ing li:first-child{border-top:0;padding-top:0}
+.ing b{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:650}
+a.rcard{color:inherit;text-decoration:none}
+.lbl{color:var(--mut);font-size:.78rem;margin:12px 0 6px}
+.card h3+.lbl{margin-top:0}
+.card .seg{margin-bottom:0}
+.card>.btn{margin-top:10px}
+.swatches{display:flex;gap:12px}
+.swatch{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:2px solid rgba(255,255,255,.2);color:#111}
+.swatch.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.swatch svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sw-volt{background:#d7ff3a}.sw-sky{background:#5ac8fa}.sw-orange{background:#ff9f0a}.sw-pink{background:#ff6b9a}.sw-mint{background:#63e6be}
+.fld.row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 0}
+.fld.row>span{margin:0;font-size:.94rem;color:var(--ink);flex:1}
+.fld.row select{width:auto;min-width:112px;min-height:40px;padding-top:6px;padding-bottom:6px;background-position:calc(100% - 18px) 18px,calc(100% - 13px) 18px}
+.card .sw+.sw{margin-top:0}
+.card .seg+.sw{margin-top:8px}
 
 /* ---------- AI status in Settings ---------- */
 .ai-on{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -386,7 +436,7 @@ dialog#sheet.closing{pointer-events:none}
 @keyframes nudge{0%{transform:scale(.9)}60%{transform:scale(1.07)}}
 @keyframes grow{from{transform:scaleX(0)}}
 @keyframes rb-in{from{opacity:0;transform:translateY(22px) scale(.96)}}
-@keyframes tint{0%{box-shadow:0 0 0 0 rgba(215,255,58,.55)}100%{box-shadow:0 0 0 9px rgba(215,255,58,0)}}
+@keyframes tint{0%{box-shadow:0 0 0 0 rgba(var(--acc-rgb),.55)}100%{box-shadow:0 0 0 9px rgba(var(--acc-rgb),0)}}
 @media (prefers-reduced-motion:no-preference){
   /* pressing: the thing under the finger gives way a little */
   .btn,.rcard,.exrow,.wrow,.qrow,.pill,.pk-main,.pk-img,.pk-n,.chip,.icon-btn,.hero.resume,.note[data-a],.set-ok,.set-n,.seg button,.prrow,.link,.wex-img,.radios span{transition:transform .14s cubic-bezier(.2,.7,.3,1),filter .14s,background-color .18s,border-color .18s,color .18s,opacity .18s}
@@ -395,6 +445,9 @@ dialog#sheet.closing{pointer-events:none}
   .rcard:active,button.exrow:active,.wrow:active,.qrow:active,.hero.resume:active,.note[data-a]:active,.prrow:active{transform:scale(.98)}
   .icon-btn:not(:disabled):active,.set-ok:active,.set-n:active,.seg button:active,.hero.resume:active,.note[data-a]:active,.prrow:active{filter:brightness(1.25)}
   .link:active,.pk-main:active,.pk-img:active{opacity:.55}
+  .fhit,.swatch,a.rcard{transition:transform .14s cubic-bezier(.2,.7,.3,1),filter .14s}
+  .fhit:active,a.rcard:active{transform:scale(.98);filter:brightness(1.25)}
+  .swatch:active{transform:scale(.9)}
   .pill:active{transform:scale(.93)}
   .qrow:active{filter:brightness(1.25)}
   .pickrow.on .pk-n{animation:pop .3s cubic-bezier(.3,1.4,.5,1)}
@@ -433,3 +486,5 @@ dialog#sheet.closing{pointer-events:none}
   #restbar .rb-in{animation:rb-in .34s cubic-bezier(.2,.9,.3,1.1)}
   #rb-fill{transition:width .5s linear}
 }
+/* "Fewer animations" switched on in the settings of the app: everything happens at once (the exercise photo keeps alternating) */
+:root[data-calm] *:not(.f2){animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}

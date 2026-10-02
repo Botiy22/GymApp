@@ -16,10 +16,12 @@
   const fmtDur = ms => { const m = Math.round(ms / 60000); return m >= 60 ? Math.floor(m / 60) + ' ' + t('h') + ' ' + (m % 60) + ' ' + t('min') : m + ' ' + t('min'); };
   const clock = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + pad(s % 60); };
   const compact = n => Math.round(n).toLocaleString(L() === 'hu' ? 'hu-HU' : 'en-GB');
-  const weekStart = d => { d = new Date(d); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; };
+  const weekStart = d => { d = new Date(d); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 7 - (D().settings.weekStart === 0 ? 0 : 1)) % 7)); return d; };
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
-  const calm = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const VERSION = '1.3';
+  const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
     if (calm()) { done(); return; }
@@ -37,7 +39,7 @@
   const mus = m => (I18N[L()].mus || {})[m] || m;
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
-  const ui = { day: today(), tab: 'home', lib: { q: '', mus: '', limit: 40 }, pick: { q: '', mus: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null };
+  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', mus: '', limit: 40 }, pick: { q: '', mus: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -55,7 +57,8 @@
     up: '<svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg>',
     down: '<svg viewBox="0 0 24 24"><path d="M6 10l6 6 6-6"/></svg>',
     chev: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
-    bolt: '<svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>'
+    bolt: '<svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>',
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5.500v13l11-6.500z"/></svg>'
   };
 
   /* ---------- history / stats ---------- */
@@ -110,6 +113,8 @@
     if (Store.failed) h += `<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
     if (!window.HTMLDialogElement) h += `<div class="note warn"><b>${esc(t('oldIOS'))}</b></div>`;
     h += `<div class="week">${days.map(dt => `<span class="${done.has(ymd(dt)) ? 'on' : ''}${ymd(dt) === today() ? ' now' : ''}"><i>${dt.toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'narrow' })}</i><b>${done.has(ymd(dt)) ? IC.check : dt.getDate()}</b></span>`).join('')}</div>`;
+    const goal = d.settings.weekGoal;
+    if (goal > 0) h += `<p class="goal${wk.length >= goal ? ' ok' : ''}"><b>${wk.length} / ${goal}</b> ${esc(t(wk.length >= goal ? 'goalDone' : 'goalText'))}</p>`;
     if (d.active) {
       h += `<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
     } else if (nx) {
@@ -178,14 +183,89 @@
   function vFood() {
     const d = D(), tg = d.settings.targets, list = dayFood();
     const sum = list.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
-    let h = head(t('tabFood')) + `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
+    let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button><button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
+    if (ui.food === 'ideas') return h + vIdeas();
+    h += `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     if (!tg) h += `<button class="note" data-a="targets"><b>${esc(t('setTargets'))}</b><span>${esc(t('setTargetsSub'))}</span></button>`;
     h += `<section class="card cal"><p class="bignum">${Math.round(sum.kcal)}<small> ${tg ? '/ ' + tg.kcal : ''} kcal</small></p>${tg ? Charts.meter(sum.kcal, tg.kcal) + `<p class="cap">${sum.kcal <= tg.kcal ? esc(t('remaining', Math.round(tg.kcal - sum.kcal))) : esc(t('over', Math.round(sum.kcal - tg.kcal)))}</p>` : ''}
       <div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + tg[k] : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
       ${tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
-    h += `<div class="row3"><button class="btn primary" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button><button class="btn" data-a="food-manual">${IC.plus}${esc(t('manual'))}</button></div>`;
+    h += `<div class="row3"><button class="btn primary" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button><button class="btn" data-a="food-manual">${IC.lib}${esc(t('foodSearchBtn'))}</button></div>`;
     h += `<h2>${esc(t('meals'))}</h2>` + (list.length ? `<div class="flist">` + list.map(f => `<div class="frow"><span><b>${esc(f.name)}</b><i>${f.g ? f.g + ' g · ' : ''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src === 'ai' ? ' · AI' : ''}</i></span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('') + `</div>` : `<p class="empty">${esc(t('noMeals'))}</p>`);
     return h;
+  }
+  /* ---------- meal ideas ---------- */
+  const RCP = window.RECIPES || { items: [], videos: [] };
+  function vIdeas() {
+    const cats = [['', t('all')], ['breakfast', t('cat_breakfast')], ['main', t('cat_main')], ['snack', t('cat_snack')]];
+    let h = `<div class="chips scroll">${cats.map(([c, n]) => `<button class="chip${ui.idea === c ? ' on' : ''}" data-a="idea-cat" data-c="${c}">${esc(n)}</button>`).join('')}</div><div class="rlist">` +
+      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard" data-a="idea-open" data-id="${esc(r.id)}"><span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.kcal} kcal · ${r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
+    const vids = RCP.videos.filter(v => /^https:\/\/www\.tiktok\.com\//.test(v.url));
+    if (vids.length) h += `<h2>${esc(t('videosTitle'))}</h2><div class="rlist">${vids.map(v => `<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p>`;
+    return h;
+  }
+  function shRecipe(id) {
+    return () => {
+      const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
+      const k = L() === 'hu' ? 0 : 1;
+      return { title: r[L()] || r.en, html: `<div class="kpis k4"><div><b>${r.kcal}</b><i>kcal</i></div><div><b>${r.p} g</b><i>${esc(t('protein'))}</i></div><div><b>${r.c} g</b><i>${esc(t('carbs'))}</i></div><div><b>${r.f} g</b><i>${esc(t('fat'))}</i></div></div>
+        <p class="cap">${esc(t('perServing'))} · ${r.g} g · ${r.min} ${esc(t('min'))}</p>
+        <section class="card"><h3>${esc(t('ingredients'))}</h3><ul class="ing">${r.ing.map(i => `<li><span>${esc(i[k])}</span><b>${i[2]} g</b></li>`).join('')}</ul></section>
+        <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(t('ideasCap'))}</p>`,
+        foot: `<button class="btn primary" data-a="idea-add" data-id="${esc(r.id)}">${esc(t('addToDiary'))}</button>` };
+    };
+  }
+
+  /* ---------- food database (USDA) ---------- */
+  const FOODS = window.FOODS || { hu: [], list: [] };
+  let fIdx = null;
+  function foodSearch(q) {
+    const toks = norm(q).split(/[\s,]+/).filter(Boolean); if (!toks.length) return [];
+    if (!fIdx) fIdx = { hu: FOODS.hu.map(h => norm(h[0])), en: FOODS.list.map(r => norm(r[0])) };      // built on first use
+    const out = [], seen = {};
+    const score = (str, base) => { let sc = base - str.length / 8; if (str.indexOf(toks[0]) === 0) sc += 40; toks.forEach(tk => { const i = str.indexOf(tk); if (i === 0 || /[\s,(]/.test(str[i - 1])) sc += 12; }); return sc; };
+    if (L() === 'hu') fIdx.hu.forEach((str, i) => { if (toks.every(tk => str.indexOf(tk) >= 0)) out.push({ h: i, i: FOODS.hu[i][1], sc: score(str, 200) }); });
+    fIdx.en.forEach((str, i) => { if (toks.every(tk => str.indexOf(tk) >= 0)) out.push({ h: -1, i, sc: score(str, 0) }); });
+    return out.sort((a, b) => b.sc - a.sc).filter(x => { const k = x.h >= 0 ? 'h' + x.h : 'e' + x.i; if (seen[k] || (x.h < 0 && seen['i' + x.i])) return false; seen[k] = 1; if (x.h >= 0) seen['i' + x.i] = 1; return true; }).slice(0, 40);
+  }
+  const PORT_HU = [[/\btablespoons?\b|\btbsp\b/g, 'evőkanál'], [/\bteaspoons?\b|\btsp\b/g, 'teáskanál'], [/\bcups?\b/g, 'csésze'], [/\bslices?\b/g, 'szelet'], [/\bpieces?\b/g, 'darab'], [/\bitem\b/g, 'db'], [/\bsandwich\b/g, 'szendvics'],
+    [/\bextra large\b/g, 'extra nagy'], [/\blarge\b/g, 'nagy'], [/\bmedium\b/g, 'közepes'], [/\bsmall\b/g, 'kicsi'], [/\bpackage\b/g, 'csomag'], [/\bcan\b/g, 'konzerv'], [/\bcontainer\b/g, 'doboz'], [/\bfillet\b/g, 'filé'], [/\bbar\b/g, 'szelet'],
+    [/\bbottle\b/g, 'palack'], [/\bserving\b/g, 'adag'], [/\bchopped or diced\b|\bchopped\b|\bdiced\b/g, 'aprítva'], [/\bsliced\b/g, 'szeletelve'], [/\bshredded\b/g, 'reszelve'], [/\bcookies?\b/g, 'keksz'], [/\blink\b/g, 'szál'], [/\bpatty\b/g, 'pogácsa'],
+    [/\bsteak\b/g, 'szelet'], [/\bfruit\b/g, 'db'], [/\bpacket\b/g, 'tasak'], [/\bscoop\b/g, 'adagolókanál'], [/\bwhole\b/g, 'egész'], [/\bmashed\b/g, 'pépesítve'], [/^\.(\d)/, '0,$1']];
+  const portName = dsc => L() === 'hu' ? PORT_HU.reduce((x, [re, to]) => x.replace(re, to), dsc) : dsc;
+  function foodOf(i, h) {
+    const r = FOODS.list[i], hu = h >= 0 ? FOODS.hu[h] : null, ports = [];
+    if (hu && hu[3]) ports.push([hu[4], hu[3]]);
+    else for (let k = 5; k + 1 < r.length; k += 2) ports.push([r[k], portName(r[k + 1]), r[k + 1]]);
+    return { own: !!(hu && hu[3]), name: hu ? hu[0] : r[0], usda: hu ? r[0] : '', approx: !!(hu && hu[2]), kcal: r[1], p: r[2], c: r[3], f: r[4], ports };
+  }
+  const dec = v => L() === 'hu' ? String(v).replace('.', ',') : String(v);                                 // Hungarian writes 22,5
+  const macroLine = f => `${esc(t('pShort'))} ${dec(f.p)} · ${esc(t('cShort'))} ${dec(f.c)} · ${esc(t('fShort'))} ${dec(f.f)}`;
+  function foodRows() {
+    const st = ui.fs, q = st.q.trim(), rc = D().recentFoods;
+    const more = `<div class="fs-more"><p class="cap">${esc(t(q ? 'foodNotFound' : 'foodOwnLead'))}</p>${q ? `<button class="btn" data-a="fs-ai">${IC.bolt}${esc(t('foodAskAI'))}</button>` : ''}<button class="btn" data-a="fs-own">${IC.pen}${esc(t('foodOwn'))}</button></div>`;
+    if (!q) return (rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : '') + `<p class="lead">${esc(t('foodSearchLead', FOODS.list.length))}</p>` + more;
+    st.hits = foodSearch(q);
+    return (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => { const f = foodOf(x.i, x.h); return `<button class="frow fhit" data-a="fs-pick" data-n="${k}"><span><b>${esc(f.name)}${f.approx ? ' ≈' : ''}</b><i>${f.kcal} kcal / 100 g · ${macroLine(f)}</i></span>${IC.chev}</button>`; }).join('')}</div>` : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
+  }
+  function shFoodFind() {
+    const fn = () => ({ title: t('addFoodTitle'), html: `<div class="search"><input type="search" data-in="fs-q" value="${esc(ui.fs.q)}" placeholder="${esc(t('foodSearchPh'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="${esc(t('addFoodTitle'))}"></div><div id="fs-list">${foodRows()}</div>` });
+    fn.kind = 'foodfind'; return fn;
+  }
+  function faOut() {
+    const f = ui.fa.food, g = num(ui.fa.g), k = g / 100;
+    return `<div class="kpis k4"><div class="hl"><b>${Math.round(f.kcal * k)}</b><i>kcal</i></div><div><b>${dec(r1(f.p * k))} g</b><i>${esc(t('protein'))}</i></div><div><b>${dec(r1(f.c * k))} g</b><i>${esc(t('carbs'))}</i></div><div><b>${dec(r1(f.f * k))} g</b><i>${esc(t('fat'))}</i></div></div>`;
+  }
+  function shFoodAmount() {
+    return () => {
+      const f = ui.fa.food, chips = [[100, '100 g']].concat(f.ports.map(p => [p[0], p[1] + ' (' + p[0] + ' g)']));
+      return { title: t('addFoodTitle'), html: `<p class="fa-name">${esc(f.name)}</p>${f.usda ? `<p class="en">${esc(f.usda)}</p>` : ''}<p class="cap">${esc(t('per100'))}: ${f.kcal} kcal · ${macroLine(f)}</p>
+        ${f.approx ? `<div class="note warn"><b>${esc(t('foodApprox'))}</b></div>` : ''}
+        <label class="fld"><span>${esc(t('grams'))}</span><input type="text" inputmode="decimal" data-in="fa-g" value="${esc(ui.fa.g)}" autocomplete="off" enterkeyhint="done"></label>
+        <div class="chips">${chips.map(([v, l]) => `<button class="chip${num(ui.fa.g) === v ? ' on' : ''}" data-a="fa-set" data-g="${v}">${esc(l)}</button>`).join('')}</div>
+        <div id="fa-out">${faOut()}</div><p class="cap">${esc(t('foodSrc'))}</p>`,
+        foot: `<button class="btn primary" data-a="fa-add">${esc(t('addToDiary'))}</button>` };
+    };
   }
   const VIEWS = { home: vHome, lib: vLib, prog: vProg, food: vFood };
 
@@ -275,7 +355,7 @@
     };
   }
   /* What a freshly picked exercise starts with: the plan's own numbers when the plan has that exercise, otherwise 3 × 8–12. */
-  const itemFor = id => { const p = PLAN_BY_EX[id]; return p && !p.similar && p.reps !== '21' ? { ex: id, label: null, sets: p.sets, reps: p.reps, rest: p.rest } : { ex: id, label: null, sets: 3, reps: '8–12', rest: 90 }; };
+  const itemFor = id => { const p = PLAN_BY_EX[id]; return p && !p.similar && p.reps !== '21' ? { ex: id, label: null, sets: p.sets, reps: p.reps, rest: p.rest } : { ex: id, label: null, sets: 3, reps: '8–12', rest: D().settings.restDefault || 90 }; };
   function cleanEdit(e) {
     delete e._old;
     e.items.forEach(i => { i.sets = Math.max(1, Math.min(12, Math.round(num(i.sets)) || 3)); i.rest = Math.max(0, Math.min(3600, Math.round(num(i.rest)))); i.reps = String(i.reps || '').trim().slice(0, 20) || '8–12'; });
@@ -301,6 +381,7 @@
   function startWorkout(r, asked) {
     if (!r || (!asked && D().active && !confirm(t('replaceActive')))) return;
     D().active = { id: uid(), rid: r.id || null, name: rName(r), start: Date.now(), entries: r.items.map(newEntry), restEnd: 0, restTotal: 0 };
+    if (D().settings.autofill) D().active.entries.forEach(en => { const hs = exHistory(en.ex), prev = hs.length ? hs[hs.length - 1].sets : []; en.sets.forEach((x, j) => { if (prev[j] && prev[j].kg) x.kg = String(prev[j].kg); }); });   // last time's weights typed in for you
     Store.save(); ui.wOpen = true; closeSheet(true); wake(); render();
   }
   function hintFor(en, hst) {
@@ -361,9 +442,9 @@
   function beep() {
     if (!D().settings.sound || !actx) return;
     [0, 0.22, 0.44].forEach(d => { try { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(actx.destination); const s = actx.currentTime + d; g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.4, s + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.16); o.start(s); o.stop(s + 0.18); } catch (e) {} });
-    if (navigator.vibrate) navigator.vibrate([120, 80, 120]);
+    if (D().settings.vibrate && navigator.vibrate) navigator.vibrate([120, 80, 120]);
   }
-  async function wake() { try { if ('wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
+  async function wake() { try { if (D().settings.awake && 'wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
   function unwake() { try { if (lock) lock.release(); } catch (e) {} lock = null; }
   function startRest(sec) { const a = D().active; if (!a || !D().settings.restAuto || !sec) return; a.restEnd = Date.now() + sec * 1000; a.restTotal = sec; Store.saveActive(); tick(); }
   function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
@@ -392,7 +473,7 @@
     return () => {
       const rc = D().recentFoods, fld = (k, lbl, mode, v) => `<label class="fld"><span>${esc(lbl)}</span><input type="text" inputmode="${mode}" name="${k}" value="${esc(v == null ? '' : v)}" autocomplete="off"></label>`;
       const v = ui.manual || {};
-      return { title: t('manual'), html: `${rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : ''}
+      return { title: t('foodOwn'), html: `${rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : ''}
         <form data-f="food-manual" id="fm"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" autocomplete="off" required></label>
         <div class="grid2">${fld('g', t('grams'), 'numeric', v.g || '')}${fld('kcal', 'kcal', 'numeric', v.kcal)}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal', v.p)}${fld('c', t('carbs') + ' (g)', 'decimal', v.c)}${fld('f', t('fat') + ' (g)', 'decimal', v.f)}</div></form>`,
         foot: `<button class="btn primary" form="fm">${esc(t('addToDiary'))}</button>` };
@@ -477,23 +558,45 @@
   function shSettings() {
     const fn = shSettingsBody(); fn.kind = 'settings'; return fn;
   }
+  function applyLook() {
+    const s = D().settings, e = document.documentElement;
+    e.dataset.accent = s.accent; e.dataset.bg = s.bg;
+    if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
+    if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
+  }
   function shSettingsBody() {
     return () => {
       const s = D().settings, kb = Math.round(Store.bytes() / 1024);
-      return { title: t('settings'), html: `<section class="card"><h3>${esc(t('language'))}</h3><div class="seg"><button class="${L() === 'hu' ? 'on' : ''}" data-a="lang" data-v="hu">Magyar</button><button class="${L() === 'en' ? 'on' : ''}" data-a="lang" data-v="en">English</button></div></section>
-        <section class="card"><h3>${esc(t('workout'))}</h3><label class="sw"><input type="checkbox" data-in="set-rest" ${s.restAuto ? 'checked' : ''}><span>${esc(t('restAuto'))}</span></label><label class="sw"><input type="checkbox" data-in="set-sound" ${s.sound ? 'checked' : ''}><span>${esc(t('restSound'))}</span></label><button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
+      const sw = (k, lbl, attr) => `<label class="sw"><input type="checkbox" ${attr || `data-in="set-flag" data-k="${k}"`} ${s[k] ? 'checked' : ''}><span>${esc(lbl)}</span></label>`;
+      const sel = (k, lbl, opts) => `<label class="fld row"><span>${esc(lbl)}</span><select data-in="set-num" data-k="${k}">${opts.map(([v, n]) => `<option value="${v}" ${+s[k] === v ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>`;
+      const seg = (a, cur, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${cur === v ? 'on' : ''}" data-a="${a}" data-v="${v}">${esc(n)}</button>`).join('')}</div>`;
+      return { title: t('settings'), html: `<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
+          <p class="lbl">${esc(t('accent'))}</p><div class="swatches">${(Store.ACCENTS || ['volt']).map(a => `<button class="swatch sw-${a}${s.accent === a ? ' on' : ''}" data-a="set-accent" data-v="${a}" aria-label="${esc(t('accent'))} ${a}" aria-pressed="${s.accent === a}">${s.accent === a ? IC.check : ''}</button>`).join('')}</div>
+          <p class="lbl">${esc(t('background'))}</p>${seg('set-bg', s.bg, (Store.BGS || ['aurora']).map(b => [b, t('bg_' + b)]))}
+          ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
+        <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
+          ${sel('restDefault', t('restDefault'), [60, 90, 120, 150, 180].map(v => [v, clock(v)]))}${sel('weekGoal', t('weekGoal'), [[0, t('goalOff')]].concat([2, 3, 4, 5, 6, 7].map(v => [v, v + ' ' + t('times')])))}${sel('weekStart', t('weekStartLbl'), [[1, t('monday')], [0, t('sunday')]])}
+          <button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
         <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}</section>
         <section class="card"><h3>${esc(t('nutrition'))}</h3><button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
-        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t('dataExplain'))} ${kb} kB. ${esc(ui.persisted ? t('persistYes') : t('persistNo'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div></section>
+        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t('dataExplain'))} ${kb} kB. ${esc(ui.persisted ? t('persistYes') : t('persistNo'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div>
+          <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now">${esc(t('updateNow'))}</button><p class="cap">${esc(t('updateCap'))}</p></section>
         <section class="card"><h3>${esc(t('installTitle'))}</h3><ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol><p class="cap">${esc(standalone ? t('installedYes') : t('installedNo'))}</p></section>
-        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p><p class="cap">GymApp 1.2 · ${window.EXERCISES.length} ${esc(t('exercises'))}</p></section>` };
+        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p></section>` };
     };
   }
-  async function exportData() {
-    const blob = new Blob([Store.exportJSON()], { type: 'application/json' }), name = 'gymapp-backup-' + today() + '.json';
-    try { const f = new File([blob], name, { type: 'application/json' }); if (isIOS && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  async function saveFile(name, blob) {
+    try { const f = new File([blob], name, { type: blob.type }); if (isIOS && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); toast(t('exported'));
   }
+  function exportCSV() {
+    const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
+    D().workouts.forEach(w => w.entries.forEach(e => e.sets.forEach((x, j) => rows.push([ymd(w.start), w.name, itemName(e), j + 1, x.kg, x.reps, x.w ? 1 : 0]))));
+    const cell = v => { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };     // a name can never be read as a formula by a spreadsheet
+    saveFile('sulypont-edzesek-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
+  }
+  function exportData() { saveFile('sulypont-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
 
   /* ================= ACTIONS ================= */
   const A = {
@@ -501,7 +604,32 @@
     settings() { ui.keyDraft = ''; openSheet(shSettings()); checkSavedKey(); },
     'install-help'() { ui.keyDraft = ''; openSheet(shSettings()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
-    lang(el) { D().settings.lang = el.dataset.v; Store.save(); render(); refreshSheet(); },
+    lang(el) { D().settings.lang = el.dataset.v; Store.save(); fIdx = null; render(); refreshSheet(); },
+    'set-accent'(el) { if ((Store.ACCENTS || []).indexOf(el.dataset.v) < 0) return; D().settings.accent = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
+    'set-bg'(el) { if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
+    'export-csv'() { exportCSV(); },
+    wipe() { if (!confirm(t('wipeConfirm')) || !confirm(t('wipeConfirm2'))) return; if (Store.wipe) Store.wipe(); location.reload(); },
+    async 'update-now'(el) {
+      if (!('serviceWorker' in navigator) || !window.caches || location.protocol === 'file:') { location.reload(); return; }
+      toast(t('updating')); el.disabled = true;
+      try {
+        const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' }); if (!probe.ok) throw new Error('offline');      // is the server reachable? (HEAD requests are never answered from the offline copy)
+        const reg = await navigator.serviceWorker.getRegistration(); if (reg) { try { await reg.update(); } catch (e) {} }
+        const sw = navigator.serviceWorker.controller;
+        const done = await new Promise(res => {                                                 // ask the offline helper to fetch every app file fresh
+          if (!sw) { res('none'); return; }
+          const ch = new MessageChannel(), tm = setTimeout(() => res('none'), 6000);
+          ch.port1.onmessage = ev => { clearTimeout(tm); res(ev.data === true ? 'ok' : 'failed'); };
+          sw.postMessage('refresh', [ch.port2]);
+        });
+        if (done === 'failed') throw new Error('refresh');                                      // nothing is thrown away unless the new files really arrived
+        if (done === 'none') {                                                                  // an older helper does not answer: drop it, it is set up again on restart
+          for (const name of (await caches.keys()).filter(k => k.indexOf('gym-shell-') === 0)) await caches.delete(name);
+          if (reg) await reg.unregister();
+        }
+        location.reload();
+      } catch (e) { el.disabled = false; toast(t('updateFail')); }
+    },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
     'w-start'(el) { startWorkout(getR(el.dataset.id)); }, 
@@ -587,8 +715,21 @@
     /* food */
     'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.foodDate = ymd(d); ui.anim = +el.dataset.d < 0 ? 'back' : 'fwd'; render(); } },
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
-    'food-manual'() { ui.manual = null; openSheet(shFoodManual()); },
-    'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); refreshSheet(); },
+    'food-view'(el) { if (ui.food !== el.dataset.v) ui.anim = 'tab'; ui.food = el.dataset.v === 'ideas' ? 'ideas' : 'diary'; render(); },
+    'idea-cat'(el) { ui.idea = el.dataset.c; rerender(); },
+    'idea-open'(el) { openSheet(shRecipe(el.dataset.id)); },
+    'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; addFood([{ name: r[L()] || r.en, g: r.g, kcal: r.kcal, p: r.p, c: r.c, f: r.f }], 'db'); closeSheet(true); rerender(); toast(t('added')); },
+    'food-manual'() { ui.fs = { q: '', hits: [] }; openSheet(shFoodFind()); },
+    'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); if (topIs('foodfind')) openSheet(shFoodManual()); else refreshSheet(); },
+    'fs-pick'(el) { const x = ui.fs.hits[+el.dataset.n]; if (!x) return; const f = foodOf(x.i, x.h); const each = f.ports.find(pt => f.own || /item|sandwich|slice|\bsub\b|\bbar\b|large|medium|small|link|patty|biscuit|taco|burrito|pieces|container|\bcan\b|packet/i.test(pt[2] || ''));   // start from a natural unit (1 sandwich, 1 slice…), otherwise from 100 g
+      ui.fa = { food: f, g: String(each ? each[0] : 100) }; openSheet(shFoodAmount()); },
+    'fs-own'() { ui.manual = { name: ui.fs.q.trim() }; openSheet(shFoodManual()); },
+    'fs-ai'() { ui.ai = { mode: 'text', img: null, b64: null, hint: '', text: ui.fs.q.trim(), loading: false, res: null, err: null }; openSheet(shFoodAI()); const st = D().settings; if (st.apiKey && st.keyState !== 'bad') aiGo(); },
+    'fa-set'(el) { ui.fa.g = String(+el.dataset.g); refreshSheet(); },
+    'fa-add'() {
+      const f = ui.fa.food, g = num(ui.fa.g); if (!(g > 0 && g <= 5000)) { toast(t('badValue')); return; }
+      addFood([{ name: f.name, g, kcal: f.kcal * g / 100, p: f.p * g / 100, c: f.c * g / 100, f: f.f * g / 100 }], 'db'); closeSheet(true); rerender(); toast(t('added'));
+    },
     'food-ai'(el) { ui.ai = { mode: el.dataset.m, img: null, b64: null, hint: '', text: '', loading: false, res: null, err: null }; openSheet(shFoodAI()); },
     'ai-go'() { aiGo(); },
     'ai-reset'() { const m = ui.ai.mode; ui.ai = { mode: m, img: null, b64: null, hint: '', text: ui.ai.text, loading: false, res: null, err: null }; refreshSheet(); },
@@ -635,6 +776,10 @@
     'key-draft'(el) { ui.keyDraft = el.value; const b = $('[data-a="key-save"]'); if (b) b.disabled = !el.value.trim(); },
     'set-model'(el) { if (Store.MODELS.indexOf(el.value) >= 0) { D().settings.model = el.value; Store.save(); } },
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
+    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); },
+    'set-num'(el) { const k = el.dataset.k, v = +el.value, ok = { restDefault: [60, 90, 120, 150, 180], weekGoal: [0, 2, 3, 4, 5, 6, 7], weekStart: [0, 1] }[k]; if (!ok || ok.indexOf(v) < 0) return; D().settings[k] = v; Store.save(); rerender(); },
+    'fs-q'(el) { ui.fs.q = el.value; const l = $('#fs-list'); if (l) l.innerHTML = foodRows(); },
+    'fa-g'(el) { ui.fa.g = el.value; const o = $('#fa-out'); if (o) o.innerHTML = faOut(); $$('#sheet [data-a="fa-set"]').forEach(c => c.classList.toggle('on', num(el.value) === +c.dataset.g)); },
     'tg-p'(el) {
       if (el.type === 'radio' && !el.checked) return;
       ui.tg.profile[el.dataset.k] = el.value; const c = calcTargets(ui.tg.profile); $('#tg-out').innerHTML = tgOut(c, ui.tg.profile);
@@ -665,7 +810,7 @@
   /* ================= INIT ================= */
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const standalone = !!navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-  Store.load();
+  Store.load(); applyLook();
   let failT = 0; Store.onFail = () => { if (Date.now() - failT > 4000) { failT = Date.now(); setTimeout(() => toast(t('saveFailed')), 0); } };
   dlg().addEventListener('close', () => { ui.sheets = []; });
   dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
@@ -679,5 +824,5 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.__gym = { ui, render, A };
+  window.__gym = { ui, render, A }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();

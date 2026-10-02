@@ -1,7 +1,7 @@
 {
-  "name": "GymApp",
-  "short_name": "GymApp",
-  "description": "Workout tracker with exercise photos, progress and a calorie diary.",
+  "name": "Súlypont",
+  "short_name": "Súlypont",
+  "description": "Edzésnapló gyakorlatfotókkal, fejlődéskövetéssel és kalórianaplóval.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

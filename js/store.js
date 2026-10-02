@@ -4,6 +4,7 @@
 window.Store = (function () {
   const KEY = 'gymapp.v1', AKEY = KEY + '.active';   // AKEY: the running workout, saved on every tap without rewriting the whole history
   const MODELS = ['claude-haiku-4-5-20251001', 'claude-sonnet-5-5', 'claude-opus-5-5'];
+  const ACCENTS = ['volt', 'sky', 'orange', 'pink', 'mint'], BGS = ['aurora', 'deep', 'plain'];
   const EXID = /^[A-Za-z0-9_\-]{1,90}$/, DAY = /^\d{4}-\d{2}-\d{2}$/, NUMSTR = /^[0-9.,]{0,8}$/;
   let data = null, mem = false, failed = false, onFail = null;
 
@@ -18,7 +19,8 @@ window.Store = (function () {
   function fresh() {
     return {
       v: 1,
-      settings: { lang: null, restAuto: true, sound: true, apiKey: '', keyState: '', model: MODELS[0],
+      settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: []
     };
@@ -39,7 +41,9 @@ window.Store = (function () {
     const f = fresh(), r = obj(raw), s = obj(r.settings), p = obj(s.profile), out = fresh(), tg = obj(s.targets);
     out.settings = {
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
-      restAuto: s.restAuto !== false, sound: s.sound !== false,
+      restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
+      restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
+      accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true,
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
       keyState: s.keyState === 'ok' || s.keyState === 'bad' ? s.keyState : '',   // '' = saved but not checked yet
       model: MODELS.indexOf(s.model) >= 0 ? s.model : MODELS[0],
@@ -89,7 +93,7 @@ window.Store = (function () {
     const food = z => {
       z = obj(z); const name = str(z.name, 80).trim(); if (!name) return null;
       const r1 = v => Math.round(num(v, 0, 10000, 0) * 10) / 10;
-      return { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' ? 'ai' : 'manual', t: num(z.t, 0, 4e12, 0) };
+      return { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
     };
     out.food = {};
     Object.keys(obj(r.food)).slice(-3000).forEach(d => { if (DAY.test(d)) { const l = arr(r.food[d]).slice(0, 200).map(food).filter(Boolean); if (l.length) out.food[d] = l; } });
@@ -125,7 +129,8 @@ window.Store = (function () {
     get memoryOnly() { return mem; },
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
-    MODELS, load, save, saveActive, clean,
+    MODELS, ACCENTS, BGS, load, save, saveActive, clean,
+    wipe() { try { [KEY, AKEY, KEY + '.corrupt'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; },
     /* a backup never carries the API key in, and never carries it out */
     replace(o) { const k = data ? data.settings : { apiKey: '', keyState: '' }; data = clean(o, k.apiKey); data.settings.keyState = k.apiKey ? k.keyState : ''; return save(); },
     exportJSON() { const copy = JSON.parse(JSON.stringify(data)); copy.settings.apiKey = ''; copy.settings.keyState = ''; return JSON.stringify({ app: 'gymapp', exported: new Date().toISOString(), data: copy }, null, 1); },
