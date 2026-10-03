@@ -1,11 +1,12 @@
-# Súlypont
+# Rep Riot
 
-(Formerly "GymApp". The folder and the web address keep the old name on purpose: the address is what the
+(Formerly "GymApp", then "Súlypont". The folder and the web address keep the old name on purpose: the address is what the
 installed app and its saved data are tied to.)
 
 A workout tracker and calorie diary that installs on a phone from the browser, with no App Store and no
-developer account. It is a web app (PWA): plain HTML, CSS and JavaScript, no build step. All your data
-stays on the device.
+developer account. It is a web app (PWA): plain HTML, CSS and JavaScript, no build step. Your data stays
+on the device; if you set up accounts (optional, see below) it is also kept in your own database, so
+you can reach it from any device after signing in.
 
 ## What is in it
 
@@ -14,14 +15,23 @@ stays on the device.
   **Free workout**: tick the exercises you want and start; at the end it can be saved as a routine.
   **Your own routines**: tick the exercises in one go, then name the routine and set sets/reps/rest.
   Any routine can be saved as a copy and changed, the built-in ones stay as they are.
-- **Exercises**: 876 exercises, 873 of them with start/end photos, muscle map, instructions, your record and
-  progress chart per exercise.
+  Routines show as tiles, two next to each other, each with an icon chosen from its muscles (or by hand
+  in the editor). The date and the days of the week strip open a **calendar**: tap any past day to see
+  its workouts, meals and steps.
+- **Exercises**: 876 exercises, 873 of them with start/end photos (the original 850 px pictures in the
+  detail view, small ones in lists), 182 also with line drawings, muscle map, your record and progress
+  chart per exercise. Names and instructions are in Hungarian and English. Filters without sideways
+  scrolling: body part → muscle → equipment. A star marks **favourites** (exercises and foods).
 - **Progress**: weekly sets per muscle group against the 10–20 target zone, body weight, records,
   full workout history, weekly workout goal.
 - **Food**: calorie and macro targets (Mifflin–St Jeor) and a daily diary with three ways to add a meal:
   **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams,
   the values are calculated), **AI** estimate from a photo or a description, or **your own values**
   from a label. **Ideas**: 15 recipes with calculated macros, one tap adds a serving to the diary.
+- **Steps and calories burned**: per day, typed in or pasted (see "Fitness data" below); the burned
+  calories can be added to the day's calorie budget.
+- **AI coach**: a chat bubble; ask about food or training and it answers from your targets, today's
+  meals and your recent workouts (needs the API key; estimates, not medical advice).
 - **Settings**: language, accent colour, background, fewer animations, reduce transparency, rest timer
   options, weekly goal, first day of week, backup/restore, CSV export, delete all data, update button.
 - Hungarian and English, switchable in Settings.
@@ -45,7 +55,7 @@ The phone needs to load the app once from an `https://` address. After that it r
    data, so do not start logging in the Safari tab.
 
 Any other static host with https works the same way (Netlify, Cloudflare Pages, your own server).
-The folder has about 1,760 files (43 MB), nearly all of them exercise photos.
+The folder has about 3,000 files (about 115 MB), nearly all of them exercise photos and drawings.
 
 ## Updating the app
 
@@ -85,9 +95,63 @@ The key is stored only in the browser storage of the device where you entered it
 written into a backup file. So each device (phone, PC) needs the same key entered once. Do not put
 the key into any file in this folder: the folder is published publicly.
 
-The photo is shrunk to 1024 px on the phone and sent straight to the Claude API; usage is billed to
-your account. Before other people use the app, this call has to move to a server of yours so no key
+Photos are shrunk to 1568 px on the phone (the largest size the model looks at) and sent straight to
+the Claude API; usage is billed to your account. What is done for accuracy:
+
+- up to two photos of the same meal (from above and from the side);
+- the instruction makes the model find a size reference first, list hidden fat and sauces, and give
+  values **per 100 g**; the app multiplies by the grams itself;
+- when the food database has an entry under the name the model gave and its energy agrees within 15%,
+  the measured USDA values replace the model's (marked on the result);
+- **the model does not learn from use.** The app remembers how you corrected earlier estimates (grams,
+  kcal per 100 g, renamed or removed items; the last 60) and sends the latest 25 along with each new
+  request. Settings shows the count and can forget them. How much this improves the estimates has not
+  been measured.
+
+Haiku is the default model (fastest, cheapest); Sonnet and Opus can be chosen in Settings. Before other people use the app, this call has to move to a server of yours so no key
 is ever on a user's device.
+
+## Accounts and syncing (optional)
+
+Without setup the app has no sign-in and keeps everything on the device. To require an account and
+keep the data in a database (free Supabase project):
+
+1. supabase.com → New project. Wait until it is ready.
+2. SQL Editor → New query → paste the contents of `supabase.sql` from this folder → Run. This creates
+   the table `userdata` (one row per user) with row level security: a signed-in user can only read and
+   write their own row, and people who are not signed in get nothing.
+3. Authentication → Sign In / Providers → Email: switch **Confirm email** off for now. (With it on,
+   every new account must click a link in an e-mail first, and the built-in mail sender of a free
+   project only sends a couple of mails per hour.)
+4. Authentication → URL Configuration → **Site URL**: the address of the app
+   (`https://YOUR-NAME.github.io/GymApp/`). The "forgot password" mail links back to it.
+5. Project Settings → API (or "API Keys"): copy the **Project URL** and the **publishable** key
+   (`sb_publishable_…`; on older projects the **anon public** key) into `js/config.js`. Both are meant
+   to be public. **Never** put the `service_role` / secret key into any file here.
+6. Commit and push. The app now opens on a sign-in screen. Register your account; the data already on
+   that device is uploaded into it. After that, on Supabase: Authentication → Sign In / Providers →
+   switch **Allow new users to sign up** off, unless you want strangers to be able to register.
+
+How syncing works: the whole diary is one JSON document per user. A device first asks whether the
+row changed; if it did, it downloads it and **merges** (workouts and meals from both sides are kept,
+deletions are remembered, settings/routines/favourites follow whichever side changed last), then
+uploads the result. It syncs at start, a few seconds after each change, and when the app comes back
+to the foreground. Logging works offline; changes upload later. Signing out removes the account's
+data from the device. The AI key is not uploaded unless you switch that on in Settings → Account.
+
+This part was tested only against a stand-in server that imitates Supabase's documented requests and
+answers, **not against the real service**. Try it with a test account before relying on it, and keep
+making backups (Settings → Data) for the first weeks.
+
+## Fitness data (steps, calories burned)
+
+A web app cannot read Apple Health, Health Connect or any watch directly; only an app installed from a
+store can. What the app offers instead: type the two numbers in, or paste a text such as
+`steps=8432;kcal=412` (most shapes are understood). On iPhone a Shortcut can produce that text with one
+tap: Find Health Samples (Steps, today) → Calculate Statistics (Sum) → the same for Active Energy →
+Text `steps=…;kcal=…` → Copy to Clipboard; then "Paste from clipboard" in the app. The shortcut was not
+tried on a real iPhone. On Android and with other watches the daily figures are copied by hand from the
+maker's app.
 
 ## Look
 
@@ -100,7 +164,8 @@ by themselves where the browser reports that setting.
 
 ## Animations
 
-Buttons give way when pressed, panels slide up and down, screens fade in when you switch tabs.
+Buttons give way when pressed, panels slide up and down, and screens cross-fade when you switch tabs
+(View Transitions where the browser has them, iOS 18 and newer; older ones get the earlier fade-in).
 All of it is in the last block of `css/app.css`. If "Reduce Motion" is switched on in iOS
 (Settings → Accessibility → Motion), none of it runs.
 
@@ -115,7 +180,7 @@ address means backing up first and restoring after.
 
 - Needs iOS 15.4 or newer.
 - `index.html` carries a Content-Security-Policy: scripts only from this folder, network calls only
-  to this site and `api.anthropic.com`, photos only from this site and the dataset's GitHub address.
+  to this site, `api.anthropic.com` and `*.supabase.co`, photos only from this site and the dataset's GitHub address.
   If you add another service later, add its address there too.
 - Whatever is read from storage or from a backup file is rebuilt field by field with fixed types
   (`clean()` in `js/store.js`), and every piece of text is escaped before it is shown.
@@ -129,19 +194,28 @@ address means backing up first and restoring after.
 | `js/app.js` | screens and logic |
 | `js/plan.js` | the built-in ULPPL routines and coaching notes (edit here) |
 | `js/i18n.js` | all Hungarian and English text |
-| `js/ai.js` | the Claude API call for food estimation |
+| `js/ai.js` | the Claude API calls (food estimation, coach chat) |
+| `js/config.js`, `js/cloud.js`, `supabase.sql` | accounts and syncing: your project's address and public key, the sign-in/sync code, the database setup |
 | `js/store.js`, `js/charts.js`, `js/musclemap.js` | storage, charts, body map |
 | `data/exercises.js` | the exercise library |
+| `data/exercises.hu.js` | Hungarian names and instructions for the library (machine-assisted translation) |
 | `data/foods.js`, `data/recipes.js` | food database (USDA SR28) and meal ideas |
-| `img/ex/<id>/0.jpg, 1.jpg` | start and end photo of each exercise |
+| `img/ex/<id>/0.jpg, 1.jpg, t.jpg` | start and end photo of each exercise, and a small one for lists |
+| `data/figures.js`, `img/fig/` | which exercises have a line drawing, and the drawings (two frames each) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | what makes it installable and offline |
 
 ## Sources
 
 Exercise data and photos: [free-exercise-db](https://github.com/yuhonas/free-exercise-db), published
-under the Unlicense (public domain dedication). The photos were resized for phone screens. The
+under the Unlicense (public domain dedication). The photos are the originals; only the small list
+pictures were made from them. The
 repository states the licence but does not document where each photo originally came from, so check
 that before selling a product built on them.
 
 Food values: US Department of Agriculture, Agricultural Research Service, Nutrient Data Laboratory.
 USDA National Nutrient Database for Standard Reference, Release 28 (2015). Public domain.
+
+Exercise drawings: [Everkinetic](https://github.com/everkinetic/data), licensed
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The SVG files in `img/fig/` are used
+unchanged. The licence requires this credit to stay, and anyone who changes the drawings must share
+the changed drawings under the same licence.

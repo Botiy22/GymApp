@@ -48,7 +48,8 @@ h3{font-size:.98rem;font-weight:700;margin:0 0 8px}
 .note.warn{border-left-color:var(--warn)}
 
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
-.week span{display:flex;flex-direction:column;align-items:center;gap:5px}
+.week .wd{display:flex;flex-direction:column;align-items:center;gap:5px;min-height:44px}
+.week .wd:disabled{opacity:.45}
 .week i{font-style:normal;font-size:.72rem;color:var(--mut);text-transform:uppercase}
 .week b{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:.86rem;font-weight:600;background:var(--card);color:var(--mut)}
 .week .now b{box-shadow:inset 0 0 0 2px var(--mut);color:var(--ink)}
@@ -167,11 +168,11 @@ dialog#sheet::backdrop{background:rgba(0,0,0,.62)}
 .sheet-body .rcard{margin-bottom:8px}
 .anim{position:relative;border-radius:16px;overflow:hidden;background:var(--raised);aspect-ratio:3/2}
 .anim img{width:100%;height:100%;object-fit:cover}
-.anim .f2{position:absolute;inset:0;animation:flip 2.2s steps(1) infinite}
+.anim .f2{position:absolute;inset:0;animation:flip 2.6s ease-in-out infinite}
 .anim.paused .f2{animation-play-state:paused}
 .anim-tag{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;font-size:.7rem;padding:3px 8px;border-radius:999px}
 .anim.one .anim-tag{display:none}
-@keyframes flip{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+@keyframes flip{0%,36%{opacity:0}50%,86%{opacity:1}100%{opacity:0}}   /* the two photos melt into each other */
 @media (prefers-reduced-motion:reduce){.anim .f2{animation-play-state:paused}.anim.paused .f2{animation-play-state:running}}
 .tip{background:var(--card);border-left:3px solid var(--acc);border-radius:12px;padding:11px 13px;margin-top:12px;font-size:.92rem;line-height:1.45}
 .tip b{display:block;color:var(--acc);font-size:.76rem;letter-spacing:.03em;margin-bottom:2px}
@@ -250,7 +251,7 @@ body.w-on #restbar{bottom:calc(var(--sb) + 10px)}
 .rb-l{display:none}
 #rb-time{font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:64px;letter-spacing:-.02em}
 .rb-track{position:absolute;left:0;right:0;bottom:0;height:4px;background:#c9c6bd}
-#rb-fill{display:block;height:100%;background:#111}
+#rb-fill{display:block;width:100%;height:100%;background:#111;transform:scaleX(0);transform-origin:left center}
 .rb-in .btn{margin-left:auto;background:#dedbd2;color:#111;border-color:#dedbd2}
 .rb-in .btn+.btn{margin-left:0}
 .rb-in .btn.primary{background:#111;color:var(--acc);border-color:#111}
@@ -484,7 +485,130 @@ dialog#sheet.closing{pointer-events:none}
   .set.pop .set-ok{animation:pop .36s cubic-bezier(.3,1.4,.5,1),tint .5s ease-out}
   .set.in,.wex-tools.in{animation:rise .24s cubic-bezier(.2,.8,.2,1)}
   #restbar .rb-in{animation:rb-in .34s cubic-bezier(.2,.9,.3,1.1)}
-  #rb-fill{transition:width .5s linear}
+  #rb-fill{transition:transform .5s linear}
+}
+/* ---------- v1.4: favourites, filters without sideways scrolling, routine tiles, calendar, activity ---------- */
+.datebtn{display:inline-flex;align-items:center;gap:4px;color:var(--mut);font-size:.92rem;margin-top:1px;min-height:34px;padding:0 10px 0 0}
+.datebtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.datenav .datebtn{color:var(--ink);padding:0 12px;margin:0;min-height:44px;border-radius:14px}
+.search.with-sel{display:flex;gap:8px}
+.search.with-sel input{flex:1;min-width:0}
+.search.with-sel select{width:auto;max-width:44%;min-height:46px;border-radius:13px;font-size:.9rem;padding-left:10px;text-overflow:ellipsis}
+.seg.grp{margin:10px 0 0}
+.seg.grp button{min-height:42px}
+.chips.mus,.chips.selrow{margin:10px 0 0}
+.chips.mus .chip,.chips.selrow .chip{min-height:40px;padding:0 15px;font-size:.9rem}
+#lib-list,#pick-list{margin-top:12px}
+.fv{font-style:normal;color:#ffd60a;font-size:.82em}
+.exmeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 2px}
+.exmeta.top{margin-top:0;align-items:flex-start}
+.exmeta .en{margin:0;flex:1;min-width:0}
+.exmeta .fa-name{flex:1;min-width:0}
+.favbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 13px 0 10px;border-radius:999px;font-size:.84rem;font-weight:650;color:var(--mut);background:var(--glass);border:1px solid var(--edge);box-shadow:var(--shine-s);flex:none}
+.favbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;flex:none}
+.favbtn.on{color:#ffd60a;border-color:rgba(255,214,10,.45)}
+.favbtn.on svg{fill:currentColor}
+/* routines: two tiles next to each other, each with its own icon */
+.rgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.rtile{flex-direction:column;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px;min-height:128px;border-radius:22px;text-align:left}
+.rtile .rc-t{flex:none;width:100%}
+.rtile .rc-t b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2;font-size:1.02rem}
+.rtile .rc-t i{margin-top:3px;font-size:.8rem}
+.r-ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(var(--acc-rgb),.16);color:var(--acc);flex:none}
+.r-ic svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic-legs .r-ic{background:rgba(90,200,250,.16);color:#5ac8fa}
+.ic-push .r-ic{background:rgba(255,159,10,.16);color:#ff9f0a}
+.ic-pull .r-ic{background:rgba(191,90,242,.18);color:#d29bff}
+.ic-core .r-ic{background:rgba(99,230,190,.16);color:#63e6be}
+.ic-arms .r-ic{background:rgba(255,107,154,.16);color:#ff6b9a}
+.ic-cardio .r-ic{background:rgba(255,105,97,.16);color:#ff6961}
+.ic-star .r-ic{background:rgba(255,214,10,.16);color:#ffd60a}
+.icons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.icons button{position:relative;border-radius:17px;padding:2px;border:2px solid transparent}
+.icons button.on{border-color:var(--ink)}
+.icons button i{position:absolute;left:0;right:0;bottom:-1px;font-style:normal;font-size:.56rem;font-weight:700;text-align:center;color:var(--ink);text-transform:uppercase;letter-spacing:.03em}
+.q-ic.line svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.actrow{margin:0 0 4px}
+.row3+.actrow{margin-top:12px}
+.actrow .rc-t i{white-space:nowrap}
+.exmeta .fa-name{font-size:1.2rem;font-weight:750;line-height:1.25;color:var(--ink)}
+#view>.actrow+h2{margin-top:22px}
+/* calendar */
+.cal-h,.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
+.cal-h{color:var(--mut);font-size:.72rem;text-transform:uppercase;margin-bottom:8px}
+.cd{position:relative;aspect-ratio:1;min-height:40px;border-radius:50%;display:grid;place-items:center;font-size:.92rem;font-weight:600;background:var(--glass-2);color:var(--ink);font-variant-numeric:tabular-nums}
+.cd:disabled{opacity:.3}
+.cd.now{box-shadow:inset 0 0 0 2px rgba(255,255,255,.65)}
+.cd.on{background:var(--acc);color:var(--acc-ink)}
+.cd.fd::after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#5ac8fa}
+.cd.on.fd::after{background:var(--acc-ink)}
+.cap .k-on,.cap .k-fd{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 6px 0 0;background:var(--acc)}
+.cap .k-fd{background:#5ac8fa;margin-left:14px}
+.sheet-body>h3{margin:18px 0 8px}
+.sheet-body>h3:first-child{margin-top:0}
+/* AI scan: up to two photos, database tick */
+.ai-shots{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.ai-shots.one{grid-template-columns:1fr}
+.ai-shot{position:relative}
+.ai-shots .ai-prev{display:block;margin:0;height:100%}
+.ai-shots:not(.one) .ai-prev{aspect-ratio:1;max-height:none}
+.ai-shot .icon-btn{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.62);border-color:transparent}
+.ai-db{display:flex;align-items:center;gap:5px;font-style:normal;color:var(--acc);font-size:.76rem;margin:7px 2px 0}
+.ai-db svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+label.btn+.cap{margin-bottom:12px}
+/* long lists: rows far off screen are not laid out until they come near (where the browser supports it) */
+.exlist>.exrow,.flist>.fhit{content-visibility:auto;contain-intrinsic-size:auto 66px}
+.exlist>.exrow{box-shadow:var(--shine-s)}   /* rows of long lists carry only the inner highlight: no large soft shadow to paint for every row */
+/* changing screen with a real cross-fade (View Transitions); taps are never swallowed while it runs */
+::view-transition{pointer-events:none}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.24s;animation-timing-function:cubic-bezier(.3,0,.2,1)}
+@media (prefers-reduced-motion:no-preference){
+  .rtile:active,.cd:not(:disabled):active,.wd:not(:disabled):active,.favbtn:active,.datebtn:active{transform:scale(.95)}
+  .rtile,.cd,.wd,.favbtn,.datebtn,.icons button{transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .14s,background-color .18s,border-color .18s,color .18s,opacity .18s}
+  .favbtn.on svg{animation:pop .34s cubic-bezier(.3,1.4,.5,1)}
+  dialog#sheet,#workout{will-change:transform}
+}
+/* ---------- v1.5: drawings, AI coach, account ---------- */
+.seg.figseg{margin-bottom:10px}
+.anim.fig{background:#fff;aspect-ratio:3/2}
+.anim.fig img{object-fit:contain;background:#fff}
+#coach{position:fixed;right:max(16px,calc(50% - 220px));bottom:calc(var(--tab) + var(--tabb) + 14px);z-index:11;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 10px 26px rgba(0,0,0,.5)}
+#coach[hidden]{display:none}
+#coach svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#restbar:not([hidden])~#coach{bottom:calc(var(--tab) + var(--tabb) + 86px)}
+body.w-on #coach,body.gated #coach,body.gated #view,body.gated #tabbar,body.gated #restbar{display:none}
+.chat{display:flex;flex-direction:column;gap:8px;min-height:120px}
+.msg{max-width:88%;padding:10px 13px;border-radius:18px;font-size:.95rem;line-height:1.45;overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:var(--acc);color:var(--acc-ink);border-bottom-right-radius:6px}
+.msg.ai{align-self:flex-start;background:var(--glass-2);border:1px solid var(--edge);border-bottom-left-radius:6px}
+.msg.wait{display:flex;gap:5px;padding:14px 16px}
+.msg.wait i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:blink 1.1s ease-in-out infinite}
+.msg.wait i:nth-child(2){animation-delay:.18s}
+.msg.wait i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
+.asks{display:grid;gap:8px;margin:4px 0 10px}
+.chip.ask{white-space:normal;text-align:left;min-height:44px;padding:8px 14px;border-radius:16px;color:var(--ink);font-size:.92rem;line-height:1.3}
+.chat .note{margin:4px 0 0}
+.chatbar{display:flex;align-items:center;gap:8px;width:100%}
+.chatbar input{flex:1;min-width:0;min-height:48px;border-radius:24px;padding:10px 16px}
+.chatbar .btn{width:48px;min-width:48px;height:48px;padding:0;border-radius:50%;flex:none}
+.chatbar .icon-btn{width:40px;height:40px;border-radius:50%}
+#gate{position:fixed;inset:0;z-index:30;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--st) + 24px) 20px calc(var(--sb) + 24px);display:flex}
+#gate[hidden]{display:none}
+.gate-in{width:100%;max-width:400px;margin:auto;display:grid;gap:12px}
+.gate-in h1{font-size:2.1rem;font-weight:800;letter-spacing:-.03em;text-align:center;line-height:1.05}
+.gate-in .lead{text-align:center;margin:0 0 4px}
+.gate-in .seg,.gate-in .note,.gate-in .fld{margin:0}
+.gate-in .cap{margin:0;text-align:center}
+.gate-in .link{justify-self:center}
+.gate-in .seg.lang{max-width:220px;justify-self:center;width:100%}
+.gate-logo{width:64px;height:64px;border-radius:20px;margin:0 auto 2px;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink)}
+.gate-logo svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+input[type=email]{width:100%;min-height:46px;border-radius:12px;border:1px solid var(--edge);background:rgba(0,0,0,.3);padding:10px 12px;font-size:1rem;-webkit-appearance:none;appearance:none}
+@media (prefers-reduced-motion:no-preference){
+  #coach{transition:transform .16s cubic-bezier(.2,.8,.2,1),bottom .25s cubic-bezier(.2,.8,.2,1)}
+  #coach:active{transform:scale(.9)}
+  .msg{animation:rise .22s cubic-bezier(.2,.8,.2,1)}
 }
 /* "Fewer animations" switched on in the settings of the app: everything happens at once (the exercise photo keeps alternating) */
 :root[data-calm] *:not(.f2){animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
