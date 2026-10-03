@@ -1,6 +1,6 @@
-# Rep Riot
+# Tungsten
 
-(Formerly "GymApp", then "Súlypont". The folder and the web address keep the old name on purpose: the address is what the
+(Formerly "GymApp", "Súlypont" and "Rep Riot". The folder and the web address keep the old name on purpose: the address is what the
 installed app and its saved data are tied to.)
 
 A workout tracker and calorie diary that installs on a phone from the browser, with no App Store and no
@@ -18,13 +18,14 @@ you can reach it from any device after signing in.
   Routines show as tiles, two next to each other, each with an icon chosen from its muscles (or by hand
   in the editor). The date and the days of the week strip open a **calendar**: tap any past day to see
   its workouts, meals and steps.
-- **Exercises**: 876 exercises, 873 of them with start/end photos (the original 850 px pictures in the
-  detail view, small ones in lists), 182 also with line drawings, muscle map, your record and progress
-  chart per exercise. Names and instructions are in Hungarian and English. Filters without sideways
+- **Exercises**: 876 exercises shown as tiles, two next to each other. 873 have start/end photos (the
+  original 850 px pictures in the detail view, small ones in lists); 182 also have line drawings, shown
+  as start and end position side by side. Every exercise has an anatomical body map (front and back)
+  with the worked muscles filled in, your record and a progress chart. Names and instructions are in Hungarian and English. Filters without sideways
   scrolling: body part → muscle → equipment. A star marks **favourites** (exercises and foods).
 - **Progress**: weekly sets per muscle group against the 10–20 target zone, body weight, records,
   full workout history, weekly workout goal.
-- **Food**: calorie and macro targets (Mifflin–St Jeor) and a daily diary with three ways to add a meal:
+- **Food**: calorie and macro targets (Mifflin–St Jeor; see "Calorie calculator" below) and a daily diary with three ways to add a meal:
   **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams,
   the values are calculated), **AI** estimate from a photo or a description, or **your own values**
   from a label. **Ideas**: 15 recipes with calculated macros, one tap adds a serving to the diary.
@@ -34,7 +35,8 @@ you can reach it from any device after signing in.
   meals and your recent workouts (needs the API key; estimates, not medical advice). Conversations are
   saved: **History** lists them (newest 40), any of them can be reopened, continued or deleted, and the
   coach is given the gist of the last five so it can pick up where you left off.
-- **Settings**: language, accent colour (a colour scale: any hue, same brightness), background, fewer animations, reduce transparency, rest timer
+- **Settings**: language, accent colour (a colour scale: any hue, same brightness), background
+  (colourful, dark, plain or **bright**), fewer animations, reduce transparency, rest timer
   options, weekly goal, first day of week, backup/restore, CSV export, delete all data, update button.
 - Hungarian and English, switchable in Settings.
 
@@ -156,6 +158,22 @@ This part was tested only against a stand-in server that imitates Supabase's doc
 answers, **not against the real service**. Try it with a test account before relying on it, and keep
 making backups (Settings → Data) for the first weeks.
 
+## Calorie calculator
+
+Resting energy is the Mifflin–St Jeor equation (10 × kg + 6.25 × cm − 5 × years, +5 for men, −161 for
+women), multiplied by the activity factor (1.2 to 1.9), then −18% for fat loss or +10% for muscle gain.
+The tests compare it with cases worked out by hand. Safeguards built in:
+
+- ages 14–100, heights 120–230 cm and weights 30–300 kg only; anything else gives no numbers;
+- under 18 no deficit is suggested;
+- a deficit never goes under 1,500 kcal (men) or 1,200 kcal (women); if maintenance itself is lower,
+  maintenance is used;
+- protein (1.8 g/kg, 2.0 g/kg when losing fat) and the minimum fat (0.8 g/kg) are counted on at most
+  the weight at BMI 27, so they do not grow without limit at a high body weight; carbohydrate is what
+  is left of the calories.
+
+It is an estimate for healthy adults, not medical advice; the numbers can always be overwritten.
+
 ## Fitness data (steps, calories burned)
 
 A web app cannot read Apple Health, Health Connect or any watch directly; only an app installed from a
@@ -216,6 +234,7 @@ address means backing up first and restoring after.
 | `data/foods.js`, `data/recipes.js` | food database (USDA SR28) and meal ideas |
 | `img/ex/<id>/0.jpg, 1.jpg, t.jpg` | start and end photo of each exercise, and a small one for lists |
 | `data/figures.js`, `img/fig/` | which exercises have a line drawing, and the drawings (two frames each) |
+| `data/body.js`, `js/musclemap.js` | the body outline with its muscle shapes, and the code that fills in the worked muscles |
 | `sw.js`, `manifest.webmanifest`, `icons/` | what makes it installable and offline |
 
 ## Sources
@@ -233,3 +252,7 @@ Exercise drawings: [Everkinetic](https://github.com/everkinetic/data), licensed
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The SVG files in `img/fig/` are used
 unchanged. The licence requires this credit to stay, and anyone who changes the drawings must share
 the changed drawings under the same licence.
+
+Body map drawing: [react-native-body-highlighter](https://github.com/HichamELBSI/react-native-body-highlighter)
+by ELABBASSI Hicham, MIT licence (the notice is kept at the top of `data/body.js`). The paths are used
+unchanged.

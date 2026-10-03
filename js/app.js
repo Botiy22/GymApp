@@ -20,7 +20,7 @@
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const VERSION = '1.6';
+  const VERSION = '1.7';
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -184,7 +184,7 @@
       const k = pick ? st.sel.indexOf(e.id) : -1, sub = `<span><b>${esc(exName(e.id))}${isFav(e.id) ? ' <em class="fv" aria-hidden="true">★</em>' : ''}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i></span>`;
       return pick                                                                     // picker: the photo opens the details, the rest of the row ticks it
         ? `<div class="exrow pickrow${k >= 0 ? ' on' : ''}" data-id="${esc(e.id)}"><button class="pk-img" data-a="ex-open" data-id="${esc(e.id)}" aria-label="${esc(t('details'))}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async"></button><button class="pk-main" data-a="pick" data-id="${esc(e.id)}" aria-pressed="${k >= 0}">${sub}<em class="pk-n">${k >= 0 ? k + 1 : ''}</em></button></div>`
-        : `<button class="exrow" data-a="ex-open" data-id="${esc(e.id)}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async">${sub}${IC.chev}</button>`;
+        : `<button class="exrow extile" data-a="ex-open" data-id="${esc(e.id)}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async" width="240" height="160">${sub}</button>`;
     }).join('') +
       (list.length > st.limit ? `<button class="btn ghost" data-a="lib-more">${esc(t('showMore'))} (${list.length - st.limit})</button>` : '');
   }
@@ -198,7 +198,7 @@
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
-  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div id="lib-list" class="exlist">${libRows(false)}</div>`; }
+  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
   function vProg() {
     const d = D();
@@ -403,7 +403,7 @@
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
       const fg = FIG[id] && !ui.figBad[id], draw = fg && D().settings.figure !== 'photo';
       let h = fg && e.k ? `<div class="seg figseg"><button class="${draw ? 'on' : ''}" data-a="fig-view" data-v="draw" aria-pressed="${!!draw}">${esc(t('figDraw'))}</button><button class="${draw ? '' : 'on'}" data-a="fig-view" data-v="photo" aria-pressed="${!draw}">${esc(t('figPhoto'))}</button></div>` : '';
-      h += draw ? `<div class="anim fig" data-a="anim" data-id="${esc(id)}"><img src="img/fig/${esc(FIG[id])}-0.svg" alt="${esc(name)}"><img class="f2" src="img/fig/${esc(FIG[id])}-1.svg" alt="" decoding="async"><span class="anim-tag">${esc(t('tapPause'))}</span></div>`
+      h += draw ? `<button class="anim fig duo${ui.figBig ? ' big' : ''}" data-a="fig-big" data-id="${esc(id)}" aria-label="${esc(t('figBig'))}"><span><img src="img/fig/${esc(FIG[id])}-0.svg" alt="${esc(name)} 1"><em>1</em></span><span><img src="img/fig/${esc(FIG[id])}-1.svg" alt="${esc(name)} 2" decoding="async"><em>2</em></span></button><p class="cap figcap">${esc(t('figCap'))}</p>`
         : !e.k ? '' : `<div class="anim${e.k < 2 ? ' one' : ''}" data-a="anim"><img src="${img(id, 0)}" alt="${esc(name)}">${e.k > 1 ? `<img class="f2" src="${img(id, 1)}" alt="" decoding="async">` : ''}<span class="anim-tag">${esc(t('tapPause'))}</span></div>`;
       if (pl && pl.similar && !draw) h += `<p class="cap">${esc(t('similarPhoto'))}</p>`;
       const fav = isFav(id), st = exSteps(id);
@@ -652,14 +652,23 @@
     s.loading = false; if (ui.ai === s && ui.sheets.length) refreshSheet();
   }
   const ACT = [[1.2, 'act1'], [1.375, 'act2'], [1.55, 'act3'], [1.725, 'act4'], [1.9, 'act5']];
+  /* Mifflin-St Jeor resting energy x activity factor, then the goal. Checked against hand-calculated cases in the tests.
+     Guards: values outside a plausible range give no result; no deficit under 18; a deficit never goes below 1500 kcal (men) / 1200 kcal (women);
+     protein and fat per kg count at most the weight at BMI 27, so they do not run away at a high body weight. */
   function calcTargets(p) {
     const w = num(p.weight), hgt = num(p.height), a = num(p.age); if (!w || !hgt || !a) return null;
-    const bmr = 10 * w + 6.25 * hgt - 5 * a + (p.sex === 'm' ? 5 : -161), tdee = bmr * num(p.activity);
-    const kcal = Math.round(tdee * (1 + ({ cut: -0.18, maintain: 0, bulk: 0.1 }[p.goal] || 0)) / 10) * 10;
-    const pr = Math.round(w * (p.goal === 'cut' ? 2.0 : 1.8)), fat = Math.round(Math.max(w * 0.8, kcal * 0.25 / 9));
-    return { bmr: Math.round(bmr / 10) * 10, tdee: Math.round(tdee / 10) * 10, kcal, p: pr, c: Math.max(0, Math.round((kcal - pr * 4 - fat * 9) / 4)), f: fat };
+    if (a < 14 || a > 100 || hgt < 120 || hgt > 230 || w < 30 || w > 300) return { bad: true };
+    const act = [1.2, 1.375, 1.55, 1.725, 1.9].indexOf(+p.activity) >= 0 ? +p.activity : 1.55;
+    const bmr = 10 * w + 6.25 * hgt - 5 * a + (p.sex === 'm' ? 5 : -161), tdee = bmr * act, m2 = (hgt / 100) * (hgt / 100);
+    const goal = ['cut', 'maintain', 'bulk'].indexOf(p.goal) < 0 ? 'maintain' : a < 18 && p.goal === 'cut' ? 'maintain' : p.goal, floor = p.sex === 'm' ? 1500 : 1200;
+    let kcal = Math.round(tdee * (1 + { cut: -0.18, maintain: 0, bulk: 0.1 }[goal]) / 10) * 10, floored = false;
+    if (goal === 'cut' && kcal < floor) { kcal = Math.min(floor, Math.round(tdee / 10) * 10); floored = true; }
+    const ref = Math.min(w, 27 * m2);
+    const pr = Math.round(ref * (goal === 'cut' ? 2.0 : 1.8)), fat = Math.round(Math.max(ref * 0.8, kcal * 0.25 / 9));
+    return { bmr: Math.round(bmr / 10) * 10, tdee: Math.round(tdee / 10) * 10, kcal, p: pr, c: Math.max(0, Math.round((kcal - pr * 4 - fat * 9) / 4)), f: fat, bmi: Math.round(w / m2 * 10) / 10, goal, floored, floor, minor: a < 18 && p.goal === 'cut' };
   }
-  const tgOut = (c, p) => c ? `<div class="kpis"><div><b>${c.bmr}</b><i>${esc(t('bmr'))}</i></div><div><b>${c.tdee}</b><i>${esc(t('tdee'))}</i></div><div class="hl"><b>${c.kcal}</b><i>${esc(t('tg_' + (p.goal || 'maintain')))}</i></div></div>` : `<p class="empty">${esc(t('fillProfile'))}</p>`;
+  const tgOut = (c, p) => !c ? `<p class="empty">${esc(t('fillProfile'))}</p>` : c.bad ? `<p class="empty">${esc(t('tgRange'))}</p>`
+    : `<div class="kpis"><div><b>${c.bmr}</b><i>${esc(t('bmr'))}</i></div><div><b>${c.tdee}</b><i>${esc(t('tdee'))}</i></div><div class="hl"><b>${c.kcal}</b><i>${esc(t('tg_' + c.goal))}</i></div></div><p class="cap">BMI ${dec(c.bmi)}${c.floored ? ' · ' + esc(t('tgFloor', c.floor)) : ''}${c.minor ? ' · ' + esc(t('tgMinor')) : ''}</p>`;
   function shTargets() {
     return () => {
       const s = ui.tg, p = s.profile, v = s.vals || {};
@@ -680,7 +689,7 @@
   const MODELS = Store.MODELS.map(m => [m, MODEL_NAMES[m] || m]);
   function aiCard(s) {
     const nn = D().aiNotes.length;
-    const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><label class="fld"><span>${esc(t('photoModel'))}</span><select data-in="set-photo-model"><option value="">${esc(t('sameModel'))}</option>${MODELS.map(([v, n]) => `<option value="${v}" ${s.photoModel === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><p class="cap">${esc(t('modelCap'))}</p>
+    const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><label class="fld"><span>${esc(t('photoModel'))}</span><select data-in="set-photo-model"><option value="">${esc(t('sameModel'))}</option>${MODELS.map(([v, n]) => `<option value="${v}" ${s.photoModel === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
       <p class="cap" id="ai-learn">${esc(nn ? t('aiLearnN', nn) : t('aiLearn0'))}</p>${nn ? `<button class="link mut" data-a="ai-forget">${esc(t('aiForget'))}</button>` : ''}`;
     if (s.apiKey && s.keyState !== 'bad')                                    // a key is saved and nothing says it is wrong: no key field at all
       return `<p class="ai-on${s.keyState === 'ok' ? '' : ' wait'}">${IC.check}<span><b>${esc(t(s.keyState === 'ok' ? 'aiOn' : 'aiSaved'))}</b><i>${esc(t(s.keyState === 'ok' ? 'aiOnSub' : 'aiSavedSub'))}</i></span></p>${model}<button class="link mut" data-a="key-remove">${esc(t('keyRemove'))}</button>`;
@@ -692,8 +701,9 @@
     const fn = shSettingsBody(); fn.kind = 'settings'; return fn;
   }
   /* accent colour from a place on the colour scale: same lightness for every hue (OKLCH), as vivid as the screen can show */
-  function hueRGB(h) {
-    const conv = C => { const a = C * Math.cos(h * Math.PI / 180), b = C * Math.sin(h * Math.PI / 180), l = Math.pow(0.82 + 0.3963377774 * a + 0.2158037573 * b, 3), m = Math.pow(0.82 - 0.1055613458 * a - 0.0638541728 * b, 3), s = Math.pow(0.82 - 0.0894841775 * a - 1.2914855480 * b, 3);
+  function hueRGB(h, L) {
+    L = L || 0.82;
+    const conv = C => { const a = C * Math.cos(h * Math.PI / 180), b = C * Math.sin(h * Math.PI / 180), l = Math.pow(L + 0.3963377774 * a + 0.2158037573 * b, 3), m = Math.pow(L - 0.1055613458 * a - 0.0638541728 * b, 3), s = Math.pow(L - 0.0894841775 * a - 1.2914855480 * b, 3);
       return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s]; };
     let C = 0.2, lin = conv(C); while (C > 0.02 && lin.some(v => v < -0.0005 || v > 1.0005)) { C -= 0.01; lin = conv(C); }
     return lin.map(v => { v = Math.min(1, Math.max(0, v)); return Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); });
@@ -701,9 +711,15 @@
   const DEF_HUE = 121;                                                                 // where the app's own yellow-green sits on the scale
   function applyLook() {
     const s = D().settings, e = document.documentElement;
-    if (s.hue == null) ['--acc', '--acc-rgb', '--acc-ink'].forEach(k => e.style.removeProperty(k));
-    else { const c = hueRGB(s.hue); e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', '#0c0e12'); }
+    const light = s.bg === 'light', hue = s.hue == null ? DEF_HUE : s.hue;
+    if (s.hue == null && !light) ['--acc', '--acc-rgb', '--acc-ink', '--acc-tx'].forEach(k => e.style.removeProperty(k));
+    else {
+      const c = hueRGB(hue, light ? 0.74 : 0.82);                                    // on the bright background the fill is a little deeper, and accent-coloured text much darker, so both stay readable
+      e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', '#0c0e12');
+      if (light) e.style.setProperty('--acc-tx', 'rgb(' + hueRGB(hue, 0.45).join(',') + ')'); else e.style.removeProperty('--acc-tx');
+    }
     e.dataset.bg = s.bg;
+    const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#eef0f5' : '#0e0f11');
     if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
   }
@@ -716,7 +732,8 @@
       const cs = CL && CL.user ? CL.state : null, when = cs && cs.at ? new Date(cs.at).toLocaleString(L() === 'hu' ? 'hu-HU' : 'en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
       const account = !cs ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="ai-on${cs.err ? ' wait' : ''}">${IC.check}<span><b>${esc(CL.user.email)}</b><i id="sync-st">${esc(cs.err ? t('syncErr') + ' ' + t('ac_' + (I18N.en['ac_' + cs.err] ? cs.err : 'api')) : when ? t('syncedAt', when) : t('syncNever'))}</i></span></p>
           ${sw('syncKey', t('setSyncKey'))}<div class="row2"><button class="btn" data-a="sync-now">${esc(t('syncNow'))}</button><button class="btn" data-a="sign-out">${esc(t('signOut'))}</button></div><p class="cap">${esc(t('accountCap'))}</p></section>`;
-      return { title: t('settings'), html: `${account}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
+      const accOff = cs || CL ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="cap">${esc(t('accOff'))}</p><button class="btn" data-a="acc-help">${esc(t('accHelp'))}</button></section>`;
+      return { title: t('settings'), html: `${account}${accOff}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
           <p class="lbl">${esc(t('accent'))}</p><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 359].map(h => 'rgb(' + hueRGB(h).join(',') + ')').join(',')})"></div>
           ${s.hue == null ? '' : `<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button>`}
           <p class="lbl">${esc(t('background'))}</p>${seg('set-bg', s.bg, (Store.BGS || ['aurora']).map(b => [b, t('bg_' + b)]))}
@@ -726,13 +743,15 @@
           <button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
         <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}${sw('coach', t('setCoach'))}</section>
         <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}<button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
-        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB. ${esc(ui.persisted ? t('persistYes') : t('persistNo'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div>
+        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now">${esc(t('updateNow'))}</button><p class="cap">${esc(t('updateCap'))}</p></section>
-        <section class="card"><h3>${esc(t('installTitle'))}</h3><ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol><p class="cap">${esc(standalone ? t('installedYes') : t('installedNo'))}</p></section>
-        <section class="card"><h3>${esc(t('about'))}</h3><p class="cap">${esc(t('aboutText'))}</p></section>` };
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now">${esc(t('updateNow'))}</button>
+          <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
     };
   }
+  /* shown only from the note an iPhone user sees in Safari before the app is on the Home Screen */
+  function shInstall() { return () => ({ title: t('installTitle'), html: `<ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol>` }); }
+  function shAccHelp() { return () => ({ title: t('account'), html: `<p class="lead">${esc(t('accHelpLead'))}</p><ol class="steps">${[1, 2, 3, 4, 5].map(i => `<li>${esc(t('accStep' + i))}</li>`).join('')}</ol><p class="cap">${esc(t('accHelpCap'))}</p>` }); }
   async function saveFile(name, blob) {
     try { const f = new File([blob], name, { type: blob.type }); if (isIOS && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); toast(t('exported'));
@@ -741,9 +760,9 @@
     const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
     D().workouts.forEach(w => w.entries.forEach(e => e.sets.forEach((x, j) => rows.push([ymd(w.start), w.name, itemName(e), j + 1, x.kg, x.reps, x.w ? 1 : 0]))));
     const cell = v => { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };     // a name can never be read as a formula by a spreadsheet
-    saveFile('repriot-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
+    saveFile('tungsten-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
   }
-  function exportData() { saveFile('repriot-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
+  function exportData() { saveFile('tungsten-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
 
   /* ================= CALENDAR, DAY, ACTIVITY ================= */
   function shCal() {
@@ -828,7 +847,7 @@
     if (old.length) out.push('Earlier conversations with this user, newest first (for continuity; do not repeat them unless asked): ' + old.map(c => { const q = (c.msgs.find(m => m.role === 'user') || {}).content || '', a = (c.msgs.filter(m => m.role === 'assistant').pop() || {}).content || ''; return '[' + ymd(c.t) + '] the user asked "' + q.replace(/\s+/g, ' ').slice(0, 160) + '" and you answered "' + a.replace(/\s+/g, ' ').slice(0, 220) + '"'; }).join(' | ') + '.');
     return out.join('\n').slice(0, 8000);
   }
-  const coachSystem = () => 'You are the coach inside "Rep Riot", an app for logging gym workouts and food. Reply in ' + (L() === 'hu' ? 'Hungarian' : 'English') + '. Be concrete and brief: normally under 140 words, plain text; short lists with "- " are fine. Use the data below when it helps and mention the numbers you relied on. ' +
+  const coachSystem = () => 'You are the coach inside "' + I18N.en.appName + '", an app for logging gym workouts and food. Reply in ' + (L() === 'hu' ? 'Hungarian' : 'English') + '. Be concrete and brief: normally under 140 words, plain text; short lists with "- " are fine. Use the data below when it helps and mention the numbers you relied on. ' +
     'For food questions suggest everyday foods with rough amounts and their approximate protein and calories, and say that these are estimates. For training questions name specific exercises with sets and reps and give the reason in one line. ' +
     'You are not a doctor: for pain, injury, illness, medication, pregnancy or signs of an eating disorder give only general information and recommend seeing a professional. Never recommend crash diets, dehydration or drugs. If something is not in the data, say so instead of guessing.\n\nUser data from the app:\n' + coachContext();
   const COACH_Q = ['coachQ1', 'coachQ2', 'coachQ3', 'coachQ4'];
@@ -958,7 +977,7 @@
     'ai-rm'(el) { ui.ai.imgs.splice(+el.dataset.i, 1); refreshSheet(); },
     're-icon'(el) { const v = el.dataset.v; ui.edit.icon = Store.ICONS.indexOf(v) >= 0 ? v : ''; refreshSheet(); },
     settings() { ui.keyDraft = ''; openSheet(shSettings()); checkSavedKey(); },
-    'install-help'() { ui.keyDraft = ''; openSheet(shSettings()); },
+    'install-help'() { openSheet(shInstall()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; render(); refreshSheet(); },
     'set-bg'(el) { if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
@@ -980,6 +999,8 @@
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
     'ai-answer'(el) { const s = ui.ai, q = s.res && s.res.question; if (!q || s.loading) return; s.qa = (s.qa || []).concat([q.text + ' ' + String(el.dataset.o || '').slice(0, 40)]); s.res = null; refreshSheet(); aiGo(); },
+    'fig-big'(el) { ui.figBig = !ui.figBig; el.classList.toggle('big', ui.figBig); },                        // start and end position: next to each other, or large one under the other
+    'acc-help'() { openSheet(shAccHelp()); },
     'fig-view'(el) { D().settings.figure = el.dataset.v === 'photo' ? 'photo' : 'draw'; Store.save(); refreshSheet(); },
     /* account */
     'gate-mode'(el) { const f = $('#gate input[name=email]'), v = el.dataset.v; if (f) ui.gate.email = f.value.trim(); if (ui.gate.busy || ['in', 'up', 'forgot'].indexOf(v) < 0) return; ui.gate.mode = v; ui.gate.err = ''; ui.gate.info = ''; renderGate(); },
@@ -1127,7 +1148,7 @@
       toast(t(r === 'ok' ? 'keyOk' : 'keyUnchecked')); if (topIs('settings')) refreshSheet();
     },
     'key-remove'() { if (!confirm(t('keyRemoveConfirm'))) return; const st = D().settings; st.apiKey = ''; st.keyState = ''; Store.save(); ui.keyDraft = ''; refreshSheet(); },
-    targets() { const s = D().settings; ui.tg = { profile: Object.assign({}, s.profile), vals: s.targets ? Object.assign({}, s.targets) : (calcTargets(s.profile) || {}) }; openSheet(shTargets()); },
+    targets() { const s = D().settings; ui.tg = { profile: Object.assign({}, s.profile), vals: s.targets ? Object.assign({}, s.targets) : ((c0 => c0 && !c0.bad ? { kcal: c0.kcal, p: c0.p, c: c0.c, f: c0.f } : {})(calcTargets(s.profile))) }; openSheet(shTargets()); },
     'tg-save'() { const v = ui.tg.vals, s = D().settings; if (!(num(v.kcal) > 0)) { toast(t('fillProfile')); return; } s.profile = ui.tg.profile; s.targets = { kcal: Math.round(num(v.kcal)), p: Math.round(num(v.p)), c: Math.round(num(v.c)), f: Math.round(num(v.f)) }; Store.save(); closeSheet(); render(); toast(t('saved')); },
     /* data */
     export() { exportData(); },
@@ -1173,7 +1194,7 @@
     'tg-p'(el) {
       if (el.type === 'radio' && !el.checked) return;
       ui.tg.profile[el.dataset.k] = el.value; const c = calcTargets(ui.tg.profile); $('#tg-out').innerHTML = tgOut(c, ui.tg.profile);
-      if (c) { ui.tg.vals = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; ['kcal', 'p', 'c', 'f'].forEach(k => { $('#tg-' + k).value = c[k]; }); }
+      if (c && !c.bad) { ui.tg.vals = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; ['kcal', 'p', 'c', 'f'].forEach(k => { $('#tg-' + k).value = c[k]; }); }
     },
     'tg-v'(el) { ui.tg.vals[el.dataset.k] = el.value; }
   };
@@ -1230,5 +1251,5 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB }; window.__gymFood = { search: foodSearch, of: foodOf };
+  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
