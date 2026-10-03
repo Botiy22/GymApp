@@ -610,5 +610,26 @@ input[type=email]{width:100%;min-height:46px;border-radius:12px;border:1px solid
   #coach:active{transform:scale(.9)}
   .msg{animation:rise .22s cubic-bezier(.2,.8,.2,1)}
 }
+/* ---------- v1.6: colour scale, coach history, scan details ---------- */
+.hue{padding:4px 0}
+.hue input{display:block;width:100%;height:30px;margin:0;border-radius:15px;border:1px solid var(--edge);-webkit-appearance:none;appearance:none;outline-offset:3px;touch-action:pan-y}
+.hue input::-webkit-slider-runnable-track{height:30px;background:none;border:0}
+.hue input::-moz-range-track{height:30px;background:none;border:0}
+.hue input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:34px;height:34px;margin-top:-2px;border-radius:50%;background:var(--acc);border:4px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.55)}
+.hue input::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--acc);border:4px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.55)}
+.hue+.link{display:block;padding:8px 0 0}
+.chat-top{display:flex;gap:8px;margin:0 0 12px}
+.chrow{padding:6px 8px 6px 4px}
+.ch-open{flex:1;min-width:0;text-align:left;padding:6px 10px;min-height:48px;border-radius:12px}
+.ch-open b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-open i{display:block;font-style:normal;color:var(--mut);font-size:.8rem}
+.chrow.cur{border-color:rgba(var(--acc-rgb),.5)}
+.btn .one{white-space:nowrap}
+.ai-basis{color:var(--mut);font-size:.78rem;line-height:1.35;margin:7px 2px 0}
+.chips.ai-range{margin:8px 0 0}
+.chips.ai-chips{margin:10px 0 0}
+.chips.ai-chips .chip,.chips.ai-range .chip,.note.ask .chip{min-height:38px}
+.note.ask .chips{margin:8px 0 6px}
+.note.ask .chip{color:var(--ink)}
 /* "Fewer animations" switched on in the settings of the app: everything happens at once (the exercise photo keeps alternating) */
 :root[data-calm] *:not(.f2){animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}

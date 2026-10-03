@@ -20,7 +20,7 @@
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const VERSION = '1.5';
+  const VERSION = '1.6';
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -46,7 +46,8 @@
   const mus = m => (I18N[L()].mus || {})[m] || m;
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
-  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null, figBad: {}, coach: { msgs: [], busy: false, err: null, draft: '' }, gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
+  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -566,7 +567,8 @@
         foot: `<button class="btn primary" form="fm">${esc(t('addToDiary'))}</button>` };
     };
   }
-  const aiNew = (mode, text) => ({ mode, imgs: [], hint: '', text: text || '', loading: false, res: null, err: null, gone: [] });
+  const aiNew = (mode, text) => ({ mode, imgs: [], hint: '', text: text || '', loading: false, res: null, err: null, gone: [], qa: [] });
+  const AI_CHIPS = ['aiChip1', 'aiChip2', 'aiChip3', 'aiChip4', 'aiChip5', 'aiChip6', 'aiChip7', 'aiChip8'];
   function shFoodAI() {
     return () => {
       const s = ui.ai, st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad;
@@ -574,18 +576,24 @@
       let h = '';
       if (!key) h += `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'needKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`;
       if (s.res) {
-        const tot = s.res.items.reduce((a, i) => a + num(i.kcal), 0);
+        const tot = s.res.items.reduce((a, i) => a + num(i.kcal), 0), q = s.res.question && (s.qa || []).length < 2 ? s.res.question : null;
         h += `${shots(false)}<p class="lead"><span class="chip on">${esc(t('conf_' + s.res.confidence))}</span> ${esc(s.res.notes)}</p>`;
+        if (q && s.res.items.length) h += `<div class="note ask"><b>${esc(q.text)}</b><div class="chips">${q.options.map(o => `<button class="chip" data-a="ai-answer" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div><span>${esc(t('aiAskCap'))}</span></div>`;
         h += s.res.items.length ? s.res.items.map((it, i) => `<div class="ai-item"><div class="re-top"><input type="text" data-in="ai-f" data-k="name" data-i="${i}" value="${esc(it.name)}" aria-label="${esc(t('name'))}"><button class="icon-btn sm" data-a="ai-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
-          <div class="grid5">${[['grams', 'g'], ['kcal', 'kcal'], ['p', t('pShort')], ['c', t('cShort')], ['f', t('fShort')]].map(([k, l]) => `<label><span>${esc(l)}</span><input type="text" inputmode="decimal" data-in="ai-f" data-k="${k}" data-i="${i}" value="${it[k]}"></label>`).join('')}</div>${it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
+          <div class="grid5">${[['grams', 'g'], ['kcal', 'kcal'], ['p', t('pShort')], ['c', t('cShort')], ['f', t('fShort')]].map(([k, l]) => `<label><span>${esc(l)}</span><input type="text" inputmode="decimal" data-in="ai-f" data-k="${k}" data-i="${i}" value="${it[k]}"></label>`).join('')}</div>
+          ${it.basis ? `<p class="ai-basis">${esc(it.basis)}</p>` : ''}${it.gmin && it.gmax ? `<div class="chips ai-range"><button class="chip${it.grams === it.gmin ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmin}">${esc(t('aiLess'))} · ${it.gmin} g</button><button class="chip${it.grams === it.gmax ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmax}">${esc(t('aiMore'))} · ${it.gmax} g</button></div>` : ''}
+          ${it.label ? `<i class="ai-db">${IC.check}${esc(t('aiLabel'))}</i>` : it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
         h += `<p class="cap">${esc(t('aiCheck'))}${s.used ? ' ' + esc(t('aiUsedNotes', s.used)) : ''}</p>`;
-        return { title: t('aiResult'), html: h, foot: (s.res.items.length ? `<button class="btn primary wide" data-a="ai-add">${esc(t('add'))} · <span id="ai-tot">${Math.round(tot)}</span> kcal</button>` : '') + `<button class="btn" data-a="ai-reset">${esc(t('again'))}</button>` };
+        return { title: t('aiResult'), html: h, foot: (s.res.items.length ? `<button class="btn primary wide" data-a="ai-add"><span class="one">${esc(t('add'))} · <span id="ai-tot">${Math.round(tot)}</span> kcal</span></button>` : '') + `<button class="btn" data-a="ai-reset">${esc(t('again'))}</button>` };
       }
       if (s.loading) return { title: t('analyzing'), html: `${shots(false)}<p class="empty spin">${esc(t('analyzingSub'))}</p>` };
       if (s.err && !(bad && s.err.code === 'auth')) h += `<div class="note warn"><b>${esc(t('err_' + s.err.code))}</b>${s.err.msg ? `<span>${esc(s.err.msg)}</span>` : ''}</div>`;
+      const picked = s.hint.split(',').map(x => x.trim());
+      const chips = `<div class="chips ai-chips">${AI_CHIPS.map(k => `<button class="chip${picked.indexOf(t(k)) >= 0 ? ' on' : ''}" data-a="ai-chip" data-v="${esc(t(k))}" aria-pressed="${picked.indexOf(t(k)) >= 0}">${esc(t(k))}</button>`).join('')}</div>`;
       if (s.mode === 'photo') {
-        h += s.imgs.length ? `${shots(true)}${s.imgs.length < 2 ? `<label class="btn">${IC.plus}${esc(t('aiSecond'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label><p class="cap">${esc(t('aiSecondCap'))}</p>` : ''}<label class="fld"><span>${esc(t('aiHint'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiHintPh'))}" autocomplete="off"></label>`
-          : `<p class="lead">${esc(t('aiPhotoLead'))}</p><div class="row2"><label class="btn primary big">${IC.cam}${esc(t('takePhoto'))}<input class="sr" type="file" accept="image/*" capture="environment" data-in="ai-file"></label><label class="btn big">${esc(t('fromGallery'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label></div><p class="cap">${esc(t('aiTips'))}</p>`;
+        const warn = s.imgs.some(x => x.warn === 'dark') ? 'aiDark' : s.imgs.some(x => x.warn === 'small') ? 'aiSmall' : '';
+        h += s.imgs.length ? `${shots(true)}${warn ? `<div class="note warn"><b>${esc(t(warn))}</b></div>` : ''}${s.imgs.length < 2 ? `<label class="btn">${IC.plus}${esc(t('aiSecond'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label><p class="cap">${esc(t('aiSecondCap'))}</p>` : ''}<label class="fld"><span>${esc(t('aiHint'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiHintPh'))}" autocomplete="off"></label>${chips}`
+          : `<p class="lead">${esc(t('aiPhotoLead'))}</p><div class="row2"><label class="btn primary big">${IC.cam}${esc(t('takePhoto'))}<input class="sr" type="file" accept="image/*" capture="environment" data-in="ai-file"></label><label class="btn big">${esc(t('fromGallery'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label></div><p class="cap">${esc(t('aiTips'))}</p><p class="cap">${esc(t('aiLabelTip'))}</p>`;
       } else h += `<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="4" data-in="ai-text" placeholder="${esc(t('describePh'))}">${esc(s.text)}</textarea></label>`;
       const ready = s.mode === 'photo' ? s.imgs.length > 0 : true;
       return { title: s.mode === 'photo' ? t('scanPhoto') : t('describe'), html: h, foot: ready ? `<button class="btn primary" data-a="ai-go" ${key ? '' : 'disabled'}>${esc(t('analyze'))}</button>${s.imgs.length ? `<button class="btn" data-a="ai-reset">${esc(t('otherPhoto'))}</button>` : ''}` : '' };
@@ -609,6 +617,7 @@
     const toks = norm(it.en || '').split(/[\s,]+/).filter(Boolean); if (toks.length < 1 || !(it.k100 > 0)) return;
     let hits = []; for (let k = toks.length; k >= Math.min(2, toks.length) && !hits.length; k--) hits = foodSearch(toks.slice(0, k).join(' '), true).slice(0, 4);
     let best = null;
+    if (it.label) return;                                                             // read from the product's own label: nothing to check it against
     hits.forEach(x => { const r = FOODS.list[x.i], df = Math.abs(r[1] - it.k100) / Math.max(r[1], it.k100, 1); if (df <= 0.15 && (!best || df < best.df)) best = { r, df }; });
     if (best) { it.k100 = best.r[1]; it.p100 = best.r[2]; it.c100 = best.r[3]; it.f100 = best.r[4]; it.db = best.r[0]; FoodAI.total(it); }
   }
@@ -635,7 +644,8 @@
     s.loading = true; s.err = null; refreshSheet();
     try {
       const memo = aiMemo();
-      const r = await FoodAI.analyze(st.apiKey, st.model, { images: s.mode === 'photo' ? s.imgs.map(x => x.b64) : [], text: s.text, lang: L(), hint: s.mode === 'photo' ? s.hint : '', notes: memo });
+      const qa = (s.qa || []).join('. '), photo = s.mode === 'photo';                 // answers given to the model's own questions go back in as extra information
+      const r = await FoodAI.analyze(st.apiKey, photo && st.photoModel ? st.photoModel : st.model, { images: photo ? s.imgs.map(x => x.b64) : [], text: s.text, lang: L(), hint: [photo ? s.hint : '', qa].filter(Boolean).join('. '), notes: memo });
       r.items.forEach(i => { dbCheck(i); i._b = { name: i.name, grams: i.grams, k100: i.k100 }; });       // _b: what the estimate was before the user touched it
       s.res = r; s.used = memo ? Math.min(25, D().aiNotes.length) : 0; s.gone = []; keyResult('ok');
     } catch (e) { s.err = { code: e.code || 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; if (e.code === 'auth') keyResult('bad'); }
@@ -670,7 +680,7 @@
   const MODELS = Store.MODELS.map(m => [m, MODEL_NAMES[m] || m]);
   function aiCard(s) {
     const nn = D().aiNotes.length;
-    const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><p class="cap">${esc(t('modelCap'))}</p>
+    const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><label class="fld"><span>${esc(t('photoModel'))}</span><select data-in="set-photo-model"><option value="">${esc(t('sameModel'))}</option>${MODELS.map(([v, n]) => `<option value="${v}" ${s.photoModel === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><p class="cap">${esc(t('modelCap'))}</p>
       <p class="cap" id="ai-learn">${esc(nn ? t('aiLearnN', nn) : t('aiLearn0'))}</p>${nn ? `<button class="link mut" data-a="ai-forget">${esc(t('aiForget'))}</button>` : ''}`;
     if (s.apiKey && s.keyState !== 'bad')                                    // a key is saved and nothing says it is wrong: no key field at all
       return `<p class="ai-on${s.keyState === 'ok' ? '' : ' wait'}">${IC.check}<span><b>${esc(t(s.keyState === 'ok' ? 'aiOn' : 'aiSaved'))}</b><i>${esc(t(s.keyState === 'ok' ? 'aiOnSub' : 'aiSavedSub'))}</i></span></p>${model}<button class="link mut" data-a="key-remove">${esc(t('keyRemove'))}</button>`;
@@ -681,9 +691,19 @@
   function shSettings() {
     const fn = shSettingsBody(); fn.kind = 'settings'; return fn;
   }
+  /* accent colour from a place on the colour scale: same lightness for every hue (OKLCH), as vivid as the screen can show */
+  function hueRGB(h) {
+    const conv = C => { const a = C * Math.cos(h * Math.PI / 180), b = C * Math.sin(h * Math.PI / 180), l = Math.pow(0.82 + 0.3963377774 * a + 0.2158037573 * b, 3), m = Math.pow(0.82 - 0.1055613458 * a - 0.0638541728 * b, 3), s = Math.pow(0.82 - 0.0894841775 * a - 1.2914855480 * b, 3);
+      return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s]; };
+    let C = 0.2, lin = conv(C); while (C > 0.02 && lin.some(v => v < -0.0005 || v > 1.0005)) { C -= 0.01; lin = conv(C); }
+    return lin.map(v => { v = Math.min(1, Math.max(0, v)); return Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); });
+  }
+  const DEF_HUE = 121;                                                                 // where the app's own yellow-green sits on the scale
   function applyLook() {
     const s = D().settings, e = document.documentElement;
-    e.dataset.accent = s.accent; e.dataset.bg = s.bg;
+    if (s.hue == null) ['--acc', '--acc-rgb', '--acc-ink'].forEach(k => e.style.removeProperty(k));
+    else { const c = hueRGB(s.hue); e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', '#0c0e12'); }
+    e.dataset.bg = s.bg;
     if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
   }
@@ -697,7 +717,8 @@
       const account = !cs ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="ai-on${cs.err ? ' wait' : ''}">${IC.check}<span><b>${esc(CL.user.email)}</b><i id="sync-st">${esc(cs.err ? t('syncErr') + ' ' + t('ac_' + (I18N.en['ac_' + cs.err] ? cs.err : 'api')) : when ? t('syncedAt', when) : t('syncNever'))}</i></span></p>
           ${sw('syncKey', t('setSyncKey'))}<div class="row2"><button class="btn" data-a="sync-now">${esc(t('syncNow'))}</button><button class="btn" data-a="sign-out">${esc(t('signOut'))}</button></div><p class="cap">${esc(t('accountCap'))}</p></section>`;
       return { title: t('settings'), html: `${account}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
-          <p class="lbl">${esc(t('accent'))}</p><div class="swatches">${(Store.ACCENTS || ['volt']).map(a => `<button class="swatch sw-${a}${s.accent === a ? ' on' : ''}" data-a="set-accent" data-v="${a}" aria-label="${esc(t('accent'))} ${a}" aria-pressed="${s.accent === a}">${s.accent === a ? IC.check : ''}</button>`).join('')}</div>
+          <p class="lbl">${esc(t('accent'))}</p><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 359].map(h => 'rgb(' + hueRGB(h).join(',') + ')').join(',')})"></div>
+          ${s.hue == null ? '' : `<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button>`}
           <p class="lbl">${esc(t('background'))}</p>${seg('set-bg', s.bg, (Store.BGS || ['aurora']).map(b => [b, t('bg_' + b)]))}
           ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
@@ -803,7 +824,9 @@
     out.push('Routines in the app: ' + d.routines.map(r => rName(r)).join(', ') + '.');
     const bw = d.body.slice(-3).map(b => b.kg + ' kg (' + b.d + ')'); if (bw.length) out.push('Body weight log: ' + bw.join(', ') + '.');
     if (d.favEx.length) out.push('Favourite exercises: ' + d.favEx.slice(0, 15).map(en).join(', ') + '.');
-    return out.join('\n').slice(0, 7000);
+    const old = d.chats.filter(c => c.id !== ui.coach.id).sort((a, b) => b.t - a.t).slice(0, 5);          // memory: what was discussed before
+    if (old.length) out.push('Earlier conversations with this user, newest first (for continuity; do not repeat them unless asked): ' + old.map(c => { const q = (c.msgs.find(m => m.role === 'user') || {}).content || '', a = (c.msgs.filter(m => m.role === 'assistant').pop() || {}).content || ''; return '[' + ymd(c.t) + '] the user asked "' + q.replace(/\s+/g, ' ').slice(0, 160) + '" and you answered "' + a.replace(/\s+/g, ' ').slice(0, 220) + '"'; }).join(' | ') + '.');
+    return out.join('\n').slice(0, 8000);
   }
   const coachSystem = () => 'You are the coach inside "Rep Riot", an app for logging gym workouts and food. Reply in ' + (L() === 'hu' ? 'Hungarian' : 'English') + '. Be concrete and brief: normally under 140 words, plain text; short lists with "- " are fine. Use the data below when it helps and mention the numbers you relied on. ' +
     'For food questions suggest everyday foods with rough amounts and their approximate protein and calories, and say that these are estimates. For training questions name specific exercises with sets and reps and give the reason in one line. ' +
@@ -818,10 +841,27 @@
   function shCoach() {
     const fn = () => {
       const st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad, c = ui.coach;
-      return { title: t('coachTitle'), html: (key ? '' : `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'coachNeedKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`) + `<div id="chat" class="chat" aria-live="polite">${coachList()}</div>`,
-        foot: `<form class="chatbar" data-f="coach"><label class="sr" for="coach-in">${esc(t('coachPh'))}</label><input id="coach-in" type="text" name="q" data-in="coach-q" value="${esc(c.draft)}" placeholder="${esc(t('coachPh'))}" autocomplete="off" enterkeyhint="send" maxlength="600" ${key ? '' : 'disabled'}><button class="btn primary" id="coach-send" ${key && !c.busy ? '' : 'disabled'} aria-label="${esc(t('send'))}">${IC.send}</button>${c.msgs.length ? `<button type="button" class="icon-btn" data-a="coach-clear" aria-label="${esc(t('coachClear'))}">${IC.close}</button>` : ''}</form>` };
+      const nh = D().chats.length;
+      return { title: t('coachTitle'), html: (key ? '' : `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'coachNeedKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`) +
+        `<div class="chat-top"><button class="pill" data-a="coach-hist">${IC.cal}${esc(t('coachHist'))}${nh ? ' (' + nh + ')' : ''}</button></div><div id="chat" class="chat" aria-live="polite">${coachList()}</div>`,
+        foot: `<form class="chatbar" data-f="coach"><label class="sr" for="coach-in">${esc(t('coachPh'))}</label><input id="coach-in" type="text" name="q" data-in="coach-q" value="${esc(c.draft)}" placeholder="${esc(t('coachPh'))}" autocomplete="off" enterkeyhint="send" maxlength="600" ${key ? '' : 'disabled'}><button class="btn primary" id="coach-send" ${key && !c.busy ? '' : 'disabled'} aria-label="${esc(t('send'))}">${IC.send}</button>${c.msgs.length ? `<button type="button" class="icon-btn" data-a="coach-clear" aria-label="${esc(t('coachNew'))}">${IC.plus}</button>` : ''}</form>` };
     };
     fn.kind = 'coach'; return fn;
+  }
+  const fmtWhen = ts => new Date(ts).toLocaleString(L() === 'hu' ? 'hu-HU' : 'en-GB', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  function shCoachHist() {
+    const fn = () => {
+      const cs = D().chats.slice().sort((a, b) => b.t - a.t);
+      return { title: t('coachHist'), html: cs.length ? `<div class="flist">${cs.map(ch => { const q = (ch.msgs.find(m => m.role === 'user') || {}).content || '';
+        return `<div class="frow chrow${ch.id === ui.coach.id ? ' cur' : ''}"><button class="ch-open" data-a="coach-open" data-id="${esc(ch.id)}"><b>${esc(q.replace(/\s+/g, ' ').slice(0, 90))}</b><i>${esc(fmtWhen(ch.t))} · ${ch.msgs.length} ${esc(t('coachMsgs'))}</i></button><button class="icon-btn sm" data-a="coach-del" data-id="${esc(ch.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`; }).join('')}</div><p class="cap">${esc(t('coachHistCap'))}</p>`
+        : `<p class="empty">${esc(t('coachHistEmpty'))}</p>` };
+    };
+    fn.kind = 'coachhist'; return fn;
+  }
+  /* every finished exchange is written into the saved conversation it belongs to */
+  function saveChat() {
+    const c = ui.coach, d = D(); if (!c.msgs.length) return; if (!c.id) c.id = uid();
+    d.chats = d.chats.filter(x => x.id !== c.id).concat([{ id: c.id, t: Date.now(), msgs: c.msgs.map(m => ({ role: m.role, content: m.content })) }]).slice(-40); Store.save();
   }
   /* update only the message list, so the keyboard stays open while talking */
   function coachDraw(full) {
@@ -833,7 +873,7 @@
     const c = ui.coach, st = D().settings; q = String(q || '').trim().slice(0, 600); if (!q || c.busy || !st.apiKey || st.keyState === 'bad') return;
     c.msgs.push({ role: 'user', content: q }); c.draft = ''; c.busy = true; c.err = null; const inp = $('#coach-in'); if (inp) inp.value = '';
     coachDraw(c.msgs.length === 1);                                                    // first message: the "clear" button appears too
-    try { const a = await FoodAI.chat(st.apiKey, st.model, coachSystem(), c.msgs); c.msgs.push({ role: 'assistant', content: a }); c.msgs = c.msgs.slice(-30); keyResult('ok'); }
+    try { const a = await FoodAI.chat(st.apiKey, st.model, coachSystem(), c.msgs); c.msgs.push({ role: 'assistant', content: a }); c.msgs = c.msgs.slice(-60); saveChat(); keyResult('ok'); }
     catch (e) { c.err = { code: ['network', 'auth', 'rate', 'model', 'api', 'parse'].indexOf(e.code) >= 0 ? e.code : 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; c.msgs.pop(); c.draft = q; if (e.code === 'auth') keyResult('bad'); }
     c.busy = false; coachDraw(!!c.err);
   }
@@ -861,7 +901,7 @@
   async function signedIn() {
     const u = CL && CL.user; if (!u) return;
     let d = D();
-    if (d.owner && d.owner !== u.id) { Store.wipe(); d = D(); ui.wOpen = false; ui.foodDate = today(); ui.coach = { msgs: [], busy: false, err: null, draft: '' }; }      // another person's data is never mixed in
+    if (d.owner && d.owner !== u.id) { Store.wipe(); d = D(); ui.wOpen = false; ui.foodDate = today(); ui.coach = newCoach(); }      // another person's data is never mixed in
     if (d.owner !== u.id) Store.stamp(u.id, d.workouts.length > 0 || Object.keys(d.food).length > 0 || d.body.length > 0 || !!d.settings.targets);
     applyLook(); renderGate(); render(); await doSync(true);
   }
@@ -921,7 +961,6 @@
     'install-help'() { ui.keyDraft = ''; openSheet(shSettings()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; render(); refreshSheet(); },
-    'set-accent'(el) { if ((Store.ACCENTS || []).indexOf(el.dataset.v) < 0) return; D().settings.accent = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
     'set-bg'(el) { if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
     'export-csv'() { exportCSV(); },
     async wipe() {
@@ -933,7 +972,14 @@
     /* coach */
     coach() { openSheet(shCoach()); checkSavedKey(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight; },
     'coach-ask'(el) { coachSend(el.dataset.q); },
-    'coach-clear'() { if (ui.coach.busy) return; ui.coach = { msgs: [], busy: false, err: null, draft: '' }; refreshSheet(); },
+    'coach-clear'() { if (ui.coach.busy) return; ui.coach = newCoach(); refreshSheet(); },                 // a new conversation; the old one stays in the history
+    'coach-hist'() { openSheet(shCoachHist()); },
+    'coach-open'(el) { const ch = D().chats.find(x => x.id === el.dataset.id); if (!ch || ui.coach.busy) return; ui.coach = Object.assign(newCoach(), { id: ch.id, msgs: ch.msgs.map(m => ({ role: m.role, content: m.content })) }); closeSheet(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight; },
+    'coach-del'(el) { if (!confirm(t('coachDelConfirm'))) return; const d = D(); d.chats = d.chats.filter(x => x.id !== el.dataset.id); if (ui.coach.id === el.dataset.id && !ui.coach.busy) ui.coach = newCoach(); Store.save(); refreshSheet(); },
+    'hue-reset'() { D().settings.hue = null; Store.save(); applyLook(); refreshSheet(); },
+    'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
+    'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
+    'ai-answer'(el) { const s = ui.ai, q = s.res && s.res.question; if (!q || s.loading) return; s.qa = (s.qa || []).concat([q.text + ' ' + String(el.dataset.o || '').slice(0, 40)]); s.res = null; refreshSheet(); aiGo(); },
     'fig-view'(el) { D().settings.figure = el.dataset.v === 'photo' ? 'photo' : 'draw'; Store.save(); refreshSheet(); },
     /* account */
     'gate-mode'(el) { const f = $('#gate input[name=email]'), v = el.dataset.v; if (f) ui.gate.email = f.value.trim(); if (ui.gate.busy || ['in', 'up', 'forgot'].indexOf(v) < 0) return; ui.gate.mode = v; ui.gate.err = ''; ui.gate.info = ''; renderGate(); },
@@ -1093,6 +1139,7 @@
   });
 
   /* ---------- typing ---------- */
+  let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
     'lib-q'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.q = el.value; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
@@ -1115,6 +1162,8 @@
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
     'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'coach', 'syncKey'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'coach') rerender(); },
     'coach-q'(el) { ui.coach.draft = el.value; },
+    'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v; applyLook(); clearTimeout(hueT); hueT = setTimeout(() => { Store.save(); if (topIs('settings') && !$('#sheet [data-a="hue-reset"]')) refreshSheet(); }, 500); },   // colour follows the finger; saved when it rests
+    'set-photo-model'(el) { D().settings.photoModel = Store.MODELS.indexOf(el.value) >= 0 ? el.value : ''; Store.save(); },
     'lib-eq'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.eq = EQS.indexOf(el.value) >= 0 ? el.value : ''; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'act-f'(el) { if (el.dataset.k === 'steps' || el.dataset.k === 'kcal') ui.act[el.dataset.k] = el.value; },
     'act-paste'(el) { if (/\d/.test(el.value) && el.value.length > 3) { const o = parseAct(el.value); if (o.steps > 0 || o.kcal > 0) { actFill(o); el.value = ''; } } },
@@ -1131,7 +1180,7 @@
   document.addEventListener('input', e => { const el = e.target, k = el.dataset && el.dataset.in; if (k && IN[k] && el.type !== 'file') IN[k](el); });
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
-    if (k === 'ai-file' && el.files[0]) { const s0 = ui.ai; try { const r = await FoodAI.shrink(el.files[0], 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64 }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
+    if (k === 'ai-file' && el.files[0]) { const s0 = ui.ai; try { const r = await FoodAI.shrink(el.files[0], 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
     if (k === 'import' && el.files[0]) {
       try { const o = JSON.parse(await el.files[0].text()), d = o && o.data ? o.data : o; if (!d || !Array.isArray(d.workouts) || !Array.isArray(d.routines)) throw 0;
         if (confirm(t('importConfirm', d.workouts.length))) { Store.replace(d); ui.wOpen = false; ui.foodDate = today(); closeSheet(true); render(); toast(t('imported')); } } catch (er) { toast(t('importBad')); }
@@ -1181,5 +1230,5 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync }; window.__gymFood = { search: foodSearch, of: foodOf };
+  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();

@@ -63,10 +63,13 @@ window.Cloud = (function () {
     const bd = {}; (newer('body') ? [a.body, b.body] : [b.body, a.body]).forEach(l => list(l).forEach(x => { if (x && x.d) bd[x.d] = x; })); out.body = Object.keys(bd).sort().map(k => bd[k]);   // per day; on a clash the newer side wins
     out.act = newer('act') ? Object.assign({}, map(a.act), map(b.act)) : Object.assign({}, map(b.act), map(a.act));
     const seen = {}; out.routines = (newer('routines') ? list(b.routines).concat(list(a.routines)) : list(a.routines).concat(list(b.routines))).filter(r => r && r.id && !del[r.id] && !seen[r.id] && (seen[r.id] = 1));
+    const ch = {}; list(b.chats).concat(list(a.chats)).forEach(c => { if (c && c.id && (!ch[c.id] || (+c.t || 0) >= (+ch[c.id].t || 0))) ch[c.id] = c; });      // coach conversations: the later version of each
+    out.chats = Object.keys(ch).filter(id => !del[id]).map(id => ch[id]).sort((x, y) => (x.t || 0) - (y.t || 0)).slice(-40);
     if (newer('favs')) { out.favEx = list(b.favEx); out.favFoods = list(b.favFoods); }
     if (newer('notes')) out.aiNotes = list(b.aiNotes);
     const mine = map(a.settings), theirs = map(b.settings);
     if (newer('settings')) out.settings = Object.assign({}, theirs, { apiKey: mine.apiKey || '', keyState: mine.keyState || '' });
+    if (!out.settings || typeof out.settings !== 'object') out.settings = {};
     if (!out.settings.apiKey && theirs.syncKey && theirs.apiKey) { out.settings.apiKey = theirs.apiKey; out.settings.syncKey = true; }    // the key travels only when its owner switched that on
     return out;
   }

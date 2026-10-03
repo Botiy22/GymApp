@@ -9,14 +9,16 @@ window.FoodAI = (function () {
     return 'You are a careful nutrition estimator. ' + (n ? 'Estimate the meal shown in the ' + (n > 1 ? n + ' photos (the same meal from different angles: use all of them).' : 'photo.') : 'Estimate the meal described below.') +
       ' Work in this order. 1) Scale: find something of known size (a dinner plate is usually 26-28 cm, a fork about 19 cm, a tablespoon, a hand, a can, standard packaging) and judge volumes from it.' +
       ' 2) Items: list every distinct food and drink. Cooking fat, sauces, dressings, butter and sugar in drinks count even when barely visible: list them as their own items when they add more than about 30 kcal.' +
-      ' 3) Portion: estimate the weight of each item in grams as eaten (cooked weight for cooked food). Do not round to 50 or 100 out of habit; when torn between two sizes take the middle.' +
+      ' 3) Portion: estimate the weight of each item in grams as eaten (cooked weight for cooked food). Work it out, do not guess: for countable foods (eggs, slices, nuggets, dumplings, cookies) count the pieces and multiply by a typical piece weight; for everything else judge the area it covers and its height against the scale, turn that into a volume and then into grams. Write that working briefly in "basis" (for example "3 pieces x 55 g" or "a third of a 27 cm plate, about 2 cm deep"). Do not round to 50 or 100 out of habit. Also give the smallest and largest weight that would still be plausible as "gmin" and "gmax".' +
       ' 4) Values: give energy and macros PER 100 g of each item as prepared, using typical food-composition-table values.' +
-      (o.hint ? ' Extra information from the user (trust it over what you see): "' + String(o.hint).replace(/"/g, "'").slice(0, 300) + '".' : '') +
+      ' 5) Labels: if a nutrition table or the packaging of a product is readable, do not estimate that product: copy its values per 100 g (or per 100 ml) exactly as printed, use the printed product name, set "src" to "label", and take the weight from the printed net weight unless the picture shows that only part of it is eaten. Everything else has "src":"estimate".' +
+      ' 6) One question: if a single missing fact would change the total energy by more than about 15% (how it was cooked and in how much fat, sugar in a drink, lean or fatty cut, how much of the plate was eaten), put ONE short question in "question" with 2 to 4 short answers to choose from; otherwise "question" is null. Do not ask what the extra information already answers.' +
+      (o.hint ? ' Extra information from the user (trust it over what you see): "' + String(o.hint).replace(/"/g, "'").slice(0, 600) + '".' : '') +
       (o.notes ? ' ' + o.notes : '') +
       ' If there is no food, return an empty items array and say so in notes.' +
       ' Reply with ONLY a JSON object, no markdown, no code fence, exactly in this shape: ' +
-      '{"scene":"one short sentence: what gave you the scale","items":[{"name":"string","en":"string","grams":number,"kcal100":number,"protein100":number,"carbs100":number,"fat100":number}],"confidence":"low|medium|high","notes":"string"}.' +
-      ' "name" and "notes" in ' + L + '; "en" is the plain English name worded like a food-composition table entry (for example "Chicken, breast, meat only, cooked, roasted" or "Rice, white, cooked"). Numbers are plain numbers without units.';
+      '{"scene":"one short sentence: what gave you the scale","items":[{"name":"string","en":"string","src":"estimate|label","basis":"string","grams":number,"gmin":number,"gmax":number,"kcal100":number,"protein100":number,"carbs100":number,"fat100":number}],"question":null or {"text":"string","options":["string"]},"confidence":"low|medium|high","notes":"string"}.' +
+      ' "name", "basis", "notes" and the question with its answers in ' + L + '; "en" is the plain English name worded like a food-composition table entry (for example "Chicken, breast, meat only, cooked, roasted" or "Rice, white, cooked"). Numbers are plain numbers without units.';
   }
   function parse(text) {
     let t = String(text || '').trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
@@ -29,13 +31,15 @@ window.FoodAI = (function () {
       items: (Array.isArray(o.items) ? o.items : []).slice(0, 30).map(i => {
         const g = Math.round(cap(i.grams, 5000)), per = 'kcal100' in i || 'protein100' in i;          // older replies give totals for the portion instead of per 100 g
         const k = g > 0 ? 100 / g : 0;
-        const it = { name: String(i.name || '?').slice(0, 80), en: String(i.en || '').slice(0, 120), grams: g,
+        const lo = Math.round(cap(i.gmin, 5000)), hi = Math.round(cap(i.gmax, 5000)), okRange = lo > 0 && hi > lo && lo <= g && g <= hi && hi <= g * 4;
+        const it = { name: String(i.name || '?').slice(0, 80), en: String(i.en || '').slice(0, 120), grams: g, label: i.src === 'label', basis: String(i.basis || '').slice(0, 140), gmin: okRange ? lo : 0, gmax: okRange ? hi : 0,
           k100: per ? cap(i.kcal100, 902) : cap(num(i.kcal) * k, 902), p100: per ? cap(i.protein100, 100) : cap(num(i.protein) * k, 100),
           c100: per ? cap(i.carbs100, 100) : cap(num(i.carbs) * k, 100), f100: per ? cap(i.fat100, 100) : cap(num(i.fat) * k, 100) };
         return total(it);
       }),
       confidence: ['low', 'medium', 'high'].includes(o.confidence) ? o.confidence : 'low',
-      notes: String(o.notes || '').slice(0, 400), scene: String(o.scene || '').slice(0, 200)
+      notes: String(o.notes || '').slice(0, 400), scene: String(o.scene || '').slice(0, 200),
+      question: (q => { const opts = q && Array.isArray(q.options) ? q.options.map(x => String(x || '').trim().slice(0, 40)).filter(Boolean).slice(0, 4) : []; const tx = q ? String(q.text || '').trim().slice(0, 160) : ''; return tx && opts.length >= 2 ? { text: tx, options: opts } : null; })(o.question && typeof o.question === 'object' ? o.question : null)
     };
   }
   /* portion totals from grams and per-100 g values */
@@ -62,7 +66,7 @@ window.FoodAI = (function () {
     return ((body && body.content) || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
   }
   async function call(apiKey, model, content) {
-    const txt = await post(apiKey, { model, max_tokens: 1500, messages: [{ role: 'user', content }] });
+    const txt = await post(apiKey, { model, max_tokens: 2000, messages: [{ role: 'user', content }] });
     try { return parse(txt); } catch (e) { const er = new Error('bad-json'); er.code = 'parse'; throw er; }
   }
   /* Downscale on the phone before sending: smaller upload, lower cost, and well inside the API's image limits. */
@@ -76,7 +80,9 @@ window.FoodAI = (function () {
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
         (window.URL || window.webkitURL).revokeObjectURL(url);
         const d = c.toDataURL('image/jpeg', 0.86);
-        ok({ dataUrl: d, base64: d.split(',')[1] });
+        let luma = 128;                                                               // how bright the picture is on average (0-255): a dark photo is the most common reason for a poor estimate
+        try { const s2 = document.createElement('canvas'); s2.width = s2.height = 24; const x2 = s2.getContext('2d'); x2.drawImage(c, 0, 0, 24, 24); const px = x2.getImageData(0, 0, 24, 24).data; let sum = 0; for (let i = 0; i < px.length; i += 4) sum += 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]; luma = sum / (px.length / 4); } catch (e) {}
+        ok({ dataUrl: d, base64: d.split(',')[1], luma, side: Math.max(img.naturalWidth, img.naturalHeight) });
       };
       img.onerror = () => fail(new Error('image'));
       img.src = url;

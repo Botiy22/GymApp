@@ -31,8 +31,10 @@ you can reach it from any device after signing in.
 - **Steps and calories burned**: per day, typed in or pasted (see "Fitness data" below); the burned
   calories can be added to the day's calorie budget.
 - **AI coach**: a chat bubble; ask about food or training and it answers from your targets, today's
-  meals and your recent workouts (needs the API key; estimates, not medical advice).
-- **Settings**: language, accent colour, background, fewer animations, reduce transparency, rest timer
+  meals and your recent workouts (needs the API key; estimates, not medical advice). Conversations are
+  saved: **History** lists them (newest 40), any of them can be reopened, continued or deleted, and the
+  coach is given the gist of the last five so it can pick up where you left off.
+- **Settings**: language, accent colour (a colour scale: any hue, same brightness), background, fewer animations, reduce transparency, rest timer
   options, weekly goal, first day of week, backup/restore, CSV export, delete all data, update button.
 - Hungarian and English, switchable in Settings.
 
@@ -98,7 +100,18 @@ the key into any file in this folder: the folder is published publicly.
 Photos are shrunk to 1568 px on the phone (the largest size the model looks at) and sent straight to
 the Claude API; usage is billed to your account. What is done for accuracy:
 
-- up to two photos of the same meal (from above and from the side);
+- up to two photos of the same meal (from above and from the side); a dark or very small photo is
+  pointed out before it is sent;
+- quick detail chips (fried in oil, baked, large portion, restaurant, "I ate half"…) that go to the
+  model as facts to trust over what it sees;
+- the model has to show its working for every weight (pieces × piece weight, or area × height against
+  the scale reference) and give a plausible range; the range becomes two buttons, "less" and "more";
+- **labels**: when a nutrition table or packaging is readable, the values are copied from it instead
+  of estimated (marked on the result) and are not replaced from the database;
+- the model may ask **one question** when a single missing fact would change the total by more than
+  about 15%; tapping an answer runs one more request with that fact (at most twice per scan);
+- a separate **model for photos** can be set, so photos can use a stronger model while text estimates
+  and the coach stay on the cheaper one;
 - the instruction makes the model find a size reference first, list hidden fat and sauces, and give
   values **per 100 g**; the app multiplies by the grams itself;
 - when the food database has an entry under the name the model gave and its energy agrees within 15%,
@@ -158,7 +171,8 @@ maker's app.
 Glass style: a colourful "wallpaper" of soft colour fields behind everything, translucent cards with a
 light edge, and frosted blur on the things that float over moving content (tab bar, panels, workout
 header, rest timer). It is all in the "glass" block of `css/app.css`; the wallpaper is the `--ambient`
-line. In Settings → Megjelenés you can change the accent colour and the background, and switch
+line. In Settings → Megjelenés you can pick the accent colour on a colour scale (the colour is computed in
+OKLCH so every hue has the same lightness and dark text stays readable on it) and the background, and switch
 transparency or animations down. With "Reduce Transparency" switched on in iOS the surfaces turn solid
 by themselves where the browser reports that setting.
 

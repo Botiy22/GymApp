@@ -5,6 +5,7 @@ window.Store = (function () {
   const KEY = 'gymapp.v1', AKEY = KEY + '.active';   // AKEY: the running workout, saved on every tap without rewriting the whole history
   const MODELS = ['claude-haiku-4-5-20251001', 'claude-sonnet-5-5', 'claude-opus-5-5'];
   const ACCENTS = ['volt', 'sky', 'orange', 'pink', 'mint'], BGS = ['aurora', 'deep', 'plain'];
+  const OLD_HUE = { sky: 231, orange: 67, pink: 3, mint: 170 };                       // the four colours older versions offered, as places on the scale
   const ICONS = ['upper', 'legs', 'push', 'pull', 'core', 'arms', 'full', 'cardio', 'star'];
   const EXID = /^[A-Za-z0-9_\-]{1,90}$/, DAY = /^\d{4}-\d{2}-\d{2}$/, NUMSTR = /^[0-9.,]{0,8}$/;
   let data = null, mem = false, failed = false, onFail = null, onSave = null, snap = null;
@@ -21,9 +22,9 @@ window.Store = (function () {
     return {
       v: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, apiKey: '', keyState: '', model: MODELS[0],
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
-      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {},
+      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, chats: [],
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
     };
   }
@@ -46,6 +47,8 @@ window.Store = (function () {
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
       accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
+      hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's own yellow-green
+      photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
       keyState: s.keyState === 'ok' || s.keyState === 'bad' ? s.keyState : '',   // '' = saved but not checked yet
       model: MODELS.indexOf(s.model) >= 0 ? s.model : MODELS[0],
@@ -105,6 +108,10 @@ window.Store = (function () {
     out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
     Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
+    /* coach conversations: newest 40, and never more than about 400 000 characters in all */
+    let room = 400000;
+    out.chats = arr(r.chats).map(c => { c = obj(c); const id = idStr(c.id), msgs = arr(c.msgs).slice(-60).map(m => { m = obj(m); const tx = str(m.content, 6000); return tx ? { role: m.role === 'assistant' ? 'assistant' : 'user', content: tx } : null; }).filter(Boolean); return id && msgs.length ? { id, t: num(c.t, 0, 4e12, 0), msgs } : null; })
+      .filter(Boolean).sort((x, y) => y.t - x.t).slice(0, 40).filter(c => { room -= c.msgs.reduce((n, m) => n + m.content.length, 0); return room >= 0; }).reverse();
     out.mt = {}; SECTS.forEach(k => { const v = num(obj(r.mt)[k], 0, 4e12, 0); if (v) out.mt[k] = v; });
     out.del = {}; Object.keys(obj(r.del)).filter(k => idStr(k)).map(k => [k, num(r.del[k], 0, 4e12, 0)]).filter(x => x[1] > 0).sort((x, y) => y[1] - x[1]).slice(0, 800).forEach(x => { out.del[x[0]] = x[1]; });
     out.owner = /^[0-9a-fA-F-]{8,64}$/.test(str(r.owner, 64)) ? r.owner : ''; out.epoch = num(r.epoch, 0, 4e12, 0);
@@ -118,7 +125,7 @@ window.Store = (function () {
   const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act };
   function shot(d) {
     const o = { ids: {} }; SECTS.forEach(k => { o[k] = JSON.stringify(PART[k](d)); });
-    d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
+    d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
     return o;
   }
   function track() {
