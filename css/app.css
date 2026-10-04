@@ -693,5 +693,63 @@ details.more .cap{margin-top:4px}
 :root[data-bg="light"][data-solid]{--panel:#fff;--bar:#fff;--glass:#fff;--glass-2:#eceef3}
 :root[data-bg="light"][data-solid] body::after{background:#15171c}
 @media (prefers-reduced-transparency:reduce){:root[data-bg="light"]{--panel:#fff;--bar:#fff;--glass:#fff;--glass-2:#eceef3}:root[data-bg="light"] body::after{background:#15171c}}
+/* ---------- v1.9: plan with tick boxes, own exercises and foods ---------- */
+.plan{display:flex;flex-direction:column;gap:8px}
+.pmeal{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:var(--glass,var(--card));border:1px solid var(--edge,var(--line));border-radius:16px;padding:12px 14px 12px 12px}
+.pm-box{flex:none;width:30px;height:30px;border-radius:10px;border:2px solid var(--mut);display:grid;place-items:center;margin-top:1px;color:transparent}
+.pm-box svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.pmeal.on .pm-box{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.pmeal.on{border-color:rgba(var(--acc-rgb),.5)}
+.pm-t{flex:1;min-width:0;display:block}
+.pm-t b{display:flex;justify-content:space-between;gap:10px;font-weight:700}
+.pm-t b small{font-weight:650;color:var(--acc-tx);white-space:nowrap;font-size:.9rem}
+.pm-t i{display:block;font-style:normal;color:var(--mut);font-size:.82rem;line-height:1.35}
+.pm-t .pm-m{margin-top:4px}
+.pm-items{display:block;margin:6px 0 2px}
+.pm-items>span{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:2px 0}
+.pm-items>span>span{min-width:0;overflow-wrap:anywhere}
+.pm-items em{font-style:normal;color:var(--mut);white-space:nowrap}
+.plan-n{color:var(--mut);font-size:.84rem;white-space:nowrap}
+.plan-n.ok{color:var(--acc-tx);font-weight:650}
+.plan+.link{margin-top:6px}
+.plancap{margin-top:10px}
+.pnotes{margin:0 0 6px;padding-left:20px}.pnotes li{margin:0 0 8px;line-height:1.4}
+.hero .btn+.btn{margin-top:8px}
+.btn.tickbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.sheet-body>.btn.tickbtn{margin-top:12px}
+.hero.done{border-color:rgba(var(--acc-rgb),.55)}
+.hero.done strong{display:flex;align-items:center;gap:10px;font-size:1.5rem}
+.hero.done strong svg{flex:none;width:26px;height:26px;fill:none;stroke:var(--acc-tx);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.hero.done .link{margin-top:8px}
+.exrow i.nt,.wnote{color:var(--acc-tx)}
+.exrow i.nt{white-space:normal}
+.rinfo{margin:-4px 0 10px}
+.re-f{grid-template-columns:repeat(4,1fr)}
+.ownrow{display:flex;justify-content:flex-end;margin:10px 0 0}
+.anim.ownpic{aspect-ratio:auto}.anim.ownpic img{position:static;width:100%;height:auto;max-height:60vh;object-fit:contain;opacity:1;animation:none}
+.vidbtn{display:flex;margin:10px 0 0;text-decoration:none}
+.mx-pic{display:flex;align-items:center;gap:14px;margin-bottom:10px}.mx-pic img{width:120px;height:80px;object-fit:cover;border-radius:12px}
+textarea{min-height:96px;resize:vertical;line-height:1.4}
+.frow.myf{padding:0 6px 0 0}
+.myf-main{flex:1;min-width:0;text-align:left;padding:10px 4px 10px 14px}
+.myf-main b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.myf-main i{display:block;font-style:normal;color:var(--mut);font-size:.8rem}
+/* ---------- v1.8: warm-up and stretching ---------- */
+.qrow.prep{margin:0 0 12px}
+.w-body>.btn+.qrow.prep{margin:10px 0 0}
+.sheet-body>.qrow.prep{margin:10px 0 0}
+.sheet-body>.kpis+.qrow.prep{margin-top:12px}
+.exlist.prep-gap{margin-top:12px}
+.qrow.prep.done .q-ic{background:var(--acc);color:var(--acc-ink)}
+.q-ic.line svg{fill:none}
+.preprow{padding:0;gap:0;min-height:68px}
+.preprow .pp-t{flex:1;min-width:0;padding:10px 6px 10px 12px}
+.preprow .pp-t b{display:block;font-weight:650;line-height:1.25;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.preprow .pp-t i{display:block;font-style:normal;color:var(--mut);font-size:.84rem}
+.pp-n{width:64px;flex:none;display:grid;place-items:center;font-style:normal;color:var(--acc-tx)}
+.pp-n b{font-size:1.25rem;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pp-n svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.preprow.cur{border-color:rgba(var(--acc-rgb),.6);background:rgba(var(--acc-rgb),.1)}
+.preprow.ok{opacity:.6}
 /* "Fewer animations" switched on in the settings of the app: everything happens at once (the exercise photo keeps alternating) */
 :root[data-calm] *:not(.f2){animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}

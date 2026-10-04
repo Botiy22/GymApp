@@ -18,6 +18,27 @@ you can reach it from any device after signing in.
   Routines show as tiles, two next to each other, each with an icon chosen from its muscles (or by hand
   in the editor). The date and the days of the week strip open a **calendar**: tap any past day to see
   its workouts, meals and steps.
+- **A plan you only tick off**: a plan file (Settings → Data → Restore) brings a coach's plan into the
+  app without touching the log: its workout days take the place of the built-in routines (sets, rep
+  ranges, RIR, rest, notes; optional days are marked and never offered as "next"), and its **meal plan**
+  shows each weekday's meals with the exact foods, grams, kcal and macros. One tap ticks a meal and
+  logs it with the plan's numbers; the day's calorie and macro target is the plan's total for that
+  weekday. The next workout has two buttons: **start** (track every set as usual) or **"done, just
+  tick it"** (counts for the week, the calendar and the muscle chart with its planned sets). The plan
+  file itself is personal and is **not** part of this repository.
+- **Your own database**: add **own exercises** (name, muscles, equipment, steps, a photo, a video
+  link) — they join the library, the search, routines and workouts — and **own foods** (per 100 g from
+  the label, with a portion). Any built-in exercise can get your own picture and video link, with a
+  way back to the original. Own pictures are shrunk to about 480 px (at most 30 of them); videos are
+  links that open in the browser, nothing is downloaded. All of it syncs with the account and is in
+  the backup.
+- **Warm-up and stretching**: every routine and every running workout offers a short **warm-up**
+  (moving exercises, 20 s each) and **stretching after the workout** (held stretches; 20, 30 or 45 s,
+  per side where there are two). The moves are picked from the muscles of that workout, out of the
+  exercise library, so each has photos and instructions. A guided timer walks through them, with a
+  cue to change sides at half time; or tick "I did it". Whether it was done is saved with the
+  workout. Can be switched off in Settings. General fitness guidance, not medical advice: go only to
+  a mild pull, never into pain.
 - **Exercises**: 876 exercises shown as tiles, two next to each other. 873 have start/end photos (the
   original 850 px pictures in the detail view, small ones in lists); 182 also have line drawings, shown
   as start and end position side by side. Every exercise has an anatomical body map (front and back)

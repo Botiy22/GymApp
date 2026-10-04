@@ -22,9 +22,10 @@ window.Store = (function () {
     return {
       v: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', apiKey: '', keyState: '', model: MODELS[0],
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, chats: [],
+      plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
     };
   }
@@ -49,6 +50,7 @@ window.Store = (function () {
       accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
       hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's own yellow-green
       photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',
+      stretch: s.stretch !== false, hold: [20, 30, 45].indexOf(+s.hold) >= 0 ? +s.hold : 30,                      // warm-up and stretching suggestions; seconds per stretch
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
       keyState: s.keyState === 'ok' || s.keyState === 'bad' ? s.keyState : '',   // '' = saved but not checked yet
       model: MODELS.indexOf(s.model) >= 0 ? s.model : MODELS[0],
@@ -61,11 +63,14 @@ window.Store = (function () {
         ? { kcal: int(tg.kcal, 1, 20000, 2000), p: int(tg.p, 0, 2000, 0), c: int(tg.c, 0, 3000, 0), f: int(tg.f, 0, 2000, 0) } : null
     };
     if (!out.settings.apiKey) out.settings.keyState = '';
-    const item = i => { i = obj(i); return EXID.test(str(i.ex, 90)) ? { ex: i.ex, label: pair(i.label), sets: int(i.sets, 1, 12, 3), reps: str(i.reps, 20) || '8–12', rest: int(i.rest, 0, 3600, 90) } : null; };
+    const extra = i => { const o = {}, rr = str(i.rir, 8).trim(), nt = str(i.note, 200).trim(); if (rr) o.rir = rr; if (nt) o.note = nt; return o; };      // optional: reps in reserve and a note
+    const item = i => { i = obj(i); return EXID.test(str(i.ex, 90)) ? Object.assign({ ex: i.ex, label: pair(i.label), sets: int(i.sets, 1, 12, 3), reps: str(i.reps, 20) || '8–12', rest: int(i.rest, 0, 3600, 90) }, extra(i)) : null; };
     out.routines = arr(r.routines).slice(0, 100).map(x => {
       x = obj(x);
       const name = typeof x.name === 'string' ? x.name.slice(0, 80) : pair(x.name);
-      return { id: idStr(x.id) || newId(), name: name || 'Routine', sub: pair(x.sub), builtin: x.builtin === true, icon: ICONS.indexOf(x.icon) >= 0 ? x.icon : '', items: arr(x.items).slice(0, 60).map(item).filter(Boolean) };
+      const o = { id: idStr(x.id) || newId(), name: name || 'Routine', sub: pair(x.sub), builtin: x.builtin === true, icon: ICONS.indexOf(x.icon) >= 0 ? x.icon : '', items: arr(x.items).slice(0, 60).map(item).filter(Boolean) };
+      const info = str(x.info, 600).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;       // optional day: left out of the "next workout" rotation
+      return o;
     });
     if (!out.routines.length) out.routines = f.routines;
     const doneSet = z => { z = obj(z); return { kg: Math.round(num(z.kg, 0, 2000, 0) * 100) / 100, reps: int(z.reps, 0, 1000, 0), w: z.w === true }; };
@@ -77,17 +82,21 @@ window.Store = (function () {
         const sets = arr(e.sets).slice(0, 40).map(doneSet).filter(z => z.reps > 0);
         return sets.length ? { ex: e.ex, label: pair(e.label), sets } : null;
       }).filter(Boolean);
-      return start && entries.length ? { id: idStr(w.id) || newId(), rid: idStr(w.rid) || null, name: str(w.name, 80) || 'Workout', start, end: num(w.end, start, 4e12, start), entries } : null;
+      const tick = w.tick === true;                                              // ticked as done, without a set-by-set log; "pl" remembers the planned sets
+      if (!start || !(entries.length || tick)) return null;
+      const o = { id: idStr(w.id) || newId(), rid: idStr(w.rid) || null, name: str(w.name, 80) || 'Workout', start, end: num(w.end, start, 4e12, start), entries, warm: w.warm === true, cool: w.cool === true };
+      if (tick && !entries.length) { o.tick = true; o.pl = arr(w.pl).slice(0, 60).map(z => { z = obj(z); return EXID.test(str(z.ex, 90)) ? { ex: z.ex, n: int(z.n, 1, 12, 3) } : null; }).filter(Boolean); }
+      return o;
     }).filter(Boolean).sort((a, b) => a.start - b.start);
     const a = r.active && typeof r.active === 'object' ? r.active : null;
     out.active = a && num(a.start, 0, 4e12, 0) ? {
       id: idStr(a.id) || newId(), rid: idStr(a.rid) || null, name: str(a.name, 80) || 'Workout', start: num(a.start, 0, 4e12, 0),
       entries: arr(a.entries).slice(0, 80).map(e => {
         e = obj(e); if (!EXID.test(str(e.ex, 90))) return null;
-        return { ex: e.ex, label: pair(e.label), target: int(e.target, 1, 12, 3), reps: str(e.reps, 20) || '8–12', rest: int(e.rest, 0, 3600, 90),
-          sets: arr(e.sets).slice(0, 40).map(z => { z = obj(z); return { kg: numStr(z.kg), reps: numStr(z.reps), done: z.done === true, w: z.w === true }; }) };
+        return Object.assign({ ex: e.ex, label: pair(e.label), target: int(e.target, 1, 12, 3), reps: str(e.reps, 20) || '8–12', rest: int(e.rest, 0, 3600, 90),
+          sets: arr(e.sets).slice(0, 40).map(z => { z = obj(z); return { kg: numStr(z.kg), reps: numStr(z.reps), done: z.done === true, w: z.w === true }; }) }, extra(e));
       }).filter(Boolean),
-      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0)
+      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true
     } : null;
     const seen = {};
     out.body = arr(r.body).map(b => {
@@ -98,7 +107,9 @@ window.Store = (function () {
     const food = z => {
       z = obj(z); const name = str(z.name, 80).trim(); if (!name) return null;
       const r1 = v => Math.round(num(v, 0, 10000, 0) * 10) / 10;
-      return { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
+      const o = { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' || z.src === 'plan' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
+      const pm = idStr(z.pm); if (pm) o.pm = pm;                                    // which meal of the plan this ticks off
+      return o;
     };
     out.food = {};
     Object.keys(obj(r.food)).slice(-3000).forEach(d => { if (DAY.test(d)) { const l = arr(r.food[d]).slice(0, 200).map(food).filter(Boolean); if (l.length) out.food[d] = l; } });
@@ -115,14 +126,50 @@ window.Store = (function () {
     out.mt = {}; SECTS.forEach(k => { const v = num(obj(r.mt)[k], 0, 4e12, 0); if (v) out.mt[k] = v; });
     out.del = {}; Object.keys(obj(r.del)).filter(k => idStr(k)).map(k => [k, num(r.del[k], 0, 4e12, 0)]).filter(x => x[1] > 0).sort((x, y) => y[1] - x[1]).slice(0, 800).forEach(x => { out.del[x[0]] = x[1]; });
     out.owner = /^[0-9a-fA-F-]{8,64}$/.test(str(r.owner, 64)) ? r.owner : ''; out.epoch = num(r.epoch, 0, 4e12, 0);
+    out.plan = cleanPlan(r.plan);
+    /* our own database: exercises and foods the user added, and their own picture or video link for any exercise */
+    let pics = 0;
+    const pic = v => typeof v === 'string' && v.length <= 90000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(v) && pics++ < 30 ? v : '';
+    const link = v => { const s = str(v, 300).trim(); return /^https:\/\/[^\s"'<>]{4,300}$/.test(s) ? s : ''; };
+    const ms = l => uniq(arr(l).filter(m => MUSCLES.indexOf(m) >= 0)).slice(0, 6);
+    out.myEx = arr(r.myEx).slice(0, 300).map(e => {
+      e = obj(e); const id = str(e.id, 40), n = str(e.n, 80).trim(); if (!/^my_[A-Za-z0-9]{1,36}$/.test(id) || !n) return null;
+      const p = ms(e.p);
+      return { id, n, p, s: ms(e.s).filter(m => p.indexOf(m) < 0), eq: EQUIP.indexOf(e.eq) >= 0 ? e.eq : 'other', steps: arr(e.steps).slice(0, 12).map(x => str(x, 300).trim()).filter(Boolean), img: pic(e.img), vid: link(e.vid), t: num(e.t, 0, 4e12, 0) };
+    }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
+    out.exMedia = {};
+    Object.keys(obj(r.exMedia)).slice(0, 200).forEach(k => { if (!EXID.test(k)) return; const m = obj(r.exMedia[k]), o = { img: pic(m.img), vid: link(m.vid) }; if (o.img || o.vid) out.exMedia[k] = o; });
+    out.myFoods = arr(r.myFoods).slice(0, 500).map(z => {
+      z = obj(z); const id = idStr(z.id), name = str(z.name, 80).trim(), kcal = Math.round(num(z.kcal, 0, 950, 0) * 10) / 10; if (!id || !name) return null;
+      const g = v => Math.round(num(v, 0, 100, 0) * 10) / 10;
+      return { id, name, kcal, p: g(z.p), c: g(z.c), f: g(z.f), port: int(z.port, 0, 5000, 0), t: num(z.t, 0, 4e12, 0) };
+    }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
     out.recentFoods = arr(r.recentFoods).slice(0, 12).map(food).filter(Boolean).map(z => ({ name: z.name, g: z.g, kcal: z.kcal, p: z.p, c: z.c, f: z.f }));
     return out;
   }
 
+  const MUSCLES = ['abdominals', 'abductors', 'adductors', 'biceps', 'calves', 'chest', 'forearms', 'glutes', 'hamstrings', 'lats', 'lower back', 'middle back', 'neck', 'quadriceps', 'shoulders', 'traps', 'triceps'];
+  const EQUIP = ['barbell', 'dumbbell', 'machine', 'cable', 'body only', 'kettlebells', 'bands', 'e-z curl bar', 'exercise ball', 'medicine ball', 'foam roll', 'other'];
+  /* A plan: for each day of the week (Monday first) the meals with their foods and exact numbers, the day's totals, and the written rules. */
+  function cleanPlan(v) {
+    const p = obj(v), days = arr(p.days); if (days.length !== 7) return null;
+    const d1 = x => Math.round(num(x, 0, 100000, 0) * 10) / 10, lines = l => arr(l).slice(0, 60).map(s => str(s, 500).trim()).filter(Boolean), seen = {};
+    const out = { name: str(p.name, 60).trim(), targets: p.targets !== false,
+      days: days.map(d => {
+        d = obj(d); const t = obj(d.total), kc = int(t.kcal, 0, 20000, 0);
+        return { type: d.type === 'train' || d.type === 'rest' ? d.type : '', total: kc > 0 ? { kcal: kc, p: d1(t.p), c: d1(t.c), f: d1(t.f) } : null,
+          meals: arr(d.meals).slice(0, 10).map(m => {
+            m = obj(m); const id = idStr(m.id), nm = typeof m.name === 'string' ? str(m.name, 40).trim() : pair(m.name); if (!id || !nm || seen[id]) return null; seen[id] = 1;
+            return { id, name: nm, kcal: int(m.kcal, 0, 20000, 0), p: d1(m.p), c: d1(m.c), f: d1(m.f), items: arr(m.items).slice(0, 20).map(i => { i = obj(i); const n = str(i.n, 80).trim(); return n ? { n, g: d1(i.g), kcal: int(i.kcal, 0, 20000, 0) } : null; }).filter(Boolean) };
+          }).filter(Boolean) };
+      }), notes: lines(p.notes), train: lines(p.train) };
+    return out.days.some(d => d.meals.length) || out.notes.length || out.train.length ? out : null;
+  }
+
   /* What changed since the last save? Each part gets a "last changed" time and every removed workout, meal or routine leaves a marker,
      so that two devices signed in to the same account can be merged without one overwriting the other. */
-  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act'];
-  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act };
+  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'own', 'plan'];
+  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan };
   function shot(d) {
     const o = { ids: {} }; SECTS.forEach(k => { o[k] = JSON.stringify(PART[k](d)); });
     d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
@@ -186,6 +233,8 @@ window.Store = (function () {
     /* a backup never carries the API key in, and never carries it out */
     replace(o) { const k = data ? data.settings : { apiKey: '', keyState: '' }, own = data ? data.owner : '', ep = data ? data.epoch : 0, sk = data ? data.settings.syncKey : false; data = clean(o, k.apiKey); data.settings.keyState = k.apiKey ? k.keyState : ''; data.settings.syncKey = sk; data.owner = own; data.epoch = ep; data.mt = {}; data.del = {}; return save(); },   // a backup never changes whose data this is
     exportJSON() { const copy = JSON.parse(JSON.stringify(data)); copy.settings.apiKey = ''; copy.settings.keyState = ''; copy.settings.syncKey = false; copy.owner = ''; copy.mt = {}; copy.del = {}; copy.epoch = 0; return JSON.stringify({ app: 'gymapp', exported: new Date().toISOString(), data: copy }, null, 1); },
+    /* change a copy of the data (a loaded plan, for example), clean it like any other outside data, and keep it; history and account stay as they are */
+    apply(fn) { const c = JSON.parse(JSON.stringify(data)), k = data.settings, act = data.active; fn(c); const n = clean(c, k.apiKey); n.settings.keyState = k.keyState; n.settings.syncKey = k.syncKey; n.active = act; data = n; return save(); },
     resetRoutines() { data.routines = seedRoutines().concat(data.routines.filter(r => !r.builtin)); save(); },
     bytes() { try { return (localStorage.getItem(KEY) || '').length + (localStorage.getItem(AKEY) || '').length; } catch (e) { return 0; } }
   };

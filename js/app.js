@@ -20,7 +20,7 @@
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const VERSION = '1.7';
+  const VERSION = '1.9';
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -32,12 +32,24 @@
   const EX = {}; window.EXERCISES.forEach(e => { EX[e.id] = e; });
   const PLAN_BY_EX = {}; const HU_NAME = {};
   window.PLAN.items.forEach(i => { if (!PLAN_BY_EX[i.ex]) PLAN_BY_EX[i.ex] = i; if (!i.similar && i.reps !== '21') HU_NAME[i.ex] = i.hu; });
-  const img = (id, f) => 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => 'img/ex/' + encodeURIComponent(id) + '/t.jpg';                    // small picture for lists; the large ones are only loaded in the detail view
+  /* The user's own picture for an exercise (their own exercises, or a replacement for a built-in one) comes before the library's photos. */
+  const NOPIC = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160"><rect width="240" height="160" fill="#26272d"/><path d="M84 80h72M72 60v40M58 69v22M168 60v40M182 69v22" fill="none" stroke="#8b8d98" stroke-width="8" stroke-linecap="round"/></svg>');
+  const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
+  const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
+  const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
+  const thumb = id => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/t.jpg';                    // small picture for lists; the large ones are only loaded in the detail view
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
-  const exName = id => { const e = EX[id]; if (!e) return id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
-  const exSteps = id => { const hu = L() === 'hu' && EXHU[id] ? (EXHU[id][1] || []).filter(Boolean) : []; return hu.length ? { list: hu, own: true } : { list: (EX[id].i || []).filter(Boolean), own: L() !== 'hu' }; };
+  const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
+  const exSteps = id => { const hu = L() === 'hu' && EXHU[id] ? (EXHU[id][1] || []).filter(Boolean) : []; return hu.length ? { list: hu, own: true } : { list: (EX[id].i || []).filter(Boolean), own: L() !== 'hu' || !!EX[id].own }; };
+  /* Our own database: exercises the user added live in their data (and account) and are merged into the library here. */
+  const BASE_N = window.EXERCISES.length; let ownRef = null;
+  function ownSync() {
+    const my = D().myEx; if (my === ownRef) return; ownRef = my;
+    window.EXERCISES.length = BASE_N; Object.keys(EX).forEach(k => { if (EX[k].own) delete EX[k]; });
+    my.forEach(e => { if (EX[e.id]) return; const x = { id: e.id, n: e.n, p: e.p, s: e.s, eq: e.eq, c: 'strength', lv: '', m: '', f: '', i: e.steps, k: 0, own: true, img: e.img, vid: e.vid }; window.EXERCISES.push(x); EX[x.id] = x; });
+    exIdx = null;
+  }
   let exIdx = null;                                                                    // search text per exercise: both names, without accents
   const exKey = id => { if (!exIdx) { exIdx = {}; window.EXERCISES.forEach(e => { exIdx[e.id] = norm(e.n + ' ' + (HU_NAME[e.id] || '') + ' ' + ((EXHU[e.id] || [])[0] || '')); }); } return exIdx[id]; };
   const isFav = id => D().favEx.indexOf(id) >= 0;
@@ -71,7 +83,8 @@
     star: '<svg viewBox="0 0 24 24"><path d="M12 3.600l2.600 5.300 5.800.800-4.200 4.100 1 5.800-5.200-2.700-5.200 2.700 1-5.800-4.200-4.100 5.800-.800z"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><path d="M4 6.500h16v13H4zM4 10.500h16M8 4v4M16 4v4"/></svg>',
     chat: '<svg viewBox="0 0 24 24"><path d="M4 5.500h16v10.500h-8.500L7 20v-4H4z"/><path d="M8.500 9.500h7M8.500 12.500h4.500"/></svg>',
-    send: '<svg viewBox="0 0 24 24"><path d="M4 12l16-7.500-5 15.500-3.500-6z"/><path d="M11.500 14L20 4.500"/></svg>'
+    send: '<svg viewBox="0 0 24 24"><path d="M4 12l16-7.500-5 15.500-3.500-6z"/><path d="M11.500 14L20 4.500"/></svg>',
+    stretch: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.300" r="1.800"/><path d="M12 7v7.500M12 9.500L6.500 5M12 9.500L17.500 5M12 14.500L8 21M12 14.500L16 21"/></svg>'
   };
   /* routine icons: chosen from the muscles of the routine, or picked by hand in the editor */
   const RICON = {
@@ -109,16 +122,18 @@
   }
   const bestOf = sets => sets.filter(s => !s.w).reduce((m, s) => Math.max(m, e1rm(s.kg, s.reps)), 0);
   const volOf = w => w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).reduce((b, s) => b + s.kg * s.reps, 0), 0);
-  const setsOf = w => w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).length, 0);
+  const setsOf = w => w.tick ? (w.pl || []).reduce((a, x) => a + x.n, 0) : w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).length, 0);
+  const wMeta = w => (w.tick ? t('tickedTag') : fmtDur(w.end - w.start)) + ' · ' + setsOf(w) + ' ' + t('setsWord') + (w.tick ? '' : ' · ' + compact(volOf(w)) + ' kg');
   function weekWorkouts() { const ws = weekStart(Date.now()).getTime(); return D().workouts.filter(w => w.start >= ws); }
   function muscleSets(ws) {
     const m = {};
-    ws.forEach(w => w.entries.forEach(e => { const x = EX[e.ex]; if (!x) return; const n = e.sets.filter(s => !s.w).length;
-      x.p.forEach(k => { m[k] = (m[k] || 0) + n; }); x.s.forEach(k => { m[k] = (m[k] || 0) + n * 0.5; }); }));
+    const add = (id, n) => { const x = EX[id]; if (!x) return; x.p.forEach(k => { m[k] = (m[k] || 0) + n; }); x.s.forEach(k => { m[k] = (m[k] || 0) + n * 0.5; }); };
+    ws.forEach(w => { if (w.tick) (w.pl || []).forEach(z => add(z.ex, z.n)); else w.entries.forEach(e => add(e.ex, e.sets.filter(s => !s.w).length)); });      // a ticked workout counts with its planned sets
     return m;
   }
   function nextRoutine() {
-    const rs = D().routines; if (!rs.length) return null;
+    const all = D().routines; if (!all.length) return null;
+    const must = all.filter(r => !r.opt), rs = must.length ? must : all;                  // optional days are never offered as "next"
     const ws = D().workouts; for (let i = ws.length - 1; i >= 0; i--) { const k = rs.findIndex(r => r.id === ws[i].rid); if (k >= 0) return rs[(k + 1) % rs.length]; }
     return rs[0];
   }
@@ -145,7 +160,7 @@
   }
 
   function vHome() {
-    const d = D(), nx = nextRoutine(), wk = weekWorkouts();
+    const d = D(), nx = nextRoutine(), wk = weekWorkouts(), tk = d.workouts.filter(w => w.tick && ymd(w.start) === today()).pop();
     const days = [0, 1, 2, 3, 4, 5, 6].map(i => { const dt = new Date(weekStart(Date.now())); dt.setDate(dt.getDate() + i); return dt; });
     const done = new Set(wk.map(w => ymd(w.start)));
     let h = head(t('appName'), fmtDate(Date.now(), true), true);
@@ -158,13 +173,16 @@
     if (goal > 0) h += `<p class="goal${wk.length >= goal ? ' ok' : ''}"><b>${wk.length} / ${goal}</b> ${esc(t(wk.length >= goal ? 'goalDone' : 'goalText'))}</p>`;
     if (d.active) {
       h += `<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
+    } else if (tk) {
+      h += `<div class="hero done"><small>${esc(t('doneToday'))}</small><strong>${IC.check}${esc(tk.name)}</strong><span>${esc(t('tickedSub'))}</span><button class="link" data-a="w-untick" data-id="${esc(tk.id)}">${esc(t('undo'))}</button></div>`;
     } else if (nx) {
       h += `<div class="hero"><small>${esc(t('nextUp'))}</small><strong>${esc(rName(nx))}</strong><span>${nx.sub ? esc(nx.sub[L()]) + ' · ' : ''}${nx.items.length} ${esc(t('exercises'))} · ~${estMin(nx)} ${esc(t('min'))}</span>
-        <button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${esc(t('startWorkout'))}</button></div>`;
+        <button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${esc(t('startWorkout'))}</button><button class="btn big tickbtn" data-a="w-tick" data-id="${esc(nx.id)}">${IC.check}${esc(t('tickWorkout'))}</button></div>`;
     }
+    h += planCard(today(), false);
     if (!d.active) h += `<button class="qrow" data-a="w-quick"><span class="q-ic">${IC.bolt}</span><span class="rc-t"><b>${esc(t('quickWorkout'))}</b><i>${esc(t('quickSub'))}</i></span>${IC.chev}</button>`;
     h += `<div class="h2row"><h2>${esc(t('routines'))}</h2><button class="pill" data-a="r-new">${IC.plus}${esc(t('newPlan'))}</button></div><div class="rlist rgrid">` + d.routines.map(r => { const ic = rIcon(r);
-      return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}</i></span></button>`; }).join('') + `</div>`;
+      return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}${r.opt ? ' · ' + esc(t('optional')) : ''}</i></span></button>`; }).join('') + `</div>`;
     h += `<h2>${esc(t('actToday'))}</h2>` + actRow(today());
     return h;
   }
@@ -173,8 +191,8 @@
     const q = norm(st.q).split(/\s+/).filter(Boolean), g = st.grp || '';
     if (g === 'sel') return (st.sel || []).map(id => EX[id]).filter(Boolean);     // "selected": what is ticked, in the order it was ticked
     const ms = st.mus ? [st.mus] : GROUPS[g], fav = D().favEx;
-    const list = window.EXERCISES.filter(e => (g !== 'fav' || fav.indexOf(e.id) >= 0) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
-    const rank = e => (fav.indexOf(e.id) >= 0 ? 2 : 0) + (PLAN_BY_EX[e.id] ? 1 : 0);                 // favourites first, then the exercises of the built-in plan
+    const list = window.EXERCISES.filter(e => (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
+    const rank = e => (e.own ? 4 : 0) + (fav.indexOf(e.id) >= 0 ? 2 : 0) + (PLAN_BY_EX[e.id] ? 1 : 0);                 // favourites first, then the exercises of the built-in plan
     return list.sort((a, b) => rank(b) - rank(a) || exName(a.id).localeCompare(exName(b.id), L()));
   }
   function libRows(pick) {
@@ -192,13 +210,13 @@
   /* Filters without sideways scrolling: body part first (one row of big buttons), then the muscles of that part, wrapped onto as many rows as needed. */
   function libControls(pick) {
     const st = pick ? ui.pick : ui.lib, g = st.grp || '';
-    const segs = [['', t('all')], ['fav', '★'], ['upper', t('grpUpper')], ['core', t('grpCore')], ['lower', t('grpLower')]];
+    const segs = [['', t('all')], ['fav', '★'], ['upper', t('grpUpper')], ['core', t('grpCore')], ['lower', t('grpLower')]].concat(D().myEx.length ? [['own', t('grpOwn')]] : []);
     return `<div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
       <div class="seg grp">${segs.map(([v, n]) => `<button class="${g === v ? 'on' : ''}" data-a="lib-grp" data-g="${v}" ${v === 'fav' ? `aria-label="${esc(t('favs'))}"` : ''} aria-pressed="${g === v}">${esc(n)}</button>`).join('')}</div>
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
-  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
+  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
   function vProg() {
     const d = D();
@@ -210,7 +228,7 @@
       return h + all.slice(0, lim).map(w => {
         const mo = new Date(w.start).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { year: 'numeric', month: 'long' });
         const hd = mo !== last ? `<h3 class="month">${esc(mo)}</h3>` : ''; last = mo;
-        return hd + `<button class="wrow" data-a="wk-open" data-id="${esc(w.id)}"><span class="wr-d"><b>${new Date(w.start).getDate()}</b><i>${esc(new Date(w.start).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'short' }))}</i></span><span class="wr-t"><b>${esc(w.name)}</b><i>${fmtDur(w.end - w.start)} · ${setsOf(w)} ${esc(t('setsWord'))} · ${compact(volOf(w))} kg</i></span>${IC.chev}</button>`;
+        return hd + `<button class="wrow" data-a="wk-open" data-id="${esc(w.id)}"><span class="wr-d"><b>${new Date(w.start).getDate()}</b><i>${esc(new Date(w.start).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'short' }))}</i></span><span class="wr-t"><b>${esc(w.name)}</b><i>${esc(wMeta(w))}</i></span>${IC.chev}</button>`;
       }).join('') + (all.length > lim ? `<button class="btn ghost" data-a="hist-more">${esc(t('showMore'))} (${all.length - lim})</button>` : '');
     }
     const wk = weekWorkouts(), ms = muscleSets(wk);
@@ -228,8 +246,25 @@
   }
 
   function dayFood() { return D().food[ui.foodDate] || []; }
+  /* ---------- the loaded plan: meals per weekday with exact numbers, each ticked off with one tap ---------- */
+  const planDay = k => { const p = D().plan; return p ? p.days[(new Date(k + 'T12:00').getDay() + 6) % 7] || null : null; };
+  const dayTargets = k => { const p = D().plan, pd = p && p.targets ? planDay(k) : null; return pd && pd.total ? pd.total : D().settings.targets; };     // the plan's own totals for that weekday, otherwise the general target
+  const pmName = m => typeof m.name === 'string' ? m.name : (m.name[L()] || m.name.hu || m.name.en);
+  function planCard(k, full) {
+    const pd = planDay(k); if (!pd || !pd.meals.length) return '';
+    const got = {}; (D().food[k] || []).forEach(f => { if (f.pm) got[f.pm] = 1; });
+    const n = pd.meals.filter(m => got[m.id]).length, p = D().plan;
+    return `<div class="h2row"><h2>${esc(t('mealPlan'))}</h2><span class="plan-n${n === pd.meals.length ? ' ok' : ''}">${pd.type ? esc(t(pd.type === 'train' ? 'dayTrain' : 'dayRest')) + ' · ' : ''}${n} / ${pd.meals.length}</span></div><div class="plan">` + pd.meals.map(m => {
+      const on = !!got[m.id];
+      return `<button class="pmeal${on ? ' on' : ''}" data-a="pm-tick" data-m="${esc(m.id)}" data-d="${esc(k)}" role="checkbox" aria-checked="${on}"><span class="pm-box">${IC.check}</span><span class="pm-t"><b>${esc(pmName(m))}<small>${m.kcal} kcal</small></b>${full ? `<span class="pm-items">${m.items.map(i => `<span><span>${esc(i.n)}</span><em>${dec(i.g)} g</em></span>`).join('')}</span>` : `<i>${esc(m.items.map(i => i.n).join(', '))}</i>`}<i class="pm-m">${macroLine(m)}</i></span></button>`; }).join('') + `</div>` +
+      (full && (p.notes.length || p.train.length) ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
+  }
+  function shPlanNotes() {
+    return () => { const p = D().plan || { notes: [], train: [], name: '' }, sec = (ttl, l) => l.length ? `<h3>${esc(ttl)}</h3><ul class="pnotes">${l.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '';
+      return { title: p.name || t('planRules'), html: sec(t('planTrain'), p.train) + sec(t('planFood'), p.notes) || `<p class="empty">${esc(t('noResults'))}</p>` }; };
+  }
   function vFood() {
-    const d = D(), tg0 = d.settings.targets, list = dayFood();
+    const d = D(), tg0 = dayTargets(ui.foodDate), fromPlan = !!tg0 && tg0 !== d.settings.targets, list = dayFood();
     const burn = tg0 && d.settings.addActive ? actOf(ui.foodDate).kcal : 0, tg = tg0 ? Object.assign({}, tg0, { kcal: tg0.kcal + burn }) : null;   // active calories can be added to the day's budget
     const sum = list.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
     let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button><button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
@@ -237,10 +272,11 @@
     h += `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><button class="datebtn" data-a="cal" data-d="${ui.foodDate}" aria-label="${esc(t('openCal'))}"><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b>${IC.down}</button><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     if (!tg) h += `<button class="note" data-a="targets"><b>${esc(t('setTargets'))}</b><span>${esc(t('setTargetsSub'))}</span></button>`;
     h += `<section class="card cal"><p class="bignum">${Math.round(sum.kcal)}<small> ${tg ? '/ ' + tg.kcal : ''} kcal</small></p>${tg ? Charts.meter(sum.kcal, tg.kcal) + `<p class="cap">${sum.kcal <= tg.kcal ? esc(t('remaining', Math.round(tg.kcal - sum.kcal))) : esc(t('over', Math.round(sum.kcal - tg.kcal)))}${burn ? ' · ' + esc(t('budgetCap', burn)) : ''}</p>` : ''}
-      <div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + tg[k] : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
-      ${tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
+      <div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + dec(tg[k]) : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
+      ${fromPlan ? `<p class="cap plancap">${esc(t('planTgCap'))}</p>` : tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
+    h += planCard(ui.foodDate, true);
     h += `<div class="row3"><button class="btn primary" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button><button class="btn" data-a="food-manual">${IC.lib}${esc(t('foodSearchBtn'))}</button></div>`;
-    h += actRow(ui.foodDate) + `<h2>${esc(t('meals'))}</h2>` + (list.length ? `<div class="flist">` + list.map(f => `<div class="frow"><span><b>${esc(f.name)}</b><i>${f.g ? f.g + ' g · ' : ''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src === 'ai' ? ' · AI' : ''}</i></span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('') + `</div>` : `<p class="empty">${esc(t('noMeals'))}</p>`);
+    h += actRow(ui.foodDate) + `<h2>${esc(t('meals'))}</h2>` + (list.length ? `<div class="flist">` + list.map(f => `<div class="frow"><span><b>${esc(f.name)}</b><i>${f.g ? f.g + ' g · ' : ''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src === 'ai' ? ' · AI' : f.src === 'plan' ? ' · ' + esc(t('planTag')) : ''}</i></span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('') + `</div>` : `<p class="empty">${esc(t('noMeals'))}</p>`);
     return h;
   }
   /* ---------- meal ideas ---------- */
@@ -309,15 +345,17 @@
   const foodHit = (x, k, a) => { const f = foodOf(x.i, x.h); return `<button class="frow fhit" data-a="${a}" data-n="${k}"><span><b>${esc(f.name)}${f.approx ? ' ≈' : ''}${D().favFoods.indexOf(f.key) >= 0 ? ' <em class="fv" aria-hidden="true">★</em>' : ''}</b><i>${f.kcal} kcal / 100 g · ${macroLine(f)}</i></span>${IC.chev}</button>`; };
   function foodRows() {
     const st = ui.fs, q = st.q.trim(), rc = D().recentFoods;
-    const more = `<div class="fs-more"><p class="cap">${esc(t(q ? 'foodNotFound' : 'foodOwnLead'))}</p>${q ? `<button class="btn" data-a="fs-ai">${IC.bolt}${esc(t('foodAskAI'))}</button>` : ''}<button class="btn" data-a="fs-own">${IC.pen}${esc(t('foodOwn'))}</button></div>`;
+    const more = `<div class="fs-more"><p class="cap">${esc(t(q ? 'foodNotFound' : 'foodOwnLead'))}</p>${q ? `<button class="btn" data-a="fs-ai">${IC.bolt}${esc(t('foodAskAI'))}</button>` : ''}<button class="btn" data-a="fs-own">${IC.pen}${esc(t('foodOwn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodNew'))}</button></div>`;
+    const toks = norm(q).split(/[\s,]+/).filter(Boolean), mine = D().myFoods.filter(z => { const s = norm(z.name); return toks.every(tk => s.indexOf(tk) >= 0); });
+    const myBlock = mine.length ? `<p class="cap">${esc(t('myFoods'))}</p><div class="flist">${mine.map(z => `<div class="frow myf"><button class="myf-main" data-a="fs-my" data-id="${esc(z.id)}"><b>${esc(z.name)}</b><i>${dec(z.kcal)} kcal / 100 g · ${macroLine(z)}</i></button><button class="icon-btn sm" data-a="mf-edit" data-id="${esc(z.id)}" aria-label="${esc(t('edit'))}">${IC.pen}</button></div>`).join('')}</div>` : '';
     if (!q) {
       st.favs = favFoodHits();
-      return (st.favs.length ? `<p class="cap">${esc(t('favs'))}</p><div class="flist">${st.favs.map((x, k) => foodHit(x, k, 'fs-fav')).join('')}</div>` : '') +
+      return myBlock + (st.favs.length ? `<p class="cap">${esc(t('favs'))}</p><div class="flist">${st.favs.map((x, k) => foodHit(x, k, 'fs-fav')).join('')}</div>` : '') +
         (rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : '') +
         `<p class="cap">${esc(t('brands'))}</p><div class="chips">${BRANDS.map(b => `<button class="chip" data-a="fs-brand" data-q="${esc(b)}">${esc(b)}</button>`).join('')}</div><p class="lead">${esc(t('foodSearchLead', FOODS.list.length))}</p>` + more;
     }
     st.hits = foodSearch(q);
-    return (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => foodHit(x, k, 'fs-pick')).join('')}</div>` : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
+    return myBlock + (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => foodHit(x, k, 'fs-pick')).join('')}</div>` : mine.length ? '' : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
   }
   function shFoodFind() {
     const fn = () => ({ title: t('addFoodTitle'), html: `<div class="search"><input type="search" data-in="fs-q" value="${esc(ui.fs.q)}" placeholder="${esc(t('foodSearchPh'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="${esc(t('addFoodTitle'))}"></div><div id="fs-list">${foodRows()}</div>` });
@@ -331,11 +369,11 @@
     return () => {
       const f = ui.fa.food, chips = [[100, '100 g']].concat(f.ports.map(p => [p[0], p[1] + ' (' + p[0] + ' g)']));
       const fav = D().favFoods.indexOf(f.key) >= 0;
-      return { title: t('addFoodTitle'), html: `<div class="exmeta top"><p class="fa-name">${esc(f.name)}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-food" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div>${f.usda ? `<p class="en">${esc(f.usda)}</p>` : ''}<p class="cap">${esc(t('per100'))}: ${f.kcal} kcal · ${macroLine(f)}</p>
+      return { title: t('addFoodTitle'), html: `<div class="exmeta top"><p class="fa-name">${esc(f.name)}</p>${f.my ? '' : `<button class="favbtn${fav ? ' on' : ''}" data-a="fav-food" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button>`}</div>${f.usda ? `<p class="en">${esc(f.usda)}</p>` : ''}<p class="cap">${esc(t('per100'))}: ${f.kcal} kcal · ${macroLine(f)}</p>
         ${f.approx ? `<div class="note warn"><b>${esc(t('foodApprox'))}</b></div>` : ''}
         <label class="fld"><span>${esc(t('grams'))}</span><input type="text" inputmode="decimal" data-in="fa-g" value="${esc(ui.fa.g)}" autocomplete="off" enterkeyhint="done"></label>
         <div class="chips">${chips.map(([v, l]) => `<button class="chip${num(ui.fa.g) === v ? ' on' : ''}" data-a="fa-set" data-g="${v}">${esc(l)}</button>`).join('')}</div>
-        <div id="fa-out">${faOut()}</div><p class="cap">${esc(t('foodSrc'))}</p>`,
+        <div id="fa-out">${faOut()}</div><p class="cap">${esc(t(f.my ? 'myFoodSrc' : 'foodSrc'))}</p>`,
         foot: `<button class="btn primary" data-a="fa-add">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -345,6 +383,7 @@
 
   let animT = 0;
   function render() {
+    ownSync();
     document.documentElement.lang = L();
     const y = ui.keepScroll ? window.scrollY : 0; ui.keepScroll = false;
     const v = $('#view'); v.dataset.anim = ui.anim || ''; ui.anim = '';
@@ -368,6 +407,7 @@
   const dlg = () => $('#sheet');
   function drawSheet(nav) {
     const fn = ui.sheets[ui.sheets.length - 1]; if (!fn) return;
+    ownSync();
     const s = fn(), d = dlg(), old = $('.sheet-body', d), y = old && ui.sheetKeep ? old.scrollTop : 0; ui.sheetKeep = false;
     d.dataset.nav = nav || '';                                   // fwd / back: the new content slides in from that side
     d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title">${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
@@ -402,10 +442,13 @@
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
       const fg = FIG[id] && !ui.figBad[id], draw = fg && D().settings.figure !== 'photo';
-      let h = fg && e.k ? `<div class="seg figseg"><button class="${draw ? 'on' : ''}" data-a="fig-view" data-v="draw" aria-pressed="${!!draw}">${esc(t('figDraw'))}</button><button class="${draw ? '' : 'on'}" data-a="fig-view" data-v="photo" aria-pressed="${!draw}">${esc(t('figPhoto'))}</button></div>` : '';
-      h += draw ? `<button class="anim fig duo${ui.figBig ? ' big' : ''}" data-a="fig-big" data-id="${esc(id)}" aria-label="${esc(t('figBig'))}"><span><img src="img/fig/${esc(FIG[id])}-0.svg" alt="${esc(name)} 1"><em>1</em></span><span><img src="img/fig/${esc(FIG[id])}-1.svg" alt="${esc(name)} 2" decoding="async"><em>2</em></span></button><p class="cap figcap">${esc(t('figCap'))}</p>`
+      const op = ownPic(id), own = !!op && op !== NOPIC, vid = exVid(id), med = D().exMedia[id];
+      let h = own ? `<div class="anim one ownpic"><img src="${esc(op)}" alt="${esc(name)}"></div>` : fg && e.k ? `<div class="seg figseg"><button class="${draw ? 'on' : ''}" data-a="fig-view" data-v="draw" aria-pressed="${!!draw}">${esc(t('figDraw'))}</button><button class="${draw ? '' : 'on'}" data-a="fig-view" data-v="photo" aria-pressed="${!draw}">${esc(t('figPhoto'))}</button></div>` : '';
+      h += own ? '' : draw ? `<button class="anim fig duo${ui.figBig ? ' big' : ''}" data-a="fig-big" data-id="${esc(id)}" aria-label="${esc(t('figBig'))}"><span><img src="img/fig/${esc(FIG[id])}-0.svg" alt="${esc(name)} 1"><em>1</em></span><span><img src="img/fig/${esc(FIG[id])}-1.svg" alt="${esc(name)} 2" decoding="async"><em>2</em></span></button><p class="cap figcap">${esc(t('figCap'))}</p>`
         : !e.k ? '' : `<div class="anim${e.k < 2 ? ' one' : ''}" data-a="anim"><img src="${img(id, 0)}" alt="${esc(name)}">${e.k > 1 ? `<img class="f2" src="${img(id, 1)}" alt="" decoding="async">` : ''}<span class="anim-tag">${esc(t('tapPause'))}</span></div>`;
-      if (pl && pl.similar && !draw) h += `<p class="cap">${esc(t('similarPhoto'))}</p>`;
+      if (pl && pl.similar && !draw && !own) h += `<p class="cap">${esc(t('similarPhoto'))}</p>`;
+      if (vid) h += `<a class="btn vidbtn" href="${esc(vid)}" target="_blank" rel="noopener noreferrer">${IC.play}${esc(t('vidOpen'))}</a>`;
+      if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
       h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${e.p.map(m => `<span class="chip on">${esc(mus(m))}</span>`).join('')}${e.s.map(m => `<span class="chip">${esc(mus(m))}</span>`).join('')}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
       if (pl && pl.tip) h += `<div class="tip"><b>${esc(t('coachNote'))}</b>${esc(pl.tip[L()])}</div>`;
@@ -413,6 +456,8 @@
       h += `<section class="card"><h3>${esc(t('myStats'))}</h3>` + (hst.length ? `<div class="kpis"><div><b>${best ? r1(best) : '–'}</b><i>${esc(t('est1rm'))}</i></div><div><b>${top ? (top.kg ? top.kg + '×' + top.reps : top.reps) : '–'}</b><i>${esc(t('bestSet'))}</i></div><div><b>${hst.length}</b><i>${esc(t('sessions'))}</i></div></div>${pts.length > 1 ? Charts.line(pts.slice(-20), { unit: ' kg' }) + `<p class="cap">${esc(t('e1rmChart'))}</p>` : ''}
         <div class="lastlist">${hst.slice(-3).reverse().map(x => `<p><i>${esc(fmtDate(x.d))}</i>${x.sets.map(s => `<span>${s.w ? 'W ' : ''}${s.kg ? s.kg + '×' : ''}${s.reps}</span>`).join('')}</p>`).join('')}</div>` : `<p class="empty">${esc(t('noHistoryEx'))}</p>`) + `</section>`;
       if (st.list.length) h += `<section class="card"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
+      h += e.own ? `<section class="card"><h3>${esc(t('myExOwn'))}</h3><button class="btn" data-a="mx-edit" data-id="${esc(id)}">${IC.pen}${esc(t('edit'))}</button></section>`
+        : `<section class="card"><h3>${esc(t('ownMedia'))}</h3><p class="cap">${esc(t('ownMediaCap'))}</p><div class="row2"><label class="btn">${IC.cam}${esc(t(med && med.img ? 'picChange' : 'picAdd'))}<input class="sr" type="file" accept="image/*" data-in="exm-file" data-id="${esc(id)}"></label><button class="btn" data-a="exm-vid" data-id="${esc(id)}">${IC.play}${esc(t('vidLink'))}</button></div>${med ? `<button class="link" data-a="exm-clear" data-id="${esc(id)}">${esc(t('ownMediaClear'))}</button>` : ''}</section>`;
       const foot = (D().active ? `<button class="btn primary" data-a="ex-to-workout" data-id="${esc(id)}">${esc(t('addToWorkout'))}</button>` : '') + `<button class="btn" data-a="ex-to-routine" data-id="${esc(id)}">${esc(t('addToRoutine'))}</button>`;
       return { title: name, html: h, foot };
     };
@@ -426,8 +471,9 @@
   function shRoutine(id) {
     return () => {
       const r = getR(id); if (!r) return { title: '', html: '' };
-      const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + `<p class="cap">${r.items.length} ${esc(t('exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(t('setsWord'))} · ~${estMin(r)} ${esc(t('min'))}</p><div class="exlist">` +
-        r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(it.reps)} · ${esc(t('rest'))} ${clock(it.rest)}</i></span>${IC.chev}</button>`).join('') + `</div>`;
+      const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + (r.info ? `<p class="cap rinfo">${esc(r.info)}</p>` : '') + `<p class="cap">${r.items.length} ${esc(t('exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(t('setsWord'))} · ~${estMin(r)} ${esc(t('min'))}</p>${prepRow('warm', { entries: r.items }, ` data-r="${esc(r.id)}"`)}${prepRow('cool', { entries: r.items }, ` data-r="${esc(r.id)}"`)}<div class="exlist prep-gap">` +
+        r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(it.reps)}${it.rir ? ' · RIR ' + esc(it.rir) : ''} · ${esc(t('rest'))} ${clock(it.rest)}</i>${it.note ? `<i class="nt">${esc(it.note)}</i>` : ''}</span>${IC.chev}</button>`).join('') + `</div>` +
+        `<button class="btn tickbtn" data-a="w-tick" data-id="${esc(r.id)}">${IC.check}${esc(t('tickWorkout'))}</button>` + (D().plan && D().plan.train.length ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
       return { title: rName(r), html: h, foot: `<button class="btn primary" data-a="w-start" data-id="${esc(r.id)}">${esc(t('startWorkout'))}</button><button class="btn" data-a="r-edit" data-id="${esc(r.id)}">${esc(t('edit'))}</button>` };
     };
   }
@@ -437,7 +483,7 @@
       const h = `<label class="fld"><span>${esc(t('routineName'))}</span><input type="text" data-in="re-name" value="${esc(rName(r))}" placeholder="${esc(t('routineNamePh'))}" autocomplete="off"></label>
         <p class="lbl">${esc(t('icon'))}</p><div class="icons">${[''].concat(Store.ICONS).map(v => `<button class="${(r.icon || '') === v ? 'on ' : ''}ic-${v || rIcon(Object.assign({}, r, { icon: '' }))}" data-a="re-icon" data-v="${v}" aria-pressed="${(r.icon || '') === v}" aria-label="${esc(v ? t('icon') + ' ' + v : t('iconAuto'))}"><span class="r-ic">${v ? RICON[v] : RICON[rIcon(Object.assign({}, r, { icon: '' }))]}</span>${v ? '' : `<i>${esc(t('iconAuto'))}</i>`}</button>`).join('')}</div>
         <div class="re-list">${r.items.map((it, i) => `<div class="re-row"><div class="re-top"><img src="${thumb(it.ex)}" alt="" decoding="async"><b>${esc(itemName(it))}</b><button class="icon-btn sm" data-a="re-up" data-i="${i}" aria-label="${esc(t('moveUp'))}" ${i ? '' : 'disabled'}>${IC.up}</button><button class="icon-btn sm" data-a="re-down" data-i="${i}" aria-label="${esc(t('moveDown'))}" ${i < r.items.length - 1 ? '' : 'disabled'}>${IC.down}</button><button class="icon-btn sm" data-a="re-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
-          <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label></div></div>`).join('') || `<p class="empty">${esc(t('noItems'))}</p>`}</div>
+          <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label><label><span>RIR</span><input type="text" data-in="re-rir" data-i="${i}" value="${esc(it.rir || '')}" maxlength="8"></label></div></div>`).join('') || `<p class="empty">${esc(t('noItems'))}</p>`}</div>
         <button class="btn" data-a="re-add">${IC.plus}${esc(t('addExercise'))}</button>${r._old ? `<button class="btn" data-a="r-dup">${esc(t('saveCopy'))}</button>` : ''}${r._old && !r.builtin ? `<button class="btn danger" data-a="r-del">${esc(t('deleteRoutine'))}</button>` : ''}`;
       return { title: r._old ? t('editRoutine') : t('newRoutine'), html: h, foot: `<button class="btn primary" data-a="re-save">${esc(t('save'))}</button>` };
     };
@@ -446,7 +492,7 @@
   const itemFor = id => { const p = PLAN_BY_EX[id]; return p && !p.similar && p.reps !== '21' ? { ex: id, label: null, sets: p.sets, reps: p.reps, rest: p.rest } : { ex: id, label: null, sets: 3, reps: '8–12', rest: D().settings.restDefault || 90 }; };
   function cleanEdit(e) {
     delete e._old;
-    e.items.forEach(i => { i.sets = Math.max(1, Math.min(12, Math.round(num(i.sets)) || 3)); i.rest = Math.max(0, Math.min(3600, Math.round(num(i.rest)))); i.reps = String(i.reps || '').trim().slice(0, 20) || '8–12'; });
+    e.items.forEach(i => { i.sets = Math.max(1, Math.min(12, Math.round(num(i.sets)) || 3)); i.rest = Math.max(0, Math.min(3600, Math.round(num(i.rest)))); i.reps = String(i.reps || '').trim().slice(0, 20) || '8–12'; i.rir = String(i.rir || '').trim().slice(0, 8); if (!i.rir) delete i.rir; });
     if (!String(typeof e.name === 'string' ? e.name : rName(e)).trim()) { const base = t('myRoutine'), k = D().routines.filter(r => rName(r).indexOf(base) === 0).length; e.name = base + (k ? ' ' + (k + 1) : ''); }
     return e;
   }
@@ -465,10 +511,10 @@
   }
 
   /* ================= ACTIVE WORKOUT ================= */
-  function newEntry(it) { return { ex: it.ex, label: it.label || null, target: it.sets || 3, reps: it.reps || '8–12', rest: it.rest || 90, sets: Array.from({ length: it.sets || 3 }, () => ({ kg: '', reps: '', done: false, w: false })) }; }
+  function newEntry(it) { return { ex: it.ex, label: it.label || null, target: it.sets || 3, reps: it.reps || '8–12', rest: it.rest || 90, rir: it.rir || '', note: it.note || '', sets: Array.from({ length: it.sets || 3 }, () => ({ kg: '', reps: '', done: false, w: false })) }; }
   function startWorkout(r, asked) {
     if (!r || (!asked && D().active && !confirm(t('replaceActive')))) return;
-    D().active = { id: uid(), rid: r.id || null, name: rName(r), start: Date.now(), entries: r.items.map(newEntry), restEnd: 0, restTotal: 0 };
+    D().active = { id: uid(), rid: r.id || null, name: rName(r), start: Date.now(), entries: r.items.map(newEntry), restEnd: 0, restTotal: 0, warm: false, cool: false };
     if (D().settings.autofill) D().active.entries.forEach(en => { const hs = exHistory(en.ex), prev = hs.length ? hs[hs.length - 1].sets : []; en.sets.forEach((x, j) => { if (prev[j] && prev[j].kg) x.kg = String(prev[j].kg); }); });   // last time's weights typed in for you
     Store.save(); ui.wOpen = true; closeSheet(true); wake(); render();
   }
@@ -486,11 +532,11 @@
     const old = $('.w-body', el), y = old ? old.scrollTop : 0;
     el.hidden = false;
     el.innerHTML = `<header class="w-head"><button class="icon-btn" data-a="w-min" aria-label="${esc(t('minimize'))}">${IC.down}</button><div><b>${esc(a.name)}</b><i id="w-el">0:00</i></div><button class="btn primary" data-a="w-finish">${esc(t('finish'))}</button></header>
-      <div class="w-body">${a.entries.map((en, i) => {
+      <div class="w-body">${prepRow('warm', a, '')}${a.entries.map((en, i) => {
         const hst = exHistory(en.ex), prev = hst.length ? hst[hst.length - 1].sets : [];
-        return `<section class="wex"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
+        return `<section class="wex"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)}${en.rir ? ' · RIR ' + esc(en.rir) : ''} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
           ${ui.wTools === i ? `<div class="wex-tools${ui.fx === 'tools' ? ' in' : ''}"><button class="btn sm" data-a="w-up" data-i="${i}" ${i ? '' : 'disabled'}>${IC.up}${esc(t('moveUp'))}</button><button class="btn sm" data-a="w-down" data-i="${i}" ${i < a.entries.length - 1 ? '' : 'disabled'}>${IC.down}${esc(t('moveDown'))}</button><button class="btn sm danger" data-a="w-delex" data-i="${i}">${esc(t('remove'))}</button></div>` : ''}
-          <p class="hint">${esc(hintFor(en, hst))}</p>
+          ${en.note ? `<p class="hint wnote">${esc(en.note)}</p>` : ''}<p class="hint">${esc(hintFor(en, hst))}</p>
           <div class="sets"><div class="set set-hd"><span>#</span><span>${esc(t('prev'))}</span><span>kg</span><span>${esc(t('reps'))}</span><span></span></div>
           ${en.sets.map((s, j) => { const p = prev[j];
             return `<div class="set${s.done ? ' done' : ''}${ui.fx === 'pop' + i + '-' + j ? ' pop' : ''}${ui.fx === 'new' + i + '-' + j ? ' in' : ''}"><button class="set-n${s.w ? ' w' : ''}" data-a="w-warm" data-i="${i}" data-j="${j}" aria-label="${esc(t('warmToggle'))}">${s.w ? 'W' : j + 1 - en.sets.slice(0, j).filter(x => x.w).length}</button><span class="prev">${p ? (p.kg ? p.kg + '×' : '') + p.reps : '–'}</span>
@@ -499,7 +545,7 @@
               <button class="set-ok" data-a="w-check" data-i="${i}" data-j="${j}" aria-label="${esc(t('setDone'))}" aria-pressed="${s.done}">${IC.check}</button></div>`; }).join('')}</div>
           <div class="wex-f"><button class="link" data-a="w-addset" data-i="${i}">+ ${esc(t('set'))}</button>${en.sets.length > 1 ? `<button class="link mut" data-a="w-delset" data-i="${i}">− ${esc(t('set'))}</button>` : ''}</div></section>`; }).join('')}
         ${a.entries.length ? '' : `<p class="empty">${esc(t('emptyHint'))}</p>`}
-        <button class="btn" data-a="w-addex">${IC.plus}${esc(t('addExercise'))}</button><button class="btn danger ghost" data-a="w-cancel">${esc(t('cancelWorkout'))}</button></div>`;
+        <button class="btn" data-a="w-addex">${IC.plus}${esc(t('addExercise'))}</button>${prepRow('cool', a, '')}<button class="btn danger ghost" data-a="w-cancel">${esc(t('cancelWorkout'))}</button></div>`;
     $('.w-body', el).scrollTop = y; ui.fx = ''; tick();
   }
   function finishWorkout() {
@@ -509,19 +555,128 @@
     const open = a.entries.reduce((n, e) => n + e.sets.filter(s => !s.done).length, 0);
     if (open && !confirm(t('finishOpen', open))) return;
     const prs = entries.map(e => { const before = exHistory(e.ex).reduce((m, x) => Math.max(m, bestOf(x.sets)), 0), now = bestOf(e.sets); return now > before && now > 0 ? { ex: e.ex, label: e.label, v: now, was: before } : null; }).filter(Boolean);
-    const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries };
+    const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries, warm: !!a.warm, cool: !!a.cool };
     D().workouts.push(w); D().workouts.sort((x, y) => x.start - y.start); D().active = null; Store.save(); ui.wOpen = false; unwake(); render();
     openSheet(shWorkout(w.id, prs));
   }
   function shWorkout(id, prs) {
     return () => {
       const w = D().workouts.find(x => x.id === id); if (!w) return { title: '', html: '' };
-      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${fmtDur(w.end - w.start)}</b><i>${esc(t('duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><div><b>${compact(volOf(w))}</b><i>${esc(t('volume'))} kg</i></div></div>`;
+      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(w.end - w.start)}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><div><b>${compact(volOf(w))}</b><i>${esc(t('volume'))} kg</i></div></div>`;
+      h += prs ? prepRow('cool', w, ` data-w="${esc(w.id)}"`) : (w.warm || w.cool ? `<p class="cap">${[w.warm ? t('warmTitle') : '', w.cool ? t('coolTitle') : ''].filter(Boolean).map(x => esc(x) + ' ✓').join(' · ')}</p>` : '');
       if (prs && prs.length) h += `<div class="tip pr"><b>${esc(t('newRecords'))}</b>${prs.map(p => `<span>${esc(itemName(p))}: ${r1(p.v)} kg${p.was ? ' (' + esc(t('was')) + ' ' + r1(p.was) + ')' : ''}</span>`).join('')}</div>`;
+      if (w.tick) h += `<p class="cap">${esc(t('tickedInfo'))}</p>` + (w.pl || []).map(x => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(x.ex)}"><img src="${thumb(x.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(exName(x.ex))}</b><i>${x.n} ${esc(t('setsWord'))}</i></span>${IC.chev}</button></div>`).join('');
       h += w.entries.map(e => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(e.ex)}"><img src="${thumb(e.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(e))}</b><i>${e.sets.map(s => (s.w ? 'W ' : '') + (s.kg ? s.kg + '×' : '') + s.reps).join(' · ')}</i></span>${IC.chev}</button></div>`).join('');
       const keep = w.rid ? '' : `<button class="btn" data-a="wk-to-routine" data-id="${esc(w.id)}">${esc(t('saveAsRoutine'))}</button>`;
       return { title: prs ? t('workoutDone') : w.name, html: h, foot: prs ? `<button class="btn primary" data-a="sheet-close">${esc(t('done'))}</button>${keep}` : `${keep}<button class="btn danger" data-a="wk-del" data-id="${esc(w.id)}">${esc(t('deleteWorkout'))}</button>` };
     };
+  }
+
+  /* ---------- our own database: exercises and foods the user adds ---------- */
+  const picCount = () => D().myEx.filter(e => e.img).length + Object.keys(D().exMedia).filter(k => D().exMedia[k].img).length;
+  const urlOk = v => /^https:\/\/[^\s"'<>]{4,300}$/.test(v);
+  /* a phone photo made small enough to keep with the data: 480 px, or 340 px when that is still too heavy */
+  function smallPic(file) {
+    return new Promise((ok, fail) => {
+      const im = new Image(), U = window.URL || window.webkitURL, url = U.createObjectURL(file);
+      im.onload = () => { let out = '';
+        [[480, 0.74], [340, 0.7], [260, 0.66]].some(([side, q]) => { const k = Math.min(1, side / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+          const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height); out = c.toDataURL('image/jpeg', q); return out.length <= 80000; });
+        U.revokeObjectURL(url); if (out && out.length <= 90000) ok(out); else fail(new Error('big')); };
+      im.onerror = () => { U.revokeObjectURL(url); fail(new Error('image')); };
+      im.src = url;
+    });
+  }
+  const newMyEx = e => e ? { id: e.id, n: e.n, p: e.p.slice(), s: e.s.slice(), eq: e.eq, steps: (e.steps || []).join('\n'), img: e.img || '', vid: e.vid || '' } : { id: '', n: '', p: [], s: [], eq: 'other', steps: '', img: '', vid: '' };
+  function shMyEx() {
+    const fn = () => {
+      const x = ui.myex, chips = k => `<div class="chips mus">${MUS_ORDER.map(m => `<button class="chip${x[k].indexOf(m) >= 0 ? ' on' : ''}" data-a="mx-mus" data-k="${k}" data-m="${m}" aria-pressed="${x[k].indexOf(m) >= 0}">${esc(mus(m))}</button>`).join('')}</div>`;
+      return { title: t(x.id ? 'myExEdit' : 'myExNew'), html: `<p class="lead">${esc(t('myExLead'))}</p>
+        <label class="fld"><span>${esc(t('name'))}</span><input type="text" data-in="mx-n" value="${esc(x.n)}" maxlength="80" autocomplete="off"></label>
+        <p class="lbl">${esc(t('mxPrimary'))}</p>${chips('p')}<p class="lbl">${esc(t('mxSecondary'))}</p>${chips('s')}
+        <label class="fld row"><span>${esc(t('equipment'))}</span><select data-in="mx-eq">${EQS.map(q => `<option value="${q}" ${x.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></label>
+        <label class="fld"><span>${esc(t('myExSteps'))}</span><textarea data-in="mx-steps" rows="4" maxlength="2400">${esc(x.steps)}</textarea></label>
+        <label class="fld"><span>${esc(t('vidLink'))}</span><input type="text" inputmode="url" data-in="mx-vid" value="${esc(x.vid)}" placeholder="https://" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+        <p class="lbl">${esc(t('picture'))}</p>${x.img ? `<div class="mx-pic"><img src="${esc(x.img)}" alt=""><button class="link" data-a="mx-nopic">${esc(t('remove'))}</button></div>` : ''}<label class="btn">${IC.cam}${esc(t(x.img ? 'picChange' : 'picAdd'))}<input class="sr" type="file" accept="image/*" data-in="mx-file"></label>
+        ${x.id ? `<button class="btn danger" data-a="mx-del">${esc(t('myExDel'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="mx-save">${esc(t('save'))}</button>` };
+    };
+    fn.kind = 'myex'; return fn;
+  }
+  function shVid(id) {
+    return () => ({ title: t('vidLink'), html: `<p class="lead">${esc(t('vidLead'))}</p><form data-f="exm-vid" id="fv" data-id="${esc(id)}"><label class="fld"><span>${esc(t('vidLink'))}</span><input type="text" inputmode="url" name="vid" value="${esc((D().exMedia[id] || {}).vid || '')}" placeholder="https://" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label></form>`, foot: `<button class="btn primary" form="fv">${esc(t('save'))}</button>` });
+  }
+  function shMyFood() {
+    return () => { const v = ui.myfood, fld = (k, lbl, mode) => `<label class="fld"><span>${esc(lbl)}</span><input type="text" inputmode="${mode}" name="${k}" value="${esc(v[k] == null || v[k] === 0 && k === 'port' ? '' : v[k])}" autocomplete="off"></label>`;
+      return { title: t(v.id ? 'myFoodEdit' : 'myFoodNew'), html: `<p class="lead">${esc(t('myFoodLead'))}</p><form data-f="myfood" id="fmf"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" maxlength="80" autocomplete="off" required></label>
+        <div class="grid2">${fld('kcal', t('kcal100'), 'decimal')}${fld('port', t('portionG'), 'numeric')}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal')}${fld('c', t('carbs') + ' (g)', 'decimal')}${fld('f', t('fat') + ' (g)', 'decimal')}</div></form>
+        ${v.id ? `<button class="btn danger" data-a="mf-del" data-id="${esc(v.id)}">${esc(t('myFoodDel'))}</button>` : ''}`, foot: `<button class="btn primary" form="fmf">${esc(t('save'))}</button>` }; };
+  }
+  /* A plan file: the plan's routines take the place of the built-in ones, the meal plan and rules are stored; the log is not touched. */
+  function applyPlan(o) {
+    return Store.apply(c => {
+      if (o.plan) c.plan = o.plan;
+      if (Array.isArray(o.routines) && o.routines.length) { const ids = o.routines.map(r => r && r.id); c.routines = o.routines.concat(c.routines.filter(r => !r.builtin && ids.indexOf(r.id) < 0)); }
+      ['myFoods', 'myEx'].forEach(k => { if (Array.isArray(o[k])) { const ids = o[k].map(z => z && z.id); c[k] = (c[k] || []).filter(z => ids.indexOf(z.id) < 0).concat(o[k]); } });
+    });
+  }
+
+  /* ---------- warm-up before and stretching after a workout ----------
+     Chosen from the muscles of the workout: moving warm-up exercises before, held stretches after (both from the exercise library, so each has photos and steps). */
+  const WARM = { chest: 'Dynamic_Chest_Stretch', shoulders: 'Arm_Circles', lats: 'Dynamic_Back_Stretch', 'middle back': 'Dynamic_Back_Stretch', traps: 'Shoulder_Circles', neck: 'Shoulder_Circles', biceps: 'Elbow_Circles', triceps: 'Elbow_Circles', forearms: 'Wrist_Circles',
+    abdominals: 'Cat_Stretch', 'lower back': 'Cat_Stretch', quadriceps: 'Bodyweight_Squat', glutes: 'Standing_Hip_Circles', hamstrings: 'Front_Leg_Raises', calves: 'Ankle_Circles', adductors: 'Standing_Hip_Circles', abductors: 'Standing_Hip_Circles' };
+  const COOL = { chest: 'Chest_And_Front_Of_Shoulder_Stretch', shoulders: 'Shoulder_Stretch', lats: 'One_Arm_Against_Wall', 'middle back': 'Upper_Back_Stretch', traps: 'Side_Neck_Stretch', neck: 'Chin_To_Chest_Stretch', biceps: 'Standing_Biceps_Stretch', triceps: 'Triceps_Stretch', forearms: 'Kneeling_Forearm_Stretch',
+    abdominals: 'Standing_Lateral_Stretch', 'lower back': 'Childs_Pose', quadriceps: 'On_Your_Side_Quad_Stretch', glutes: 'Ankle_On_The_Knee', hamstrings: 'Hamstring_Stretch', calves: 'Calf_Stretch_Hands_Against_Wall', adductors: 'Side_Lying_Groin_Stretch', abductors: 'IT_Band_and_Glute_Stretch' };
+  const TWO_SIDES = ['Shoulder_Stretch', 'One_Arm_Against_Wall', 'Side_Neck_Stretch', 'Triceps_Stretch', 'Standing_Lateral_Stretch', 'On_Your_Side_Quad_Stretch', 'Ankle_On_The_Knee', 'Hamstring_Stretch', 'Calf_Stretch_Hands_Against_Wall', 'Side_Lying_Groin_Stretch', 'IT_Band_and_Glute_Stretch', 'Kneeling_Hip_Flexor', 'Front_Leg_Raises', 'Standing_Hip_Circles', 'Ankle_Circles'];
+  function prepList(kind, entries) {
+    const score = {}; (entries || []).forEach(x => { const e = EX[x.ex]; if (!e) return; e.p.forEach(m => { score[m] = (score[m] || 0) + 1; }); e.s.forEach(m => { score[m] = (score[m] || 0) + 0.4; }); });
+    const order = Object.keys(score).sort((a, b) => score[b] - score[a] || MUS_ORDER.indexOf(a) - MUS_ORDER.indexOf(b)), map = kind === 'warm' ? WARM : COOL, max = kind === 'warm' ? 5 : 6, ids = [];
+    order.forEach(m => { const id = map[m]; if (id && EX[id] && ids.indexOf(id) < 0 && ids.length < max) ids.push(id); });
+    if (kind === 'cool' && score.quadriceps >= 1 && EX.Kneeling_Hip_Flexor && ids.indexOf('Kneeling_Hip_Flexor') < 0) ids.push('Kneeling_Hip_Flexor');      // leg work shortens the hip flexors too
+    const one = kind === 'warm' ? 20 : (D().settings.hold || 30);
+    return ids.map(id => { const sides = TWO_SIDES.indexOf(id) >= 0 ? 2 : 1; return { id, sides, sec: one * sides }; });
+  }
+  const prepMin = list => Math.max(1, Math.round(list.reduce((a, x) => a + x.sec, 0) / 60));
+  /* the row that opens the warm-up or the stretching: src is the running workout, a finished one or a routine */
+  function prepRow(kind, src, attr) {
+    if (!D().settings.stretch) return '';
+    const list = prepList(kind, src.entries); if (!list.length) return '';
+    const done = src[kind] === true;
+    return `<button class="qrow prep${done ? ' done' : ''}" data-a="prep" data-k="${kind}"${attr}><span class="q-ic line">${done ? IC.check : kind === 'warm' ? IC.walk : IC.stretch}</span><span class="rc-t"><b>${esc(t(kind === 'warm' ? 'warmTitle' : 'coolTitle'))}</b><i>${list.length} ${esc(t('moves'))} · ~${prepMin(list)} ${esc(t('min'))}${done ? ' · ' + esc(t('doneWord')) : ''}</i></span>${IC.chev}</button>`;
+  }
+  function shPrep() {
+    const fn = () => {
+      const p = ui.prep, left = p.i >= 0 && p.i < p.list.length ? (p.run ? (p.end - Date.now()) / 1000 : p.left / 1000) : 0;
+      const rows = p.list.map((x, i) => { const ok = p.fin || i < p.i, cur = i === p.i && !p.fin;
+        return `<div class="exrow preprow${cur ? ' cur' : ''}${ok ? ' ok' : ''}" data-i="${i}"><button class="pk-img" data-a="ex-open" data-id="${esc(x.id)}" aria-label="${esc(t('details'))}"><img src="${thumb(x.id)}" alt="" loading="lazy" decoding="async"></button><div class="pp-t"><b>${esc(exName(x.id))}</b><i>${esc(x.sides > 1 ? t('perSide', x.sec / 2) : t('secs', x.sec))}</i></div><em class="pp-n">${cur ? `<b id="prep-time">${clock(left)}</b>` : ok ? IC.check : ''}</em></div>`; }).join('');
+      return { title: t(p.kind === 'warm' ? 'warmTitle' : 'coolTitle'), html: `<p class="lead">${esc(t(p.kind === 'warm' ? 'warmLead' : 'coolLead', D().settings.hold))}</p><div class="exlist">${rows}</div><p class="cap">${esc(t('prepCap'))}</p>`,
+        foot: p.fin ? `<button class="btn primary" data-a="prep-done">${esc(t('done'))}</button>`
+          : p.i < 0 ? `<button class="btn primary wide" data-a="prep-go">${IC.play}${esc(t('prepStart'))}</button><button class="btn" data-a="prep-done">${esc(t('prepMark'))}</button>`
+          : `<button class="btn primary" data-a="prep-pause">${esc(t(p.run ? 'pause' : 'resume'))}</button><button class="btn" data-a="prep-next">${esc(t('skip'))}</button>` };
+    };
+    fn.kind = 'prep'; return fn;
+  }
+  function chirp(n) {
+    if (D().settings.sound && actx) { for (let k = 0; k < (n || 1); k++) { try { const o = actx.createOscillator(), g = actx.createGain(), s0 = actx.currentTime + k * 0.2; o.frequency.value = n > 1 ? 660 : 880; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(0.0001, s0); g.gain.exponentialRampToValueAtTime(0.35, s0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s0 + 0.15); o.start(s0); o.stop(s0 + 0.17); } catch (e) {} } }
+    if (D().settings.vibrate && navigator.vibrate) navigator.vibrate(n > 1 ? [80, 60, 80] : 90);
+  }
+  function prepMark() {                                                                // remember that it was done: on the running workout or on the finished one
+    const p = ui.prep, d = D(); if (!p) return;
+    if (p.live && d.active) { d.active[p.kind] = true; Store.saveActive(); renderWorkout(); }
+    else if (p.wid) { const w = d.workouts.find(x => x.id === p.wid); if (w && !w[p.kind]) { w[p.kind] = true; Store.save(); } }
+  }
+  function prepStep(i) {
+    const p = ui.prep; if (!p) return;
+    if (i >= p.list.length) { p.i = p.list.length; p.run = false; p.fin = true; chirp(1); prepMark(); if (!(D().active && ui.wOpen)) unwake(); if (topIs('prep')) refreshSheet(); return; }
+    p.i = i; p.end = Date.now() + p.list[i].sec * 1000; p.half = p.list[i].sides > 1; p.run = true;
+    if (topIs('prep')) { refreshSheet(); const row = $('#sheet .preprow.cur'); if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' }); }
+  }
+  function prepTick() {
+    const p = ui.prep; if (!p || !p.run) return;
+    if (!topIs('prep')) { p.left = Math.max(0, p.end - Date.now()); p.run = false; if (!(D().active && ui.wOpen)) unwake(); return; }      // panel closed or covered: the clock waits
+    const left = (p.end - Date.now()) / 1000, x = p.list[p.i];
+    if (p.half && left <= x.sec / 2) { p.half = false; chirp(2); toast(t('otherSide')); }
+    if (left <= 0) { if (p.i + 1 < p.list.length) chirp(1); prepStep(p.i + 1); return; }
+    const el = $('#prep-time'); if (el) el.textContent = clock(left);
   }
 
   /* ---------- rest timer, clock, sound, wake lock ---------- */
@@ -538,6 +693,7 @@
   function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
   function tick() {
     dayCheck();
+    prepTick();
     const a = D().active, bar = $('#restbar'), el = $('#w-el');
     if (a && el) el.textContent = clock((Date.now() - a.start) / 1000);
     if (!a || !a.restEnd) { bar.hidden = true; return; }
@@ -563,7 +719,8 @@
       const v = ui.manual || {};
       return { title: t('foodOwn'), html: `${rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : ''}
         <form data-f="food-manual" id="fm"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" autocomplete="off" required></label>
-        <div class="grid2">${fld('g', t('grams'), 'numeric', v.g || '')}${fld('kcal', 'kcal', 'numeric', v.kcal)}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal', v.p)}${fld('c', t('carbs') + ' (g)', 'decimal', v.c)}${fld('f', t('fat') + ' (g)', 'decimal', v.f)}</div></form>`,
+        <div class="grid2">${fld('g', t('grams'), 'numeric', v.g || '')}${fld('kcal', 'kcal', 'numeric', v.kcal)}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal', v.p)}${fld('c', t('carbs') + ' (g)', 'decimal', v.c)}${fld('f', t('fat') + ' (g)', 'decimal', v.f)}</div>
+        <label class="sw"><input type="checkbox" name="keep"><span>${esc(t('myFoodKeep'))}</span></label></form>`,
         foot: `<button class="btn primary" form="fm">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -739,11 +896,14 @@
           <p class="lbl">${esc(t('background'))}</p>${seg('set-bg', s.bg, (Store.BGS || ['aurora']).map(b => [b, t('bg_' + b)]))}
           ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
+          ${sw('stretch', t('setStretch'))}${s.stretch ? sel('hold', t('holdLbl'), [20, 30, 45].map(v => [v, v + ' ' + t('secShort')])) : ''}
           ${sel('restDefault', t('restDefault'), [60, 90, 120, 150, 180].map(v => [v, clock(v)]))}${sel('weekGoal', t('weekGoal'), [[0, t('goalOff')]].concat([2, 3, 4, 5, 6, 7].map(v => [v, v + ' ' + t('times')])))}${sel('weekStart', t('weekStartLbl'), [[1, t('monday')], [0, t('sunday')]])}
           <button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
         <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}${sw('coach', t('setCoach'))}</section>
         <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}<button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
-        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div>
+        ${D().plan ? `<section class="card"><h3>${esc(t('planCard'))}</h3><p class="cap">${esc(D().plan.name || t('mealPlan'))}</p>${sw('', t('planUseTg'), `data-in="plan-tg"${D().plan.targets ? ' checked' : ''}`)}<button class="btn" data-a="plan-notes">${esc(t('planRules'))}</button><button class="btn danger" data-a="plan-remove">${esc(t('planRemove'))}</button></section>` : ''}
+        <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
+        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
         <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now">${esc(t('updateNow'))}</button>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
@@ -780,9 +940,9 @@
   }
   function shDay(k) {
     const fn = () => {
-      const d = D(), ws = d.workouts.filter(w => ymd(w.start) === k), fl = d.food[k] || [], tg = d.settings.targets;
+      const d = D(), ws = d.workouts.filter(w => ymd(w.start) === k), fl = d.food[k] || [], tg = dayTargets(k);
       const sum = fl.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
-      let h = `<h3>${esc(t('workoutsDay'))}</h3>` + (ws.length ? ws.map(w => `<button class="wrow" data-a="wk-open" data-id="${esc(w.id)}"><span class="q-ic line">${IC.home}</span><span class="wr-t"><b>${esc(w.name)}</b><i>${pad(new Date(w.start).getHours())}:${pad(new Date(w.start).getMinutes())} · ${fmtDur(w.end - w.start)} · ${setsOf(w)} ${esc(t('setsWord'))} · ${compact(volOf(w))} kg</i></span>${IC.chev}</button>`).join('') : `<p class="empty">${esc(t('noWorkoutDay'))}</p>`);
+      let h = `<h3>${esc(t('workoutsDay'))}</h3>` + (ws.length ? ws.map(w => `<button class="wrow" data-a="wk-open" data-id="${esc(w.id)}"><span class="q-ic line">${IC.home}</span><span class="wr-t"><b>${esc(w.name)}</b><i>${pad(new Date(w.start).getHours())}:${pad(new Date(w.start).getMinutes())} · ${esc(wMeta(w))}</i></span>${IC.chev}</button>`).join('') : `<p class="empty">${esc(t('noWorkoutDay'))}</p>`);
       h += `<h3>${esc(t('tabFood'))}</h3><button class="rcard" data-a="day-food" data-d="${esc(k)}"><span class="q-ic line">${IC.food}</span><span class="rc-t"><b>${Math.round(sum.kcal)}${tg ? ' / ' + tg.kcal : ''} kcal</b><i>${fl.length ? `${esc(t('dayFoodN', fl.length))} · ${esc(t('pShort'))} ${Math.round(sum.p)} · ${esc(t('cShort'))} ${Math.round(sum.c)} · ${esc(t('fShort'))} ${Math.round(sum.f)}` : esc(t('noMeals'))}</i></span>${IC.chev}</button>`;
       h += `<h3>${esc(t('actTitle'))}</h3>` + actRow(k);
       return { title: fmtDate(k + 'T12:00', true), html: h };
@@ -826,11 +986,13 @@
   /* ================= COACH: ask the AI about food and training ================= */
   const rich = x => esc(x).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/^#{1,4} *(.+)$/gm, '<b>$1</b>').replace(/\n/g, '<br>');    // escaped first, then only bold and line breaks are let through
   function coachContext() {
-    const d = D(), s = d.settings, p = s.profile, tg = s.targets, td = today(), out = [], en = id => (EX[id] || {}).n || id;
+    const d = D(), s = d.settings, p = s.profile, td = today(), tg = dayTargets(td), out = [], en = id => (EX[id] || {}).n || id;
     const sum = l => l.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
     out.push('Today is ' + td + '.');
     out.push('Profile: ' + [p.sex === 'f' ? 'female' : 'male', p.age ? p.age + ' years' : '', p.height ? p.height + ' cm' : '', p.weight ? p.weight + ' kg' : ''].filter(Boolean).join(', ') + '; goal: ' + ({ cut: 'lose fat', maintain: 'maintain weight', bulk: 'build muscle' }[p.goal] || 'maintain weight') + '.');
     out.push(tg ? 'Daily targets: ' + tg.kcal + ' kcal, protein ' + tg.p + ' g, carbs ' + tg.c + ' g, fat ' + tg.f + ' g.' : 'No calorie or macro targets are set.');
+    const pd = planDay(td); if (pd && pd.meals.length) { const got = {}; (d.food[td] || []).forEach(f => { if (f.pm) got[f.pm] = 1; });
+      out.push('The user follows a fixed meal plan' + (pd.type ? ' (today is a ' + (pd.type === 'train' ? 'training' : 'rest') + ' day)' : '') + '. Planned meals today: ' + pd.meals.map(m => (typeof m.name === 'string' ? m.name : m.name.en || m.name.hu) + ' [' + m.items.map(i => i.n + ' ' + i.g + ' g').join(', ') + '; ' + m.kcal + ' kcal]' + (got[m.id] ? ' (eaten)' : ' (not ticked yet)')).join('; ') + '.'); }
     const fl = d.food[td] || [], tot = sum(fl);
     out.push(fl.length ? 'Eaten today so far: ' + Math.round(tot.kcal) + ' kcal, protein ' + Math.round(tot.p) + ' g, carbs ' + Math.round(tot.c) + ' g, fat ' + Math.round(tot.f) + ' g. Items: ' + fl.slice(0, 15).map(f => f.name + (f.g ? ' ' + f.g + ' g' : '') + ' (' + Math.round(f.kcal) + ' kcal, protein ' + Math.round(f.p) + ' g)').join('; ') + '.' : 'Nothing is logged in the food diary today.');
     const days = Object.keys(d.food).filter(k => k < td).sort().slice(-7).map(k => sum(d.food[k]));
@@ -999,6 +1161,61 @@
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
     'ai-answer'(el) { const s = ui.ai, q = s.res && s.res.question; if (!q || s.loading) return; s.qa = (s.qa || []).concat([q.text + ' ' + String(el.dataset.o || '').slice(0, 40)]); s.res = null; refreshSheet(); aiGo(); },
+    /* the plan: tick a meal, tick a workout */
+    'pm-tick'(el) {
+      const k = el.dataset.d, pd = planDay(k), m = pd && pd.meals.find(x => x.id === el.dataset.m); if (!m) return;
+      const d = D(), day = d.food[k] || [], had = day.some(f => f.pm === m.id);
+      if (had) d.food[k] = day.filter(f => f.pm !== m.id);
+      else d.food[k] = day.concat([{ id: uid(), name: (pmName(m) + ': ' + m.items.map(i => i.n).join(', ')).slice(0, 80), g: Math.round(m.items.reduce((a, i) => a + i.g, 0)), kcal: m.kcal, p: m.p, c: m.c, f: m.f, src: 'plan', pm: m.id, t: Date.now() }]);
+      if (!d.food[k].length) delete d.food[k];
+      Store.save(); if (D().settings.vibrate && navigator.vibrate && !had) navigator.vibrate(20); rerender();
+    },
+    'plan-notes'() { openSheet(shPlanNotes()); },
+    'plan-remove'() { if (!confirm(t('planRemoveConfirm'))) return; D().plan = null; Store.save(); refreshSheet(); rerender(); toast(t('saved')); },
+    'w-tick'(el) {
+      const r = getR(el.dataset.id); if (!r) return; const d = D(), now = Date.now();
+      d.workouts.push({ id: uid(), rid: r.id, name: rName(r), start: now, end: now, entries: [], tick: true, pl: r.items.map(i => ({ ex: i.ex, n: i.sets })), warm: false, cool: false });
+      d.workouts.sort((x, y) => x.start - y.start); Store.save(); if (d.settings.vibrate && navigator.vibrate) navigator.vibrate(30); closeSheet(true); rerender(); toast(t('ticked'));
+    },
+    'w-untick'(el) { const d = D(); d.workouts = d.workouts.filter(w => !(w.id === el.dataset.id && w.tick)); Store.save(); rerender(); },
+    /* own exercises */
+    'mx-new'() { ui.myex = newMyEx(null); if (ui.tab === 'lib' && ui.lib.q.trim()) ui.myex.n = ui.lib.q.trim(); openSheet(shMyEx()); },
+    'mx-edit'(el) { const e = D().myEx.find(x => x.id === el.dataset.id); if (!e) return; ui.myex = newMyEx(e); openSheet(shMyEx()); },
+    'mx-mus'(el) { const x = ui.myex, l = x[el.dataset.k === 's' ? 's' : 'p'], m = el.dataset.m, i = l.indexOf(m); if (i >= 0) l.splice(i, 1); else if (l.length < 6) { l.push(m); const o = x[el.dataset.k === 's' ? 'p' : 's'], j = o.indexOf(m); if (j >= 0) o.splice(j, 1); } refreshSheet(); },
+    'mx-nopic'() { ui.myex.img = ''; refreshSheet(); },
+    'mx-save'() {
+      const x = ui.myex, n = x.n.trim(), vid = x.vid.trim(), d = D(), old = x.id ? d.myEx.find(o => o.id === x.id) : null;
+      if (!n) { toast(t('myExNeedName')); return; } if (!x.p.length) { toast(t('myExNeedMus')); return; } if (vid && !urlOk(vid)) { toast(t('vidBad')); return; }
+      if (x.img && !(old && old.img) && picCount() >= 30) { toast(t('picLimit')); return; }
+      if (!old && d.myEx.length >= 300) { toast(t('picLimit')); return; }
+      const e = { id: x.id || 'my_' + uid(), n: n.slice(0, 80), p: x.p.slice(0, 6), s: x.s.filter(m => x.p.indexOf(m) < 0).slice(0, 6), eq: x.eq, steps: x.steps.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 12), img: x.img, vid, t: Date.now() };
+      d.myEx = old ? d.myEx.map(o => o.id === e.id ? e : o) : d.myEx.concat([e]);
+      Store.save(); ownSync(); closeSheet(); if (!ui.sheets.length) { if (ui.tab === 'lib' && !old) { ui.lib.q = ''; ui.lib.grp = 'own'; ui.lib.mus = ''; ui.lib.eq = ''; } rerender(); } toast(t('saved'));
+    },
+    'mx-del'() {
+      const x = ui.myex, d = D(); if (!x.id || !confirm(t('myExDelConfirm'))) return;
+      d.myEx = d.myEx.filter(o => o.id !== x.id); d.favEx = d.favEx.filter(i => i !== x.id); d.routines.forEach(r => { r.items = r.items.filter(i => i.ex !== x.id); });
+      if (ui.lib.grp === 'own' && !d.myEx.length) ui.lib.grp = '';
+      Store.save(); ownSync(); closeSheet(true); rerender(); toast(t('saved'));
+    },
+    'exm-vid'(el) { openSheet(shVid(el.dataset.id)); },
+    'exm-clear'(el) { delete D().exMedia[el.dataset.id]; Store.save(); refreshSheet(); if (!ui.wOpen) rerender(); },
+    /* own foods */
+    'mf-new'() { ui.myfood = { id: '', name: ui.fs && ui.fs.q ? ui.fs.q.trim() : '', kcal: '', p: '', c: '', f: '', port: '' }; openSheet(shMyFood()); },
+    'mf-edit'(el) { const z = D().myFoods.find(x => x.id === el.dataset.id); if (z) { ui.myfood = Object.assign({}, z); openSheet(shMyFood()); } },
+    'mf-del'(el) { if (!confirm(t('myFoodDelConfirm'))) return; D().myFoods = D().myFoods.filter(z => z.id !== el.dataset.id); Store.save(); closeSheet(); if (topIs('settings')) refreshSheet(); },
+    'fs-my'(el) { const z = D().myFoods.find(x => x.id === el.dataset.id); if (!z) return; ui.fa = { food: { key: 'my:' + z.id, my: true, own: true, name: z.name, usda: '', approx: false, kcal: z.kcal, p: z.p, c: z.c, f: z.f, ports: z.port ? [[z.port, t('portion')]] : [] }, g: String(z.port || 100) }; openSheet(shFoodAmount()); },
+    /* warm-up and stretching */
+    prep(el) {
+      const k = el.dataset.k === 'warm' ? 'warm' : 'cool', d = D(), w = el.dataset.w ? d.workouts.find(x => x.id === el.dataset.w) : null, r = el.dataset.r ? getR(el.dataset.r) : null;
+      const src = w || (r ? { entries: r.items } : d.active); if (!src) return;
+      ui.prep = { kind: k, wid: w ? w.id : '', live: !w && !r, list: prepList(k, src.entries), i: -1, end: 0, left: 0, run: false, half: false, fin: false };
+      if (ui.prep.list.length) openSheet(shPrep());
+    },
+    'prep-go'() { audio(); wake(); prepStep(0); },
+    'prep-pause'() { const p = ui.prep; if (!p || p.fin || p.i < 0) return; if (p.run) { p.left = Math.max(0, p.end - Date.now()); p.run = false; } else { audio(); wake(); p.end = Date.now() + p.left; p.run = true; } refreshSheet(); },
+    'prep-next'() { const p = ui.prep; if (!p || p.fin || p.i < 0) return; audio(); prepStep(p.i + 1); },
+    'prep-done'() { const p = ui.prep; if (!p) return; const was = p.fin; p.run = false; prepMark(); if (!(D().active && ui.wOpen)) unwake(); closeSheet(); if (!was && (p.live || p.wid)) toast(t('saved')); if (topIs('prep') === false && ui.sheets.length) refreshSheet(); },
     'fig-big'(el) { ui.figBig = !ui.figBig; el.classList.toggle('big', ui.figBig); },                        // start and end position: next to each other, or large one under the other
     'acc-help'() { openSheet(shAccHelp()); },
     'fig-view'(el) { D().settings.figure = el.dataset.v === 'photo' ? 'photo' : 'draw'; Store.save(); refreshSheet(); },
@@ -1167,7 +1384,9 @@
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
     're-name'(el) { ui.edit.name = el.value; }, 're-sets'(el) { ui.edit.items[+el.dataset.i].sets = el.value; },
-    're-reps'(el) { ui.edit.items[+el.dataset.i].reps = el.value; }, 're-rest'(el) { ui.edit.items[+el.dataset.i].rest = el.value; },
+    're-reps'(el) { ui.edit.items[+el.dataset.i].reps = el.value; }, 're-rir'(el) { ui.edit.items[+el.dataset.i].rir = el.value; },
+    'mx-n'(el) { ui.myex.n = el.value; }, 'mx-steps'(el) { ui.myex.steps = el.value; }, 'mx-vid'(el) { ui.myex.vid = el.value; }, 'mx-eq'(el) { ui.myex.eq = EQS.indexOf(el.value) >= 0 ? el.value : 'other'; },
+    'plan-tg'(el) { if (D().plan) { D().plan.targets = el.checked; Store.save(); rerender(); } }, 're-rest'(el) { ui.edit.items[+el.dataset.i].rest = el.value; },
     'ai-hint'(el) { ui.ai.hint = el.value; }, 'ai-text'(el) { ui.ai.text = el.value; },
     'ai-f'(el) {
       const it = ui.ai.res.items[+el.dataset.i], k = el.dataset.k, P = { kcal: 'k100', p: 'p100', c: 'c100', f: 'f100' };
@@ -1181,14 +1400,14 @@
     'key-draft'(el) { ui.keyDraft = el.value; const b = $('[data-a="key-save"]'); if (b) b.disabled = !el.value.trim(); },
     'set-model'(el) { if (Store.MODELS.indexOf(el.value) >= 0) { D().settings.model = el.value; Store.save(); } },
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
-    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'coach', 'syncKey'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'coach') rerender(); },
+    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
     'coach-q'(el) { ui.coach.draft = el.value; },
     'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v; applyLook(); clearTimeout(hueT); hueT = setTimeout(() => { Store.save(); if (topIs('settings') && !$('#sheet [data-a="hue-reset"]')) refreshSheet(); }, 500); },   // colour follows the finger; saved when it rests
     'set-photo-model'(el) { D().settings.photoModel = Store.MODELS.indexOf(el.value) >= 0 ? el.value : ''; Store.save(); },
     'lib-eq'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.eq = EQS.indexOf(el.value) >= 0 ? el.value : ''; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'act-f'(el) { if (el.dataset.k === 'steps' || el.dataset.k === 'kcal') ui.act[el.dataset.k] = el.value; },
     'act-paste'(el) { if (/\d/.test(el.value) && el.value.length > 3) { const o = parseAct(el.value); if (o.steps > 0 || o.kcal > 0) { actFill(o); el.value = ''; } } },
-    'set-num'(el) { const k = el.dataset.k, v = +el.value, ok = { restDefault: [60, 90, 120, 150, 180], weekGoal: [0, 2, 3, 4, 5, 6, 7], weekStart: [0, 1] }[k]; if (!ok || ok.indexOf(v) < 0) return; D().settings[k] = v; Store.save(); rerender(); },
+    'set-num'(el) { const k = el.dataset.k, v = +el.value, ok = { restDefault: [60, 90, 120, 150, 180], weekGoal: [0, 2, 3, 4, 5, 6, 7], weekStart: [0, 1], hold: [20, 30, 45] }[k]; if (!ok || ok.indexOf(v) < 0) return; D().settings[k] = v; Store.save(); rerender(); },
     'fs-q'(el) { ui.fs.q = el.value; const l = $('#fs-list'); if (l) l.innerHTML = foodRows(); },
     'fa-g'(el) { ui.fa.g = el.value; const o = $('#fa-out'); if (o) o.innerHTML = faOut(); $$('#sheet [data-a="fa-set"]').forEach(c => c.classList.toggle('on', num(el.value) === +c.dataset.g)); },
     'tg-p'(el) {
@@ -1202,7 +1421,20 @@
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
     if (k === 'ai-file' && el.files[0]) { const s0 = ui.ai; try { const r = await FoodAI.shrink(el.files[0], 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
+    if (k === 'mx-file' && el.files[0]) { const s0 = ui.myex; try { const u = await smallPic(el.files[0]); if (ui.myex === s0) { s0.img = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } el.value = ''; }
+    if (k === 'exm-file' && el.files[0]) {
+      const id = el.dataset.id, had = D().exMedia[id];
+      try { if (!(had && had.img) && picCount() >= 30) { toast(t('picLimit')); } else { const u = await smallPic(el.files[0]); if (EX[id]) { D().exMedia[id] = { img: u, vid: (had && had.vid) || '' }; Store.save(); refreshSheet(); if (!ui.wOpen) rerender(); toast(t('saved')); } } } catch (er) { toast(t('picBad')); }
+      el.value = '';
+    }
     if (k === 'import' && el.files[0]) {
+      let plan = null; try { plan = JSON.parse(await el.files[0].text()); } catch (er) { plan = null; }
+      if (plan && plan.app === 'gymapp' && plan.kind === 'plan') {                           // a plan file: routines, meal plan, rules; the log stays
+        const nr = Array.isArray(plan.routines) ? plan.routines.length : 0, nm = plan.plan && Array.isArray(plan.plan.days) ? plan.plan.days.reduce((a, x) => a + (x && Array.isArray(x.meals) ? x.meals.length : 0), 0) : 0;
+        if (!nr && !nm) toast(t('importBad'));
+        else if (confirm(t('planConfirm', nr, nm))) { applyPlan(plan); ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded')); }
+        el.value = ''; return;
+      }
       try { const o = JSON.parse(await el.files[0].text()), d = o && o.data ? o.data : o; if (!d || !Array.isArray(d.workouts) || !Array.isArray(d.routines)) throw 0;
         if (confirm(t('importConfirm', d.workouts.length))) { Store.replace(d); ui.wOpen = false; ui.foodDate = today(); closeSheet(true); render(); toast(t('imported')); } } catch (er) { toast(t('importBad')); }
       el.value = '';
@@ -1212,7 +1444,21 @@
   document.addEventListener('submit', e => {
     const f = e.target, k = f.dataset.f; if (!k) return; e.preventDefault(); const v = Object.fromEntries(new FormData(f));
     if (k === 'bw') { const kg = r1(num(v.kg)); if (!(kg > 20 && kg < 400)) { toast(t('badValue')); return; } const d = D(); d.body = d.body.filter(b => b.d !== today()); d.body.push({ d: today(), kg }); Store.save(); rerender(); toast(t('saved')); }
-    if (k === 'food-manual') { if (!(num(v.kcal) >= 0) || !String(v.name).trim()) return; addFood([v], 'manual'); closeSheet(true); rerender(); toast(t('added')); }
+    if (k === 'food-manual') { if (!(num(v.kcal) >= 0) || !String(v.name).trim()) return;
+      const g = num(v.g), nm = String(v.name).trim().slice(0, 80);
+      if (v.keep && g > 0 && num(v.kcal) > 0) { const k100 = x => r1(num(x) * 100 / g), d = D(), same = d.myFoods.find(z => z.name.toLowerCase() === nm.toLowerCase());     // kept for next time, counted back to 100 g
+        const z = { id: same ? same.id : uid(), name: nm, kcal: k100(v.kcal), p: k100(v.p), c: k100(v.c), f: k100(v.f), port: Math.round(g), t: Date.now() }; d.myFoods = same ? d.myFoods.map(o => o.id === z.id ? z : o) : d.myFoods.concat([z]); }
+      addFood([v], 'manual'); closeSheet(true); rerender(); toast(t('added')); }
+    if (k === 'myfood') {
+      const nm = String(v.name || '').trim().slice(0, 80), kc = num(v.kcal); if (!nm || !(kc > 0 && kc <= 950)) { toast(t('badValue')); return; }
+      if ([v.p, v.c, v.f].some(x => num(x) < 0 || num(x) > 100)) { toast(t('badValue')); return; }
+      const d = D(), id = ui.myfood.id, z = { id: id || uid(), name: nm, kcal: r1(kc), p: r1(num(v.p)), c: r1(num(v.c)), f: r1(num(v.f)), port: Math.max(0, Math.min(5000, Math.round(num(v.port)))), t: Date.now() };
+      d.myFoods = id ? d.myFoods.map(o => o.id === id ? z : o) : d.myFoods.concat([z]); Store.save(); closeSheet(); if (topIs('settings')) refreshSheet(); toast(t('saved'));
+    }
+    if (k === 'exm-vid') {
+      const id = f.dataset.id, vid = String(v.vid || '').trim(), had = D().exMedia[id]; if (vid && !urlOk(vid)) { toast(t('vidBad')); return; }
+      if (EX[id]) { if (vid || (had && had.img)) D().exMedia[id] = { img: (had && had.img) || '', vid }; else delete D().exMedia[id]; Store.save(); closeSheet(); toast(t('saved')); }
+    }
     if (k === 'coach') coachSend(v.q);
     if (k === 'gate') gateSubmit(v);
   });
@@ -1251,5 +1497,5 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
-  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets }; window.__gymFood = { search: foodSearch, of: foodOf };
+  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
