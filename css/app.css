@@ -770,3 +770,43 @@ textarea{min-height:96px;resize:vertical;line-height:1.4}
 .preprow.ok{opacity:.6}
 /* "Fewer animations" switched on in the settings of the app: everything happens at once (the exercise photo keeps alternating) */
 :root[data-calm] *:not(.f2){animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
+
+/* Momentum and supplied-content detail views. Colours follow the active theme. */
+.momentum-hero{display:flex;align-items:center;gap:18px}
+.momentum-hero h2{margin:5px 0;font-size:1.2rem}
+.momentum-hero small,.momentum-hero p{color:var(--mut)}
+.momentum-ring{width:100px;height:100px;flex:none;border-radius:50%;background:conic-gradient(var(--acc-tx) var(--progress),var(--line) 0);display:grid;place-items:center;position:relative}
+.momentum-ring::before{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--card)}
+.momentum-ring b{position:relative;font-size:1.35rem}
+.momentum-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:10px 0 18px}
+.momentum-week button{min-height:76px;border:1px solid var(--line);border-radius:12px;padding:8px 4px;background:var(--card);display:flex;align-items:center;flex-direction:column;gap:4px}
+.momentum-week i{font-style:normal;color:var(--mut);font-size:.8rem}
+.momentum-week .selected{border-color:var(--acc-tx)}
+.momentum-week span{height:4px;width:100%;background:linear-gradient(to right,var(--acc-tx) var(--fill),var(--line) 0);border-radius:3px}
+.momentum-week button:disabled{opacity:.4}
+.habit-meter{display:block;height:5px;border-radius:4px;background:var(--line);overflow:hidden;margin:4px 0}
+.habit-meter i{display:block;height:100%;background:var(--acc-tx);border-radius:inherit}
+.habit-counter{display:flex;align-items:center;gap:4px;flex:none}
+.habit-counter .pill{min-width:36px;min-height:36px;text-align:center;padding:4px 7px;font-variant-numeric:tabular-nums}
+.habit-row{flex-wrap:wrap}
+.habit-name b{white-space:normal;overflow-wrap:anywhere}
+.momentum-heat{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:12px 0}
+.momentum-cell{min-height:40px;border:1px solid var(--line);border-radius:8px;text-align:center;background:var(--raised);font-size:.8rem}
+.momentum-cell.due{background:linear-gradient(to top,rgba(var(--acc-rgb),.24) var(--fill),var(--raised) 0)}
+.momentum-cell.full{border-color:var(--acc-tx);color:var(--acc-tx)}
+.recipe-portions{display:flex;align-items:center;gap:12px;margin:16px 0;flex-wrap:wrap}
+.recipe-portions>span{flex:1;min-width:120px}
+.recipe-portions b{min-width:25px;text-align:center}
+.anim.art-board{aspect-ratio:auto;display:block;width:100%;height:auto;max-height:none;overflow:hidden;background:#fff;border-radius:14px}
+.anim.art-board img{width:100%;height:auto;position:static;object-fit:contain;max-height:none}
+.art-captions{display:grid;grid-template-columns:1fr 1fr;background:var(--raised);color:var(--ink);padding:10px 6px;gap:8px;font-size:.8rem;text-align:center}
+.anim.art-board.big{overflow-x:auto}
+.anim.art-board.big img,.anim.art-board.big .art-captions{width:170%;max-width:none}
+.muscle-detail h4{font-size:.85rem;color:var(--mut);margin:14px 0 8px}
+.muscle-detail .chip{white-space:normal;text-align:left;min-height:40px}
+.circuit-guide{border:1px solid var(--acc-tx)}
+.circuit-guide progress{display:block;width:100%;height:8px;margin:10px 0 14px;accent-color:var(--acc-tx)}
+.circuit-guide .btn{white-space:normal}
+.rinfo{white-space:pre-line;line-height:1.6;margin:12px 0}
+.set:focus-within{outline:1px solid var(--acc-tx);outline-offset:2px}
+@media(max-width:390px){.habit-row{gap:8px}.habit-name{flex-basis:calc(100% - 90px)}.habit-counter{margin-left:44px}.habit-row>.icon-btn:last-child{margin-left:auto}.momentum-hero{gap:12px}.momentum-ring{width:78px;height:78px}.momentum-hero h2{font-size:1rem}}

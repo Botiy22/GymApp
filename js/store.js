@@ -69,7 +69,7 @@ window.Store = (function () {
       x = obj(x);
       const name = typeof x.name === 'string' ? x.name.slice(0, 80) : pair(x.name);
       const o = { id: idStr(x.id) || newId(), name: name || 'Routine', sub: pair(x.sub), builtin: x.builtin === true, icon: ICONS.indexOf(x.icon) >= 0 ? x.icon : '', items: arr(x.items).slice(0, 60).map(item).filter(Boolean) };
-      const info = typeof x.info === 'object' && x.info ? { hu: str(x.info.hu, 600), en: str(x.info.en, 600) } : str(x.info, 600).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;
+      const info = typeof x.info === 'object' && x.info ? { hu: str(x.info.hu, 1200), en: str(x.info.en, 1200) } : str(x.info, 1200).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;
       if (x.circuit === true) o.circuit = true;
       return o;
     });
@@ -101,7 +101,7 @@ window.Store = (function () {
         return Object.assign({ ex: e.ex, label: pair(e.label), target: int(e.target, 1, 12, 3), reps: str(e.reps, 20) || '8–12', rest: int(e.rest, 0, 3600, 90),
           sets: arr(e.sets).slice(0, 40).map(z => { z = obj(z); return { kg: numStr(z.kg), reps: numStr(z.reps), done: z.done === true, w: z.w === true }; }) }, extra(e));
       }).filter(Boolean),
-      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true, circuit: a.circuit === true
+      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true, circuit: a.circuit === true, info: a.info && typeof a.info === 'object' ? { hu: str(a.info.hu, 1200), en: str(a.info.en, 1200) } : str(a.info, 1200)
     } : null;
     const seen = {};
     out.body = arr(r.body).map(b => {

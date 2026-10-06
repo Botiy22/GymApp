@@ -1,3 +1,24 @@
+# Completion update — 2026-10-06
+
+Cloud implementation completed after checkpoint 6f8e727. The historical handoff below describes
+the starting point, not the current implementation. Completed: movement boards and human-face
+medium-grip board, specific muscle names/focus, bilingual routine info, round-order circuit guide,
+zero-rest handling, Momentum/recipe/mobile/light-theme CSS, input defaults/validation, source
+attribution, and service-worker core/cache refresh. Existing storage keys, workout plans and cloud
+sync remain in use. Missing source macros require user entry before logging.
+
+Verification: source review, JavaScript syntax checks and git whitespace checks. No tests added or
+run, per user instruction. The edited image was visually inspected. Live layout inspection could
+not run: Chromium installation download returned a truncated archive, and the provided cloud
+browser blocked the cloud workspace loopback URL (net::ERR_BLOCKED_BY_CLIENT). Account sync
+and offline behavior were not exercised against live user data. Do not claim they were tested.
+
+Image edit prompt: replace only both mannequin heads/necks with normal human heads/faces;
+preserve machine, hands, shoulder-width overhand grip, poses, shaded anatomy and white background.
+Used built-in imagegen; final project asset: img/fig/lat-medium.webp.
+
+---
+
 # GymApp cloud continuation — 2026-10-06
 
 This branch is unfinished work, preserved because the user's laptop is running out of battery. Do not treat it as deployable.

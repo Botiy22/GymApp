@@ -106,10 +106,19 @@ and fat per 100 g, plus household portions. No number in it was typed by hand. T
   same product (for example túró).
 - Hungarian packaged products (Túró Rudi and so on) are not in it. Use the label or the AI estimate.
 
-`data/recipes.js` holds the meal ideas. The recipes are the app's own; their calories and macros are
-computed by the same script from the food data, using raw ingredient weights. The "videos" list only
-links to the creator's own TikTok videos (title and link); the recipes shown in those videos are not
-copied into the app. Before offering the app to other people, ask the creator before using his name.
+`data/recipes.js` holds the original meal ideas, calculated from USDA raw-ingredient data.
+`data/additions.js` adds four recipes transcribed from supplied recordings. Their nutrition is
+creator-reported and not independently verified. Missing values remain null and must be entered
+before logging. Batch quantities and logged servings are separate; pancakes are logged per piece.
+Original videos are not bundled. Uncertain quantities and app adaptations are labelled in the recipes.
+
+The optional Centr routine guides ten rounds in exercise order. Zero rest disables the automatic
+timer. The three-grip pulldown routine records one demonstrated sequence, without assuming total
+sets or rest from the source. Existing plans and diaries are retained.
+
+Momentum preserves old habit checkmarks and adds counters, diary-driven steps/protein/workout
+goals, a weekly strip and 28-day progress. Muscle names describe the map's anatomical groups;
+they do not represent measured activation percentages or fibre-specific loading.
 
 ## AI food recognition
 
@@ -279,3 +288,8 @@ the changed drawings under the same licence.
 Body map drawing: [react-native-body-highlighter](https://github.com/HichamELBSI/react-native-body-highlighter)
 by ELABBASSI Hicham, MIT licence (the notice is kept at the top of `data/body.js`). The paths are used
 unchanged.
+
+Detailed movement boards `img/fig/press.webp`, `row.webp`, `lat-wide.webp` and
+`lat-medium.webp` are AI-generated GymApp illustrations, separate from the CC BY-SA
+Everkinetic SVGs. The medium-grip board was edited to restore normal human faces while
+preserving the two positions and shoulder-width overhand grip.
