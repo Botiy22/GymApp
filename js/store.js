@@ -16,11 +16,11 @@ window.Store = (function () {
       items: window.PLAN.items.filter(i => i.day === d.id).map(i => ({
         ex: i.ex, label: { hu: i.hu, en: i.en }, sets: i.sets, reps: i.reps, rest: i.rest
       }))
-    }));
+    })).concat(JSON.parse(JSON.stringify(window.EXTRA_ROUTINES || [])));
   }
   function fresh() {
     return {
-      v: 1,
+      v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
         accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
@@ -69,10 +69,15 @@ window.Store = (function () {
       x = obj(x);
       const name = typeof x.name === 'string' ? x.name.slice(0, 80) : pair(x.name);
       const o = { id: idStr(x.id) || newId(), name: name || 'Routine', sub: pair(x.sub), builtin: x.builtin === true, icon: ICONS.indexOf(x.icon) >= 0 ? x.icon : '', items: arr(x.items).slice(0, 60).map(item).filter(Boolean) };
-      const info = str(x.info, 600).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;       // optional day: left out of the "next workout" rotation
+      const info = typeof x.info === 'object' && x.info ? { hu: str(x.info.hu, 600), en: str(x.info.en, 600) } : str(x.info, 600).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;
+      if (x.circuit === true) o.circuit = true;
       return o;
     });
     if (!out.routines.length) out.routines = f.routines;
+    out.contentVersion = 1;
+    if (!(r.contentVersion >= 1)) (window.EXTRA_ROUTINES || []).forEach(x => {
+      if (!out.routines.some(y => y.id === x.id) && !obj(r.del)[x.id]) out.routines.push(JSON.parse(JSON.stringify(x)));
+    });
     const doneSet = z => { z = obj(z); return { kg: Math.round(num(z.kg, 0, 2000, 0) * 100) / 100, reps: int(z.reps, 0, 1000, 0), w: z.w === true }; };
     out.workouts = arr(r.workouts).slice(-5000).map(w => {
       w = obj(w);
@@ -96,7 +101,7 @@ window.Store = (function () {
         return Object.assign({ ex: e.ex, label: pair(e.label), target: int(e.target, 1, 12, 3), reps: str(e.reps, 20) || '8–12', rest: int(e.rest, 0, 3600, 90),
           sets: arr(e.sets).slice(0, 40).map(z => { z = obj(z); return { kg: numStr(z.kg), reps: numStr(z.reps), done: z.done === true, w: z.w === true }; }) }, extra(e));
       }).filter(Boolean),
-      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true
+      restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true, circuit: a.circuit === true
     } : null;
     const seen = {};
     out.body = arr(r.body).map(b => {
@@ -119,13 +124,7 @@ window.Store = (function () {
     out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
     Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
-    out.habits = arr(r.habits).slice(0, 100).map(h => {
-      h = obj(h); const id = idStr(h.id), name = str(h.name, 60).trim();
-      if (!id || !name) return null;
-      const days = Array.from(new Set(arr(h.days).map(x => +x).filter(x => Number.isInteger(x) && x >= 0 && x <= 6))).sort();
-      const done = Array.from(new Set(arr(h.done).filter(x => DAY.test(str(x, 10))))).slice(-3000);
-      return { id, name, days: days.length ? days : [0, 1, 2, 3, 4, 5, 6], done };
-    }).filter(Boolean);
+    out.habits = arr(r.habits).slice(0, 100).map(Momentum.clean).filter(Boolean).filter((h, i, list) => list.findIndex(x => x.id === h.id) === i);
     /* coach conversations: newest 40, and never more than about 400 000 characters in all */
     let room = 400000;
     out.chats = arr(r.chats).map(c => { c = obj(c); const id = idStr(c.id), msgs = arr(c.msgs).slice(-60).map(m => { m = obj(m); const tx = str(m.content, 6000); return tx ? { role: m.role === 'assistant' ? 'assistant' : 'user', content: tx } : null; }).filter(Boolean); return id && msgs.length ? { id, t: num(c.t, 0, 4e12, 0), msgs } : null; })

@@ -228,3 +228,27 @@ window.I18N = {
     eq: { barbell: 'barbell', dumbbell: 'dumbbell', other: 'other', 'body only': 'bodyweight', cable: 'cable', machine: 'machine', kettlebells: 'kettlebell', bands: 'band', 'medicine ball': 'medicine ball', 'exercise ball': 'exercise ball', 'foam roll': 'foam roll', 'e-z curl bar': 'EZ bar' }
   }
 };
+Object.assign(I18N.hu, {
+  tabHabits: 'Lendület', habitsDaily: 'Napi céljaid', habitAdd: 'Új cél', habitEdit: 'Cél szerkesztése', habitName: 'Cél neve', habitNamePh: 'pl. Olvasás vagy nyújtás',
+  habitEmpty: 'Építsd fel a saját ritmusodat. Válassz egy ötletet, vagy adj hozzá saját célt.', habitsEmpty: 'Még nincs napi célod.', habitNeedName: 'Adj nevet a célnak.', calKeyH: 'napi cél',
+  momentumSub: 'Apró lépések, látható haladás.', momentumDone: 'Minden mai cél teljesítve!', momentumProgress: 'Minden lépés számít.', momentumRest: 'Ma szabadnapod van.', momentumTemplates: 'Ötletek az induláshoz',
+  momentumWeek: 'Ezen a héten', momentumMonth: 'Az elmúlt 28 nap', momentumRate: 'teljesített cél', momentumDays: 'beütemezett alkalom', momentumType: 'Hogyan követed?', momentumGoal: 'Napi mennyiség', momentumUnit: 'Egység', momentumUnitPh: 'pl. pohár, perc, oldal',
+  momentum_check: 'Egy pipa', momentum_count: 'Számláló', momentum_steps: 'Naplózott lépések', momentum_workout: 'Naplózott edzés', momentum_protein: 'Naplózott fehérje', momentumAuto: 'A naplóból frissül', momentumAutoCap: 'Az aznapi naplózott adatokból automatikusan számol. A lépések rögzítésével, egy edzés mentésével vagy az étkezési naplóval teljesül.', momentumAmount: 'Elért mennyiség', momentumLimit: 'Legfeljebb 100 célt adhatsz hozzá.',
+  tplWater: 'Víz · poharak', tplRead: 'Olvasás · oldalak', tplStretch: 'Nyújtás', tplSteps: 'Lépéscél', tplWorkout: 'Edzésnap', tplProtein: 'Fehérjecél',
+  recipeBatch: 'Hozzávalók a teljes adaghoz', recipeYield: '{0} adag készül', recipeQty: 'Naplózandó adag', recipeMissing: 'Egészítsd ki a hiányzó tápértékeket a használt termékek alapján. A mezők a kiválasztott mennyiségre vonatkoznak.', recipeSource: 'Forrás', recipeNew: 'A videóidból', recipeEstimate: 'Az elkészítési idő becslés.',
+  movementStart: 'Kiindulás', movementEnd: 'Véghelyzet', movementArt: 'Részletes mozdulatrajz · a két fázis összehasonlítható és nagyítható.', muscleDetail: 'Konkrét izmok', muscleGroupCap: 'A térkép izomcsoportokat mutat. Az egyes izmok terhelése a technikától és az egyéni adottságoktól is függ.', muscleAll: 'Összes',
+  circuitRound: '{0}. kör / {1}', circuitNext: 'Következő mozdulat', circuitDone: 'Minden kör kész', circuitJump: 'Ugrás a sorozathoz', circuitComplete: '{0}/{1} mozdulat kész',
+  resetRoutinesConfirm: 'Visszaállítod a beépített edzéseket? A saját terveid megmaradnak.'
+});
+Object.assign(I18N.en, {
+  tabHabits: 'Momentum', habitsDaily: 'Daily goals', habitAdd: 'New goal', habitEdit: 'Edit goal', habitName: 'Goal name', habitNamePh: 'e.g. Reading or stretching',
+  habitEmpty: 'Build your own rhythm. Choose an idea or add your own goal.', habitsEmpty: 'No daily goals yet.', habitNeedName: 'Give your goal a name.', calKeyH: 'daily goal',
+  momentumSub: 'Small steps, visible progress.', momentumDone: 'All goals completed today!', momentumProgress: 'Every step counts.', momentumRest: 'A day off from your goals.', momentumTemplates: 'Ideas to get started',
+  momentumWeek: 'This week', momentumMonth: 'The past 28 days', momentumRate: 'goals completed', momentumDays: 'scheduled occasions', momentumType: 'How will you track it?', momentumGoal: 'Daily amount', momentumUnit: 'Unit', momentumUnitPh: 'e.g. glasses, minutes, pages',
+  momentum_check: 'One check', momentum_count: 'Counter', momentum_steps: 'Logged steps', momentum_workout: 'Logged workout', momentum_protein: 'Logged protein', momentumAuto: 'Updated from your diary', momentumAutoCap: 'Uses that day’s logged data automatically. Log steps, save a workout or add meals to complete the goal.', momentumAmount: 'Amount achieved', momentumLimit: 'You can add up to 100 goals.',
+  tplWater: 'Water · glasses', tplRead: 'Reading · pages', tplStretch: 'Stretching', tplSteps: 'Step goal', tplWorkout: 'Workout day', tplProtein: 'Protein goal',
+  recipeBatch: 'Ingredients for the full batch', recipeYield: 'Makes {0} servings', recipeQty: 'Servings to log', recipeMissing: 'Supply the missing nutrition using the products you used. Fields are for the selected amount.', recipeSource: 'Source', recipeNew: 'From your videos', recipeEstimate: 'Preparation time is approximate.',
+  movementStart: 'Start', movementEnd: 'Finish', movementArt: 'Detailed movement illustration · compare both phases and tap to enlarge.', muscleDetail: 'Specific muscles', muscleGroupCap: 'The map shows muscle groups. Loading of individual muscles also depends on technique and individual anatomy.', muscleAll: 'All',
+  circuitRound: 'Round {0} / {1}', circuitNext: 'Next movement', circuitDone: 'All rounds complete', circuitJump: 'Go to set', circuitComplete: '{0}/{1} movements complete',
+  resetRoutinesConfirm: 'Restore the built-in workouts? Your own routines stay.'
+});

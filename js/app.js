@@ -20,7 +20,7 @@
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const VERSION = '1.9';
+  const VERSION = '2.0';
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -37,7 +37,7 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/t.jpg';                    // small picture for lists; the large ones are only loaded in the detail view
+  const thumb = id => ownPic(id) || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
   const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
@@ -155,27 +155,36 @@
   const head = (title, sub, cal) => `<header class="top"><div><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
-  const habitDue = (h, k) => h.days.indexOf(new Date(k + 'T12:00').getDay()) >= 0;
-  const habitDone = (h, k) => h.done.indexOf(k) >= 0;
+  const habitDue = Momentum.due;
+  const habitDone = (h, k) => Momentum.done(h, k, D());
   function habitStreak(h, k) {
-    let d = new Date(k + 'T12:00'); if (!habitDone(h, ymd(d))) d.setDate(d.getDate() - 1);
-    let n = 0; while (n < 3000) { const key = ymd(d); if (habitDue(h, key)) { if (!habitDone(h, key)) break; n++; } d.setDate(d.getDate() - 1); }
-    return n;
+    return Momentum.streak(h, k, D());
   }
   function habitRows(k) {
     const list = D().habits.filter(h => habitDue(h, k));
     if (!list.length) return `<p class="empty">${esc(D().habits.length ? t('habitsNoneDue') : t('habitsEmpty'))}</p>`;
-    return list.map(h => { const done = habitDone(h, k); return `<div class="habit-row"><button class="habit-check${done ? ' on' : ''}" data-a="habit-toggle" data-id="${esc(h.id)}" data-d="${esc(k)}" aria-pressed="${done}" aria-label="${esc(done ? t('habitUndo') : t('habitComplete'))}: ${esc(h.name)}">${done ? IC.check : ''}</button><span class="habit-name${done ? ' done' : ''}"><b>${esc(h.name)}</b><i>${esc(t('habitStreak', habitStreak(h, k)))}</i></span><button class="icon-btn sm" data-a="habit-edit" data-id="${esc(h.id)}" aria-label="${esc(t('edit'))}: ${esc(h.name)}">${IC.pen}</button></div>`; }).join('');
+    return list.map(h => { const done = habitDone(h, k), value = r1(Momentum.value(h, k, D())), ratio = Momentum.progress(h, k, D()), auto = !['check', 'count'].includes(h.source), unit = h.source === 'protein' ? 'g' : h.source === 'steps' ? t('stepsLbl') : h.unit;
+      const attrs = `data-id="${esc(h.id)}" data-d="${esc(k)}"`;
+      return `<div class="habit-row"><button class="habit-check${done ? ' on' : ''}" data-a="habit-toggle" ${attrs} aria-pressed="${done}" aria-label="${esc(auto ? t('momentumAuto') : done ? t('habitUndo') : t('habitComplete'))}: ${esc(h.name)}">${done ? IC.check : auto ? IC.chev : h.source === 'count' ? IC.plus : ''}</button><span class="habit-name"><b>${esc(h.name)}</b><i>${esc(t('habitStreak', habitStreak(h, k)))}${auto ? ' · ' + esc(t('momentumAuto')) : ''}</i>${h.source !== 'check' ? `<span class="habit-meter" role="progressbar" aria-label="${esc(h.name)}" aria-valuemin="0" aria-valuemax="${h.goal}" aria-valuenow="${Math.min(value, h.goal)}"><i style="width:${ratio * 100}%"></i></span><i>${compact(value)} / ${compact(h.goal)} ${esc(unit)}</i>` : ''}</span>${h.source === 'count' ? `<div class="habit-counter"><button class="icon-btn sm" data-a="habit-count" ${attrs} data-n="-1" aria-label="−1 ${esc(unit)}" ${value <= 0 ? 'disabled' : ''}>−</button><button class="pill" data-a="habit-amount" ${attrs} aria-label="${esc(t('momentumAmount'))}">${value}</button><button class="icon-btn sm" data-a="habit-count" ${attrs} data-n="1" aria-label="+1 ${esc(unit)}">+</button></div>` : ''}<button class="icon-btn sm" data-a="habit-edit" data-id="${esc(h.id)}" aria-label="${esc(t('edit'))}: ${esc(h.name)}">${IC.pen}</button></div>`;
+    }).join('');
   }
   function shHabitEdit() {
     const x = ui.habitEdit, labels = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'short' }));
-    return () => ({ title: x.id ? t('habitEdit') : t('habitAdd'), html: `<label class="fld"><span>${esc(t('habitName'))}</span><input id="habit-name" data-in="habit-name" maxlength="60" value="${esc(x.name)}" placeholder="${esc(t('habitNamePh'))}" autocomplete="off"></label><p class="cap">${esc(t('habitSchedule'))}</p><div class="chips">${labels.map((n, i) => `<button class="chip${x.days.indexOf(i) >= 0 ? ' on' : ''}" data-a="habit-day-pick" data-day="${i}" aria-pressed="${x.days.indexOf(i) >= 0}">${esc(n)}</button>`).join('')}</div>${x.id ? `<button class="btn danger" data-a="habit-delete">${esc(t('delete'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="habit-save">${esc(t('save'))}</button>` });
+    return () => ({ title: x.id ? t('habitEdit') : t('habitAdd'), html: `<label class="fld"><span>${esc(t('habitName'))}</span><input id="habit-name" data-in="habit-name" maxlength="60" value="${esc(x.name)}" placeholder="${esc(t('habitNamePh'))}" autocomplete="off"></label><label class="fld"><span>${esc(t('momentumType'))}</span><select data-in="habit-source">${Momentum.sources.map(s => `<option value="${s}" ${x.source === s ? 'selected' : ''}>${esc(t('momentum_' + s))}</option>`).join('')}</select></label>${!['check', 'workout'].includes(x.source) ? `<div class="grid2"><label class="fld"><span>${esc(t('momentumGoal'))}</span><input id="habit-goal" data-in="habit-goal" inputmode="decimal" value="${esc(x.goal)}"></label>${x.source === 'count' ? `<label class="fld"><span>${esc(t('momentumUnit'))}</span><input data-in="habit-unit" maxlength="20" value="${esc(x.unit)}" placeholder="${esc(t('momentumUnitPh'))}"></label>` : ''}</div>` : ''}${!['check', 'count'].includes(x.source) ? `<p class="cap">${esc(t('momentumAutoCap'))}</p>` : ''}<p class="cap">${esc(t('habitSchedule'))}</p><div class="chips">${labels.map((n, i) => `<button class="chip${x.days.indexOf(i) >= 0 ? ' on' : ''}" data-a="habit-day-pick" data-day="${i}" aria-pressed="${x.days.indexOf(i) >= 0}">${esc(n)}</button>`).join('')}</div>${x.id ? `<button class="btn danger" data-a="habit-delete">${esc(t('delete'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="habit-save">${esc(t('save'))}</button>` });
   }
   function vHabits() {
     const k = ui.habitDate, d = new Date(k + 'T12:00'), loc = L() === 'hu' ? 'hu-HU' : 'en-GB', due = D().habits.filter(h => habitDue(h, k)), done = due.filter(h => habitDone(h, k)).length;
     let h = head(t('tabHabits'), t(k === today() ? 'today' : 'habitDayName', d.toLocaleDateString(loc, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })));
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
+    const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
+    h += `<section class="card momentum-hero"><div class="momentum-ring" style="--progress:${percent * 3.6}deg" role="img" aria-label="${percent}%"><b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
+    const start = ymd(weekStart(k + 'T12:00'));
+    h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
+    h += `<section class="card"><h3>${esc(t('momentumTemplates'))}</h3><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></section>`;
+    let scheduled = 0, completed = 0;
+    const heat = Array.from({ length: 28 }, (_, i) => { const key = Momentum.shift(k, i - 27), s = Momentum.summary(D().habits, key, D()); scheduled += s.total; completed += s.done; return `<button class="momentum-cell${s.total ? ' due' : ''}${s.done === s.total && s.total ? ' full' : ''}" style="--fill:${Math.round(s.ratio * 100)}%" data-a="habit-select-date" data-d="${key}" aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}" title="${key}: ${s.done}/${s.total}">${Number(key.slice(-2))}</button>`; }).join('');
+    h += `<section class="card"><h3>${esc(t('momentumMonth'))}</h3><div class="momentum-heat">${heat}</div><p class="cap">${completed} / ${scheduled} ${esc(t('momentumDays'))}${scheduled ? ' · ' + Math.round(completed / scheduled * 100) + '%' : ''}</p></section>`;
     return h;
   }
   function actRow(k) {
@@ -308,7 +317,7 @@
   function vIdeas() {
     const cats = [['', t('all')], ['breakfast', t('cat_breakfast')], ['main', t('cat_main')], ['snack', t('cat_snack')]];
     let h = `<div class="seg">${cats.map(([c, n]) => `<button class="${ui.idea === c ? 'on' : ''}" data-a="idea-cat" data-c="${c}" aria-pressed="${ui.idea === c}">${esc(n)}</button>`).join('')}</div><div class="rlist">` +
-      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard" data-a="idea-open" data-id="${esc(r.id)}"><span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.kcal} kcal · ${r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
+      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard" data-a="idea-open" data-id="${esc(r.id)}"><span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.source ? esc(t('recipeNew')) + ' · ' : ''}${r.kcal == null ? '—' : r.kcal} kcal · ${r.p == null ? '—' : r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
     const vids = RCP.videos.filter(v => /^https:\/\/www\.tiktok\.com\//.test(v.url));
     if (vids.length) h += `<h2>${esc(t('videosTitle'))}</h2><div class="rlist">${vids.map(v => `<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p>`;
     return h;
@@ -316,11 +325,11 @@
   function shRecipe(id) {
     return () => {
       const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
-      const k = L() === 'hu' ? 0 : 1;
-      return { title: r[L()] || r.en, html: `<div class="kpis k4"><div><b>${r.kcal}</b><i>kcal</i></div><div><b>${r.p} g</b><i>${esc(t('protein'))}</i></div><div><b>${r.c} g</b><i>${esc(t('carbs'))}</i></div><div><b>${r.f} g</b><i>${esc(t('fat'))}</i></div></div>
-        <p class="cap">${esc(t('perServing'))} · ${r.g} g · ${r.min} ${esc(t('min'))}</p>
-        <section class="card"><h3>${esc(t('ingredients'))}</h3><ul class="ing">${r.ing.map(i => `<li><span>${esc(i[k])}</span><b>${i[2]} g</b></li>`).join('')}</ul></section>
-        <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(t('ideasCap'))}</p>`,
+      const k = L() === 'hu' ? 0 : 1, q = ui.recipeQty || 1, macro = key => r[key] == null ? '—' : r1(r[key] * q);
+      return { title: r[L()] || r.en, html: `<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
+        <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
+        <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li><span>${esc(i[k])}</span><b>${typeof i[2] === 'number' ? i[2] + ' g' : esc(i[2])}</b></li>`).join('')}</ul></section>
+        <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
         foot: `<button class="btn primary" data-a="idea-add" data-id="${esc(r.id)}">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -714,7 +723,7 @@
   async function wake() { try { if (D().settings.awake && 'wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
   function unwake() { try { if (lock) lock.release(); } catch (e) {} lock = null; }
   function startRest(sec) { const a = D().active; if (!a || !D().settings.restAuto || !sec) return; a.restEnd = Date.now() + sec * 1000; a.restTotal = sec; Store.saveActive(); tick(); }
-  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
+  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; if (ui.habitDate === ui.day) ui.habitDate = d; ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
   function tick() {
     dayCheck();
     prepTick();
@@ -739,10 +748,10 @@
   }
   function shFoodManual() {
     return () => {
-      const rc = D().recentFoods, fld = (k, lbl, mode, v) => `<label class="fld"><span>${esc(lbl)}</span><input type="text" inputmode="${mode}" name="${k}" value="${esc(v == null ? '' : v)}" autocomplete="off"></label>`;
+      const rc = D().recentFoods, fld = (k, lbl, mode, v) => `<label class="fld"><span>${esc(lbl)}</span><input type="text" inputmode="${mode}" name="${k}" value="${esc(v == null ? '' : v)}" ${ui.manual && ui.manual.requireMacros && k !== 'g' ? 'required' : ''} autocomplete="off"></label>`;
       const v = ui.manual || {};
       return { title: t('foodOwn'), html: `${rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : ''}
-        <form data-f="food-manual" id="fm"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" autocomplete="off" required></label>
+        ${v.requireMacros ? `<p class="cap">${esc(t('recipeMissing'))}</p>` : ''}<form data-f="food-manual" id="fm"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" autocomplete="off" required></label>
         <div class="grid2">${fld('g', t('grams'), 'numeric', v.g || '')}${fld('kcal', 'kcal', 'numeric', v.kcal)}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal', v.p)}${fld('c', t('carbs') + ' (g)', 'decimal', v.c)}${fld('f', t('fat') + ' (g)', 'decimal', v.f)}</div>
         <label class="sw"><input type="checkbox" name="keep"><span>${esc(t('myFoodKeep'))}</span></label></form>`,
         foot: `<button class="btn primary" form="fm">${esc(t('addToDiary'))}</button>` };
@@ -1147,20 +1156,29 @@
     'day-open'(el) { const k = el.dataset.d; if (/^\d{4}-\d\d-\d\d$/.test(k) && k <= today()) openSheet(shDay(k)); },
     'day-food'(el) { const k = el.dataset.d; if (!/^\d{4}-\d\d-\d\d$/.test(k) || k > today()) return; ui.foodDate = k; ui.food = 'diary'; closeSheet(true); go('tab', () => { ui.tab = 'food'; render(); }); },
     act(el) { const k = /^\d{4}-\d\d-\d\d$/.test(el.dataset.d || '') && el.dataset.d <= today() ? el.dataset.d : today(), a = actOf(k); ui.act = { steps: a.steps ? String(a.steps) : '', kcal: a.kcal ? String(a.kcal) : '' }; openSheet(shAct(k)); },
-    'habit-new'() { ui.habitEdit = { id: '', name: '', days: [0, 1, 2, 3, 4, 5, 6] }; openSheet(shHabitEdit()); },
-    'habit-edit'(el) { const h = D().habits.find(x => x.id === el.dataset.id); if (!h) return; ui.habitEdit = { id: h.id, name: h.name, days: h.days.slice() }; openSheet(shHabitEdit()); },
+    'habit-new'() { if (D().habits.length >= 100) { toast(t('momentumLimit')); return; } ui.habitEdit = { id: '', name: '', days: [0, 1, 2, 3, 4, 5, 6], source: 'check', goal: 1, unit: '' }; openSheet(shHabitEdit()); },
+    'habit-template'(el) { A['habit-new'](); if (!ui.habitEdit) return; const x = [['tplWater', 'count', 8, L() === 'hu' ? 'pohár' : 'glasses'], ['tplRead', 'count', 10, L() === 'hu' ? 'oldal' : 'pages'], ['tplStretch', 'check', 1, ''], ['tplSteps', 'steps', 8000, ''], ['tplWorkout', 'workout', 1, ''], ['tplProtein', 'protein', 150, '']][+el.dataset.i]; if (!x) return; Object.assign(ui.habitEdit, { name: t(x[0]), source: x[1], goal: x[2], unit: x[3] }); refreshSheet(); },
+    'habit-edit'(el) { const h = D().habits.find(x => x.id === el.dataset.id); if (!h) return; ui.habitEdit = Object.assign({}, h, { days: h.days.slice() }); openSheet(shHabitEdit()); },
     'habit-day-pick'(el) { const a = ui.habitEdit.days, n = +el.dataset.day, i = a.indexOf(n); if (i >= 0) { if (a.length === 1) { toast(t('habitNeedDay')); return; } a.splice(i, 1); } else a.push(n); a.sort(); refreshSheet(); },
     'habit-save'() {
       const x = ui.habitEdit, input = $('#habit-name'), name = String(input ? input.value : x.name).trim().slice(0, 60); if (!name) { toast(t('habitNeedName')); if (input) input.focus(); return; }
       if (!x.days.length) { toast(t('habitNeedDay')); return; }
-      const d = D(), old = x.id && d.habits.find(h => h.id === x.id), h = { id: x.id || uid(), name, days: x.days.slice(), done: old ? old.done : [] };
+      if (!['check', 'workout'].includes(x.source) && !(num(x.goal) >= 1 && num(x.goal) <= 200000)) { toast(t('badValue')); return; }
+      const d = D(), old = x.id && d.habits.find(h => h.id === x.id), h = Momentum.clean({ id: x.id || uid(), name, days: x.days.slice(), source: x.source, goal: num(x.goal), unit: x.unit, logs: old ? old.logs : {}, started: old ? old.started : today(), t: Date.now() });
       d.habits = old ? d.habits.map(z => z.id === h.id ? h : z) : d.habits.concat([h]); Store.save(); ui.habitEdit = null; closeSheet(true); rerender(); toast(t('saved'));
     },
     'habit-delete'() { const x = ui.habitEdit, d = D(); if (!x || !x.id) return; d.habits = d.habits.filter(h => h.id !== x.id); Store.save(); ui.habitEdit = null; closeSheet(true); rerender(); toast(t('saved')); },
     'habit-toggle'(el) {
       const k = el.dataset.d, h = D().habits.find(x => x.id === el.dataset.id); if (!h || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return;
-      const i = h.done.indexOf(k); if (i >= 0) h.done.splice(i, 1); else h.done.push(k); h.done.sort(); Store.save(); if (topIs('day')) refreshSheet(); rerender();
+      if (h.source === 'steps') { A.act(el); return; }
+      if (h.source === 'protein') { A['day-food'](el); return; }
+      if (h.source === 'workout') { if (k === today()) { closeSheet(true); ui.tab = 'home'; rerender(); } else A['day-open'](el); return; }
+      if (h.source === 'count') { A['habit-count']({ dataset: Object.assign({}, el.dataset, { n: '1' }) }); return; }
+      h.logs[k] = { v: habitDone(h, k) ? 0 : 1, t: Date.now() }; Store.save(); if (topIs('day')) refreshSheet(); rerender();
     },
+    'habit-count'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return; h.logs[k] = { v: Math.max(0, Math.min(200000, r1(Momentum.value(h, k, D()) + num(el.dataset.n)))), t: Date.now() }; Store.save(); if (topIs('day')) refreshSheet(); rerender(); },
+    'habit-amount'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || k > today() || !habitDue(h, k)) return; ui.habitAmount = { id: h.id, day: k }; openSheet(() => ({ title: h.name, html: `<form id="habit-amount-form" data-f="habit-amount"><label class="fld"><span>${esc(t('momentumAmount'))} ${esc(h.unit)}</span><input name="value" inputmode="decimal" required value="${Momentum.value(h, k, D())}"></label></form>`, foot: `<button class="btn primary" form="habit-amount-form">${esc(t('save'))}</button>` })); },
+    'habit-select-date'(el) { if (/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) && el.dataset.d <= today()) { ui.habitDate = el.dataset.d; rerender(); } },
     'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); render(); } },
     'act-est'() { const w = num(D().settings.profile.weight), st = num(ui.act.steps); if (!(st > 0)) { toast(t('actEstNeed')); return; } ui.act.kcal = String(Math.round(st * w * 0.00055)); const b = $('#act-kcal'); if (b) b.value = ui.act.kcal; },
     async 'act-paste'() { let txt = ''; try { txt = await navigator.clipboard.readText(); } catch (e) { toast(t('actClipNo')); return; } if (topIs('act')) actFill(parseAct(txt)); },
@@ -1377,8 +1395,9 @@
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
     'food-view'(el) { const v = el.dataset.v === 'ideas' ? 'ideas' : 'diary'; if (ui.food !== v) go('tab', () => { ui.food = v; render(); }); else render(); },
     'idea-cat'(el) { ui.idea = el.dataset.c; rerender(); },
-    'idea-open'(el) { openSheet(shRecipe(el.dataset.id)); },
-    'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; addFood([{ name: r[L()] || r.en, g: r.g, kcal: r.kcal, p: r.p, c: r.c, f: r.f }], 'db'); closeSheet(true); rerender(); toast(t('added')); },
+    'idea-open'(el) { ui.recipeQty = 1; openSheet(shRecipe(el.dataset.id)); },
+    'recipe-qty'(el) { ui.recipeQty = Math.max(.5, Math.min(20, (ui.recipeQty || 1) + num(el.dataset.n))); refreshSheet(); },
+    'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; const q = ui.recipeQty || 1, food = { name: (r[L()] || r.en) + (q !== 1 ? ' × ' + q : ''), g: Math.round((r.g || 0) * q) }; ['kcal', 'p', 'c', 'f'].forEach(k => { food[k] = r[k] == null ? '' : r1(r[k] * q); }); if (['kcal', 'p', 'c', 'f'].some(k => r[k] == null)) { ui.manual = Object.assign(food, { requireMacros: true }); openSheet(shFoodManual()); return; } addFood([food], r.source ? 'manual' : 'db'); closeSheet(true); rerender(); toast(t('added')); },
     'food-manual'() { ui.fs = { q: '', hits: [] }; openSheet(shFoodFind()); },
     'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); if (topIs('foodfind')) openSheet(shFoodManual()); else refreshSheet(); },
     'fs-pick'(el) { const x = ui.fs.hits[+el.dataset.n]; if (x) pickFood(x); },
@@ -1421,6 +1440,9 @@
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
     'habit-name'(el) { if (ui.habitEdit) ui.habitEdit.name = el.value; },
+    'habit-source'(el) { if (!ui.habitEdit || !Momentum.sources.includes(el.value)) return; ui.habitEdit.source = el.value; if (['check', 'workout'].includes(el.value)) ui.habitEdit.goal = 1; refreshSheet(); },
+    'habit-goal'(el) { if (ui.habitEdit) ui.habitEdit.goal = el.value; },
+    'habit-unit'(el) { if (ui.habitEdit) ui.habitEdit.unit = el.value; },
     'lib-q'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.q = el.value; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
@@ -1484,8 +1506,9 @@
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset && e.target.dataset.in === 'w-reps') { e.preventDefault(); e.target.blur(); const b = $('.set-ok', e.target.closest('.set')); if (b && b.getAttribute('aria-pressed') !== 'true') b.click(); } });
   document.addEventListener('submit', e => {
     const f = e.target, k = f.dataset.f; if (!k) return; e.preventDefault(); const v = Object.fromEntries(new FormData(f));
+    if (k === 'habit-amount') { const x = ui.habitAmount, h = x && D().habits.find(z => z.id === x.id); if (!h || !habitDue(h, x.day) || x.day > today() || !String(v.value).trim() || num(v.value) < 0 || num(v.value) > 200000) { toast(t('badValue')); return; } h.logs[x.day] = { v: r1(num(v.value)), t: Date.now() }; Store.save(); closeSheet(); if (topIs('day')) refreshSheet(); rerender(); }
     if (k === 'bw') { const kg = r1(num(v.kg)); if (!(kg > 20 && kg < 400)) { toast(t('badValue')); return; } const d = D(); d.body = d.body.filter(b => b.d !== today()); d.body.push({ d: today(), kg }); Store.save(); rerender(); toast(t('saved')); }
-    if (k === 'food-manual') { if (!(num(v.kcal) >= 0) || !String(v.name).trim()) return;
+    if (k === 'food-manual') { if (ui.manual && ui.manual.requireMacros && ['kcal', 'p', 'c', 'f'].some(key => !/^[0-9]+([.,][0-9]+)?$/.test(String(v[key]).trim()))) { toast(t('badValue')); return; } if (!(num(v.kcal) >= 0) || !String(v.name).trim()) return;
       const g = num(v.g), nm = String(v.name).trim().slice(0, 80);
       if (v.keep && g > 0 && num(v.kcal) > 0) { const k100 = x => r1(num(x) * 100 / g), d = D(), same = d.myFoods.find(z => z.name.toLowerCase() === nm.toLowerCase());     // kept for next time, counted back to 100 g
         const z = { id: same ? same.id : uid(), name: nm, kcal: k100(v.kcal), p: k100(v.p), c: k100(v.c), f: k100(v.f), port: Math.round(g), t: Date.now() }; d.myFoods = same ? d.myFoods.map(o => o.id === z.id ? z : o) : d.myFoods.concat([z]); }
@@ -1540,3 +1563,5 @@
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
+
+
