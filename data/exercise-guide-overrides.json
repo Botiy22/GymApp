@@ -1359,5 +1359,469 @@
         "Keep your back steady and extend your hips to stand; your arms only hold the band."
       ]
     }
+  },
+  "Band_Pull_Apart": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Tartsd a szalagot két kézzel magad előtt vállmagasságban.",
+        "Nyújtott karral húzd szét a szalagot, karodat oldalra nyitva.",
+        "Törzsed maradjon stabil; kontrolláltan engedd vissza."
+      ],
+      "en": [
+        "Hold a band in both hands in front at shoulder height.",
+        "Pull it apart by opening your straight arms out to the sides.",
+        "Keep your trunk steady; return with control."
+      ]
+    }
+  },
+  "Band_Skull_Crusher": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj padra, a fejed mögött alacsonyan rögzített szalagot fogd meg. Felkarod függőlegesen álljon.",
+        "Nyújtsd a könyököd, emeld a kezed a mellkasod fölé.",
+        "Felkarod maradjon helyben; lassan hajlítsd vissza a könyököd."
+      ],
+      "en": [
+        "Lie on a bench holding a band anchored low behind your head, upper arms vertical.",
+        "Extend your elbows to raise your hands above your chest.",
+        "Keep your upper arms still; bend your elbows back slowly."
+      ]
+    }
+  },
+  "Barbell_Ab_Rollout": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Vegyél fel fekvőtámaszhelyzetet a tárcsás rúdon, karod nyújtva.",
+        "Csípődet megemelve gurítsd a rudat a lábad felé.",
+        "Törzsed tartsd kontroll alatt; lassan gurítsd vissza plankhelyzetbe."
+      ],
+      "en": [
+        "Take a push-up position on a plate-loaded barbell with straight arms.",
+        "Raise your hips as you roll the bar toward your feet.",
+        "Keep your trunk controlled; roll back slowly into the plank."
+      ]
+    }
+  },
+  "Barbell_Ab_Rollout_-_On_Knees": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Térdelj le, a tárcsás rudat két kézzel fogd a vállad alatt.",
+        "Gurítsd a rudat előre a stabilan tartható tartományban.",
+        "Ne ejtsd be a derekad; kontrolláltan húzd vissza."
+      ],
+      "en": [
+        "Kneel with both hands on the plate-loaded bar beneath your shoulders.",
+        "Roll it forward through a range you can control.",
+        "Avoid sagging at your lower back; pull it back with control."
+      ]
+    }
+  },
+  "Barbell_Deadlift": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj a rúdhoz, csípőd és térded hajlítva fogd meg a lábad mellett.",
+        "Lábbal indítva emeld fel a rudat, és egyenesedj fel.",
+        "A rúd maradjon közel; ne dőlj hátra felül, kontrolláltan engedd le."
+      ],
+      "en": [
+        "Stand close to the bar, bend your hips and knees and grip beside your legs.",
+        "Push through your legs to lift the bar and stand.",
+        "Keep the bar close; avoid leaning back at the top and lower with control."
+      ]
+    }
+  },
+  "Barbell_Glute_Bridge": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj hanyatt hajlított térddel, talpad a padlón. A párnázott rúd a csípőhajlatodnál legyen.",
+        "Talpadra támaszkodva emeld meg a csípőd.",
+        "Ne homoríts derékból; lassan engedd vissza a csípőd."
+      ],
+      "en": [
+        "Lie on your back, knees bent and feet planted, with a padded bar across your hip crease.",
+        "Press through your feet to raise your hips.",
+        "Avoid arching your lower back; lower your hips slowly."
+      ]
+    }
+  },
+  "Barbell_Guillotine_Bench_Press": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj padra, a rudat felső fogással tartsd a nyakad fölött.",
+        "Lassan engedd a rudat a nyakad közelébe, érintés nélkül.",
+        "A nyakadra ne helyezd a rudat; kontrolláltan nyomd fel."
+      ],
+      "en": [
+        "Lie on a bench holding the bar above your neck with an overhand grip.",
+        "Lower it slowly near your neck without making contact.",
+        "Never rest the bar on your neck; press up with control."
+      ]
+    }
+  },
+  "Barbell_Hack_Squat": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj stabilan, a rudat nyújtott karral tartsd a tested mögött.",
+        "Csípődet és térdedet hajlítva engedd le a tested, a rudat a lábad közelében tartva.",
+        "Teljes talppal támaszkodva állj fel; hátad maradjon stabil."
+      ],
+      "en": [
+        "Stand steady holding a bar behind your body with straight arms.",
+        "Bend your hips and knees to lower, keeping the bar close to your legs.",
+        "Stand through your whole foot with your back steady."
+      ]
+    }
+  },
+  "Barbell_Incline_Shoulder_Raise": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj ferde padra, a rudat nyújtott karral tartsd magad fölött.",
+        "A könyök hajlítása nélkül told fel a vállad, a lapockákat előrevezetve.",
+        "Kontrolláltan engedd vissza a vállad a padhoz."
+      ],
+      "en": [
+        "Lie on an incline bench holding the bar above you with straight arms.",
+        "Without bending your elbows, raise your shoulders by moving your shoulder blades forward.",
+        "Lower your shoulders back toward the bench with control."
+      ]
+    }
+  },
+  "Barbell_Rear_Delt_Row": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Széles felső fogással tartsd a rudat, és dőlj előre csípőből.",
+        "Könyöködet oldalra vezetve húzd a rudat a felső mellkasod felé.",
+        "Törzsed maradjon helyben; lassan engedd le."
+      ],
+      "en": [
+        "Take a wide overhand grip and hinge forward at your hips.",
+        "Drive your elbows out to row the bar toward your upper chest.",
+        "Keep your trunk still; lower slowly."
+      ]
+    }
+  },
+  "Barbell_Rollout_from_Bench": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Térdelj padra, a padlóban lévő tárcsás rudat két kézzel fogd meg magad előtt.",
+        "Nyújtott karral gurítsd előre a rudat, miközben nyújtod a csípőd.",
+        "Ne ejtsd be a derekad; csak kontrollált tartományból húzd vissza."
+      ],
+      "en": [
+        "Kneel on a bench and hold a plate-loaded bar on the floor in front.",
+        "With straight arms, roll it forward as your hips extend.",
+        "Avoid sagging at your lower back; return only from a controlled range."
+      ]
+    }
+  },
+  "Barbell_Seated_Calf_Raise": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj padra, lábujjpárnád támaszd emelvényre. A párnázott rudat tartsd a combodon, a térded fölött.",
+        "Emeld a sarkad a lábujjpárnádra támaszkodva.",
+        "Tartsd stabilan a rudat; lassan engedd le a sarkad."
+      ],
+      "en": [
+        "Sit on a bench, balls of your feet on a platform, holding a padded bar on your thighs above the knees.",
+        "Raise your heels while keeping the balls of your feet supported.",
+        "Keep the bar steady; lower your heels slowly."
+      ]
+    }
+  },
+  "Barbell_Shoulder_Press": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj háttámlás padra, a rudat felső fogással tartsd a vállad előtt.",
+        "Nyomd a rudat a fejed fölé.",
+        "Törzsed maradjon stabil; lassan engedd vállhoz."
+      ],
+      "en": [
+        "Sit against a backrest holding the bar in front of your shoulders with an overhand grip.",
+        "Press the bar overhead.",
+        "Keep your trunk steady; lower to your shoulders slowly."
+      ]
+    }
+  },
+  "Barbell_Shrug": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj stabilan, a rudat nyújtott karral tartsd a combod előtt, felső fogással.",
+        "Emeld a vállad a füled felé.",
+        "Ne hajlítsd a könyököd és ne körözz; lassan engedd le a vállad."
+      ],
+      "en": [
+        "Stand steady holding the bar in front of your thighs with straight arms and an overhand grip.",
+        "Raise your shoulders toward your ears.",
+        "Avoid bending your elbows or rolling your shoulders; lower slowly."
+      ]
+    }
+  },
+  "Barbell_Shrug_Behind_The_Back": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj stabilan, a rudat nyújtott karral tartsd a tested mögött.",
+        "Emeld a vállad a füled felé.",
+        "Ne hajlítsd a könyököd és ne körözz; kontrolláltan engedd le."
+      ],
+      "en": [
+        "Stand steady holding the bar behind your body with straight arms.",
+        "Raise your shoulders toward your ears.",
+        "Avoid bending your elbows or rolling your shoulders; lower with control."
+      ]
+    }
+  },
+  "Barbell_Side_Bend": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rudat tartsd a felső hátadon, állj stabil terpeszben.",
+        "Döntsd a törzsed oldalra, forgatás nélkül.",
+        "Kontrolláltan egyenesedj fel, majd válts oldalt; ne erőltesd a tartományt."
+      ],
+      "en": [
+        "Hold the bar on your upper back and stand steady with feet apart.",
+        "Side-bend your trunk without twisting.",
+        "Return upright with control, then switch sides; do not force the range."
+      ]
+    }
+  },
+  "Barbell_Side_Split_Squat": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rúd a felső hátadon legyen, lábad nyisd széles terpeszbe.",
+        "Az egyik térdedet hajlítva engedd a csípőd arra az oldalra; a másik láb maradjon közel nyújtott.",
+        "Az adott talpaddal nyomd vissza magad középre, majd válts oldalt."
+      ],
+      "en": [
+        "Support the bar on your upper back in a wide stance.",
+        "Bend one knee to lower your hips toward that side, keeping the other leg nearly straight.",
+        "Push through that foot to return to the centre, then switch sides."
+      ]
+    }
+  },
+  "Barbell_Squat": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rúd a felső hátadon legyen. Állj stabilan, és feszítsd meg a törzsed.",
+        "Csípődet és térdedet hajlítva guggolj le a kontrollált tartományban.",
+        "Teljes talppal támaszkodva állj fel; térded kövesse a lábfejed irányát."
+      ],
+      "en": [
+        "Support the bar on your upper back and brace your trunk.",
+        "Bend your hips and knees to squat through a controlled range.",
+        "Stand through your whole foot; let your knees track with your feet."
+      ]
+    }
+  },
+  "Barbell_Squat_To_A_Bench": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rúd a felső hátadon legyen, mögötted stabil pad vagy doboz.",
+        "Csípődet hátratolva guggolj le, amíg finoman megérinted a támaszt.",
+        "Ne ejtsd rá magad; teljes talppal támaszkodva állj fel."
+      ],
+      "en": [
+        "Support the bar on your upper back with a stable bench or box behind you.",
+        "Push your hips back to squat until you gently touch the support.",
+        "Do not drop onto it; stand through your whole foot."
+      ]
+    }
+  },
+  "Barbell_Step_Ups": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rúd a felső hátadon legyen, egyik talpad tedd teljesen a stabil fellépőre.",
+        "Az emelvényen lévő lábaddal nyomd fel magad, és lépj fel.",
+        "Kontrolláltan lépj vissza; térded kövesse a lábfejed irányát."
+      ],
+      "en": [
+        "Support the bar on your upper back and place one whole foot on a stable step.",
+        "Push through the supported leg to step up.",
+        "Step back down with control; let the knee track with the foot."
+      ]
+    }
+  },
+  "Barbell_Walking_Lunge": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rúd a felső hátadon legyen, állj stabilan.",
+        "Lépj előre kitörésbe, mindkét térdedet hajlítva.",
+        "Nyomd fel magad az elöl lévő talpaddal, majd a másik lábaddal lépj tovább előre."
+      ],
+      "en": [
+        "Support the bar on your upper back and stand steady.",
+        "Step forward into a lunge, bending both knees.",
+        "Push through your front foot to rise, then step forward with the other leg."
+      ]
+    }
+  },
+  "Battling_Ropes": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Fogd a rögzített kötél két végét, állj stabilan enyhén hajlított térddel.",
+        "Felváltva emeld és engedd le a karjaidat, hullámot keltve a kötélben.",
+        "Törzsed maradjon stabil; a mozdulatot kontrollált ritmusban végezd."
+      ],
+      "en": [
+        "Hold both ends of the anchored rope in a steady stance with knees slightly bent.",
+        "Alternate raising and lowering your arms to create waves.",
+        "Keep your trunk steady and use a controlled rhythm."
+      ]
+    }
+  },
+  "Bear_Crawl_Sled_Drags": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A szán hevederét rögzítsd az övedhez mögötted. Támaszkodj kézen és lábujjon, térded hajlítva.",
+        "Váltott kéz- és láblépésekkel mássz előre, húzva a szánt.",
+        "Tarts stabil törzset, és ne ejtsd be a derekad."
+      ],
+      "en": [
+        "Attach the sled strap to your belt behind you and support yourself on hands and toes with bent knees.",
+        "Crawl forward with alternating hand and foot steps to pull the sled.",
+        "Keep your trunk steady without sagging at the lower back."
+      ]
+    }
+  },
+  "Behind_Head_Chest_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj egyenesen, kezed a fejed mögött. Társad finoman tartsa a könyöködet.",
+        "Próbáld előrevezetni a könyököd az ellenállással szemben, majd lazíts.",
+        "Társad óvatosan vezesse hátra a könyököd; jelezd a kényelmes határt."
+      ],
+      "en": [
+        "Sit upright with hands behind your head and your partner gently holding your elbows.",
+        "Try to move your elbows forward against resistance, then relax.",
+        "Let your partner guide them gently back; communicate your comfortable limit."
+      ]
+    }
+  },
+  "Bench_Dips": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Kezeddel támaszkodj a mögötted lévő pad szélére, lábad nyújtsd előre.",
+        "Könyökhajlítással engedd le a tested a kontrollált tartományban.",
+        "Nyomd vissza magad; ne erőltesd a vállad hátranyúlását."
+      ],
+      "en": [
+        "Support yourself on the edge of a bench behind you with legs extended forward.",
+        "Bend your elbows to lower through a controlled range.",
+        "Press back up without forcing the shoulder range behind you."
+      ]
+    }
+  },
+  "Bench_Jump": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj stabil pad vagy doboz elé, és enyhén guggolj le.",
+        "Lábbal elrugaszkodva ugorj át a támasz fölött, karoddal segítve a lendületet.",
+        "Hajlított térddel érkezz stabilan; fordulj meg a következő ugráshoz."
+      ],
+      "en": [
+        "Stand in front of a stable bench or box and make a short squat.",
+        "Push through your legs to jump over it, using your arms to assist.",
+        "Land steadily with bent knees; turn around before the next jump."
+      ]
+    }
+  },
+  "Bench_Press_-_Powerlifting": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj padra, lapockád húzd össze, talpad támaszd le. Tarts stabil hidat és fogd a rudat.",
+        "Engedd a rudat az alsó mellkasodhoz, csuklód és könyököd a rúd alatt tartva.",
+        "Rövid megállítás után nyomd fel; a tested maradjon stabil."
+      ],
+      "en": [
+        "Lie on the bench, retract your shoulder blades and plant your feet. Hold a steady arch and grip the bar.",
+        "Lower to your lower chest with wrists and elbows under the bar.",
+        "Pause briefly, then press up while keeping your body steady."
+      ]
+    }
+  },
+  "Bench_Press_-_With_Bands": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Rögzítsd a szalagot a pad feji végén alul. Feküdj le, a fogantyúkat tartsd a mellkasod fölött.",
+        "Engedd a kezed a mellkasod mellé, majd nyomd fel.",
+        "Lapockád maradjon támaszon; kontrolláltan mozgasd a szalagot."
+      ],
+      "en": [
+        "Anchor the band beneath the head end of the bench and lie down with handles above your chest.",
+        "Lower your hands beside your chest, then press up.",
+        "Keep your shoulder blades supported and control the band."
+      ]
+    }
+  },
+  "Bench_Press_with_Chains": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Rögzítsd a láncokat a rúd végeire. Feküdj padra, talpad és lapockád támaszd le.",
+        "Engedd a rudat az alsó mellkasodhoz, majd nyomd fel.",
+        "A láncok szabadon mozogjanak; a tested maradjon stabil."
+      ],
+      "en": [
+        "Attach chains to the bar ends and lie on the bench with feet and shoulder blades supported.",
+        "Lower to your lower chest, then press up.",
+        "Keep the chains clear and your body steady."
+      ]
+    }
   }
 }
