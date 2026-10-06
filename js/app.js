@@ -1548,7 +1548,7 @@
   /* A photo missing from this copy of the app is fetched from the open dataset instead (needs a connection). */
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
-    if (src.indexOf('img/guide/') === 0 || src.indexOf('img/fig/') === 0) { const a = el.closest('.exercise-phases'), id = a && a.dataset.id; if (id && !ui.figBad[id]) { ui.figBad[id] = 1; if (ui.sheets.length) refreshSheet(); } return; }   // drawing missing: show the photos instead
+    if (src.indexOf('img/guide/') === 0 || src.indexOf('img/fig/') === 0) { const a = el.closest('.exercise-phases'), id = a && a.dataset.id; if (id && !ui.figBad[id]) { ui.figBad[id] = 1; if (ui.sheets.length) refreshSheet(); } return; }   // Failed guide: keep the instructions and show the missing phase notice.
     if (src.indexOf('img/ex/') === 0 && /\/t\.jpg$/.test(src) && !el.dataset.t) { el.dataset.t = '1'; el.src = src.replace(/t\.jpg$/, '0.jpg'); return; }                                       // no small picture: use the large one
     if (src.indexOf('img/ex/') === 0 && !el.dataset.fb && (EX[decodeURIComponent(src.split('/')[2])] || {}).k) { el.dataset.fb = '1'; el.src = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + src.slice(7).replace(/t\.jpg$/, '0.jpg'); }
     else if (el.dataset.fb || src.indexOf('img/ex/') === 0) el.style.visibility = 'hidden';

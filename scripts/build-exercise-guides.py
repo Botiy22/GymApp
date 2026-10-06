@@ -7,7 +7,7 @@ def short(lines):
     useful=[re.sub(r'\s+',' ',s).strip() for s in lines if s.strip() and not re.match(r'^(repeat|ismételd|this will be your starting|ez a kiinduló)',s,re.I)]
     if len(useful)>3: useful=[useful[0],useful[len(useful)//2],useful[-1]]
     return [re.split(r'(?<=[.!?])\s+',s)[0] for s in useful]
-g={e['id']:{'version':1,'steps':{'hu':short(hu.get(e['id'],['',[]])[1]),'en':short(e['i'])},'reviewed':False,'summaryMethod':'source-extract'} for e in ex}
+g={e['id']:{'version':1,'reviewed':False,'summaryMethod':'source-extract'} for e in ex}
 overrides=r/'data/exercise-guide-overrides.json'
 if overrides.is_file():
     for id,entry in json.loads(overrides.read_text()).items():
