@@ -24,7 +24,7 @@ window.Store = (function () {
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
         accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
-      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, chats: [],
+      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
     };
@@ -119,6 +119,13 @@ window.Store = (function () {
     out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
     Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
+    out.habits = arr(r.habits).slice(0, 100).map(h => {
+      h = obj(h); const id = idStr(h.id), name = str(h.name, 60).trim();
+      if (!id || !name) return null;
+      const days = Array.from(new Set(arr(h.days).map(x => +x).filter(x => Number.isInteger(x) && x >= 0 && x <= 6))).sort();
+      const done = Array.from(new Set(arr(h.done).filter(x => DAY.test(str(x, 10))))).slice(-3000);
+      return { id, name, days: days.length ? days : [0, 1, 2, 3, 4, 5, 6], done };
+    }).filter(Boolean);
     /* coach conversations: newest 40, and never more than about 400 000 characters in all */
     let room = 400000;
     out.chats = arr(r.chats).map(c => { c = obj(c); const id = idStr(c.id), msgs = arr(c.msgs).slice(-60).map(m => { m = obj(m); const tx = str(m.content, 6000); return tx ? { role: m.role === 'assistant' ? 'assistant' : 'user', content: tx } : null; }).filter(Boolean); return id && msgs.length ? { id, t: num(c.t, 0, 4e12, 0), msgs } : null; })
@@ -168,11 +175,11 @@ window.Store = (function () {
 
   /* What changed since the last save? Each part gets a "last changed" time and every removed workout, meal or routine leaves a marker,
      so that two devices signed in to the same account can be merged without one overwriting the other. */
-  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'own', 'plan'];
-  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan };
+  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'habits', 'own', 'plan'];
+  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, habits: d => d.habits, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan };
   function shot(d) {
     const o = { ids: {} }; SECTS.forEach(k => { o[k] = JSON.stringify(PART[k](d)); });
-    d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
+    d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.habits.forEach(h => { o.ids[h.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
     return o;
   }
   function track() {

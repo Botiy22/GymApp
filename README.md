@@ -46,6 +46,8 @@ you can reach it from any device after signing in.
   scrolling: body part → muscle → equipment. A star marks **favourites** (exercises and foods).
 - **Progress**: weekly sets per muscle group against the 10–20 target zone, body weight, records,
   full workout history, weekly workout goal.
+- **Habits**: a daily checklist for your own habits, with weekday schedules, streaks, and past check-ins.
+  Completed habits also appear in the calendar and day view; habit data is included in backups and account sync.
 - **Food**: calorie and macro targets (Mifflin–St Jeor; see "Calorie calculator" below) and a daily diary with three ways to add a meal:
   **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams,
   the values are calculated), **AI** estimate from a photo or a description, or **your own values**

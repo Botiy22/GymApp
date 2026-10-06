@@ -59,7 +59,7 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -84,7 +84,8 @@
     cal: '<svg viewBox="0 0 24 24"><path d="M4 6.500h16v13H4zM4 10.500h16M8 4v4M16 4v4"/></svg>',
     chat: '<svg viewBox="0 0 24 24"><path d="M4 5.500h16v10.500h-8.500L7 20v-4H4z"/><path d="M8.500 9.500h7M8.500 12.500h4.500"/></svg>',
     send: '<svg viewBox="0 0 24 24"><path d="M4 12l16-7.500-5 15.500-3.500-6z"/><path d="M11.500 14L20 4.500"/></svg>',
-    stretch: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.300" r="1.800"/><path d="M12 7v7.500M12 9.500L6.500 5M12 9.500L17.500 5M12 14.500L8 21M12 14.500L16 21"/></svg>'
+    stretch: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.300" r="1.800"/><path d="M12 7v7.500M12 9.500L6.500 5M12 9.500L17.500 5M12 14.500L8 21M12 14.500L16 21"/></svg>',
+    habit: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/><circle cx="12" cy="12" r="10"/></svg>'
   };
   /* routine icons: chosen from the muscles of the routine, or picked by hand in the editor */
   const RICON = {
@@ -154,6 +155,29 @@
   const head = (title, sub, cal) => `<header class="top"><div><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
+  const habitDue = (h, k) => h.days.indexOf(new Date(k + 'T12:00').getDay()) >= 0;
+  const habitDone = (h, k) => h.done.indexOf(k) >= 0;
+  function habitStreak(h, k) {
+    let d = new Date(k + 'T12:00'); if (!habitDone(h, ymd(d))) d.setDate(d.getDate() - 1);
+    let n = 0; while (n < 3000) { const key = ymd(d); if (habitDue(h, key)) { if (!habitDone(h, key)) break; n++; } d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function habitRows(k) {
+    const list = D().habits.filter(h => habitDue(h, k));
+    if (!list.length) return `<p class="empty">${esc(D().habits.length ? t('habitsNoneDue') : t('habitsEmpty'))}</p>`;
+    return list.map(h => { const done = habitDone(h, k); return `<div class="habit-row"><button class="habit-check${done ? ' on' : ''}" data-a="habit-toggle" data-id="${esc(h.id)}" data-d="${esc(k)}" aria-pressed="${done}" aria-label="${esc(done ? t('habitUndo') : t('habitComplete'))}: ${esc(h.name)}">${done ? IC.check : ''}</button><span class="habit-name${done ? ' done' : ''}"><b>${esc(h.name)}</b><i>${esc(t('habitStreak', habitStreak(h, k)))}</i></span><button class="icon-btn sm" data-a="habit-edit" data-id="${esc(h.id)}" aria-label="${esc(t('edit'))}: ${esc(h.name)}">${IC.pen}</button></div>`; }).join('');
+  }
+  function shHabitEdit() {
+    const x = ui.habitEdit, labels = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'short' }));
+    return () => ({ title: x.id ? t('habitEdit') : t('habitAdd'), html: `<label class="fld"><span>${esc(t('habitName'))}</span><input id="habit-name" data-in="habit-name" maxlength="60" value="${esc(x.name)}" placeholder="${esc(t('habitNamePh'))}" autocomplete="off"></label><p class="cap">${esc(t('habitSchedule'))}</p><div class="chips">${labels.map((n, i) => `<button class="chip${x.days.indexOf(i) >= 0 ? ' on' : ''}" data-a="habit-day-pick" data-day="${i}" aria-pressed="${x.days.indexOf(i) >= 0}">${esc(n)}</button>`).join('')}</div>${x.id ? `<button class="btn danger" data-a="habit-delete">${esc(t('delete'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="habit-save">${esc(t('save'))}</button>` });
+  }
+  function vHabits() {
+    const k = ui.habitDate, d = new Date(k + 'T12:00'), loc = L() === 'hu' ? 'hu-HU' : 'en-GB', due = D().habits.filter(h => habitDue(h, k)), done = due.filter(h => habitDone(h, k)).length;
+    let h = head(t('tabHabits'), t(k === today() ? 'today' : 'habitDayName', d.toLocaleDateString(loc, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })));
+    h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
+    h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
+    return h;
+  }
   function actRow(k) {
     const a = actOf(k), has = a.steps > 0 || a.kcal > 0;
     return `<button class="qrow actrow" data-a="act" data-d="${esc(k)}"><span class="q-ic line">${IC.walk}</span><span class="rc-t"><b>${has ? `${compact(a.steps)} ${esc(t('steps'))} · ${compact(a.kcal)} kcal` : esc(t('actAdd'))}</b><i>${esc(t(has ? 'actEdit' : 'actAddSub'))}</i></span>${IC.chev}</button>`;
@@ -379,7 +403,7 @@
   }
   function pickFood(x) { const f = foodOf(x.i, x.h); const each = f.ports.find(pt => f.own || /item|sandwich|slice|\bsub\b|\bbar\b|large|medium|small|link|patty|biscuit|taco|burrito|pieces|container|\bcan\b|packet/i.test(pt[2] || ''));   // start from a natural unit (1 sandwich, 1 slice…), otherwise from 100 g
       ui.fa = { food: f, g: String(each ? each[0] : 100) }; openSheet(shFoodAmount()); }
-  const VIEWS = { home: vHome, lib: vLib, prog: vProg, food: vFood };
+  const VIEWS = { home: vHome, lib: vLib, prog: vProg, food: vFood, habits: vHabits };
 
   let animT = 0;
   function render() {
@@ -932,9 +956,9 @@
       const wd = {}; let cnt = 0; d.workouts.forEach(w => { const k = ymd(w.start); wd[k] = 1; if (k.indexOf(pre) === 0) cnt++; });
       const names = [0, 1, 2, 3, 4, 5, 6].map(i => { const x = new Date(weekStart(Date.now())); x.setDate(x.getDate() + i); return `<span>${esc(x.toLocaleDateString(loc, { weekday: 'narrow' }))}</span>`; }).join('');
       let cells = ''; for (let i = 0; i < off; i++) cells += '<span></span>';
-      for (let i = 1; i <= days; i++) { const k = pre + pad(i); cells += `<button class="cd${wd[k] ? ' on' : ''}${k === td ? ' now' : ''}${(d.food[k] || []).length ? ' fd' : ''}" data-a="day-open" data-d="${k}" ${k > td ? 'disabled' : ''}>${i}</button>`; }
+      for (let i = 1; i <= days; i++) { const k = pre + pad(i), hd = d.habits.some(h => habitDue(h, k) && habitDone(h, k)); cells += `<button class="cd${wd[k] ? ' on' : ''}${k === td ? ' now' : ''}${(d.food[k] || []).length ? ' fd' : ''}${hd ? ' hb' : ''}" data-a="day-open" data-d="${k}" ${k > td ? 'disabled' : ''}>${i}</button>`; }
       return { title: t('calTitle'), html: `<div class="datenav"><button class="icon-btn" data-a="cal-mo" data-d="-1" aria-label="${esc(t('prevMonth'))}">${IC.back}</button><b>${esc(first.toLocaleDateString(loc, { year: 'numeric', month: 'long' }))}</b><button class="icon-btn flip" data-a="cal-mo" data-d="1" aria-label="${esc(t('nextMonth'))}" ${c.y * 12 + c.m >= now.getFullYear() * 12 + now.getMonth() ? 'disabled' : ''}>${IC.back}</button></div>
-        <div class="cal-h">${names}</div><div class="cal-g">${cells}</div><p class="cap"><i class="k-on"></i>${esc(t('calKeyW'))}<i class="k-fd"></i>${esc(t('calKeyF'))} · ${esc(t('calCount', cnt))}</p><p class="cap">${esc(t('calTap'))}</p>` };
+        <div class="cal-h">${names}</div><div class="cal-g">${cells}</div><p class="cap"><i class="k-on"></i>${esc(t('calKeyW'))}<i class="k-fd"></i>${esc(t('calKeyF'))}<i class="k-hb"></i>${esc(t('calKeyH'))} · ${esc(t('calCount', cnt))}</p><p class="cap">${esc(t('calTap'))}</p>` };
     };
     fn.kind = 'cal'; return fn;
   }
@@ -945,6 +969,7 @@
       let h = `<h3>${esc(t('workoutsDay'))}</h3>` + (ws.length ? ws.map(w => `<button class="wrow" data-a="wk-open" data-id="${esc(w.id)}"><span class="q-ic line">${IC.home}</span><span class="wr-t"><b>${esc(w.name)}</b><i>${pad(new Date(w.start).getHours())}:${pad(new Date(w.start).getMinutes())} · ${esc(wMeta(w))}</i></span>${IC.chev}</button>`).join('') : `<p class="empty">${esc(t('noWorkoutDay'))}</p>`);
       h += `<h3>${esc(t('tabFood'))}</h3><button class="rcard" data-a="day-food" data-d="${esc(k)}"><span class="q-ic line">${IC.food}</span><span class="rc-t"><b>${Math.round(sum.kcal)}${tg ? ' / ' + tg.kcal : ''} kcal</b><i>${fl.length ? `${esc(t('dayFoodN', fl.length))} · ${esc(t('pShort'))} ${Math.round(sum.p)} · ${esc(t('cShort'))} ${Math.round(sum.c)} · ${esc(t('fShort'))} ${Math.round(sum.f)}` : esc(t('noMeals'))}</i></span>${IC.chev}</button>`;
       h += `<h3>${esc(t('actTitle'))}</h3>` + actRow(k);
+      if (d.habits.length) h += `<h3>${esc(t('tabHabits'))}</h3><div class="day-habits">${habitRows(k)}</div>`;
       return { title: fmtDate(k + 'T12:00', true), html: h };
     };
     fn.kind = 'day'; return fn;
@@ -1122,6 +1147,21 @@
     'day-open'(el) { const k = el.dataset.d; if (/^\d{4}-\d\d-\d\d$/.test(k) && k <= today()) openSheet(shDay(k)); },
     'day-food'(el) { const k = el.dataset.d; if (!/^\d{4}-\d\d-\d\d$/.test(k) || k > today()) return; ui.foodDate = k; ui.food = 'diary'; closeSheet(true); go('tab', () => { ui.tab = 'food'; render(); }); },
     act(el) { const k = /^\d{4}-\d\d-\d\d$/.test(el.dataset.d || '') && el.dataset.d <= today() ? el.dataset.d : today(), a = actOf(k); ui.act = { steps: a.steps ? String(a.steps) : '', kcal: a.kcal ? String(a.kcal) : '' }; openSheet(shAct(k)); },
+    'habit-new'() { ui.habitEdit = { id: '', name: '', days: [0, 1, 2, 3, 4, 5, 6] }; openSheet(shHabitEdit()); },
+    'habit-edit'(el) { const h = D().habits.find(x => x.id === el.dataset.id); if (!h) return; ui.habitEdit = { id: h.id, name: h.name, days: h.days.slice() }; openSheet(shHabitEdit()); },
+    'habit-day-pick'(el) { const a = ui.habitEdit.days, n = +el.dataset.day, i = a.indexOf(n); if (i >= 0) { if (a.length === 1) { toast(t('habitNeedDay')); return; } a.splice(i, 1); } else a.push(n); a.sort(); refreshSheet(); },
+    'habit-save'() {
+      const x = ui.habitEdit, input = $('#habit-name'), name = String(input ? input.value : x.name).trim().slice(0, 60); if (!name) { toast(t('habitNeedName')); if (input) input.focus(); return; }
+      if (!x.days.length) { toast(t('habitNeedDay')); return; }
+      const d = D(), old = x.id && d.habits.find(h => h.id === x.id), h = { id: x.id || uid(), name, days: x.days.slice(), done: old ? old.done : [] };
+      d.habits = old ? d.habits.map(z => z.id === h.id ? h : z) : d.habits.concat([h]); Store.save(); ui.habitEdit = null; closeSheet(true); rerender(); toast(t('saved'));
+    },
+    'habit-delete'() { const x = ui.habitEdit, d = D(); if (!x || !x.id) return; d.habits = d.habits.filter(h => h.id !== x.id); Store.save(); ui.habitEdit = null; closeSheet(true); rerender(); toast(t('saved')); },
+    'habit-toggle'(el) {
+      const k = el.dataset.d, h = D().habits.find(x => x.id === el.dataset.id); if (!h || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return;
+      const i = h.done.indexOf(k); if (i >= 0) h.done.splice(i, 1); else h.done.push(k); h.done.sort(); Store.save(); if (topIs('day')) refreshSheet(); rerender();
+    },
+    'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); render(); } },
     'act-est'() { const w = num(D().settings.profile.weight), st = num(ui.act.steps); if (!(st > 0)) { toast(t('actEstNeed')); return; } ui.act.kcal = String(Math.round(st * w * 0.00055)); const b = $('#act-kcal'); if (b) b.value = ui.act.kcal; },
     async 'act-paste'() { let txt = ''; try { txt = await navigator.clipboard.readText(); } catch (e) { toast(t('actClipNo')); return; } if (topIs('act')) actFill(parseAct(txt)); },
     'act-save'(el) {
@@ -1380,6 +1420,7 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
+    'habit-name'(el) { if (ui.habitEdit) ui.habitEdit.name = el.value; },
     'lib-q'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.q = el.value; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
@@ -1482,7 +1523,7 @@
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);
-  $('#tabbar').innerHTML = [['home', IC.home], ['lib', IC.lib], ['prog', IC.prog], ['food', IC.food]].map(([k, ic]) => `<button data-a="tab" data-tab="${k}">${ic}<span></span></button>`).join('');
+  $('#tabbar').innerHTML = [['home', IC.home], ['habits', IC.habit], ['lib', IC.lib], ['prog', IC.prog], ['food', IC.food]].map(([k, ic]) => `<button data-a="tab" data-tab="${k}">${ic}<span></span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   render(); $('#rb-skip').textContent = t('skip');

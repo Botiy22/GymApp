@@ -68,6 +68,7 @@ window.Cloud = (function () {
     if (newer('favs')) { out.favEx = list(b.favEx); out.favFoods = list(b.favFoods); }
     if (newer('notes')) out.aiNotes = list(b.aiNotes);
     if (newer('own')) { out.myEx = list(b.myEx); out.myFoods = list(b.myFoods); out.exMedia = map(b.exMedia); }                     // own exercises, foods and pictures: the side that changed them last
+    if (newer('habits')) out.habits = list(b.habits);
     if (newer('plan')) out.plan = b.plan && typeof b.plan === 'object' ? b.plan : null;
     const mine = map(a.settings), theirs = map(b.settings);
     if (newer('settings')) out.settings = Object.assign({}, theirs, { apiKey: mine.apiKey || '', keyState: mine.keyState || '' });

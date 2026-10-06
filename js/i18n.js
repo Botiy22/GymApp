@@ -1,6 +1,6 @@
 window.I18N = {
   hu: {
-    appName: 'Tungsten', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés',
+    appName: 'Tungsten', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
     settings: 'Beállítások', back: 'Vissza', close: 'Bezárás', save: 'Mentés', saved: 'Elmentve', added: 'Hozzáadva', done: 'Kész', edit: 'Szerkesztés', delete: 'Törlés', remove: 'Eltávolítás', more: 'Továbbiak', details: 'Részletek', name: 'Név', all: 'Mind',
     min: 'perc', h: 'ó', exercises: 'gyakorlat', setsWord: 'sorozat', set: 'sorozat', reps: 'ism.', rest: 'pihenő', prev: 'előző', today: 'Ma',
     installTitle: 'Telepítés iPhone-ra', installShort: 'Safari: Megosztás gomb → „Főképernyőhöz adás”. Koppints a részletekért.',
@@ -58,9 +58,10 @@ window.I18N = {
     appCard: 'Alkalmazás', updateNow: 'Frissítés keresése', updating: 'Frissítés…', updateFail: 'Nem sikerült frissíteni. Ellenőrizd az internetkapcsolatot.', updateCap: 'Letölti a legújabb változatot, és újraindítja az alkalmazást. Az adataid megmaradnak.',
     favs: 'Kedvencek', favAdd: 'Kedvencekhez', favOn: 'Kedvenc', favEmpty: 'Még nincs kedvenc gyakorlatod. Nyiss meg egy gyakorlatot, és koppints a csillagra.',
     grpUpper: 'Felsőtest', grpCore: 'Törzs', grpLower: 'Alsótest', equipment: 'Eszköz', eqAll: 'Minden eszköz', brands: 'Gyorséttermek', icon: 'Ikon', iconAuto: 'Auto',
-    openCal: 'Naptár megnyitása', calTitle: 'Naptár', calKeyW: 'edzés', calKeyF: 'étkezés rögzítve', calCount: '{0} edzés ebben a hónapban', calTap: 'Koppints egy napra az aznapi edzések, étkezések és lépések megnézéséhez.', prevMonth: 'Előző hónap', nextMonth: 'Következő hónap',
+    openCal: 'Naptár megnyitása', calTitle: 'Naptár', calKeyW: 'edzés', calKeyF: 'étkezés rögzítve', calKeyH: 'szokás', calCount: '{0} edzés ebben a hónapban', calTap: 'Koppints egy napra az aznapi edzések, étkezések és lépések megnézéséhez.', prevMonth: 'Előző hónap', nextMonth: 'Következő hónap',
     workoutsDay: 'Edzések', noWorkoutDay: 'Ezen a napon nem volt edzés.', dayFoodN: '{0} tétel',
     actToday: 'Mai aktivitás', actTitle: 'Lépések és elégetett kalória', steps: 'lépés', stepsLbl: 'Lépések', burnLbl: 'Elégetett aktív kalória (kcal)', actAdd: 'Lépések és kalória megadása', actAddSub: 'Az órád vagy a telefonod egészség-alkalmazásából', actEdit: 'Koppints a módosításhoz',
+    habitsDaily: 'Mai szokások', habitAdd: 'Szokás hozzáadása', habitEdit: 'Szokás szerkesztése', habitName: 'Szokás neve', habitNamePh: 'pl. 10 perc nyújtás', habitSchedule: 'Mely napokon?', habitEmpty: 'Még nincs szokásod. Adj hozzá egyet, és pipáld ki, amikor megvan.', habitsNoneDue: 'Erre a napra nincs beütemezett szokás.', habitStreak: '{0} napos sorozat', habitComplete: 'Kész', habitUndo: 'Kész jelölés visszavonása', habitNeedName: 'Adj nevet a szokásnak.', habitNeedDay: 'Válassz legalább egy napot.', habitDayName: '{0}',
     actEst: 'Kalória becslése a lépésekből (durva közelítés)', actEstNeed: 'Előbb írd be a lépések számát.', actImport: 'Beillesztés', actImportLead: 'Másold ki a két számot az órád vagy a telefonod alkalmazásából, és illeszd be: az alkalmazás kiolvassa belőle a lépéseket és a kalóriát.',
     actPaste: 'Beillesztés a vágólapról', actPasteLbl: 'vagy illeszd be ide a szöveget', actPasted: 'Beolvasva: {0} lépés, {1} kcal', actPasteBad: 'Ebben nem találtam számokat.', actClipNo: 'A vágólapot nem tudtam olvasni. Illeszd be a szöveget a mezőbe.',
     actHow: 'Egy koppintással iPhone-on (Parancsok alkalmazás)', actHow1: 'Nyisd meg a Parancsok alkalmazást, és hozz létre új parancsot.', actHow2: 'Add hozzá az „Egészségminták keresése” műveletet: Típus = Lépések, Kezdő dátum = ma.', actHow3: 'Add hozzá a „Statisztika számítása” műveletet, és válaszd az Összeget.',
@@ -113,7 +114,7 @@ window.I18N = {
     eq: { barbell: 'kétkezes rúd', dumbbell: 'kézisúlyzó', other: 'egyéb', 'body only': 'saját testsúly', cable: 'kábel', machine: 'gép', kettlebells: 'kettlebell', bands: 'gumiszalag', 'medicine ball': 'medicinlabda', 'exercise ball': 'fitlabda', 'foam roll': 'SMR-henger', 'e-z curl bar': 'EZ-rúd' }
   },
   en: {
-    appName: 'Tungsten', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food',
+    appName: 'Tungsten', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
     settings: 'Settings', back: 'Back', close: 'Close', save: 'Save', saved: 'Saved', added: 'Added', done: 'Done', edit: 'Edit', delete: 'Delete', remove: 'Remove', more: 'More', details: 'Details', name: 'Name', all: 'All',
     min: 'min', h: 'h', exercises: 'exercises', setsWord: 'sets', set: 'set', reps: 'reps', rest: 'rest', prev: 'prev', today: 'Today',
     installTitle: 'Install on iPhone', installShort: 'Safari: Share button → “Add to Home Screen”. Tap for details.',
@@ -171,9 +172,10 @@ window.I18N = {
     appCard: 'App', updateNow: 'Check for update', updating: 'Updating…', updateFail: 'Could not update. Check your internet connection.', updateCap: 'Downloads the newest version and restarts the app. Your data stays.',
     favs: 'Favourites', favAdd: 'Add to favourites', favOn: 'Favourite', favEmpty: 'No favourite exercises yet. Open an exercise and tap the star.',
     grpUpper: 'Upper', grpCore: 'Core', grpLower: 'Lower', equipment: 'Equipment', eqAll: 'Any equipment', brands: 'Fast food', icon: 'Icon', iconAuto: 'Auto',
-    openCal: 'Open calendar', calTitle: 'Calendar', calKeyW: 'workout', calKeyF: 'food logged', calCount: '{0} workouts this month', calTap: 'Tap a day to see its workouts, meals and steps.', prevMonth: 'Previous month', nextMonth: 'Next month',
+    openCal: 'Open calendar', calTitle: 'Calendar', calKeyW: 'workout', calKeyF: 'food logged', calKeyH: 'habit', calCount: '{0} workouts this month', calTap: 'Tap a day to see its workouts, meals and steps.', prevMonth: 'Previous month', nextMonth: 'Next month',
     workoutsDay: 'Workouts', noWorkoutDay: 'No workout on this day.', dayFoodN: '{0} items',
     actToday: 'Activity today', actTitle: 'Steps and calories burned', steps: 'steps', stepsLbl: 'Steps', burnLbl: 'Active calories burned (kcal)', actAdd: 'Add steps and calories', actAddSub: 'From your watch or your phone\'s health app', actEdit: 'Tap to change',
+    habitsDaily: 'Habits for this day', habitAdd: 'Add a habit', habitEdit: 'Edit habit', habitName: 'Habit name', habitNamePh: 'e.g. Stretch for 10 minutes', habitSchedule: 'Which days?', habitEmpty: 'No habits yet. Add one, then check it off when it’s done.', habitsNoneDue: 'No habits are scheduled for this day.', habitStreak: '{0}-day streak', habitComplete: 'Mark complete', habitUndo: 'Undo completion', habitNeedName: 'Give this habit a name.', habitNeedDay: 'Choose at least one day.', habitDayName: '{0}',
     actEst: 'Estimate calories from steps (rough)', actEstNeed: 'Enter the number of steps first.', actImport: 'Paste', actImportLead: 'Copy the two numbers from your watch or phone app and paste them: the app picks out the steps and the calories.',
     actPaste: 'Paste from clipboard', actPasteLbl: 'or paste the text here', actPasted: 'Read: {0} steps, {1} kcal', actPasteBad: 'No numbers found in that.', actClipNo: 'Could not read the clipboard. Paste the text into the field instead.',
     actHow: 'One tap on iPhone (Shortcuts app)', actHow1: 'Open the Shortcuts app and create a new shortcut.', actHow2: 'Add the “Find Health Samples” action: Type is Steps, Start Date is today.', actHow3: 'Add “Calculate Statistics” and choose Sum.',
