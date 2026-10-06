@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "total": 877,
+  "generated": 13,
+  "status": "unfinished: cloud workspace reset; UI JavaScript and build scripts must be restored",
+  "generatedImages": [
+    "img/guide/Ab_Crunch_Machine.webp",
+    "img/guide/Barbell_Bench_Press_-_Medium_Grip.webp",
+    "img/guide/Barbell_Curl.webp",
+    "img/guide/Barbell_Full_Squat.webp",
+    "img/guide/Barbell_Hip_Thrust.webp",
+    "img/guide/Barbell_Lunge.webp",
+    "img/guide/Barbell_Incline_Bench_Press_-_Medium_Grip.webp",
+    "img/guide/Cable_Crunch.webp",
+    "img/guide/Barbell_Step_Ups.webp"
+  ]
+}
