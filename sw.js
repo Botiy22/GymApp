@@ -1,7 +1,7 @@
 /* Tungsten service worker: makes the app start instantly and work with no connection.
    Bump VERSION whenever you upload changed files so phones pick them up. */
-const VERSION = 'v2-momentum-20261006';
-const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v3';   // v3: invalidate replaced movement boards as well as cached photos
+const VERSION = 'v3-guides-20261006';
+const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v4';   // v3: invalidate replaced movement boards as well as cached photos
 const CORE = ['./', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js',
   'js/i18n.js', 'js/plan.js', 'js/musclemap.js', 'js/config.js', 'js/momentum.js', 'js/store.js', 'js/charts.js', 'js/ai.js', 'js/cloud.js', 'js/app.js',
   'img/fig/0211-0.svg', 'img/fig/0211-1.svg', 'img/fig/0114-0.svg', 'img/fig/0114-1.svg', 'img/fig/0201-0.svg', 'img/fig/0201-1.svg', 'img/fig/press.webp', 'img/fig/row.webp', 'img/fig/lat-wide.webp', 'img/fig/lat-medium.webp', 'img/fig/0122-0.svg', 'img/fig/0122-1.svg', 'img/fig/0093-0.svg', 'img/fig/0093-1.svg', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'];
@@ -36,7 +36,7 @@ function revalidated(r) { const h = new Headers(r.headers); h.set('Cache-Control
 self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;            // API calls go straight to the network
-  if (url.pathname.includes('/img/ex/') || url.pathname.includes('/img/fig/')) {   // photos and drawings: cache first, keep forever
+  if (url.pathname.includes('/img/ex/') || url.pathname.includes('/img/fig/') || url.pathname.includes('/img/guide/')) {   // photos and drawings: cache first, keep forever
     e.respondWith(caches.open(IMG).then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }))));
     return;
   }
@@ -47,3 +47,4 @@ self.addEventListener('fetch', e => {
     return (await net) || (req.mode === 'navigate' ? c.match('index.html') : Response.error());
   }));
 });
+

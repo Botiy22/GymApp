@@ -141,7 +141,7 @@ window.Store = (function () {
     out.myEx = arr(r.myEx).slice(0, 300).map(e => {
       e = obj(e); const id = str(e.id, 40), n = str(e.n, 80).trim(); if (!/^my_[A-Za-z0-9]{1,36}$/.test(id) || !n) return null;
       const p = ms(e.p);
-      return { id, n, p, s: ms(e.s).filter(m => p.indexOf(m) < 0), eq: EQUIP.indexOf(e.eq) >= 0 ? e.eq : 'other', steps: arr(e.steps).slice(0, 12).map(x => str(x, 300).trim()).filter(Boolean), img: pic(e.img), vid: link(e.vid), t: num(e.t, 0, 4e12, 0) };
+      return { id, n, p, s: ms(e.s).filter(m => p.indexOf(m) < 0), eq: EQUIP.indexOf(e.eq) >= 0 ? e.eq : 'other', steps: arr(e.steps).slice(0, 12).map(x => str(x, 300).trim()).filter(Boolean), schemaVersion:e.schemaVersion === 1 ? 1 : 0, phaseSteps:arr(e.phaseSteps).slice(0,3).map(x=>str(x,220).trim()).filter(Boolean), img: pic(e.img), endImg:pic(e.endImg), vid: link(e.vid), t: num(e.t, 0, 4e12, 0) };
     }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
     out.exMedia = {};
     Object.keys(obj(r.exMedia)).slice(0, 200).forEach(k => { if (!EXID.test(k)) return; const m = obj(r.exMedia[k]), o = { img: pic(m.img), vid: link(m.vid) }; if (o.img || o.vid) out.exMedia[k] = o; });
