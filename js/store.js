@@ -166,7 +166,7 @@ window.Store = (function () {
         return { type: d.type === 'train' || d.type === 'rest' ? d.type : '', total: kc > 0 ? { kcal: kc, p: d1(t.p), c: d1(t.c), f: d1(t.f) } : null,
           meals: arr(d.meals).slice(0, 10).map(m => {
             m = obj(m); const id = idStr(m.id), nm = typeof m.name === 'string' ? str(m.name, 40).trim() : pair(m.name); if (!id || !nm || seen[id]) return null; seen[id] = 1;
-            return { id, name: nm, kcal: int(m.kcal, 0, 20000, 0), p: d1(m.p), c: d1(m.c), f: d1(m.f), items: arr(m.items).slice(0, 20).map(i => { i = obj(i); const n = str(i.n, 80).trim(); return n ? { n, g: d1(i.g), kcal: int(i.kcal, 0, 20000, 0) } : null; }).filter(Boolean) };
+            return { id, name: nm, kcal: int(m.kcal, 0, 20000, 0), p: d1(m.p), c: d1(m.c), f: d1(m.f), items: arr(m.items).slice(0, 20).map(i => { i = obj(i); const n = str(i.n, 80).trim(); return n ? { n, g: d1(i.g), kcal: i.kcal == null ? null : int(i.kcal, 0, 20000, 0) } : null; }).filter(Boolean) };
           }).filter(Boolean) };
       }), notes: lines(p.notes), train: lines(p.train) };
     return out.days.some(d => d.meals.length) || out.notes.length || out.train.length ? out : null;
@@ -245,3 +245,4 @@ window.Store = (function () {
     bytes() { try { return (localStorage.getItem(KEY) || '').length + (localStorage.getItem(AKEY) || '').length; } catch (e) { return 0; } }
   };
 })();
+
