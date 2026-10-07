@@ -289,3 +289,18 @@ Object.assign(I18N.en, {guideTap:'Tap the drawing you want to enlarge.', figCap:
 
 Object.assign(I18N.hu, {buildNumber:'Build: {0}', updateSuccess:'Sikeres frissítés. Telepített verzió: {0}.'});
 Object.assign(I18N.en, {buildNumber:'Build: {0}', updateSuccess:'Update successful. Installed version: {0}.'});
+
+Object.assign(I18N.hu, {
+  catalogueReady: 'Alapgyakorlatok', catalogueAll: 'Teljes adatbázis',
+  catalogueCount: '{0} rajzos alapgyakorlat · {1} a teljes adatbázisban',
+  catalogueReadyNote: 'Két rajzzal és rövid útmutatóval. Az ötnapos split és a beküldött edzések gyakorlatai is itt vannak.',
+  catalogueAllNote: 'Minden korábbi gyakorlat elérhető. A további rajzok és leírások fokozatosan készülnek.',
+  guidePending: 'Ehhez a gyakorlathoz még készül az egységes útmutató. Az alábbi szöveg a korábbi adatbázis rövidített leírása.'
+});
+Object.assign(I18N.en, {
+  catalogueReady: 'Core exercises', catalogueAll: 'Full database',
+  catalogueCount: '{0} illustrated core exercises · {1} in the full database',
+  catalogueReadyNote: 'Two illustrations and a short guide. Includes the five-day split and workouts from your supplied clips.',
+  catalogueAllNote: 'All previous exercises remain available. Additional illustrations and guides are being completed gradually.',
+  guidePending: 'The unified guide for this exercise is still in progress. The text below is a shortened description from the previous database.'
+});

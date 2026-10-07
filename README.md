@@ -26,22 +26,22 @@ you can reach it from any device after signing in.
   weekday. The next workout has two buttons: **start** (track every set as usual) or **"done, just
   tick it"** (counts for the week, the calendar and the muscle chart with its planned sets). The plan
   file itself is personal and is **not** part of this repository.
-- **Your own database**: add **own exercises** (name, muscles, equipment, steps, a photo, a video
-  link) — they join the library, the search, routines and workouts — and **own foods** (per 100 g from
-  the label, with a portion). Any built-in exercise can get your own picture and video link, with a
-  way back to the original. Own pictures are shrunk to about 480 px (at most 30 of them); videos are
-  links that open in the browser, nothing is downloaded. All of it syncs with the account and is in
-  the backup.
+- **Your own database**: add **own exercises** with a name, muscles, equipment, three short cues
+  and two static movement pictures. They join the library, search, routines and workouts. Add
+  **own foods** from label values per 100 g, with a portion. Own pictures are shrunk to about
+  480 px, with a total limit of 30. Legacy steps, single pictures and video URLs remain in backups
+  and sync; exercise details no longer show video links or stock-photo animations.
 - **Warm-up and stretching**: every routine and every running workout offers a short **warm-up**
   (moving exercises, 20 s each) and **stretching after the workout** (held stretches; 20, 30 or 45 s,
   per side where there are two). The moves are picked from the muscles of that workout, out of the
-  exercise library, so each has photos and instructions. A guided timer walks through them, with a
+  exercise library, with written instructions (some legacy warm-up/stretch guides still await drawings). A guided timer walks through them, with a
   cue to change sides at half time; or tick "I did it". Whether it was done is saved with the
   workout. Can be switched off in Settings. General fitness guidance, not medical advice: go only to
   a mild pull, never into pain.
-- **Exercises**: 876 exercises shown as tiles, two next to each other. 873 have start/end photos (the
-  original 850 px pictures in the detail view, small ones in lists); 182 also have line drawings, shown
-  as start and end position side by side. Every exercise has an anatomical body map (front and back)
+- **Exercises**: 61 illustrated core exercises shown as tiles, with two static positions, individual
+  enlargement and three short Hungarian/English cues. This includes all five-day split exercises
+  and both supplied workout routines. A Full database control retains all 878 entries; legacy
+  descriptions awaiting review are labelled. Every exercise has an anatomical body map (front and back)
   with the worked muscles filled in, your record and a progress chart. Names and instructions are in Hungarian and English. Filters without sideways
   scrolling: body part → muscle → equipment. A star marks **favourites** (exercises and foods).
 - **Progress**: weekly sets per muscle group against the 10–20 target zone, body weight, records,

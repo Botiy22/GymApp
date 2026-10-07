@@ -1,3 +1,19 @@
+# Core exercise release — 2026-10-07
+
+User-approved scope: publish a stable illustrated core, covering the entire five-day split and supplied workout clips. The earlier all-877 migration requirement is superseded; the old checkpoints below are historical.
+
+Version 2.2.0, build 20261007.4. Core: 61 exercises with two-position boards and three curated HU/EN cues. Full database: 878 entries; 198 curated descriptions in total; 817 further boards and 680 description reviews remain as future content. All 35 split IDs and both supplied routines (nine IDs, overlapping with the split; 39 distinct IDs total) are covered.
+
+The split's historically machine-labelled Seated_Side_Lateral_Raise item selects a dedicated machine guide while retaining its saved ID. The original catalogue variant keeps its seated dumbbell drawing. New plans can choose the separate Machine_Lateral_Raise entry. The split's 21s curl uses 7 lower-half, 7 upper-half and 7 full-range cues. Long built-in coaching notes are omitted from details; user notes remain.
+
+Published boards are mandatory release cache assets. Original source data, stock images, legacy media values, storage keys, plans, logs, backups and cloud merge logic remain intact. Full database and favourites still expose legacy exercises. Warm-up/stretch timers remain, with source descriptions for movements whose drawings are pending.
+
+Verification: source/diff review; content build and JS syntax checks; all 61 release boards visually inspected. The user rejected the first machine-board candidate because the upper arm appeared inside its pad; the corrected v2 keeps the raised arms above supporting pads. No tests added or run. The cloud-browser opening timed out, so browser/mobile layout, offline operation and live-account sync have not been exercised. Built-in imagegen used; original and edit prompts: data/core-machine-image.json.
+
+---
+
+## Historical migration checkpoints
+
 # Exercise migration checkpoint — 2026-10-07
 
 UNFINISHED: do not merge to main. Scope remains all 877 exercises.

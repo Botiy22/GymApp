@@ -189,6 +189,25 @@
         "Raise your arms out to shoulder height.",
         "Avoid swinging; lower slowly."
       ]
+    },
+    "variants": {
+      "machine": {
+        "reviewed": true,
+        "board": "img/guide/Machine_Lateral_Raise-v2.webp",
+        "steps": {
+          "hu": [
+            "Ülj a gépbe, talpad támaszd le; a párnák a felkarod külső oldalához kerüljenek.",
+            "Emeld a felkarod oldalra vállmagasságig.",
+            "Vállad ne húzd fel; lassan engedd vissza a gép karjait."
+          ],
+          "en": [
+            "Sit with your feet planted and the pads against the outside of your upper arms.",
+            "Raise your upper arms out to shoulder height.",
+            "Avoid shrugging; lower the machine arms slowly."
+          ]
+        },
+        "source": "Existing split label; original stored exercise ID preserved."
+      }
     }
   },
   "Side_Lateral_Raise": {
@@ -365,6 +384,24 @@
         "Curl the bar toward your shoulders.",
         "Keep your upper arms still; lower slowly."
       ]
+    },
+    "variants": {
+      "twentyOne": {
+        "reviewed": true,
+        "board": "img/guide/Barbell_Curl.webp",
+        "steps": {
+          "hu": [
+            "Tenyérrel előre fogd a rudat; könyököd maradjon a törzsed mellett.",
+            "Végezz 7 hajlítást alulról félmagasságig, majd 7-et félmagasságtól felülre.",
+            "Pihenő nélkül végezz 7 teljes hajlítást; ne lendíts a törzseddel."
+          ],
+          "en": [
+            "Hold the bar with an underhand grip, elbows beside your torso.",
+            "Do 7 curls from the bottom to halfway, then 7 from halfway to the top.",
+            "Without resting, do 7 full-range curls; keep your torso still."
+          ]
+        }
+      }
     }
   },
   "Standing_Military_Press": {
@@ -3156,5 +3193,22 @@
         "Keep your feet in place, press overhead, and lower with control."
       ]
     }
+  },
+  "Machine_Lateral_Raise": {
+    "reviewed": true,
+    "steps": {
+      "hu": [
+        "Ülj a gépbe, talpad támaszd le; a párnák a felkarod külső oldalához kerüljenek.",
+        "Emeld a felkarod oldalra vállmagasságig.",
+        "Vállad ne húzd fel; lassan engedd vissza a gép karjait."
+      ],
+      "en": [
+        "Sit with your feet planted and the pads against the outside of your upper arms.",
+        "Raise your upper arms out to shoulder height.",
+        "Avoid shrugging; lower the machine arms slowly."
+      ]
+    },
+    "source": "Existing user five-day split: machine lateral raise; generic machine representation.",
+    "board": "img/guide/Machine_Lateral_Raise-v2.webp"
   }
 }

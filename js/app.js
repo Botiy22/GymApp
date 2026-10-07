@@ -2,7 +2,7 @@
   'use strict';
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release/guide dependencies before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE || !window.EXERCISE_GUIDES || !window.ExerciseGuide) {
+  if (!window.GYM_RELEASE || !window.EXERCISE_GUIDES || !window.ExerciseGuide || typeof window.ExerciseGuide.ready !== 'function') {
     const src = !window.GYM_RELEASE ? 'js/release.js' : !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : 'js/exercise-guide.js';
     const script = document.createElement('script');
     script.src = src;
@@ -270,7 +270,7 @@
     const q = norm(st.q).split(/\s+/).filter(Boolean), g = st.grp || '';
     if (g === 'sel') return (st.sel || []).map(id => EX[id]).filter(Boolean);     // "selected": what is ticked, in the order it was ticked
     const ms = st.mus ? [st.mus] : GROUPS[g], fav = D().favEx;
-    const list = window.EXERCISES.filter(e => (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
+    const list = window.EXERCISES.filter(e => (st.catalogue === 'all' || e.own || g === 'fav' || ExerciseGuide.ready(e.id)) && (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
     const rank = e => (e.own ? 4 : 0) + (fav.indexOf(e.id) >= 0 ? 2 : 0) + (PLAN_BY_EX[e.id] ? 1 : 0);                 // favourites first, then the exercises of the built-in plan
     return list.sort((a, b) => rank(b) - rank(a) || exName(a.id).localeCompare(exName(b.id), L()));
   }
@@ -290,12 +290,12 @@
   function libControls(pick) {
     const st = pick ? ui.pick : ui.lib, g = st.grp || '';
     const segs = [['', t('all')], ['fav', '★'], ['upper', t('grpUpper')], ['core', t('grpCore')], ['lower', t('grpLower')]].concat(D().myEx.length ? [['own', t('grpOwn')]] : []);
-    return `<div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
+    return `<div class="seg catalogue-scope">${[['ready', 'catalogueReady'], ['all', 'catalogueAll']].map(([v, key]) => `<button class="${(st.catalogue || 'ready') === v ? 'on' : ''}" data-a="lib-catalogue" data-v="${v}" aria-pressed="${(st.catalogue || 'ready') === v}">${esc(t(key))}</button>`).join('')}</div><p class="cap">${esc(t(st.catalogue === 'all' ? 'catalogueAllNote' : 'catalogueReadyNote'))}</p><div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
       <div class="seg grp">${segs.map(([v, n]) => `<button class="${g === v ? 'on' : ''}" data-a="lib-grp" data-g="${v}" ${v === 'fav' ? `aria-label="${esc(t('favs'))}"` : ''} aria-pressed="${g === v}">${esc(n)}</button>`).join('')}</div>
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
-  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
+  function vLib() { return head(t('tabLib'), t('catalogueCount', window.EXERCISES.filter(e => !e.own && ExerciseGuide.ready(e.id)).length, BASE_N)) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
   function vProg() {
     const d = D();
@@ -529,14 +529,14 @@
       const focus = ui.muscleFocus && ui.muscleFocus.id === id ? ui.muscleFocus.group : '', mm = focus ? MuscleMap.fromLists(e.p.includes(focus) ? [focus] : [], e.s.includes(focus) ? [focus] : []) : pl && pl.mm ? pl.mm : MuscleMap.fromLists(e.p, e.s), hst = exHistory(id);
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
-      const guide = ExerciseGuide.get(id, e, L()), board = !ui.figBad[id] ? guide.board : '', phases = guide.pair;
+      const variant = pl && pl.similar ? 'machine' : pl && pl.reps === '21' ? 'twentyOne' : '';
+      const guide = ExerciseGuide.get(id, e, L(), variant), board = !ui.figBad[guide.board] ? guide.board : '', phases = guide.pair;
       let h = exerciseDrawings(id, name, board, phases);
-      const st = exSteps(id);
-      if (st.list.length) h += `<section class="card exercise-instructions"><h3>${esc(t('howTo'))}</h3><ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
+      if (!e.own && !ExerciseGuide.ready(id)) h += `<p class="cap">${esc(t('guidePending'))}</p>`;
+      if (guide.steps.length) h += `<section class="card exercise-instructions"><h3>${esc(t('howTo'))}</h3><ol class="steps">${guide.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id);
       h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${e.p.map(m => `<span class="chip on">${esc(mus(m))}</span>`).join('')}${e.s.map(m => `<span class="chip">${esc(mus(m))}</span>`).join('')}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
-      if (pl && pl.tip) h += `<div class="tip"><b>${esc(t('coachNote'))}</b>${esc(pl.tip[L()])}</div>`;
       h += `<section class="card"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'))}</div><p class="cap"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p></section>`;
       const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
       h += `<section class="card muscle-detail"><h3>${esc(t('muscleNames'))}</h3><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary', e.p], ['secondary', e.s]].map(([key, list]) => `<h4>${esc(t(key))}</h4><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}"><b>${esc(muscleName(m).split(' · ')[0])}</b>${muscleName(m).includes(' · ') ? `<small>${esc(muscleName(m).split(' · ').slice(1).join(' · '))}</small>` : ''}</button>`).join('')}</div>`).join('')}<p class="cap">${esc(t('musclePrecision'))}</p></section>`;
@@ -1472,7 +1472,8 @@
     'ex-routine-add'(el) { getR(el.dataset.id).items.push({ ex: el.dataset.ex, sets: 3, reps: '8–12', rest: 90 }); Store.save(); closeSheet(); toast(t('added')); if (ui.tab === 'home') rerender(); },
     anim(el) { el.classList.toggle('paused'); },
     'lib-mus'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.mus = MUS_ORDER.indexOf(el.dataset.m) >= 0 ? el.dataset.m : ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
-    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
+    'lib-catalogue'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.catalogue = el.dataset.v === 'all' ? 'all' : 'ready'; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
+    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || g === 'own' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
     'lib-more'(el) { const pk = !!el.closest('#sheet'); (pk ? ui.pick : ui.lib).limit += 60; if (pk) refreshSheet(); else rerender(); },
     /* progress */
     prog(el) { const v = el.dataset.v === 'history' ? 'history' : 'overview'; ui.histLimit = 60; if (ui.prog !== v) go('tab', () => { ui.prog = v; render(); }); else render(); },
@@ -1626,8 +1627,7 @@
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
     if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0) {
-      const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
-      if (id) ui.figBad[id] = 1;
+      ui.figBad[src] = 1;
       const picture = el.closest('.drawing-picture');
       if (picture) { picture.innerHTML = `<span class="phase-missing">${esc(t('artUnavailable'))}</span>`; const button = picture.closest('button'); if (button) button.disabled = true; }
       return;

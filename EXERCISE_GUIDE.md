@@ -39,7 +39,20 @@ The source-extraction process is not an independent scientific validation of the
 
 ## Current content state
 
-Read `data/exercise-guide-status.json` for exact generated/pending counts. This branch is unfinished
-until all 877 exercise boards and the remaining source summaries have been reviewed. Do not merge
-this incomplete migration to main. No tests added or run without an explicit user request.
+The user approved a staged core release on 2026-10-07, prioritising their five-day split and supplied
+workout clips rather than waiting for the entire catalogue. Read `data/exercise-guide-status.json`
+for exact counts. The default library/picker shows the 61 illustrated core exercises plus own
+exercises; favourites and saved plans/history remain accessible. The Full database control exposes
+all 878 entries, including the legacy entries awaiting artwork or description review.
 
+All 35 split exercise IDs and all nine supplied-routine IDs (39 distinct IDs together) have a board
+and three curated HU/EN cues. Machine lateral raise is a separate new exercise. The saved split's
+original seated-lateral-raise ID is retained: its machine-labelled plan item selects the machine
+guide variant. The ordinary library entry still depicts seated dumbbell lateral raise. The 21s
+plan item uses its own three-part instructions and the normal barbell-curl range illustration.
+
+Published guide assets are included in the service worker's mandatory atomic refresh, and served
+from that release cache before generic images. The content build verifies required guide metadata
+and file presence; this does not constitute a runtime/offline or training-technique test.
+Additional catalogue illustrations are future content work, not a blocker for this core release.
+No tests added or run without an explicit user request.
