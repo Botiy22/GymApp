@@ -6,6 +6,11 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.1.1 — 2026-10-07
+
+- Long exercise instructions and muscle names wrap inside their cards.
+- Horizontal page overflow is constrained; vertical scrolling and local filter scrolling remain available.
+
 ## 2.1.0 — 2026-10-07
 
 - Goals month calendar with independent day selection and restored daily/weekly layout.
