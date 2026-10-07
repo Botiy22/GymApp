@@ -288,3 +288,6 @@ Object.assign(I18N.en, {guideTap:'Tap the drawing you want to enlarge.', figCap:
 
 Object.assign(I18N.hu, {buildNumber:'Build: {0}', updateSuccess:'Sikeres frissítés. Telepített verzió: {0}.'});
 Object.assign(I18N.en, {buildNumber:'Build: {0}', updateSuccess:'Update successful. Installed version: {0}.'});
+
+Object.assign(I18N.hu,{addPlan:'Terv hozzáadása',weeklyPlanHint:'A teljes heti étrended. Az elfogyasztott étkezéseket a Naplóban jelölheted.',noPlannedMeals:'Erre a napra nincs étkezés.',whatsNew:'Újdonságok',installedVersion:'telepítve',routineImportLimit:'Legfeljebb 100 edzésterv fér el. Távolíts el egy nem használt tervet.',mealImportLimit:'Legfeljebb 10 étkezés lehet egy napon. Szerkeszd az előnézetet, vagy válaszd az étrend lecserélését.'});
+Object.assign(I18N.en,{addPlan:'Add a plan',weeklyPlanHint:'Your whole week. Tick off meals you have eaten in the Diary.',noPlannedMeals:'No meals planned for this day.',whatsNew:"What's new",installedVersion:'installed',routineImportLimit:'Up to 100 workout plans can be saved. Remove an unused plan.',mealImportLimit:'Up to 10 meals per weekday. Edit the preview or choose to replace the meal plan.'});

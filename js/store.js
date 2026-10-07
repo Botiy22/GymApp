@@ -48,7 +48,7 @@ window.Store = (function () {
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
       accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
-      hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's own yellow-green
+      hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's mint accent
       photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',
       stretch: s.stretch !== false, hold: [20, 30, 45].indexOf(+s.hold) >= 0 ? +s.hold : 30,                      // warm-up and stretching suggestions; seconds per stretch
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
@@ -240,7 +240,23 @@ window.Store = (function () {
     replace(o) { const k = data ? data.settings : { apiKey: '', keyState: '' }, own = data ? data.owner : '', ep = data ? data.epoch : 0, sk = data ? data.settings.syncKey : false; data = clean(o, k.apiKey); data.settings.keyState = k.apiKey ? k.keyState : ''; data.settings.syncKey = sk; data.owner = own; data.epoch = ep; data.mt = {}; data.del = {}; return save(); },   // a backup never changes whose data this is
     exportJSON() { const copy = JSON.parse(JSON.stringify(data)); copy.settings.apiKey = ''; copy.settings.keyState = ''; copy.settings.syncKey = false; copy.owner = ''; copy.mt = {}; copy.del = {}; copy.epoch = 0; return JSON.stringify({ app: 'gymapp', exported: new Date().toISOString(), data: copy }, null, 1); },
     /* change a copy of the data (a loaded plan, for example), clean it like any other outside data, and keep it; history and account stay as they are */
-    apply(fn) { const c = JSON.parse(JSON.stringify(data)), k = data.settings, act = data.active; fn(c); const n = clean(c, k.apiKey); n.settings.keyState = k.keyState; n.settings.syncKey = k.syncKey; n.active = act; data = n; return save(); },
+    apply(fn) {
+      // A failed import must not leave half-applied plans in memory or in storage.
+      if (mem) return false;
+      const previous=data, previousSnap=snap, k=data.settings, act=data.active;
+      let stored, storedActive;
+      try { stored=localStorage.getItem(KEY); storedActive=localStorage.getItem(AKEY); } catch (e) { return false; }
+      const c=JSON.parse(JSON.stringify(data));fn(c);const n=clean(c,k.apiKey);
+      n.settings.keyState=k.keyState;n.settings.syncKey=k.syncKey;n.active=act;data=n;
+      if (save()) return true;
+      data=previous;snap=previousSnap;
+      try {
+        for (const [key,value] of [[KEY,stored],[AKEY,storedActive]]) {
+          if (localStorage.getItem(key)!==value) { if(value==null)localStorage.removeItem(key);else localStorage.setItem(key,value); }
+        }
+      } catch (e) { /* The failure stays visible; never claim the import was saved. */ }
+      return false;
+    },
     resetRoutines() { data.routines = seedRoutines().concat(data.routines.filter(r => !r.builtin)); save(); },
     bytes() { try { return (localStorage.getItem(KEY) || '').length + (localStorage.getItem(AKEY) || '').length; } catch (e) { return 0; } }
   };

@@ -1,3 +1,13 @@
+# Update — 2.4.0, 2026-10-07
+
+The user explicitly requested browser tests for this change. Fixed XLSX recognition by preserving worksheet columns and grouping workout days and weekday meals, added compact automatic preview and safe appending, a weekly meal-plan view, mint/light design refresh and visible release history in Settings. Storage failure rolls back plan imports.
+
+Validation: 23 real Chromium browser regressions, JavaScript syntax and Git whitespace checks; responsive screenshots reviewed. See tests/README.md for coverage and commands. Tests use generated fixtures and isolated browser data, with no live account. The actual user's XLSX was not provided. WebKit download was blocked by proxy 403, so physical Safari/iPhone and live Supabase/AI checks remain unrun.
+
+A complete pre-change filesystem/Git backup is outside the checkout under /workspace/GymApp-backups. GitHub branch backup/before-xlsx-redesign-20261007 preserves commit d95ab8f.
+
+---
+
 # Completion update — 2026-10-06
 
 Cloud implementation completed after checkpoint 6f8e727. The historical handoff below describes

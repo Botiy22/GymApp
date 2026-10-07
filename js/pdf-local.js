@@ -68,12 +68,18 @@ window.PDFLocal = (() => {
     };
     return {kcal:value('kcal|kaloria|calories'),p:value('feherje|protein'),c:value('szenhidrat|carbs|carbohydrate'),f:value('zsir|fat')};
   };
-  function draft(sources,catalog,hu) {
-    const out={app:'gymapp',kind:'plan',appendRoutines:true,routines:[],plan:null,warnings:[hu?'A helyi felismerés csak néhány szövegformátumot kezel. Hasonlítsd össze az összes sort a PDF-fel: lehetnek kihagyott vagy rosszul szétválasztott részek.':'Local recognition handles limited text formats. Compare every row with the PDF: sections may be omitted or split incorrectly.']};
+  function draft(sources,catalog,hu,mappings) {
+    const out={app:'gymapp',kind:'plan',appendRoutines:true,appendMeals:true,routines:[],plan:null,unassignedMeals:[],pendingTables:[],warnings:[]};
     const weekdays=['hetfo','kedd','szerda','csutortok','pentek','szombat','vasarnap'];
     const enweek=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
     const diet=()=>out.plan||(out.plan={name:hu?'PDF étrend':'PDF meal plan',targets:true,days:Array.from({length:7},blankDay),notes:[],train:[]});
     for(const source of sources){
+      if(source.kind==='xlsx'){
+        const parsed=PlanSheet.parse(source,catalog,hu,mappings);
+        out.routines.push(...parsed.routines);out.unassignedMeals.push(...parsed.unassignedMeals);out.pendingTables.push(...parsed.pendingTables);out.warnings.push(...parsed.warnings,...(source.warnings||[]));
+        if(parsed.plan){const p=diet();p.name=parsed.plan.name;parsed.plan.days.forEach((d,i)=>{p.days[i].meals.push(...d.meals);if(d.total)p.days[i].total=d.total;if(d.type)p.days[i].type=d.type;});}
+        continue;
+      }
       let routine=null,day=-1,meal=null,dayType='';
       for(const line of source.lines){
         const s=line.text.replace(/\s*\|\s*/g,' ').trim(),plain=norm(s);if(!s)continue;
@@ -84,7 +90,7 @@ window.PDFLocal = (() => {
         if(head){routine={name:s.slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]};out.routines.push(routine);day=-1;meal=null;continue;}
         if(day>=0 && /^(napi osszes|napi cel|osszesen|daily total|daily target|total)\b/.test(plain)){diet().days[day].total=nutrients(s);meal=null;continue;}
         if(day>=0 && /^(reggeli|tizorai|ebed|uzsonna|vacsora|breakfast|lunch|dinner|snack|[1-9] etkezes|meal [1-9])\b/.test(plain)){
-          meal=Object.assign({name:s.split(/[:|]/)[0].slice(0,40),items:[]},nutrients(s));diet().days[day].type=dayType;diet().days[day].meals.push(meal);continue;
+          meal=Object.assign({name:s.split(/[:|]/)[0].replace(/\s+(?:kcal|kaloria|calories|protein|feherje|carbs|szenhidrat|fat|zsir)\b.*$/i,'').slice(0,40),items:[]},nutrients(s));diet().days[day].type=dayType;diet().days[day].meals.push(meal);continue;
         }
         if(day>=0 && meal){
           const ns=nutrients(s);
@@ -98,10 +104,10 @@ window.PDFLocal = (() => {
           const rx=/\b([1-9][0-9]?)\s*[x×]\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
           if(rx){
             const label=s.slice(0,rx.index).replace(/^[\s•*\-\d.)]+|[|:;\s]+$/g,'').trim();if(!label)continue;
-            const matches=catalog.filter(e=>[e.hu,e.en].some(n=>norm(n)===norm(label)));
+            const exercise=PlanSheet.exercise(label,catalog);
             const rest=/(?:piheno|rest)\s*[:=]?\s*([0-9]+)\s*(mp|s|sec|perc|min)\b/i.exec(plain);
             const rir=/\brir\s*[:=]?\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
-            routine.items.push({ex:matches.length===1?matches[0].id:'',label,sets:Number(rx[1]),reps:rx[2].replace(/\s+/g,''),rest:rest?Number(rest[1])*(/perc|min/.test(rest[2])?60:1):null,rir:rir?rir[1]:'',note:ref+' · '+s.slice(rx.index+rx[0].length).trim()});
+            routine.items.push({ex:exercise,label,sets:Number(rx[1]),reps:rx[2].replace(/\s+/g,''),rest:rest?Number(rest[1])*(/perc|min/.test(rest[2])?60:1):null,rir:rir?rir[1]:'',note:ref+' · '+s.slice(rx.index+rx[0].length).trim()});
           }
         }
       }

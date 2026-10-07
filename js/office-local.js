@@ -65,7 +65,7 @@ window.OfficeLocal=(()=>{
         block++;onProgress(file.name,block,body.children.length);
         if(child.localName==='p'){const s=text(child);if(s.trim())lines.push({page:'¶'+block,text:s});}
         if(child.localName==='tbl'){
-          const rows=direct(child,'tr').map((row,i)=>{const cells=direct(row,'tc').map(cell=>ns(cell,'p').map(text).join(' '));return {page:'T'+block+'R'+(i+1),cells,text:cells.join(' | ')};});lines.push(...tableLines(rows));
+          const rows=direct(child,'tr').map((row,i)=>{const cells=direct(row,'tc').map(cell=>ns(cell,'p').map(text).join(' '));return {page:'T'+block+'R'+(i+1),table:'T'+block,cells,text:cells.join(' | ')};});lines.push(...tableLines(rows));
         }
       }
       warnings.push('DOCX: body paragraphs and tables only; headers, footers, text boxes, comments and images are not imported.');
@@ -79,6 +79,9 @@ window.OfficeLocal=(()=>{
         if(!rel||rel.getAttribute('TargetMode')==='External'){warnings.push('Skipped external or missing worksheet: '+sheet.getAttribute('name'));continue;}
         const target=rel.getAttribute('Target')||'';if(target.includes('..')||/^[a-z]+:/i.test(target))throw new Error('file');
         const path=target.startsWith('/')?target.slice(1):'xl/'+target;const doc=await xml(zip,path,signal),rows=[];
+        const merged=[];
+        for(const cell of ns(doc,'mergeCell')){const m=/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(cell.getAttribute('ref')||'');if(m)merged.push({first:m[1]+m[2],col:m[1],start:+m[2],end:+m[4]});}
+        const savedCells={};ns(doc,'c').forEach(cell=>{const v=direct(cell,'v')[0],kind=cell.getAttribute('t');savedCells[cell.getAttribute('r')]=kind==='s'&&v?strings[Number(v.textContent)]||'':kind==='inlineStr'?text(cell):v?v.textContent:'';});
         lines.push({page:sheet.getAttribute('name'),text:sheet.getAttribute('name')});
         for(const row of ns(doc,'row')){
           if(++count>10000)throw new Error('length');const cells=[];
@@ -90,13 +93,15 @@ window.OfficeLocal=(()=>{
             if(direct(cell,'f').length){warnings.push(sheet.getAttribute('name')+'!'+ref+': formula uses the saved value only; no recalculation.');}
             cells[at]=s;
           }
-          if(cells.some(Boolean))rows.push({page:sheet.getAttribute('name')+'!'+row.getAttribute('r'),cells:Array.from(cells,x=>x||''),text:cells.join(' | ')});
+          const rowNumber=+row.getAttribute('r'),inherited={};
+          for(const merge of merged)if(rowNumber>=merge.start&&rowNumber<=merge.end){const col=Array.from(merge.col).reduce((n,c)=>n*26+c.charCodeAt(0)-64,0)-1;inherited[col]=savedCells[merge.first]||'';}
+          if(cells.some(Boolean))rows.push({page:sheet.getAttribute('name')+'!'+row.getAttribute('r'),sheet:sheet.getAttribute('name'),row:rowNumber,merged:inherited,cells:Array.from(cells,x=>x||''),text:cells.join(' | ')});
         }
-        lines.push(...tableLines(rows));
+        lines.push(...rows);
       }
-      warnings.push('XLSX: raw values only. Date/number formatting, merged cells, drawings and external links are not interpreted.');
+      warnings.push('XLSX: saved cell values are used. Formulas are not recalculated; drawings and external links are not imported.');
     }
-    if(lines.reduce((n,l)=>n+l.text.length,0)>200000)throw new Error('length');return {name:file.name,lines,warnings};
+    if(lines.reduce((n,l)=>n+l.text.length,0)>200000)throw new Error('length');return {name:file.name,kind:extension,lines,warnings};
   }
   return {extract};
 })();

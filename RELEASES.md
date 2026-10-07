@@ -6,6 +6,21 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.4.0 — 2026-10-07, build 20261007.9
+
+- Structured XLSX import uses Hungarian/English column headers, worksheet names, day/meal groupings, merged grouping cells and explicit units. Ingredient nutrition is summed only when all values are supplied; per-100-g columns are scaled by stated grams. Formulas use saved values only.
+- Files are read automatically after selection. Compact previews show detected workout and meal counts, highlight missing fields and offer column mapping for unrecognized worksheets.
+- One Add plans action saves the selected sections. Meals append to the existing plan by default, replacement is explicit, and existing routines, diary entries and active workouts are retained.
+- A weekly Meal plan view makes every imported weekday visible. Import success provides direct buttons to the saved plans.
+- Updated mint/deep-ink and light palettes, cards, navigation and responsive import dialog.
+- What's new in Settings shows the installed release and recent app updates.
+- 23 Chromium browser regression checks passed: XLSX/DOCX/PDF import, saving/reload, preserved data, workout/meal logging, storage rollback, responsive themes and an offline update/import. Syntax and whitespace checks passed. The user's original workbook was not provided; fixtures cover documented formats. Safari/WebKit download was blocked by the network proxy.
+
+## 2.3.1 — 2026-10-07, build 20261007.8
+
+- FileReader fallback for missing File.arrayBuffer/File.text APIs and repeat selection of the same document or image.
+- No browser tests were run before that commit; it did not resolve structured spreadsheet recognition.
+
 ## 2.3.1 — 2026-10-07, build 20261007.7
 
 - PDF text extraction reads the public PDF.js stream with a reader, avoiding ReadableStream async iteration unavailable in some Safari versions (upstream PDF.js issue #20973).

@@ -1,9 +1,10 @@
 (function startGymApp() {
   'use strict';
+  if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PDFLocal || !window.PlanImport) {
-    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PDFLocal ? 'js/pdf-local.js' : 'js/plan-import.js';
+  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport) {
+    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : 'js/plan-import.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -260,6 +261,7 @@
     }
     h += planCard(today(), false);
     if (!d.active) h += `<button class="qrow" data-a="w-quick"><span class="q-ic">${IC.bolt}</span><span class="rc-t"><b>${esc(t('quickWorkout'))}</b><i>${esc(t('quickSub'))}</i></span>${IC.chev}</button>`;
+    h += planEntry();
     h += `<div class="h2row"><h2>${esc(t('routines'))}</h2><button class="pill" data-a="r-new">${IC.plus}${esc(t('newPlan'))}</button></div><div class="rlist rgrid">` + d.routines.map(r => { const ic = rIcon(r);
       return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}${r.opt ? ' · ' + esc(t('optional')) : ''}</i></span></button>`; }).join('') + `</div>`;
     h += `<h2>${esc(t('actToday'))}</h2>` + actRow(today());
@@ -342,12 +344,22 @@
     return () => { const p = D().plan || { notes: [], train: [], name: '' }, sec = (ttl, l) => l.length ? `<h3>${esc(ttl)}</h3><ul class="pnotes">${l.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '';
       return { title: p.name || t('planRules'), html: sec(t('planTrain'), p.train) + sec(t('planFood'), p.notes) || `<p class="empty">${esc(t('noResults'))}</p>` }; };
   }
+  function planEntry() {
+    return `<button class="plan-entry" data-a="pdf-plan"><span><b>${esc(t('addPlan'))}</b><small>Excel · PDF · Word</small></span>${IC.plus}</button>`;
+  }
+  function vMealPlan() {
+    const p=D().plan;if(!p)return planEntry();
+    const days=L()==='hu'?['Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat','Vasárnap']:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    return `<section class="meal-plan-header"><h2>${esc(p.name||t('mealPlan'))}</h2><p>${esc(t('weeklyPlanHint'))}</p></section><div class="meal-week">`+p.days.map((d,i)=>`<section class="meal-day"><h3>${days[i]}<small>${d.meals.length} ${esc(L()==='hu'?'étkezés':d.meals.length===1?'meal':'meals')}</small></h3>${d.meals.length?d.meals.map(m=>`<div class="meal-plan-row"><div><b>${esc(pmName(m))}</b><strong>${m.kcal} kcal</strong></div><p>${macroLine(m)}</p><details><summary>${esc(t('foodsWord'))}</summary><ul>${m.items.map(f=>`<li>${esc(f.n)} · ${dec(f.g)} g</li>`).join('')}</ul></details></div>`).join(''):`<p class="meal-day-empty">${esc(t('noPlannedMeals'))}</p>`}</section>`).join('')+`</div>`+planEntry();
+  }
   function vFood() {
     const d = D(), tg0 = dayTargets(ui.foodDate), fromPlan = !!tg0 && tg0 !== d.settings.targets, list = dayFood();
     const burn = tg0 && d.settings.addActive ? actOf(ui.foodDate).kcal : 0, tg = tg0 ? Object.assign({}, tg0, { kcal: tg0.kcal + burn }) : null;   // active calories can be added to the day's budget
     const sum = list.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
-    let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button><button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
+    let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button>${d.plan?`<button class="${ui.food === 'plan' ? 'on' : ''}" data-a="food-view" data-v="plan">${esc(t('mealPlan'))}</button>`:''}<button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
     if (ui.food === 'ideas') return h + vIdeas();
+    if (ui.food === 'plan') return h + vMealPlan();
+    h += planEntry();
     h += `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><button class="datebtn" data-a="cal" data-d="${ui.foodDate}" aria-label="${esc(t('openCal'))}"><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b>${IC.down}</button><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     if (!tg) h += `<button class="note" data-a="targets"><b>${esc(t('setTargets'))}</b><span>${esc(t('setTargetsSub'))}</span></button>`;
     h += `<section class="card cal"><p class="bignum">${Math.round(sum.kcal)}<small> ${tg ? '/ ' + tg.kcal : ''} kcal</small></p>${tg ? Charts.meter(sum.kcal, tg.kcal) + `<p class="cap">${sum.kcal <= tg.kcal ? esc(t('remaining', Math.round(tg.kcal - sum.kcal))) : esc(t('over', Math.round(sum.kcal - tg.kcal)))}${burn ? ' · ' + esc(t('budgetCap', burn)) : ''}</p>` : ''}
@@ -718,7 +730,18 @@
   /* A plan file: the plan's routines take the place of the built-in ones, the meal plan and rules are stored; the log is not touched. */
   function applyPlan(o) {
     return Store.apply(c => {
-      if (o.plan) c.plan = o.plan;
+      if (o.plan) {
+        if(o.appendMeals === true && c.plan) {
+          o.plan.days.forEach((day,i)=>{
+            const existing=c.plan.days[i],hadMeals=existing.meals.length>0,ids=new Set(day.meals.map(m=>m.id));
+            existing.meals=existing.meals.filter(m=>!ids.has(m.id)).concat(day.meals);
+            // Keep existing daily targets when adding meals; replacement imports can change them.
+            if(!existing.total&&!hadMeals&&day.total)existing.total=day.total;
+            if(!existing.type&&day.type)existing.type=day.type;
+          });
+          c.plan.notes=Array.from(new Set(c.plan.notes.concat(o.plan.notes||[])));
+        } else c.plan = o.plan;
+      }
       if (Array.isArray(o.routines) && o.routines.length) { const ids = o.routines.map(r => r && r.id); c.routines = o.routines.concat(c.routines.filter(r => (o.appendRoutines === true || !r.builtin) && ids.indexOf(r.id) < 0)); }
       ['myFoods', 'myEx'].forEach(k => { if (Array.isArray(o[k])) { const ids = o[k].map(z => z && z.id); c[k] = (c[k] || []).filter(z => ids.indexOf(z.id) < 0).concat(o[k]); } });
     });
@@ -969,7 +992,7 @@
     let C = 0.2, lin = conv(C); while (C > 0.02 && lin.some(v => v < -0.0005 || v > 1.0005)) { C -= 0.01; lin = conv(C); }
     return lin.map(v => { v = Math.min(1, Math.max(0, v)); return Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); });
   }
-  const DEF_HUE = 121;                                                                 // where the app's own yellow-green sits on the scale
+  const DEF_HUE = 168;                                                                 // where the app's mint accent sits on the scale
   function applyLook() {
     const s = D().settings, e = document.documentElement;
     const light = s.bg === 'light', hue = s.hue == null ? DEF_HUE : s.hue;
@@ -980,7 +1003,7 @@
       if (light) e.style.setProperty('--acc-tx', 'rgb(' + hueRGB(hue, 0.45).join(',') + ')'); else e.style.removeProperty('--acc-tx');
     }
     e.dataset.bg = s.bg;
-    const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#eef0f5' : '#0e0f11');
+    const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f1f6f3' : '#0b171b');
     if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
   }
@@ -1007,9 +1030,9 @@
         <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}<button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
         ${D().plan ? `<section class="card"><h3>${esc(t('planCard'))}</h3><p class="cap">${esc(D().plan.name || t('mealPlan'))}</p>${sw('', t('planUseTg'), `data-in="plan-tg"${D().plan.targets ? ' checked' : ''}`)}<button class="btn" data-a="plan-notes">${esc(t('planRules'))}</button><button class="btn danger" data-a="plan-remove">${esc(t('planRemove'))}</button></section>` : ''}
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
-        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(L() === 'hu' ? 'PDF / Word / Excel terv' : 'PDF / Word / Excel plan')}</button>
+        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="release-notes">${esc(t('whatsNew'))} · ${esc(VERSION)}</button><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
     };
   }
@@ -1222,15 +1245,22 @@
   const A = {
     'pdf-plan'() {
       if (!document.querySelector('link[href="css/plan-import.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/plan-import.css'; document.head.append(style); }
-      PlanImport.open({ lang: L(),
-        catalog: Object.values(EX).map(e => ({ id: e.id, hu: HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n })),
+      PlanImport.open({ lang: L(), hasMealPlan: !!D().plan, restDefault: D().settings.restDefault,
+        catalog: Object.values(EX).map(e => ({ id: e.id, hu: HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n, aliases: [e.id, (EXHU[e.id] || [])[0], (PLAN_BY_EX[e.id] || {}).en, (PLAN_BY_EX[e.id] || {}).hu].filter(Boolean) })),
         onExport: plan => saveFile('GymApp-terv.json', new Blob([JSON.stringify(plan, null, 2)], { type: 'application/json' })),
+        onOpen: tab => { ui.tab=tab;if(tab==='food')ui.food='plan';render(); },
         onApply: plan => {
-          if (D().routines.length + plan.routines.length > 100) { toast(L() === 'hu' ? 'Legfeljebb 100 edzésterv tárolható. Előbb távolíts el egy nem használt tervet.' : 'At most 100 routines can be saved. Remove an unused routine first.'); return false; }
-          const saved = applyPlan(plan); ui.foodDate = today(); closeSheet(true); render();
-          toast(saved ? t('planLoaded') : (L() === 'hu' ? 'A terv az alkalmazásban van, de az eszközre mentés nem sikerült. Készíts biztonsági másolatot.' : 'Plan loaded, but device storage failed. Export a backup.'));
+          const newRoutines=plan.routines.filter(r=>!D().routines.some(x=>x.id===r.id)).length;
+          if (D().routines.length + newRoutines > 100) throw new Error(t('routineImportLimit'));
+          if(plan.plan&&plan.appendMeals&&D().plan&&plan.plan.days.some((d,i)=>D().plan.days[i].meals.filter(m=>!d.meals.some(n=>n.id===m.id)).length+d.meals.length>10)) throw new Error(t('mealImportLimit'));
+          const saved = applyPlan(plan);
+          if(!saved)return false;
+          ui.foodDate=today();closeSheet(true);render();return true;
         }
       });
+    },
+    'release-notes'() {
+      openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
     },
     tab(el) { const k = el.dataset.tab; if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
     /* calendar, day, activity */
@@ -1500,7 +1530,7 @@
     /* food */
     'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) go(+el.dataset.d < 0 ? 'back' : 'fwd', () => { ui.foodDate = ymd(d); render(); }); },
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
-    'food-view'(el) { const v = el.dataset.v === 'ideas' ? 'ideas' : 'diary'; if (ui.food !== v) go('tab', () => { ui.food = v; render(); }); else render(); },
+    'food-view'(el) { const v = el.dataset.v === 'ideas' ? 'ideas' : el.dataset.v === 'plan' && D().plan ? 'plan' : 'diary'; if (ui.food !== v) go('tab', () => { ui.food = v; render(); }); else render(); },
     'idea-cat'(el) { ui.idea = el.dataset.c; rerender(); },
     'idea-open'(el) { ui.recipeQty = 1; openSheet(shRecipe(el.dataset.id)); },
     'recipe-qty'(el) { ui.recipeQty = Math.max(.5, Math.min(20, (ui.recipeQty || 1) + num(el.dataset.n))); refreshSheet(); },
@@ -1614,7 +1644,7 @@
         const nr = Array.isArray(plan.routines) ? plan.routines.length : 0, nm = plan.plan && Array.isArray(plan.plan.days) ? plan.plan.days.reduce((a, x) => a + (x && Array.isArray(x.meals) ? x.meals.length : 0), 0) : 0;
         if (!nr && !nm) toast(t('importBad'));
         else if (plan.appendRoutines === true && D().routines.filter(r => !plan.routines.some(n => n.id === r.id)).length + nr > 100) toast(L() === 'hu' ? 'Legfeljebb 100 edzésterv tárolható.' : 'At most 100 routines can be saved.');
-        else if (confirm(t('planConfirm', nr, nm))) { applyPlan(plan); ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded')); }
+        else if (confirm(t('planConfirm', nr, nm))) { if(applyPlan(plan)){ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded'));}else toast(t('saveFailed')); }
         el.value = ''; return;
       }
       try { const o = JSON.parse(contents), d = o && o.data ? o.data : o; if (!d || !Array.isArray(d.workouts) || !Array.isArray(d.routines)) throw 0;
