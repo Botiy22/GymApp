@@ -1,5 +1,30 @@
-(function () {
+(function startGymApp() {
   'use strict';
+  // A previously cached HTML shell may receive this newer app script before its new script tags.
+  // Load the missing guide dependency before initializing storage or installing event handlers.
+  if (!window.EXERCISE_GUIDES || !window.ExerciseGuide) {
+    const src = !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : 'js/exercise-guide.js';
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = startGymApp;
+    script.onerror = () => {
+      const hu = (navigator.language || '').toLowerCase().startsWith('hu');
+      const view = document.getElementById('view');
+      if (!view) return;
+      const box = document.createElement('div');
+      box.className = 'card';
+      const message = document.createElement('p');
+      message.textContent = hu ? 'Az alkalmazás frissítéséhez csatlakozz az internethez, majd töltsd újra.' : 'Connect to the internet and reload to update the app.';
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.textContent = hu ? 'Újratöltés' : 'Reload';
+      retry.onclick = () => location.reload();
+      box.append(message, retry);
+      view.replaceChildren(box);
+    };
+    document.head.append(script);
+    return;
+  }
   /* ---------- helpers ---------- */
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -1581,4 +1606,3 @@
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
-
