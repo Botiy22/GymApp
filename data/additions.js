@@ -1,6 +1,11 @@
 /* Transcribed from the user's October 2026 recordings. Unshown values stay null.
    Source macro figures are the creators' claims, not USDA calculations. */
 (function () {
+  // The split historically labels Seated_Side_Lateral_Raise as a machine variant.
+  // Keep that saved ID intact; offer the exact machine variation for future additions.
+  window.EXERCISES.push({id:'Machine_Lateral_Raise', n:'Machine Lateral Raise', p:['shoulders'], s:['traps'], eq:'machine', c:'strength', lv:'beginner', m:'isolation', f:'pull', k:0,
+    i:['Sit with your feet planted and your arms beneath the pads near your elbows.', 'Raise your upper arms out to shoulder height.', 'Avoid shrugging; lower the machine arms slowly.']});
+  window.EX_HU.Machine_Lateral_Raise = ['Gépi oldalra karemelés', ['Ülj a gépbe, talpad támaszd le; a karod a könyök közelében kerüljön a párnák alá.', 'Emeld a felkarod oldalra vállmagasságig.', 'Vállad ne húzd fel; lassan engedd vissza a gép karjait.']];
   window.EXERCISES.push({ id: 'Medium_Grip_Lat_Pulldown', n: 'Medium-Grip Lat Pulldown', p: ['lats'], s: ['biceps', 'middle back', 'shoulders'], eq: 'cable', c: 'strength', lv: 'beginner', m: 'compound', f: 'pull', k: 0,
     i: ['Adjust the thigh pad and plant your feet. Hold the bar with an overhand grip about shoulder width apart.', 'Keep your torso steady and pull the bar in front of you toward your upper chest, bringing your elbows down.', 'Return slowly with control.'] });
   window.EX_HU.Medium_Grip_Lat_Pulldown = ['Lehúzás mellhez vállszéles fogással', ['Rögzítsd a combodat a párna alatt, talpad támaszd a padlóra. A rudat vállszéles felső fogással tartsd.', 'Stabil törzzsel húzd a rudat magad előtt a mellkasod felső részéhez, könyöködet lefelé vezetve.', 'Kontrolláltan engedd vissza a rudat.']];
@@ -31,3 +36,4 @@
       steps: { hu: ['Turmixold simára a cottage cheese-t, a tojásokat, a vaníliát és a szirupot.', 'Keverd hozzá az önkelő lisztet, majd az áfonyát. Az áfonya mennyiségét ízlés szerint válaszd; ez az eredeti mennyiség hiányában saját módosítás.', 'Tapadásmentes serpenyőben, közepes hőfokon süss tíz kisebb palacsintát. Fordítsd meg, amikor az alja megszilárdult, és süsd át a másik oldalát is.', 'A naplózásnál add meg, hány palacsintát ettél.'], en: ['Blend cottage cheese, eggs, vanilla and syrup until smooth.', 'Mix in self-rising flour and blueberries. Choose blueberries to taste; this is an adaptation because the original amount is not visible.', 'Cook ten smaller pancakes in a non-stick pan over medium heat. Flip when the underside sets and cook through on both sides.', 'When logging, choose how many pancakes you ate.'] }, kcal: 122, p: 10, c: 12.5, f: 3.5, g: 0 }
   );
 })();
+

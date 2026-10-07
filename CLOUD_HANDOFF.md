@@ -1,3 +1,15 @@
+# Current release scope — 2026-10-07
+
+The user approved a stable core release instead of completing every catalogue entry first,
+with their five-day split and supplied workout clips as mandatory content. Version 2.2.0,
+build 20261007.5: 61 illustrated core exercises, all 39 distinct split/supplied-routine IDs
+covered, 878 total entries retained behind Full database. Saved plans and IDs are unchanged.
+The split's machine lateral raise selects its own guide; normal seated dumbbell raises remain
+a different variation. See EXERCISE_GUIDE.md and data/exercise-guide-status.json.
+Historical all-catalogue completion requirements below are superseded by this user-approved scope.
+Verification: source/diff review, content build, JS syntax checks and visual board inspection.
+No tests added/run. Browser layout, offline and live-account sync have not been checked.
+
 # Completion update — 2026-10-06
 
 Cloud implementation completed after checkpoint 6f8e727. The historical handoff below describes

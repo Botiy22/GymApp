@@ -824,21 +824,43 @@ textarea{min-height:96px;resize:vertical;line-height:1.4}
 .set:focus-within{outline:1px solid var(--acc-tx);outline-offset:2px}
 @media(max-width:390px){.habit-row{gap:8px}.habit-name{flex-basis:calc(100% - 90px)}.habit-counter{margin-left:44px}.habit-row>.icon-btn:last-child{margin-left:auto}.momentum-hero{gap:12px}.momentum-ring{width:78px;height:78px}.momentum-hero h2{font-size:1rem}}
 
+/* Exercise guide v1: two static positions for every movement. */
+.exercise-guide{margin-bottom:18px;min-width:0}
+.exercise-phases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;border-radius:14px;text-align:center;min-width:0}
+.exercise-phase{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#fff}
+.phase-picture{display:block;position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#fff}
+.phase-picture img{display:block;width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
+.phase-picture img.board-half{width:200%;max-width:none;height:100%;object-fit:fill;inset:auto;top:0}
+.phase-picture .half-0{left:0}.phase-picture .half-1{left:-100%}
+.phase-caption{display:block;background:var(--raised);color:var(--ink);padding:10px 6px;font-size:.8rem;font-weight:600}
+.phase-missing{display:grid;place-items:center;height:100%;padding:12px;color:#555;font-size:.85rem}
+.exercise-phases.big{grid-template-columns:minmax(0,1fr)}
+.exercise-phases.big .phase-picture{aspect-ratio:3/4}
+.exercise-instructions .steps{padding-left:22px}
+.exercise-instructions .steps li{margin-bottom:8px;line-height:1.5}
+.muscle-detail{min-width:0;overflow:hidden}
+.muscle-detail .chips{min-width:0;max-width:100%}
+.muscle-detail .chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;max-width:100%;min-width:0;flex:0 1 auto;white-space:normal;overflow-wrap:anywhere;word-break:normal;padding:10px 12px;border-radius:12px;line-height:1.35}
+.muscle-detail .chip b{font-weight:500;font-size:.85rem;max-width:100%}
+.muscle-detail .chip small{font-size:.74rem;max-width:100%;opacity:.8}
+.own-phases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;min-width:0;margin-bottom:18px}
+.own-phases>div{min-width:0}.own-phases .btn{font-size:.8rem;padding:10px 6px;white-space:normal}
+.own-phases .mx-pic img{width:100%;max-height:220px;object-fit:contain}
+@media(max-width:390px){.exercise-phases{gap:6px}.phase-caption{font-size:.74rem}.muscle-detail .chip{width:100%}}
+
 
 /* Each illustration opens the position that was tapped. */
 .drawing-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px;min-width:0}
 .drawing-phase{display:block;width:100%;padding:0;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center}
 .drawing-picture{display:block;position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#fff}
 .drawing-picture img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.drawing-picture img.drawing-board{width:200%;max-width:none;object-fit:fill;left:0}
+.drawing-picture img.drawing-board{width:200%;max-width:none;object-fit:contain;left:0}
 .drawing-picture img.drawing-board.phase-1{left:-100%}
 .drawing-caption{display:block;padding:10px 6px;font-size:.8rem;font-weight:600;background:var(--raised);color:var(--ink)}
 .drawing-zoom{max-width:640px;margin:0 auto}
 .drawing-phase:focus-visible{outline:2px solid var(--acc-tx);outline-offset:2px}
 .momentum-month .habit-today{display:block;margin:8px 0 0 auto;width:auto;min-height:36px;padding:6px 10px;font-size:.78rem}
 .update-status{min-height:1.4em;margin:8px 0;line-height:1.4}
-
-.phase-missing{display:grid;place-items:center;height:100%;padding:12px;color:#555;font-size:.85rem}
 
 /* Keep long exercise text inside its card, and prevent sideways page movement. */
 html,body{max-width:100%;overflow-x:clip}

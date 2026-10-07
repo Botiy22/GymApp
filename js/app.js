@@ -1,9 +1,9 @@
 (function startGymApp() {
   'use strict';
   // A previously cached HTML shell may receive this newer app script before its new script tags.
-  // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE) {
-    const src = 'js/release.js';
+  // Load the release/guide dependencies before initializing storage or installing event handlers.
+  if (!window.GYM_RELEASE || !window.EXERCISE_GUIDES || !window.ExerciseGuide || typeof window.ExerciseGuide.ready !== 'function') {
+    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : 'js/exercise-guide.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -65,17 +65,17 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
+  const thumb = id => EX[id] && EX[id].own ? ownPic(id) || NOPIC : ((window.EXERCISE_GUIDES || {})[id] || {}).board || NOPIC;
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
   const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
-  const exSteps = id => { const hu = L() === 'hu' && EXHU[id] ? (EXHU[id][1] || []).filter(Boolean) : []; return hu.length ? { list: hu, own: true } : { list: (EX[id].i || []).filter(Boolean), own: L() !== 'hu' || !!EX[id].own }; };
+  const exSteps = id => ({list:ExerciseGuide.get(id, EX[id], L()).steps, own:true});
   /* Our own database: exercises the user added live in their data (and account) and are merged into the library here. */
   const BASE_N = window.EXERCISES.length; let ownRef = null;
   function ownSync() {
     const my = D().myEx; if (my === ownRef) return; ownRef = my;
     window.EXERCISES.length = BASE_N; Object.keys(EX).forEach(k => { if (EX[k].own) delete EX[k]; });
-    my.forEach(e => { if (EX[e.id]) return; const x = { id: e.id, n: e.n, p: e.p, s: e.s, eq: e.eq, c: 'strength', lv: '', m: '', f: '', i: e.steps, k: 0, own: true, img: e.img, vid: e.vid }; window.EXERCISES.push(x); EX[x.id] = x; });
+    my.forEach(e => { if (EX[e.id]) return; const x = { id: e.id, n: e.n, p: e.p, s: e.s, eq: e.eq, c: 'strength', lv: '', m: '', f: '', i: e.steps, phaseSteps:e.phaseSteps, k: 0, own: true, img: e.img, endImg:e.endImg, vid: e.vid }; window.EXERCISES.push(x); EX[x.id] = x; });
     exIdx = null;
   }
   let exIdx = null;                                                                    // search text per exercise: both names, without accents
@@ -270,7 +270,7 @@
     const q = norm(st.q).split(/\s+/).filter(Boolean), g = st.grp || '';
     if (g === 'sel') return (st.sel || []).map(id => EX[id]).filter(Boolean);     // "selected": what is ticked, in the order it was ticked
     const ms = st.mus ? [st.mus] : GROUPS[g], fav = D().favEx;
-    const list = window.EXERCISES.filter(e => (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
+    const list = window.EXERCISES.filter(e => (st.catalogue === 'all' || e.own || g === 'fav' || ExerciseGuide.ready(e.id)) && (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
     const rank = e => (e.own ? 4 : 0) + (fav.indexOf(e.id) >= 0 ? 2 : 0) + (PLAN_BY_EX[e.id] ? 1 : 0);                 // favourites first, then the exercises of the built-in plan
     return list.sort((a, b) => rank(b) - rank(a) || exName(a.id).localeCompare(exName(b.id), L()));
   }
@@ -290,12 +290,12 @@
   function libControls(pick) {
     const st = pick ? ui.pick : ui.lib, g = st.grp || '';
     const segs = [['', t('all')], ['fav', '★'], ['upper', t('grpUpper')], ['core', t('grpCore')], ['lower', t('grpLower')]].concat(D().myEx.length ? [['own', t('grpOwn')]] : []);
-    return `<div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
+    return `<div class="seg catalogue-scope">${[['ready', 'catalogueReady'], ['all', 'catalogueAll']].map(([v, key]) => `<button class="${(st.catalogue || 'ready') === v ? 'on' : ''}" data-a="lib-catalogue" data-v="${v}" aria-pressed="${(st.catalogue || 'ready') === v}">${esc(t(key))}</button>`).join('')}</div><p class="cap">${esc(t(st.catalogue === 'all' ? 'catalogueAllNote' : 'catalogueReadyNote'))}</p><div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
       <div class="seg grp">${segs.map(([v, n]) => `<button class="${g === v ? 'on' : ''}" data-a="lib-grp" data-g="${v}" ${v === 'fav' ? `aria-label="${esc(t('favs'))}"` : ''} aria-pressed="${g === v}">${esc(n)}</button>`).join('')}</div>
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
-  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
+  function vLib() { return head(t('tabLib'), t('catalogueCount', window.EXERCISES.filter(e => !e.own && ExerciseGuide.ready(e.id)).length, BASE_N)) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
   function vProg() {
     const d = D();
@@ -529,20 +529,20 @@
       const focus = ui.muscleFocus && ui.muscleFocus.id === id ? ui.muscleFocus.group : '', mm = focus ? MuscleMap.fromLists(e.p.includes(focus) ? [focus] : [], e.s.includes(focus) ? [focus] : []) : pl && pl.mm ? pl.mm : MuscleMap.fromLists(e.p, e.s), hst = exHistory(id);
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
-      const art = (window.EX_ART || {})[id], figure = FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
-      const pair = !ui.figBad[id] && figure ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : [];
-      let h = e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair);
+      const variant = pl && pl.similar ? 'machine' : pl && pl.reps === '21' ? 'twentyOne' : '';
+      const guide = ExerciseGuide.get(id, e, L(), variant), board = !ui.figBad[guide.board] ? guide.board : '', phases = guide.pair;
+      let h = exerciseDrawings(id, name, board, phases);
+      if (!e.own && !ExerciseGuide.ready(id)) h += `<p class="cap">${esc(t('guidePending'))}</p>`;
+      if (guide.steps.length) h += `<section class="card exercise-instructions"><h3>${esc(t('howTo'))}</h3><ol class="steps">${guide.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
-      const fav = isFav(id), st = exSteps(id);
+      const fav = isFav(id);
       h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${e.p.map(m => `<span class="chip on">${esc(mus(m))}</span>`).join('')}${e.s.map(m => `<span class="chip">${esc(mus(m))}</span>`).join('')}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
-      if (pl && pl.tip) h += `<div class="tip"><b>${esc(t('coachNote'))}</b>${esc(pl.tip[L()])}</div>`;
       h += `<section class="card"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'))}</div><p class="cap"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p></section>`;
       const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
-      h += `<section class="card muscle-detail"><h3>${esc(t('muscleNames'))}</h3><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary', e.p], ['secondary', e.s]].map(([key, list]) => `<h4>${esc(t(key))}</h4><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div>`).join('')}<p class="cap">${esc(t('musclePrecision'))}</p></section>`;
+      h += `<section class="card muscle-detail"><h3>${esc(t('muscleNames'))}</h3><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary', e.p], ['secondary', e.s]].map(([key, list]) => `<h4>${esc(t(key))}</h4><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}"><b>${esc(muscleName(m).split(' · ')[0])}</b>${muscleName(m).includes(' · ') ? `<small>${esc(muscleName(m).split(' · ').slice(1).join(' · '))}</small>` : ''}</button>`).join('')}</div>`).join('')}<p class="cap">${esc(t('musclePrecision'))}</p></section>`;
       h += `<section class="card"><h3>${esc(t('myStats'))}</h3>` + (hst.length ? `<div class="kpis"><div><b>${best ? r1(best) : '–'}</b><i>${esc(t('est1rm'))}</i></div><div><b>${top ? (top.kg ? top.kg + '×' + top.reps : top.reps) : '–'}</b><i>${esc(t('bestSet'))}</i></div><div><b>${hst.length}</b><i>${esc(t('sessions'))}</i></div></div>${pts.length > 1 ? Charts.line(pts.slice(-20), { unit: ' kg' }) + `<p class="cap">${esc(t('e1rmChart'))}</p>` : ''}
         <div class="lastlist">${hst.slice(-3).reverse().map(x => `<p><i>${esc(fmtDate(x.d))}</i>${x.sets.map(s => `<span>${s.w ? 'W ' : ''}${s.kg ? s.kg + '×' : ''}${s.reps}</span>`).join('')}</p>`).join('')}</div>` : `<p class="empty">${esc(t('noHistoryEx'))}</p>`) + `</section>`;
-      if (st.list.length) h += `<section class="card"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
-      if (e.own) h += `<section class="card"><h3>${esc(t('myExOwn'))}</h3><button class="btn" data-a="mx-edit" data-id="${esc(id)}">${IC.pen}${esc(t('edit'))}</button></section>`;
+      if (e.own) h += `<section class="card"><button class="btn" data-a="mx-edit" data-id="${esc(id)}">${IC.pen}${esc(t('edit'))}</button></section>`;
       const foot = (D().active ? `<button class="btn primary" data-a="ex-to-workout" data-id="${esc(id)}">${esc(t('addToWorkout'))}</button>` : '') + `<button class="btn" data-a="ex-to-routine" data-id="${esc(id)}">${esc(t('addToRoutine'))}</button>`;
       return { title: name, html: h, foot };
     };
@@ -677,7 +677,7 @@
   }
 
   /* ---------- our own database: exercises and foods the user adds ---------- */
-  const picCount = () => D().myEx.filter(e => e.img).length + Object.keys(D().exMedia).filter(k => D().exMedia[k].img).length;
+  const picCount = () => D().myEx.reduce((n,e)=>n + +!!e.img + +!!e.endImg,0) + Object.keys(D().exMedia).filter(k => D().exMedia[k].img).length;
   const urlOk = v => /^https:\/\/[^\s"'<>]{4,300}$/.test(v);
   /* a phone photo made small enough to keep with the data: 480 px, or 340 px when that is still too heavy */
   function smallPic(file) {
@@ -691,7 +691,7 @@
       im.src = url;
     });
   }
-  const newMyEx = e => e ? { id: e.id, n: e.n, p: e.p.slice(), s: e.s.slice(), eq: e.eq, steps: (e.steps || []).join('\n'), img: e.img || '', vid: e.vid || '' } : { id: '', n: '', p: [], s: [], eq: 'other', steps: '', img: '', vid: '' };
+  const newMyEx = e => ({id:e ? e.id : '', n:e ? e.n : '', p:e ? e.p.slice() : [], s:e ? e.s.slice() : [], eq:e ? e.eq : 'other', steps:e ? (e.phaseSteps && e.phaseSteps.length ? e.phaseSteps.slice() : ExerciseGuide.concise(e.steps)) : ['', '', ''], originalSteps:e ? (e.steps || []).slice() : [], img:e && e.img || '', endImg:e && e.endImg || '', vid:e && e.vid || ''});
   function shMyEx() {
     const fn = () => {
       const x = ui.myex, chips = k => `<div class="chips mus">${MUS_ORDER.map(m => `<button class="chip${x[k].indexOf(m) >= 0 ? ' on' : ''}" data-a="mx-mus" data-k="${k}" data-m="${m}" aria-pressed="${x[k].indexOf(m) >= 0}">${esc(mus(m))}</button>`).join('')}</div>`;
@@ -699,9 +699,8 @@
         <label class="fld"><span>${esc(t('name'))}</span><input type="text" data-in="mx-n" value="${esc(x.n)}" maxlength="80" autocomplete="off"></label>
         <p class="lbl">${esc(t('mxPrimary'))}</p>${chips('p')}<p class="lbl">${esc(t('mxSecondary'))}</p>${chips('s')}
         <label class="fld row"><span>${esc(t('equipment'))}</span><select data-in="mx-eq">${EQS.map(q => `<option value="${q}" ${x.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></label>
-        <label class="fld"><span>${esc(t('myExSteps'))}</span><textarea data-in="mx-steps" rows="4" maxlength="2400">${esc(x.steps)}</textarea></label>
-        <label class="fld"><span>${esc(t('vidLink'))}</span><input type="text" inputmode="url" data-in="mx-vid" value="${esc(x.vid)}" placeholder="https://" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
-        <p class="lbl">${esc(t('picture'))}</p>${x.img ? `<div class="mx-pic"><img src="${esc(x.img)}" alt=""><button class="link" data-a="mx-nopic">${esc(t('remove'))}</button></div>` : ''}<label class="btn">${IC.cam}${esc(t(x.img ? 'picChange' : 'picAdd'))}<input class="sr" type="file" accept="image/*" data-in="mx-file"></label>
+        ${['guideSetup','guideMovement','guideCue'].map((key,i)=>`<label class="fld"><span>${esc(t(key))}</span><textarea data-in="mx-steps" data-index="${i}" rows="2" maxlength="220">${esc(x.steps[i] || '')}</textarea></label>`).join('')}
+        <div class="own-phases">${['img','endImg'].map((key,i)=>`<div><p class="lbl">${esc(t(i ? 'artEnd' : 'artStart'))}</p>${x[key] ? `<div class="mx-pic"><img src="${esc(x[key])}" alt=""><button class="link" data-a="mx-nopic" data-key="${key}">${esc(t('remove'))}</button></div>` : ''}<label class="btn">${IC.cam}${esc(t(x[key] ? 'picChange' : 'picAdd'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="mx-file" data-key="${key}"></label></div>`).join('')}</div>
         ${x.id ? `<button class="btn danger" data-a="mx-del">${esc(t('myExDel'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="mx-save">${esc(t('save'))}</button>` };
     };
     fn.kind = 'myex'; return fn;
@@ -1319,13 +1318,14 @@
     'mx-new'() { ui.myex = newMyEx(null); if (ui.tab === 'lib' && ui.lib.q.trim()) ui.myex.n = ui.lib.q.trim(); openSheet(shMyEx()); },
     'mx-edit'(el) { const e = D().myEx.find(x => x.id === el.dataset.id); if (!e) return; ui.myex = newMyEx(e); openSheet(shMyEx()); },
     'mx-mus'(el) { const x = ui.myex, l = x[el.dataset.k === 's' ? 's' : 'p'], m = el.dataset.m, i = l.indexOf(m); if (i >= 0) l.splice(i, 1); else if (l.length < 6) { l.push(m); const o = x[el.dataset.k === 's' ? 'p' : 's'], j = o.indexOf(m); if (j >= 0) o.splice(j, 1); } refreshSheet(); },
-    'mx-nopic'() { ui.myex.img = ''; refreshSheet(); },
+    'mx-nopic'(el) { ui.myex[el.dataset.key === 'endImg' ? 'endImg' : 'img'] = ''; refreshSheet(); },
     'mx-save'() {
-      const x = ui.myex, n = x.n.trim(), vid = x.vid.trim(), d = D(), old = x.id ? d.myEx.find(o => o.id === x.id) : null;
-      if (!n) { toast(t('myExNeedName')); return; } if (!x.p.length) { toast(t('myExNeedMus')); return; } if (vid && !urlOk(vid)) { toast(t('vidBad')); return; }
-      if (x.img && !(old && old.img) && picCount() >= 30) { toast(t('picLimit')); return; }
+      const x = ui.myex, n = x.n.trim(), vid = x.vid, d = D(), old = x.id ? d.myEx.find(o => o.id === x.id) : null;
+      if (!n) { toast(t('myExNeedName')); return; } if (!x.p.length) { toast(t('myExNeedMus')); return; }
+      if (!old && (!x.img || !x.endImg || x.steps.length < 3 || x.steps.some(v => !v.trim()))) { toast(t('guideNeed')); return; }
+      if (picCount() - (old ? +!!old.img + +!!old.endImg : 0) + +!!x.img + +!!x.endImg > 30) { toast(t('picLimit')); return; }
       if (!old && d.myEx.length >= 300) { toast(t('picLimit')); return; }
-      const e = { id: x.id || 'my_' + uid(), n: n.slice(0, 80), p: x.p.slice(0, 6), s: x.s.filter(m => x.p.indexOf(m) < 0).slice(0, 6), eq: x.eq, steps: x.steps.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 12), img: x.img, vid, t: Date.now() };
+      const e = { id: x.id || 'my_' + uid(), n: n.slice(0, 80), p: x.p.slice(0, 6), s: x.s.filter(m => x.p.indexOf(m) < 0).slice(0, 6), eq: x.eq, steps: old ? x.originalSteps : x.steps.map(s => s.trim()).filter(Boolean), phaseSteps:x.steps.map(s => s.trim()).filter(Boolean).slice(0,3), schemaVersion:1, img: x.img, endImg:x.endImg, vid, t: Date.now() };
       d.myEx = old ? d.myEx.map(o => o.id === e.id ? e : o) : d.myEx.concat([e]);
       Store.save(); ownSync(); closeSheet(); if (!ui.sheets.length) { if (ui.tab === 'lib' && !old) { ui.lib.q = ''; ui.lib.grp = 'own'; ui.lib.mus = ''; ui.lib.eq = ''; } rerender(); } toast(t('saved'));
     },
@@ -1472,7 +1472,8 @@
     'ex-routine-add'(el) { getR(el.dataset.id).items.push({ ex: el.dataset.ex, sets: 3, reps: '8–12', rest: 90 }); Store.save(); closeSheet(); toast(t('added')); if (ui.tab === 'home') rerender(); },
     anim(el) { el.classList.toggle('paused'); },
     'lib-mus'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.mus = MUS_ORDER.indexOf(el.dataset.m) >= 0 ? el.dataset.m : ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
-    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
+    'lib-catalogue'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.catalogue = el.dataset.v === 'all' ? 'all' : 'ready'; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
+    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || g === 'own' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
     'lib-more'(el) { const pk = !!el.closest('#sheet'); (pk ? ui.pick : ui.lib).limit += 60; if (pk) refreshSheet(); else rerender(); },
     /* progress */
     prog(el) { const v = el.dataset.v === 'history' ? 'history' : 'overview'; ui.histLimit = 60; if (ui.prog !== v) go('tab', () => { ui.prog = v; render(); }); else render(); },
@@ -1543,7 +1544,7 @@
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
     're-name'(el) { ui.edit.name = el.value; }, 're-sets'(el) { ui.edit.items[+el.dataset.i].sets = el.value; },
     're-reps'(el) { ui.edit.items[+el.dataset.i].reps = el.value; }, 're-rir'(el) { ui.edit.items[+el.dataset.i].rir = el.value; },
-    'mx-n'(el) { ui.myex.n = el.value; }, 'mx-steps'(el) { ui.myex.steps = el.value; }, 'mx-vid'(el) { ui.myex.vid = el.value; }, 'mx-eq'(el) { ui.myex.eq = EQS.indexOf(el.value) >= 0 ? el.value : 'other'; },
+    'mx-n'(el) { ui.myex.n = el.value; }, 'mx-steps'(el) { ui.myex.steps[+el.dataset.index] = el.value; }, 'mx-vid'(el) { ui.myex.vid = el.value; }, 'mx-eq'(el) { ui.myex.eq = EQS.indexOf(el.value) >= 0 ? el.value : 'other'; },
     'plan-tg'(el) { if (D().plan) { D().plan.targets = el.checked; Store.save(); rerender(); } }, 're-rest'(el) { ui.edit.items[+el.dataset.i].rest = el.value; },
     'ai-hint'(el) { ui.ai.hint = el.value; }, 'ai-text'(el) { ui.ai.text = el.value; },
     'ai-f'(el) {
@@ -1579,7 +1580,7 @@
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
     if (k === 'ai-file' && el.files[0]) { const s0 = ui.ai; try { const r = await FoodAI.shrink(el.files[0], 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
-    if (k === 'mx-file' && el.files[0]) { const s0 = ui.myex; try { const u = await smallPic(el.files[0]); if (ui.myex === s0) { s0.img = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } el.value = ''; }
+    if (k === 'mx-file' && el.files[0]) { const s0 = ui.myex, key = el.dataset.key === 'endImg' ? 'endImg' : 'img'; try { const u = await smallPic(el.files[0]); if (ui.myex === s0) { s0[key] = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } el.value = ''; }
     if (k === 'exm-file' && el.files[0]) {
       const id = el.dataset.id, had = D().exMedia[id];
       try { if (!(had && had.img) && picCount() >= 30) { toast(t('picLimit')); } else { const u = await smallPic(el.files[0]); if (EX[id]) { D().exMedia[id] = { img: u, vid: (had && had.vid) || '' }; Store.save(); refreshSheet(); if (!ui.wOpen) rerender(); toast(t('saved')); } } } catch (er) { toast(t('picBad')); }
@@ -1615,7 +1616,7 @@
       d.myFoods = id ? d.myFoods.map(o => o.id === id ? z : o) : d.myFoods.concat([z]); Store.save(); closeSheet(); if (topIs('settings')) refreshSheet(); toast(t('saved'));
     }
     if (k === 'exm-vid') {
-      const id = f.dataset.id, vid = String(v.vid || '').trim(), had = D().exMedia[id]; if (vid && !urlOk(vid)) { toast(t('vidBad')); return; }
+      const id = f.dataset.id, vid = String(v.vid || '').trim(), had = D().exMedia[id];
       if (EX[id]) { if (vid || (had && had.img)) D().exMedia[id] = { img: (had && had.img) || '', vid }; else delete D().exMedia[id]; Store.save(); closeSheet(); toast(t('saved')); }
     }
     if (k === 'coach') coachSend(v.q);
@@ -1626,8 +1627,7 @@
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
     if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0) {
-      const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
-      if (id) ui.figBad[id] = 1;
+      ui.figBad[src] = 1;
       const picture = el.closest('.drawing-picture');
       if (picture) { picture.innerHTML = `<span class="phase-missing">${esc(t('artUnavailable'))}</span>`; const button = picture.closest('button'); if (button) button.disabled = true; }
       return;
@@ -1669,5 +1669,3 @@
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
-
-

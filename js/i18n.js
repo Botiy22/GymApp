@@ -258,6 +258,8 @@ I18N.hu.aboutText += " További négy recept a beküldött videókból származi
 
 Object.assign(I18N.en, {"artPhases": "Start and finish positions", "artStart": "1 · Start", "artEnd": "2 · Finish", "artUnavailable": "The illustration could not load. Instructions are available below.", "muscleNames": "Specific muscles", "musclePrecision": "The map shows muscle groups, not measured activation or individual fibres. The full view preserves the workout plan’s map.", "circuitProgress": "Circuit workout progress", "circuitComplete": "All rounds complete", "ideasCap": "Original recipes use nutrition calculated from USDA data. Recipes from supplied clips use creator-reported figures; see each recipe for its source and missing values.", "videosCap": "Links open on TikTok. Four supplied recipes are also available among meal ideas."});
 I18N.en.aboutText += " Four additional recipes are transcribed from supplied clips with unverified creator-reported nutrition. Detailed WebP movement illustrations are AI-generated, separate from Everkinetic drawings.";
+Object.assign(window.I18N.hu, {guideTap:'Koppints a két helyzet nagyításához.', phaseMissing:'A gyakorlat rajza még készül.', guideSetup:'Kiinduló helyzet', guideMovement:'Mozdulat', guideCue:'Mire figyelj', guideNeed:'Adj meg két képet és mindhárom rövid leírást.', musclePrecision:'Az ábra izomcsoportokat jelöl.'});
+Object.assign(window.I18N.en, {guideTap:'Tap to enlarge both positions.', phaseMissing:'This exercise illustration is being prepared.', guideSetup:'Setup', guideMovement:'Movement', guideCue:'Key cue', guideNeed:'Add both images and all three short instructions.', musclePrecision:'The diagram shows muscle groups.'});
 Object.assign(I18N.hu, {
   tabHabits: 'Célok', momentumSub: 'Napi célok, heti és havi haladás.',
   momentumWeek: 'Heti haladás', momentumMonth: 'Havi haladás', momentum28: 'Az elmúlt 28 nap',
@@ -281,10 +283,24 @@ Object.assign(I18N.en, {
   momentumMonthCap: 'Counts goals due up to today. Select a day to see its details.'
 });
 
-
 Object.assign(I18N.hu, {guideTap:'Koppints a kívánt rajzra a nagyításhoz.', figCap:'1 = kiindulás, 2 = véghelyzet. Koppints a kívánt rajzra.', updateSuccess:'Sikeres frissítés. Az alkalmazás naprakész.', updateRestarting:'A letöltés kész. Újraindítás…', updateReloading:'Az alkalmazás újraindul…', updateReloaded:'Az alkalmazás újratöltve. A frissítés nem igazolható.', updateCap:'Letölti a frissítést, majd újraindítás után jelzi az eredményt. Az adataid megmaradnak.'});
 Object.assign(I18N.en, {guideTap:'Tap the drawing you want to enlarge.', figCap:'1 = start, 2 = finish. Tap either drawing.', updateSuccess:'Update successful. The app is up to date.', updateRestarting:'Download complete. Restarting…', updateReloading:'Restarting the app…', updateReloaded:'The app has reloaded. The update could not be verified.', updateCap:'Downloads the update and reports the result after restarting. Your data stays.'});
 
 
 Object.assign(I18N.hu, {buildNumber:'Build: {0}', updateSuccess:'Sikeres frissítés. Telepített verzió: {0}.'});
 Object.assign(I18N.en, {buildNumber:'Build: {0}', updateSuccess:'Update successful. Installed version: {0}.'});
+
+Object.assign(I18N.hu, {
+  catalogueReady: 'Alapgyakorlatok', catalogueAll: 'Teljes adatbázis',
+  catalogueCount: '{0} rajzos alapgyakorlat · {1} a teljes adatbázisban',
+  catalogueReadyNote: 'Két rajzzal és rövid útmutatóval. Az ötnapos split és a beküldött edzések gyakorlatai is itt vannak.',
+  catalogueAllNote: 'Minden korábbi gyakorlat elérhető. A további rajzok és leírások fokozatosan készülnek.',
+  guidePending: 'Ehhez a gyakorlathoz még készül az egységes útmutató. Az alábbi szöveg a korábbi adatbázis rövidített leírása.'
+});
+Object.assign(I18N.en, {
+  catalogueReady: 'Core exercises', catalogueAll: 'Full database',
+  catalogueCount: '{0} illustrated core exercises · {1} in the full database',
+  catalogueReadyNote: 'Two illustrations and a short guide. Includes the five-day split and workouts from your supplied clips.',
+  catalogueAllNote: 'All previous exercises remain available. Additional illustrations and guides are being completed gradually.',
+  guidePending: 'The unified guide for this exercise is still in progress. The text below is a shortened description from the previous database.'
+});
