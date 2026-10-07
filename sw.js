@@ -1,8 +1,9 @@
 /* Tungsten service worker: makes the app start instantly and work with no connection.
-   Bump VERSION whenever you upload changed files so phones pick them up. */
-const VERSION = 'v3-guides-ui-refinements-20261007';
+   Bump js/release.js whenever you publish changed files so phones pick them up. */
+importScripts('js/release.js');
+const VERSION = GYM_RELEASE.cacheId;
 const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v6';   // Invalidate replaced guide boards on update.
-const CORE = ['./', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js', 'data/exercise-guides.js', 'js/exercise-guide.js',
+const CORE = ['./', 'js/release.js', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js', 'data/exercise-guides.js', 'js/exercise-guide.js',
   'js/i18n.js', 'js/plan.js', 'js/musclemap.js', 'js/config.js', 'js/momentum.js', 'js/store.js', 'js/charts.js', 'js/ai.js', 'js/cloud.js', 'js/app.js',
   'img/fig/press.webp', 'img/fig/row.webp', 'img/fig/lat-wide.webp', 'img/fig/lat-medium.webp', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 const PLAN_IMG = ["img/guide/Barbell_Bench_Press_-_Medium_Grip.webp", "img/guide/Pullups.webp", "img/guide/Incline_Dumbbell_Press.webp", "img/guide/Leverage_Iso_Row.webp", "img/guide/Side_Lateral_Raise.webp", "img/guide/Cable_Rope_Overhead_Triceps_Extension.webp", "img/guide/Incline_Dumbbell_Curl.webp", "img/guide/Barbell_Full_Squat.webp", "img/guide/Romanian_Deadlift.webp", "img/guide/Leg_Press.webp", "img/guide/Lying_Leg_Curls.webp", "img/guide/Seated_Calf_Raise.webp", "img/guide/Ab_Crunch_Machine.webp", "img/guide/Thigh_Adductor.webp", "img/fig/press.webp", "img/guide/Barbell_Incline_Bench_Press_-_Medium_Grip.webp", "img/guide/Dips_-_Chest_Version.webp", "img/guide/Single-Arm_Cable_Crossover.webp", "img/guide/Seated_Side_Lateral_Raise.webp", "img/guide/Incline_Barbell_Triceps_Extension.webp", "img/guide/Cable_One_Arm_Tricep_Extension.webp", "img/fig/row.webp", "img/fig/lat-wide.webp", "img/guide/Seated_Cable_Rows.webp", "img/guide/Cable_Rear_Delt_Fly.webp", "img/guide/Barbell_Curl.webp", "img/guide/Hammer_Curls.webp", "img/guide/Seated_Dumbbell_Palms-Up_Wrist_Curl.webp", "img/guide/Front_Barbell_Squat.webp", "img/guide/Seated_Leg_Curl.webp", "img/guide/Barbell_Hip_Thrust.webp", "img/guide/Split_Squat_with_Dumbbells.webp", "img/guide/Leg_Extensions.webp", "img/guide/Standing_Calf_Raises.webp", "img/guide/Cable_Crunch.webp", "img/guide/Standing_Overhead_Barbell_Triceps_Extension.webp", "img/guide/Barbell_Lunge.webp", "img/fig/lat-medium.webp", "img/guide/Underhand_Cable_Pulldowns.webp"];
@@ -27,7 +28,7 @@ self.addEventListener('message', e => {
   e.waitUntil((async () => {
     let ok = true;
     try { const c = await caches.open(SHELL); await c.addAll(CORE.map(u => new Request(u, { cache: 'reload' }))); } catch (err) { ok = false; }
-    if (e.ports && e.ports[0]) e.ports[0].postMessage(e.data === 'refresh' ? ok : { ok, version: VERSION });
+    if (e.ports && e.ports[0]) e.ports[0].postMessage(e.data === 'refresh' ? ok : { ok, version: VERSION, release: GYM_RELEASE.version, build: GYM_RELEASE.build });
   })());
 });
 /* Hand cached app files to the page marked "always re-check", so a reload can never reuse an older in-memory copy. */

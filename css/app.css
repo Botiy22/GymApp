@@ -861,3 +861,14 @@ textarea{min-height:96px;resize:vertical;line-height:1.4}
 .drawing-phase:focus-visible{outline:2px solid var(--acc-tx);outline-offset:2px}
 .momentum-month .habit-today{display:block;margin:8px 0 0 auto;width:auto;min-height:36px;padding:6px 10px;font-size:.78rem}
 .update-status{min-height:1.4em;margin:8px 0;line-height:1.4}
+
+/* Keep long exercise text inside its card, and prevent sideways page movement. */
+html,body{max-width:100%;overflow-x:clip}
+@supports not (overflow:clip){html,body{overflow-x:hidden}}
+.sheet-body{min-width:0;overflow-x:hidden}
+.sheet-body .card,.sheet-body .tip,.sheet-body .exmeta,.sheet-body .chips,.sheet-body .steps{min-width:0;max-width:100%}
+.sheet-body .steps li,.sheet-body p,.sheet-body .tip{overflow-wrap:anywhere;word-break:normal}
+.sheet-body .chips:not(.scroll) .chip{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;flex-shrink:1}
+.muscle-detail .chip{flex:0 1 auto;padding:8px 12px;line-height:1.4;text-align:left;white-space:normal}
+.sheet-body .exmeta{flex-wrap:wrap}
+.sheet-foot .btn{min-width:0;white-space:normal;overflow-wrap:anywhere}

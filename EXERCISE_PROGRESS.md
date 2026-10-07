@@ -2,7 +2,7 @@
 
 UNFINISHED: do not merge to main. Scope remains all 877 exercises.
 
-Current content files: 48 two-position boards (including the four previously accepted boards), 197 curated HU/EN descriptions. The generated board count is not a count of accepted or fully reviewed images. Read data/exercise-guide-status.json for pending IDs. Original IDs, plans and data remain unchanged.
+Current content files: 54 two-position boards (including the four previously accepted boards), 197 curated HU/EN descriptions. The generated board count is not a count of accepted or fully reviewed images. Read data/exercise-guide-status.json for pending IDs. Original IDs, plans and data remain unchanged.
 
 The previous long image pipeline no longer exists after the tool session restarted. Do not promise unattended work continues after the session ends. Persist each small content batch to GitHub. The latest uncommitted work was recovered from the cloud filesystem and consolidated here; this is independent of the user's laptop.
 
@@ -16,10 +16,14 @@ Changes: uniform two-position exercise UI, three-cue HU/EN guide layer, named-mu
 Verification: content build and JavaScript syntax checks only; selected images visually inspected. No tests added or run. No claim of clinical validation or measured activation.
 
 
-Completed image corrections, 2026-10-07: reverse-grip single-arm triceps handle and continuous foreground cable; overhead rope full framing; upright 3/4 sit-up with secured feet; cross-arm front-squat grip. Prompts and review notes are in data/exercise-image-corrections.json. Generated board count is now 48.
+Completed image corrections, 2026-10-07: reverse-grip single-arm triceps handle and continuous foreground cable; overhead rope full framing; upright 3/4 sit-up with secured feet; cross-arm front-squat grip. Prompts and review notes are in data/exercise-image-corrections.json. At that checkpoint the generated board count was 48.
 
 Added the overhead barbell triceps extension and underhand cable pulldown boards for the two supplied routines. The anchored-band good morning board now faces its front anchor in both panels. Full catalogue remains incomplete.
 
 Goals/calendar fix: the completed main-only PR #2 renames the tab to Célok / Goals and gives the month its own state, separate from selected day. Monthly totals exclude future goals; the fixed 28-day summary remains. The same change is merged into this unfinished branch while preserving guide metadata, image UI and all 48 boards / 197 descriptions. Browser interaction checks remain unperformed.
 
 UI follow-up (main PR #3, merge 81f6fc7d721bbc870d75580ac2e8f06f509472b6): daily and weekly Goals content is back above the month calendar. The compact today button appears only for another selected day. Selecting a date preserves its viewport position. Start/end illustrations have separate buttons and open the tapped position in a large view. Stock-photo and media sections are removed from the main exercise detail UI. Updates show progress and report verified completion after reload, with versioned worker replies and legacy-message compatibility. Source/diff review and JavaScript syntax checks passed; no tests or browser interaction/layout/offline checks performed. Catalogue completion counts are unchanged.
+
+Release follow-up: completed main PR #4 introduces a single release metadata file and visible version/build numbers. Main PR #5 (2.1.1, build 20261007.2) wraps exercise text/chips and constrains horizontal overflow. This unfinished branch uses 2.1.1-dev and keeps its guide data and asset caching.
+
+Image batch: Air_Bike, Alternate_Hammer_Curl, Alternate_Heel_Touchers, Alternate_Incline_Dumbbell_Curl, Alternating_Cable_Shoulder_Press and Arnold_Dumbbell_Press now have two-position generated boards. Prompts and selected review notes are in data/exercise-image-corrections.json. The bicycle crunch was edited after its first output. Counts: 54 boards / 197 curated descriptions; no claim that all images have user acceptance. No tests or browser layout/offline checks run.
