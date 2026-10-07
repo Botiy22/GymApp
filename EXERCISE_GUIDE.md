@@ -10,7 +10,7 @@ Keep stable exercise IDs: saved plans, logs and cloud documents reference these 
 
 Built-in guide metadata is in `data/exercise-guides.js`. Each entry has `version: 1`,
 `steps: {hu: [...], en: [...]}`, and a `board` path. Two equally sized panels share one
-landscape board; the UI shows them separately, then vertically when enlarged. Exact variation,
+landscape board; the UI shows them separately, and each tapped position opens in its own large view. The board keeps its natural aspect ratio; figures are never stretched to fill the card. Exact variation,
 hand orientation, bench angle and equipment must match the exercise ID. A board for a different
 variation is not an acceptable fallback. Use `data/exercise-guide-overrides.json` for curated
 instructions that should survive regeneration.
@@ -42,3 +42,4 @@ The source-extraction process is not an independent scientific validation of the
 Read `data/exercise-guide-status.json` for exact generated/pending counts. This branch is unfinished
 until all 877 exercise boards and the remaining source summaries have been reviewed. Do not merge
 this incomplete migration to main. No tests added or run without an explicit user request.
+

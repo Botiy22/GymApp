@@ -6,6 +6,12 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## Unreleased exercise catalogue — 2.1.1-dev, build 20261007.3
+
+- 60 generated two-position boards; 197 curated descriptions.
+- The catalogue remains unfinished and must not be merged to main.
+- All generation prompts and selected review notes are in data/exercise-image-corrections.json.
+
 ## 2.1.1 — 2026-10-07
 
 - Long exercise instructions and muscle names wrap inside their cards.

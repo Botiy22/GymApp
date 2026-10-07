@@ -2,7 +2,7 @@
 
 UNFINISHED: do not merge to main. Scope remains all 877 exercises.
 
-Current content files: 54 two-position boards (including the four previously accepted boards), 197 curated HU/EN descriptions. The generated board count is not a count of accepted or fully reviewed images. Read data/exercise-guide-status.json for pending IDs. Original IDs, plans and data remain unchanged.
+Current content files: 60 two-position boards (including the four previously accepted boards), 197 curated HU/EN descriptions. The generated board count is not a count of accepted or fully reviewed images. Read data/exercise-guide-status.json for pending IDs. Original IDs, plans and data remain unchanged.
 
 The previous long image pipeline no longer exists after the tool session restarted. Do not promise unattended work continues after the session ends. Persist each small content batch to GitHub. The latest uncommitted work was recovered from the cloud filesystem and consolidated here; this is independent of the user's laptop.
 
@@ -27,3 +27,5 @@ UI follow-up (main PR #3, merge 81f6fc7d721bbc870d75580ac2e8f06f509472b6): daily
 Release follow-up: completed main PR #4 introduces a single release metadata file and visible version/build numbers. Main PR #5 (2.1.1, build 20261007.2) wraps exercise text/chips and constrains horizontal overflow. This unfinished branch uses 2.1.1-dev and keeps its guide data and asset caching.
 
 Image batch: Air_Bike, Alternate_Hammer_Curl, Alternate_Heel_Touchers, Alternate_Incline_Dumbbell_Curl, Alternating_Cable_Shoulder_Press and Arnold_Dumbbell_Press now have two-position generated boards. Prompts and selected review notes are in data/exercise-image-corrections.json. The bicycle crunch was edited after its first output. Counts: 54 boards / 197 curated descriptions; no claim that all images have user acceptance. No tests or browser layout/offline checks run.
+
+Second image batch: Band_Pull_Apart, Barbell_Shrug, Bench_Dips, Ball_Leg_Curl, Alternating_Floor_Press and Barbell_Deadlift. Cable shoulder-press and deadlift framing were refined; wider floor illustrations retain their natural proportions in the UI. Counts: 60 boards / 197 curated descriptions. Unfinished developer release: 2.1.1-dev, build 20261007.3; image cache bumped to v7 for the replaced cable board. Generation uses the built-in tool. Images visually inspected; source/content build and syntax review only, no tests or browser checks.
