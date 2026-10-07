@@ -4,6 +4,48 @@ window.PDFLocal = (() => {
   'use strict';
   const scriptURL = document.currentScript.src;
   const MAX = 12 * 1024 * 1024;
+  function atStage(error, stage) {
+    const e = new Error(error && error.message ? error.message : String(error));
+    e.name = error && error.name ? error.name : 'Error';
+    e.importStage = stage;
+    return e;
+  }
+  function describeError(error) {
+    if (error && error.name === 'AbortError') return {code:'cancelled',detail:''};
+    if (error && error.name === 'PasswordException') return {code:'password',detail:''};
+    if (error && error.name === 'InvalidPDFException') return {code:'invalid-pdf',detail:''};
+    const message = String(error && error.message || '');
+    if (['size','file','pages','length'].includes(message)) return {code:message,detail:''};
+    const detail = (String(error && error.name || 'Error') + ': ' + message).replace(/[\r\n]+/g,' ').slice(0,180);
+    return {code:error && error.importStage || 'preview',detail};
+  }
+  // PDF.js 5.6 getTextContent uses ReadableStream's async iterator, which some
+  // Safari versions lack (upstream #20973). Read the public stream API directly;
+  // no global polyfill or change to the vendored library is needed.
+  async function pageText(page, signal, remaining) {
+    const reader = page.streamTextContent().getReader(), items = [];
+    let finished = false, size = 0;
+    const abort = () => { reader.cancel().catch(() => {}); };
+    signal.addEventListener('abort', abort, {once:true});
+    try {
+      for (;;) {
+        if (signal.aborted) throw new DOMException('Aborted','AbortError');
+        const chunk = await reader.read();
+        if (signal.aborted) throw new DOMException('Aborted','AbortError');
+        if (chunk.done) { finished = true; break; }
+        for (const item of chunk.value.items || []) {
+          size += typeof item.str === 'string' ? item.str.length : 0;
+          if (size > remaining) throw new Error('length');
+          items.push(item);
+        }
+      }
+      return {items};
+    } finally {
+      signal.removeEventListener('abort', abort);
+      if (!finished) { try { await reader.cancel(); } catch (e) {} }
+      reader.releaseLock();
+    }
+  }
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const blankDay=()=>({type:'',total:null,meals:[]});
   const nutrients=s=>{
@@ -67,23 +109,26 @@ window.PDFLocal = (() => {
       if(signal.aborted)throw new DOMException('Aborted','AbortError');
       if(/\.(docx|xlsx)$/i.test(file.name)){const source=await OfficeLocal.extract(file,signal,onProgress);characters+=source.lines.reduce((n,l)=>n+l.text.length,0);if(characters>200000)throw new Error('length');sources.push(source);continue;}
       if(!/\.pdf$/i.test(file.name)&&file.type!=='application/pdf')throw new Error('file');
-      if(!lib){lib=await import(new URL('../vendor/pdfjs/pdf.min.mjs',scriptURL).href);lib.GlobalWorkerOptions.workerSrc=new URL('../vendor/pdfjs/pdf.worker.min.mjs',scriptURL).href;}
+      if(!lib){try{lib=await import(new URL('../vendor/pdfjs/pdf.min.mjs',scriptURL).href);lib.GlobalWorkerOptions.workerSrc=new URL('../vendor/pdfjs/pdf.worker.min.mjs',scriptURL).href;}catch(error){throw atStage(error,'pdf-library');}}
       const data=new Uint8Array(await file.arrayBuffer());
       if(String.fromCharCode(...data.slice(0,5))!=='%PDF-')throw new Error('file');
       const task=lib.getDocument({data,isEvalSupported:false,useSystemFonts:false,disableFontFace:true,useWorkerFetch:false,enableXfa:false,stopAtErrors:true});
-      const abort=()=>{task.destroy();};signal.addEventListener('abort',abort,{once:true});
+      const abort=()=>{task.destroy().catch(()=>{});};signal.addEventListener('abort',abort,{once:true});
       try{
-        const pdf=await task.promise;pages+=pdf.numPages;if(pages>60)throw new Error('pages');const lines=[];
+        let pdf;try{pdf=await task.promise;}catch(error){throw atStage(error,'pdf-open');}
+        pages+=pdf.numPages;if(pages>60)throw new Error('pages');const lines=[];
         for(let pageNumber=1;pageNumber<=pdf.numPages;pageNumber++){
           if(signal.aborted)throw new DOMException('Aborted','AbortError');onProgress(file.name,pageNumber,pdf.numPages);
-          const page=await pdf.getPage(pageNumber),content=await page.getTextContent();const rows=[];
+          let page,content;
+          try{page=await pdf.getPage(pageNumber);content=await pageText(page,signal,200000-characters);}catch(error){if(page)page.cleanup();throw atStage(error,'pdf-text');}
+          const rows=[];
           for(const item of content.items){if(!item.str)continue;const y=item.transform[5],x=item.transform[4];let row=rows.find(r=>Math.abs(r.y-y)<3);if(!row){row={y,items:[]};rows.push(row);}row.items.push({x,text:item.str});}
           rows.sort((a,b)=>b.y-a.y).forEach(row=>{const s=row.items.sort((a,b)=>a.x-b.x).map(x=>x.text).join(' | ');characters+=s.length;if(characters>200000)throw new Error('length');lines.push({page:pageNumber,text:s});});page.cleanup();
         }
         sources.push({name:file.name,lines});
-      }finally{signal.removeEventListener('abort',abort);await task.destroy();}
+      }finally{signal.removeEventListener('abort',abort);try{await task.destroy();}catch(error){/* Cleanup must not hide the original reading error. */}}
     }
     return sources;
   }
-  return {extract,draft};
+  return {extract,draft,describeError};
 })();
