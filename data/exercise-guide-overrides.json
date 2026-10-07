@@ -193,15 +193,15 @@
     "variants": {
       "machine": {
         "reviewed": true,
-        "board": "img/guide/Machine_Lateral_Raise-v2.webp",
+        "board": "img/guide/Machine_Lateral_Raise-v3.webp",
         "steps": {
           "hu": [
-            "Ülj a gépbe, talpad támaszd le; a párnák a felkarod külső oldalához kerüljenek.",
+            "Ülj a gépbe, talpad támaszd le; a karod a könyök közelében kerüljön a párnák alá.",
             "Emeld a felkarod oldalra vállmagasságig.",
             "Vállad ne húzd fel; lassan engedd vissza a gép karjait."
           ],
           "en": [
-            "Sit with your feet planted and the pads against the outside of your upper arms.",
+            "Sit with your feet planted and your arms beneath the pads near your elbows.",
             "Raise your upper arms out to shoulder height.",
             "Avoid shrugging; lower the machine arms slowly."
           ]
@@ -3198,17 +3198,17 @@
     "reviewed": true,
     "steps": {
       "hu": [
-        "Ülj a gépbe, talpad támaszd le; a párnák a felkarod külső oldalához kerüljenek.",
+        "Ülj a gépbe, talpad támaszd le; a karod a könyök közelében kerüljön a párnák alá.",
         "Emeld a felkarod oldalra vállmagasságig.",
         "Vállad ne húzd fel; lassan engedd vissza a gép karjait."
       ],
       "en": [
-        "Sit with your feet planted and the pads against the outside of your upper arms.",
+        "Sit with your feet planted and your arms beneath the pads near your elbows.",
         "Raise your upper arms out to shoulder height.",
         "Avoid shrugging; lower the machine arms slowly."
       ]
     },
     "source": "Existing user five-day split: machine lateral raise; generic machine representation.",
-    "board": "img/guide/Machine_Lateral_Raise-v2.webp"
+    "board": "img/guide/Machine_Lateral_Raise-v3.webp"
   }
 }

@@ -4,8 +4,8 @@
   // The split historically labels Seated_Side_Lateral_Raise as a machine variant.
   // Keep that saved ID intact; offer the exact machine variation for future additions.
   window.EXERCISES.push({id:'Machine_Lateral_Raise', n:'Machine Lateral Raise', p:['shoulders'], s:['traps'], eq:'machine', c:'strength', lv:'beginner', m:'isolation', f:'pull', k:0,
-    i:['Sit with your feet planted and the pads against the outside of your upper arms.', 'Raise your upper arms out to shoulder height.', 'Avoid shrugging; lower the machine arms slowly.']});
-  window.EX_HU.Machine_Lateral_Raise = ['Gépi oldalra karemelés', ['Ülj a gépbe, talpad támaszd le; a párnák a felkarod külső oldalához kerüljenek.', 'Emeld a felkarod oldalra vállmagasságig.', 'Vállad ne húzd fel; lassan engedd vissza a gép karjait.']];
+    i:['Sit with your feet planted and your arms beneath the pads near your elbows.', 'Raise your upper arms out to shoulder height.', 'Avoid shrugging; lower the machine arms slowly.']});
+  window.EX_HU.Machine_Lateral_Raise = ['Gépi oldalra karemelés', ['Ülj a gépbe, talpad támaszd le; a karod a könyök közelében kerüljön a párnák alá.', 'Emeld a felkarod oldalra vállmagasságig.', 'Vállad ne húzd fel; lassan engedd vissza a gép karjait.']];
   window.EXERCISES.push({ id: 'Medium_Grip_Lat_Pulldown', n: 'Medium-Grip Lat Pulldown', p: ['lats'], s: ['biceps', 'middle back', 'shoulders'], eq: 'cable', c: 'strength', lv: 'beginner', m: 'compound', f: 'pull', k: 0,
     i: ['Adjust the thigh pad and plant your feet. Hold the bar with an overhand grip about shoulder width apart.', 'Keep your torso steady and pull the bar in front of you toward your upper chest, bringing your elbows down.', 'Return slowly with control.'] });
   window.EX_HU.Medium_Grip_Lat_Pulldown = ['Lehúzás mellhez vállszéles fogással', ['Rögzítsd a combodat a párna alatt, talpad támaszd a padlóra. A rudat vállszéles felső fogással tartsd.', 'Stabil törzzsel húzd a rudat magad előtt a mellkasod felső részéhez, könyöködet lefelé vezetve.', 'Kontrolláltan engedd vissza a rudat.']];

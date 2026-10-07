@@ -6,7 +6,7 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
-## 2.2.0 — 2026-10-07, build 20261007.4
+## 2.2.0 — 2026-10-07, build 20261007.5
 
 - 61 illustrated core exercises; 198 curated descriptions across the full database.
 - Core library and picker default, with separate full-database access for all 878 entries.
