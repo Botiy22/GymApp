@@ -84,7 +84,7 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -197,9 +197,31 @@
     const x = ui.habitEdit, labels = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'short' }));
     return () => ({ title: x.id ? t('habitEdit') : t('habitAdd'), html: `<label class="fld"><span>${esc(t('habitName'))}</span><input id="habit-name" data-in="habit-name" maxlength="60" value="${esc(x.name)}" placeholder="${esc(t('habitNamePh'))}" autocomplete="off"></label><label class="fld"><span>${esc(t('momentumType'))}</span><select data-in="habit-source">${Momentum.sources.map(s => `<option value="${s}" ${x.source === s ? 'selected' : ''}>${esc(t('momentum_' + s))}</option>`).join('')}</select></label>${!['check', 'workout'].includes(x.source) ? `<div class="grid2"><label class="fld"><span>${esc(t('momentumGoal'))}</span><input id="habit-goal" data-in="habit-goal" inputmode="decimal" value="${esc(x.goal)}"></label>${x.source === 'count' ? `<label class="fld"><span>${esc(t('momentumUnit'))}</span><input data-in="habit-unit" maxlength="20" value="${esc(x.unit)}" placeholder="${esc(t('momentumUnitPh'))}"></label>` : ''}</div>` : ''}${!['check', 'count'].includes(x.source) ? `<p class="cap">${esc(t('momentumAutoCap'))}</p>` : ''}<p class="cap">${esc(t('habitSchedule'))}</p><div class="chips">${labels.map((n, i) => `<button class="chip${x.days.indexOf(i) >= 0 ? ' on' : ''}" data-a="habit-day-pick" data-day="${i}" aria-pressed="${x.days.indexOf(i) >= 0}">${esc(n)}</button>`).join('')}</div>${x.id ? `<button class="btn danger" data-a="habit-delete">${esc(t('delete'))}</button>` : ''}`, foot: `<button class="btn primary" data-a="habit-save">${esc(t('save'))}</button>` });
   }
+  function habitMonthView() {
+    const month = ui.habitMonth, first = new Date(month + '-01T12:00'), loc = L() === 'hu' ? 'hu-HU' : 'en-GB';
+    const count = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    const offset = (first.getDay() - (D().settings.weekStart === 0 ? 0 : 1) + 7) % 7;
+    const weekdays = Array.from({ length: 7 }, (_, i) => new Date(2024, 0, (D().settings.weekStart === 0 ? 7 : 8) + i).toLocaleDateString(loc, { weekday: 'short' }));
+    let scheduled = 0, completed = 0;
+    const cells = Array.from({ length: Math.ceil((offset + count) / 7) * 7 }, (_, i) => {
+      const day = i - offset + 1;
+      if (day < 1 || day > count) return '<span class="momentum-blank" aria-hidden="true"></span>';
+      const key = month + '-' + pad(day), future = key > today(), s = future ? { total: 0, done: 0, ratio: 0 } : Momentum.summary(D().habits, key, D());
+      scheduled += s.total; completed += s.done;
+      const label = fmtDate(key + 'T12:00', true) + ': ' + (future ? t('momentumFuture') : s.total ? t('momentumDaySummary', s.done, s.total) : t('habitsNoneDue'));
+      return `<button class="momentum-cell${s.total ? ' due' : ''}${s.done === s.total && s.total ? ' full' : ''}${key === ui.habitDate ? ' selected' : ''}${key === today() ? ' today' : ''}" style="--fill:${Math.round(s.ratio * 100)}%" data-a="habit-select-date" data-d="${key}" ${future ? 'disabled' : ''} aria-pressed="${key === ui.habitDate}" ${key === today() ? 'aria-current="date"' : ''} aria-label="${esc(label)}" title="${esc(label)}">${day}</button>`;
+    }).join('');
+    return `<section class="card momentum-month"><h2>${esc(t('momentumMonth'))}</h2><div class="datenav momentum-month-nav"><button class="icon-btn" data-a="habit-month-step" data-d="-1" aria-label="${esc(t('momentumPrevMonth'))}">${IC.back}</button><b aria-live="polite">${esc(first.toLocaleDateString(loc, { month: 'long', year: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-month-step" data-d="1" aria-label="${esc(t('momentumNextMonth'))}" ${month >= today().slice(0, 7) ? 'disabled' : ''}>${IC.back}</button></div><div class="momentum-weekdays" aria-hidden="true">${weekdays.map(n => `<span>${esc(n)}</span>`).join('')}</div><div class="momentum-heat">${cells}</div><p class="momentum-month-summary">${esc(scheduled ? t('momentumMonthSummary', completed, scheduled, Math.round(completed / scheduled * 100)) : t('momentumMonthEmpty'))}</p><p class="cap">${esc(t('momentumMonthCap'))}</p><button class="pill" data-a="habit-today">${esc(t('momentumBackToday'))}</button></section>`;
+  }
   function vHabits() {
     const k = ui.habitDate, d = new Date(k + 'T12:00'), loc = L() === 'hu' ? 'hu-HU' : 'en-GB', due = D().habits.filter(h => habitDue(h, k)), done = due.filter(h => habitDone(h, k)).length;
-    let h = head(t('tabHabits'), t(k === today() ? 'today' : 'habitDayName', d.toLocaleDateString(loc, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })));
+    let h = head(t('tabHabits'), t('momentumSub'));
+    // The month is independent of the selected day and precedes the variable-height daily details.
+    h += habitMonthView();
+    let recentTotal = 0, recentDone = 0;
+    const recentStart = Momentum.shift(today(), -27);
+    for (let i = 0; i < 28; i++) { const s = Momentum.summary(D().habits, Momentum.shift(recentStart, i), D()); recentTotal += s.total; recentDone += s.done; }
+    h += `<section class="card momentum-recent"><h3>${esc(t('momentum28'))}</h3><p class="cap">${esc(fmtDate(recentStart + 'T12:00'))} – ${esc(fmtDate(today() + 'T12:00'))}</p><b>${esc(recentTotal ? t('momentumMonthSummary', recentDone, recentTotal, Math.round(recentDone / recentTotal * 100)) : t('momentumMonthEmpty'))}</b></section>`;
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
     h += `<section class="card momentum-hero"><div class="momentum-ring" style="--progress:${percent * 3.6}deg" role="img" aria-label="${percent}%"><b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
@@ -207,9 +229,6 @@
     h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
     h += `<section class="card"><h3>${esc(t('momentumTemplates'))}</h3><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></section>`;
-    let scheduled = 0, completed = 0;
-    const heat = Array.from({ length: 28 }, (_, i) => { const key = Momentum.shift(k, i - 27), s = Momentum.summary(D().habits, key, D()); scheduled += s.total; completed += s.done; return `<button class="momentum-cell${s.total ? ' due' : ''}${s.done === s.total && s.total ? ' full' : ''}" style="--fill:${Math.round(s.ratio * 100)}%" data-a="habit-select-date" data-d="${key}" aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}" title="${key}: ${s.done}/${s.total}">${Number(key.slice(-2))}</button>`; }).join('');
-    h += `<section class="card"><h3>${esc(t('momentumMonth'))}</h3><div class="momentum-heat">${heat}</div><p class="cap">${completed} / ${scheduled} ${esc(t('momentumDays'))}${scheduled ? ' · ' + Math.round(completed / scheduled * 100) + '%' : ''}</p></section>`;
     return h;
   }
   function actRow(k) {
@@ -763,7 +782,7 @@
   async function wake() { try { if (D().settings.awake && 'wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
   function unwake() { try { if (lock) lock.release(); } catch (e) {} lock = null; }
   function startRest(sec) { const a = D().active; if (!a || !D().settings.restAuto || !sec) return; a.restEnd = Date.now() + sec * 1000; a.restTotal = sec; Store.saveActive(); tick(); }
-  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; if (ui.habitDate === ui.day) ui.habitDate = d; ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
+  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; if (ui.habitDate === ui.day) { if (ui.habitMonth === ui.day.slice(0, 7)) ui.habitMonth = d.slice(0, 7); ui.habitDate = d; } ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
   function tick() {
     dayCheck();
     prepTick();
@@ -1218,8 +1237,10 @@
     },
     'habit-count'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return; h.logs[k] = { v: Math.max(0, Math.min(200000, r1(Momentum.value(h, k, D()) + num(el.dataset.n)))), t: Date.now() }; Store.save(); if (topIs('day')) refreshSheet(); rerender(); },
     'habit-amount'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || k > today() || !habitDue(h, k)) return; ui.habitAmount = { id: h.id, day: k }; openSheet(() => ({ title: h.name, html: `<form id="habit-amount-form" data-f="habit-amount"><label class="fld"><span>${esc(t('momentumAmount'))} ${esc(h.unit)}</span><input name="value" inputmode="decimal" required value="${Momentum.value(h, k, D())}"></label></form>`, foot: `<button class="btn primary" form="habit-amount-form">${esc(t('save'))}</button>` })); },
-    'habit-select-date'(el) { if (/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) && el.dataset.d <= today()) { ui.habitDate = el.dataset.d; rerender(); } },
-    'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); render(); } },
+    'habit-select-date'(el) { if (/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) && el.dataset.d <= today()) { const group = el.classList.contains('momentum-cell') ? '.momentum-heat' : '.momentum-week'; ui.habitDate = el.dataset.d; rerender(); const button = $(group + ' [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); } },
+    'habit-month-step'(el) { const d = new Date(ui.habitMonth + '-01T12:00'); d.setMonth(d.getMonth() + +el.dataset.d); const month = ymd(d).slice(0, 7); if (month > today().slice(0, 7)) return; const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); ui.habitMonth = month; ui.habitDate = month + '-' + pad(Math.min(Number(ui.habitDate.slice(-2)), last)); if (ui.habitDate > today()) ui.habitDate = today(); rerender(); const button = $('.momentum-month-nav [data-d="' + el.dataset.d + '"]'); const focus = button && !button.disabled ? button : $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (focus) focus.focus({ preventScroll: true }); },
+    'habit-today'() { ui.habitDate = today(); ui.habitMonth = today().slice(0, 7); rerender(); const button = $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); },
+    'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); ui.habitMonth = ui.habitDate.slice(0, 7); rerender(); } },
     'act-est'() { const w = num(D().settings.profile.weight), st = num(ui.act.steps); if (!(st > 0)) { toast(t('actEstNeed')); return; } ui.act.kcal = String(Math.round(st * w * 0.00055)); const b = $('#act-kcal'); if (b) b.value = ui.act.kcal; },
     async 'act-paste'() { let txt = ''; try { txt = await navigator.clipboard.readText(); } catch (e) { toast(t('actClipNo')); return; } if (topIs('act')) actFill(parseAct(txt)); },
     'act-save'(el) {

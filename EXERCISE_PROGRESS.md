@@ -19,3 +19,5 @@ Verification: content build and JavaScript syntax checks only; selected images v
 Completed image corrections, 2026-10-07: reverse-grip single-arm triceps handle and continuous foreground cable; overhead rope full framing; upright 3/4 sit-up with secured feet; cross-arm front-squat grip. Prompts and review notes are in data/exercise-image-corrections.json. Generated board count is now 48.
 
 Added the overhead barbell triceps extension and underhand cable pulldown boards for the two supplied routines. The anchored-band good morning board now faces its front anchor in both panels. Full catalogue remains incomplete.
+
+Goals/calendar fix: the completed main-only PR #2 renames the tab to Célok / Goals and gives the month its own state, separate from selected day. Monthly totals exclude future goals; the fixed 28-day summary remains. The same change is merged into this unfinished branch while preserving guide metadata, image UI and all 48 boards / 197 descriptions. Browser interaction checks remain unperformed.

@@ -1,6 +1,6 @@
 /* Tungsten service worker: makes the app start instantly and work with no connection.
    Bump VERSION whenever you upload changed files so phones pick them up. */
-const VERSION = 'v3-guides-20261007-3';
+const VERSION = 'v3-guides-goals-20261007';
 const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v6';   // Invalidate replaced guide boards on update.
 const CORE = ['./', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js', 'data/exercise-guides.js', 'js/exercise-guide.js',
   'js/i18n.js', 'js/plan.js', 'js/musclemap.js', 'js/config.js', 'js/momentum.js', 'js/store.js', 'js/charts.js', 'js/ai.js', 'js/cloud.js', 'js/app.js',
