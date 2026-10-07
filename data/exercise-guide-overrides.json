@@ -500,12 +500,12 @@
     "summaryMethod": "curated",
     "steps": {
       "hu": [
-        "Tartsd a rudat az elülső válladon, könyököd emeld fel. Feszítsd meg a törzsed.",
+        "Tartsd a rudat a vállad elülső részén, karod keresztben, könyököd magasan legyen.",
         "Hajlítsd a csípőd és térded, guggolj le.",
         "Tartsd a törzsed stabilan, és teljes talppal nyomd fel magad."
       ],
       "en": [
-        "Support the bar on your front shoulders, elbows raised. Brace your trunk.",
+        "Rest the bar on your front shoulders with arms crossed and elbows high.",
         "Bend at your hips and knees to squat down.",
         "Keep your trunk steady and drive up through your whole foot."
       ]
@@ -2737,6 +2737,423 @@
         "Stand between the car-deadlift apparatus handles and bend your hips and knees to grip them.",
         "Brace your trunk and extend your hips and knees to lift the apparatus.",
         "Push your hips back and lower the load with control."
+      ]
+    }
+  },
+  "Car_Drivers": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj egyenesen, a tárcsát kétoldalt fogd meg, karod nyújtsd előre.",
+        "Forgasd a tárcsát az egyik, majd a másik irányba, mint egy kormányt.",
+        "Karod maradjon elöl; törzsed ne forduljon a tárcsával."
+      ],
+      "en": [
+        "Stand upright, holding a plate at both sides with arms extended in front.",
+        "Rotate the plate one way, then the other, like a steering wheel.",
+        "Keep your arms forward without turning your torso with the plate."
+      ]
+    }
+  },
+  "Carioca_Quick_Step": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Vedd fel a laza, enyhén hajlított térdű alapállást.",
+        "Oldalra haladva lépj keresztbe hátra, majd emeld előre a térded.",
+        "Nézz előre, karoddal kísérd a lépést; lábfejedet ne csavard el."
+      ],
+      "en": [
+        "Start in a relaxed athletic stance with slightly bent knees.",
+        "Move sideways with a quick cross-behind step, then drive the knee upward.",
+        "Look forward and coordinate your arms without twisting your feet."
+      ]
+    }
+  },
+  "Cat_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Helyezkedj négykézlábra a talajon.",
+        "Húzd be a hasad és domborítsd a hátad, fejedet engedd le.",
+        "Tartsd a nyújtást kontrolláltan, majd térj vissza."
+      ],
+      "en": [
+        "Start on your hands and knees.",
+        "Draw your abdomen inward and round your back, letting your head lower.",
+        "Hold the stretch with control, then return."
+      ]
+    }
+  },
+  "Catch_and_Overhead_Throw": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj a fal vagy társad elé, a medicinlabdát két kézzel tartsd a fejed mögött.",
+        "Dobd a labdát előre a fejed fölött.",
+        "Kövesd a dobást a karoddal, és készülj a visszaérkező labda elkapására."
+      ],
+      "en": [
+        "Face a wall or partner and hold the medicine ball behind your head with both hands.",
+        "Throw the ball forward overhead.",
+        "Follow through with your arms and prepare to catch the returning ball."
+      ]
+    }
+  },
+  "Chain_Handle_Extension": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj a padra, a láncok közepét rögzítsd a két fogantyúhoz. Könyököd felfelé nézzen.",
+        "Felkarod helyben tartva nyújtsd a könyököd, emeld a láncokat.",
+        "Lassan hajlítsd vissza a könyököd; a láncok alsó része érjen a talajra."
+      ],
+      "en": [
+        "Lie on a bench with the middle of each chain attached to a handle and elbows pointing up.",
+        "Keep your upper arms still and extend your elbows to lift the chains.",
+        "Bend your elbows slowly, letting the lower chain links rest on the floor."
+      ]
+    }
+  },
+  "Chain_Press": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Feküdj a padra, a láncokhoz rögzített fogantyúkat tartsd a mellkasod fölött, tenyérrel előre.",
+        "Könyököd hajlítva engedd le a fogantyúkat a mellkasod mellé.",
+        "Nyomd vissza őket; a leengedett láncszemek terhelés nélkül a talajra kerülnek."
+      ],
+      "en": [
+        "Lie on a bench, holding the chain handles above your chest with palms forward.",
+        "Bend your elbows to lower the handles beside your chest.",
+        "Press up again; the lowered chain links unload onto the floor."
+      ]
+    }
+  },
+  "Chair_Leg_Extended_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj egyenesen a széken, kétoldalt kapaszkodj az ülésbe.",
+        "Emeld az egyik lábad, nyújtsd a térded és húzd magad felé a lábfejed.",
+        "Vidd a nyújtott lábat oldalra, majd vissza középre és le; válts lábat."
+      ],
+      "en": [
+        "Sit upright on a chair and hold the seat at both sides.",
+        "Lift one leg, extend the knee, and draw the toes toward you.",
+        "Move the straight leg outward, then back to centre and down; switch legs."
+      ]
+    }
+  },
+  "Chair_Lower_Back_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj egyenesen a széken, egyik kezeddel kapaszkodj az ülésbe.",
+        "A másik karodat a fejed fölé emelve hajolj oldalra.",
+        "Tartsd kontrolláltan a helyzetet, majd válts oldalt."
+      ],
+      "en": [
+        "Sit upright on a chair and hold the seat with one hand.",
+        "Raise your other arm overhead and bend sideways.",
+        "Hold with control, then switch sides."
+      ]
+    }
+  },
+  "Chair_Squat": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A Smith-gép rúdját tartsd a vállad hátulján, lábad a rúd vonala előtt legyen.",
+        "Egyenes törzzsel hajlítsd a térded és ereszkedj guggolásba.",
+        "Talpadba nyomva állj vissza; a rúd a gép vezetősínjén mozogjon."
+      ],
+      "en": [
+        "Hold the Smith-machine bar across your rear shoulders with feet forward of the bar.",
+        "Keep your torso upright and bend your knees into a squat.",
+        "Press through your feet to stand, keeping the bar on the machine's rails."
+      ]
+    },
+    "sourceNote": "Despite the original name, the source describes the guided-bar Smith-machine variation with feet forward, not a bodyweight squat onto a chair."
+  },
+  "Chair_Upper_Body_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj a szék szélére, és fogd meg magad mögött a háttámlát.",
+        "Karod nyújtva és hátad egyenesen tartva vidd előre a törzsed.",
+        "Tartsd a nyújtást, majd kontrolláltan engedd fel."
+      ],
+      "en": [
+        "Sit on the chair's edge and hold the backrest behind you.",
+        "With arms straight and back upright, move your torso forward.",
+        "Hold the stretch, then release with control."
+      ]
+    }
+  },
+  "Chest_And_Front_Of_Shoulder_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Állj egyenesen, a botot vállszélesnél tágabban fogd magad előtt, tenyérrel lefelé.",
+        "Óvatosan emeld a botot a fejed fölé és mögé.",
+        "Csak kontrollált mozgástartományban dolgozz; lassan térj vissza."
+      ],
+      "en": [
+        "Stand upright, holding a stick in front with a wider-than-shoulder overhand grip.",
+        "Carefully raise the stick overhead and behind your head.",
+        "Use a range you can control and return slowly."
+      ]
+    }
+  },
+  "Chest_Push_from_3_point_stance": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Vedd fel a hárompontos rajthelyzetet, egyik kezeddel a talajon, a labdával magad előtt.",
+        "Az első lépésnél emeld a medicinlabdát két kézzel a mellkasodhoz.",
+        "A második lépésnél lökd előre a labdát, karoddal követve a dobást."
+      ],
+      "en": [
+        "Start in a three-point stance with one hand on the ground and the ball in front.",
+        "On your first step, bring the medicine ball to your chest with both hands.",
+        "On your second step, push the ball forward and follow through with your arms."
+      ]
+    }
+  },
+  "Chest_Push_multiple_response": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Térdelj a fal vagy társad elé, a labdát tartsd két kézzel a mellkasodnál.",
+        "Csípőd előretolva lökd előre a labdát, majd kézzel támaszd meg az előredőlő tested.",
+        "Térj vissza egyenes térdelésbe, és ismételd a mozdulatot."
+      ],
+      "en": [
+        "Kneel facing a wall or partner with the ball held at your chest.",
+        "Drive your hips forward to pass the ball, then catch your forward fall on your hands.",
+        "Return to upright kneeling and repeat."
+      ]
+    }
+  },
+  "Chest_Push_single_response": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Térdelj, a medicinlabdát tartsd két kézzel a mellkasodnál.",
+        "Csípőd előretolva lökd előre a labdát.",
+        "Az előredőlő testedet kézzel támaszd meg a talajon."
+      ],
+      "en": [
+        "Kneel with the medicine ball held at your chest in both hands.",
+        "Drive your hips forward and push the ball ahead.",
+        "Catch your forward fall by placing your hands on the floor."
+      ]
+    }
+  },
+  "Chest_Push_with_Run_Release": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Enyhén hajlított térddel és hátratolt csípővel tartsd a labdát a lábad előtt.",
+        "Az első lépésnél húzd a labdát a mellkasodhoz, a másodiknál lökd előre.",
+        "A dobás után azonnal indulj futásnak a labda irányába."
+      ],
+      "en": [
+        "With knees bent and hips back, hold the ball in front of your legs.",
+        "Bring it to your chest on the first step and push it forward on the second.",
+        "Immediately run forward in the direction of the throw."
+      ]
+    }
+  },
+  "Chest_Stretch_on_Stability_Ball": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Helyezkedj négykézlábra a labda mellé, egyik könyököd tedd a labdára oldalra nyitott karral.",
+        "Engedd a törzsed a talaj felé, könyököd a labdán tartva.",
+        "Tartsd kontrolláltan a nyújtást, majd válts kart."
+      ],
+      "en": [
+        "Start on hands and knees beside the ball with one elbow resting on it and the arm open sideways.",
+        "Lower your torso toward the floor while keeping the elbow on the ball.",
+        "Hold the stretch with control, then switch arms."
+      ]
+    }
+  },
+  "Childs_Pose": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Négykézláb helyzetből nyújtsd előre a kezed.",
+        "Ülj hátra a sarkadra, karod a talajon csúsztatva.",
+        "Pihentesd a homlokod a talajon, karod engedd a tested mellé."
+      ],
+      "en": [
+        "From hands and knees, reach your hands forward.",
+        "Sit back toward your heels, letting your arms slide along the floor.",
+        "Rest your forehead on the floor and relax your arms beside your body."
+      ]
+    }
+  },
+  "Chin-Up": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Fogd a húzódzkodórudat vállszélesnél szűkebb alsó fogással, és függeszkedj.",
+        "Könyököd lefelé húzva emeld a tested, míg fejed a rúd vonalához ér.",
+        "Ne lendítsd a lábad; lassan engedd vissza magad."
+      ],
+      "en": [
+        "Hang from the bar with a narrower-than-shoulder underhand grip.",
+        "Draw your elbows down to raise your body until your head reaches bar level.",
+        "Avoid leg swing and lower yourself slowly."
+      ]
+    }
+  },
+  "Chin_To_Chest_Stretch": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Ülj a talajra, kezedet tedd könnyedén a fejed hátuljára.",
+        "Lassan közelítsd az állad a mellkasodhoz.",
+        "Finoman tartsd a helyzetet; ne erővel húzd a fejed."
+      ],
+      "en": [
+        "Sit on the floor and place your hands lightly behind your head.",
+        "Slowly bring your chin toward your chest.",
+        "Hold gently without pulling your head forcefully."
+      ]
+    }
+  },
+  "Circus_Bell": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Az óriás kézisúlyzót fogd két kézzel a lábad között.",
+        "Csípő- és térdnyújtással vedd a válladra, majd a szabad kezed engedd el.",
+        "Kis térdhajlításból láblendítéssel nyomd fej fölé, majd kontrolláltan engedd vissza."
+      ],
+      "en": [
+        "Grip the oversized dumbbell with both hands between your feet.",
+        "Extend your hips and knees to clean it to one shoulder, then release the extra hand.",
+        "Dip at the knees and drive it overhead, then lower with control."
+      ]
+    }
+  },
+  "Clean": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A talajon lévő rudat a lábad mellett fogd felülről, vállad a rúd vonala előtt legyen.",
+        "Lábszárad mellett húzd fel, majd a térd fölött csípő- és lábnyújtással gyorsítsd.",
+        "Guggolj a rúd alá, fordítsd előre a könyököd és fogadd a válladon, majd állj fel."
+      ],
+      "en": [
+        "Grip the floor bar overhand just outside your legs, shoulders ahead of the bar.",
+        "Pull it close past your shins, then accelerate above the knees by extending hips and legs.",
+        "Pull under into a squat, rotate elbows forward to receive it on your shoulders, then stand."
+      ]
+    }
+  },
+  "Clean_Deadlift": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rudat tartsd a lábszárad előtt, vállszéles felső vagy kampófogással, hajlított térddel.",
+        "Nyomj a talajba, és húzd a rudat a térded fölé, hátad szögét megtartva.",
+        "Csípőd előretolva állj fel; kontrolláltan engedd vissza a rudat."
+      ],
+      "en": [
+        "Grip the bar near your shins overhand or with a hook grip at shoulder width, knees bent.",
+        "Push into the floor and lift past your knees while keeping your back angle steady.",
+        "Drive your hips forward to stand, then lower the bar with control."
+      ]
+    }
+  },
+  "Clean_Pull": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A talajon lévő rudat fogd a lábad mellett felülről vagy kampófogással.",
+        "Húzd a rudat a térded fölé, majd a combodnál gyorsíts csípő-, térd- és bokanyújtással.",
+        "Karod maradjon nyújtva; ez a változat nem tartalmaz vállra felvételt."
+      ],
+      "en": [
+        "Grip the floor bar just outside your legs overhand or with a hook grip.",
+        "Pull past your knees, then accelerate at the thighs by extending hips, knees, and ankles.",
+        "Keep your arms extended; this variation does not include receiving the bar on your shoulders."
+      ]
+    }
+  },
+  "Clean_Shrug": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "Vállszéles felső vagy kampófogással tartsd a rudat a combod közepénél, enyhén előredőlve.",
+        "Emeld a vállad a füled felé.",
+        "Karod maradjon nyújtva; kontrolláltan engedd le a vállad."
+      ],
+      "en": [
+        "Hold the bar at mid-thigh with a shoulder-width overhand or hook grip and a slight forward lean.",
+        "Shrug your shoulders toward your ears.",
+        "Keep your arms extended and lower your shoulders with control."
+      ]
+    }
+  },
+  "Clean_and_Jerk": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A talajon lévő rudat fogd a lábad mellett felülről vagy kampófogással.",
+        "Láb- és csípőnyújtással gyorsítsd, majd guggolj alá és fogadd a válladon; állj fel.",
+        "Kis térdhajlításból lökd fej fölé, harántterpeszben fogadd, majd zárd a lábad."
+      ],
+      "en": [
+        "Grip the floor bar just outside your legs overhand or with a hook grip.",
+        "Accelerate with legs and hips, pull under into a squat, receive on your shoulders, then stand.",
+        "Dip and drive the bar overhead, catch in a split stance, then bring your feet together."
+      ]
+    }
+  },
+  "Clean_and_Press": {
+    "reviewed": true,
+    "summaryMethod": "curated",
+    "steps": {
+      "hu": [
+        "A rudat fogd a lábad mellett felülről, lábszáradhoz közel.",
+        "Láb- és csípőnyújtással gyorsítsd, majd guggolj alá és fogadd a válladon; állj fel.",
+        "Lábad helyben tartva nyomd a rudat fej fölé, majd kontrolláltan engedd vissza."
+      ],
+      "en": [
+        "Grip the bar overhand just outside your legs, close to your shins.",
+        "Accelerate with legs and hips, pull under into a squat, receive on your shoulders, then stand.",
+        "Keep your feet in place, press overhead, and lower with control."
       ]
     }
   }

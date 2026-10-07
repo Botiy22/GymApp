@@ -1,0 +1,41 @@
+{
+  "tool": "built-in imagegen",
+  "date": "2026-10-07",
+  "assets": {
+    "Cable_One_Arm_Tricep_Extension": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-bce969e2-7f18-44f0-b69b-c157526fd354.png",
+      "prompt": "Use case: precise-object-edit. Edit target: attached two-panel reverse-grip single-arm cable triceps illustration. Fix ONLY the CABLE in the RIGHT-HAND PANEL. The black cable currently ends disconnected near the free hand on the right. REMOVE that wrong cable route completely. Draw ONE continuous, taut, straight black cable from the UPPER PULLEY down diagonally to the EXISTING silver CARABINER directly ABOVE the D-handle in the WORKING hand on the left side of this panel. Exact endpoints in the full 1536x1024 image: upper pulley around (1290,85), D-handle's carabiner around (1039,472). The cable MUST be visible IN FRONT of the man's chest and abdominal clothing on this diagonal, not hidden behind his body. It must physically join the metal carabiner without any gap, then that carabiner joins the D-handle's top yoke. Keep the hand and underhand grip, handle, man, natural face, all equipment, dimensions and BOTH body poses unchanged. LEFT PANEL entirely unchanged. No additional loose cable, no text, no arrows.",
+      "review": "Visually inspected: movement/grip/framing/cable connection for the requested correction. Not clinical certification."
+    },
+    "Cable_Rope_Overhead_Triceps_Extension": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-3073a0a5-cc1c-45a4-92c8-7395ebba7cf7.png",
+      "prompt": "Edit target: attached two-panel exercise board. Change only framing: zoom out enough that overhead hands, rope ends, feet and pulley tower fit entirely inside each equal-width panel with at least 8% white margin above and below. Keep EXACTLY the poses: LEFT elbows extended overhead holding rope, RIGHT elbows flexed with hands behind head. Preserve rope attached to low cable, person and natural face, clothing, anatomy, viewpoint and white background. No text/arrows.",
+      "review": "Visually inspected: movement/grip/framing/cable connection for the requested correction. Not clinical certification."
+    },
+    "3_4_Sit-Up": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-0ba3cf55-6540-45ba-bb65-ba83072b7239.png",
+      "prompt": "Edit target: attached two-panel sit-up illustration. Correct only movement and foot anchoring. Keep LEFT lying with knees bent and hands lightly beside head. RIGHT must show a full upright sit-up with torso approximately vertical, not a shallow abdominal crunch: hips flexed, head over hips, chest upright close to thighs, same knees bent, hands lightly beside head, neck neutral. In both panels feet are secured beneath the same low unobtrusive padded foot anchor. Return phase only lowers three quarters; do not depict a range diagram or text. Preserve detailed shaded style, natural face, dark tank, grey shorts/shoes, white background, two equal panels with 8% margins.",
+      "review": "Visually inspected: movement/grip/framing/cable connection for the requested correction. Not clinical certification."
+    },
+    "Front_Barbell_Squat": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-9ce1b7f4-7305-4e72-98d1-a32d6d3cac3e.png",
+      "prompt": "Edit target: attached two-panel front squat board. Change ONLY the arm/hand grip in BOTH positions to the CROSS-ARM FRONT-RACK grip matching the source exercise. Barbell rests across anterior deltoids, not supported in the hands. Arms cross at upper chest, right hand rests over bar near left shoulder and left hand over bar near right shoulder, elbows point forward high. No clean-rack bent-wrist grip. Preserve bar, weights, person's natural face, torso and legs, standing LEFT/deep controlled squat RIGHT, detailed shaded style, charcoal tank, grey shorts/shoes, white background, equal panels.",
+      "review": "Visually inspected: movement/grip/framing/cable connection for the requested correction. Not clinical certification."
+    },
+    "Standing_Overhead_Barbell_Triceps_Extension": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-9a20ff0a-cbf7-4b7c-8891-443881083dbb.png",
+      "prompt": "Use case: scientific-educational. Asset: GymApp static exercise illustration. Landscape 1536x1024, two equally wide panels, plain white background, no text, arrows or logos. The SAME detailed shaded adult male with a normal human head and clearly drawn face in both panels, charcoal tank top, grey shorts and grey trainers. Natural anatomy, clear hands and equipment, three-quarter view, full body and all relevant equipment within each panel, with 8% white margins. Left panel is setup, right panel is movement. Do not use stick figures, neutral mannequin heads, red activation heatmaps or percentages. Standing overhead BARBELL triceps extension using a straight bar, with narrow OVERHAND grip, hands closer than shoulder width. LEFT: standing upright feet shoulder width, bar held overhead, elbows extended, upper arms close to head. RIGHT: same torso and upper arms position, elbows bent to lower the bar BEHIND the head. Bar sits behind head, not in front of face. Elbows point forward/up; only forearms change position. Keep trunk steady without excessive back arch. Entire bar, plates and fingers must be visible with white margin.",
+      "review": "Visually inspected for two poses, normal face, named variation and equipment connections. Not clinical certification."
+    },
+    "Underhand_Cable_Pulldowns": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-b350a1a2-d381-496b-b9e8-1c08cf3a411b.png",
+      "prompt": "Use case: scientific-educational. Asset: GymApp static exercise illustration. Landscape 1536x1024, two equally wide panels, plain white background, no text, arrows or logos. The SAME detailed shaded adult male with a normal human head and clearly drawn face in both panels, charcoal tank top, grey shorts and grey trainers. Natural anatomy, clear hands and equipment, three-quarter view, full body and all relevant equipment within each panel, with 8% white margins. Left panel is setup, right panel is movement. Do not use stick figures, neutral mannequin heads, red activation heatmaps or percentages. Seated UNDERHAND cable lat pulldown. Grip MUST be SUPINATED and narrower than shoulder width, palms facing the man, wrists neutral. Show clear upward-facing palms and fingers wrapping under a long horizontal pulldown bar. LEFT: seated on pulldown machine, feet on floor, thighs secured under pad, arms extended upward grasping bar above head. RIGHT: same slight torso lean, elbows drawn down close to torso, bar at upper chest IN FRONT of body. The taut cable connects continuously from upper pulley to a metal carabiner at the centre of the bar in BOTH panels. Keep machine seat, thigh pad and pulley position consistent.",
+      "review": "Visually inspected for two poses, normal face, named variation and equipment connections. Not clinical certification."
+    },
+    "Band_Good_Morning_Pull_Through": {
+      "source": "/workspace/scratch/5e075b1dd3e4/generated_images/exec-7b96ab76-d8e7-4343-b5f3-23b6ee72a09f.png",
+      "prompt": "Use case: precise-object-edit. Attached two-panel anchored-band GOOD MORNING is the edit target. Correct the man's ORIENTATION in BOTH panels. The fixed post stays on the LEFT of each panel, but the man MUST FACE LEFT toward that post, not right away from it. The band's anchor must be IN FRONT of the man, never behind him. LEFT panel: upright stance looking toward the left post, both hands hold band at shoulders/upper back. RIGHT panel: hip hinge TOWARD THE LEFT POST: hips move right/back, chest and face move left/forward toward post, back neutral, knees slightly bent. Band loops around upper back, supported by hands, and runs continuously toward the post's same knee-height anchor IN FRONT. Keep subject, detailed natural face, tank, shorts, shoes, standing vs hinged poses, knee-height post anchor, white background and two equal panels. No between-the-legs hand grip; no band under feet; no text.",
+      "review": "Visually inspected for two poses, normal face, named variation and equipment connections. Not clinical certification."
+    }
+  }
+}
