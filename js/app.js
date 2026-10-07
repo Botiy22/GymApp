@@ -1,5 +1,30 @@
-(function () {
+(function startGymApp() {
   'use strict';
+  // A previously cached HTML shell may receive this newer app script before its new script tags.
+  // Load the release metadata before initializing storage or installing event handlers.
+  if (!window.GYM_RELEASE) {
+    const src = 'js/release.js';
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = startGymApp;
+    script.onerror = () => {
+      const hu = (navigator.language || '').toLowerCase().startsWith('hu');
+      const view = document.getElementById('view');
+      if (!view) return;
+      const box = document.createElement('div');
+      box.className = 'card';
+      const message = document.createElement('p');
+      message.textContent = hu ? 'Az alkalmazás frissítéséhez csatlakozz az internethez, majd töltsd újra.' : 'Connect to the internet and reload to update the app.';
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.textContent = hu ? 'Újratöltés' : 'Reload';
+      retry.onclick = () => location.reload();
+      box.append(message, retry);
+      view.replaceChildren(box);
+    };
+    document.head.append(script);
+    return;
+  }
   /* ---------- helpers ---------- */
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -20,8 +45,10 @@
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const VERSION = '2.0';
-  const APP_BUILD = 'v2-ui-refinements-20261007';
+  const VERSION = GYM_RELEASE.version;
+  const APP_BUILD = GYM_RELEASE.cacheId;
+  const releaseText = () => VERSION + ' · ' + t('buildNumber', GYM_RELEASE.build);
+  const updateStatusText = () => t(ui.updateStatus, releaseText());
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -982,7 +1009,7 @@
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(t(ui.updateStatus)) : ''}</p>
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
     };
   }
@@ -1352,7 +1379,7 @@
         if ('serviceWorker' in navigator && window.caches && location.protocol !== 'file:') {
           const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' });
           if (!probe.ok) throw new Error('offline');
-          const reg = await navigator.serviceWorker.getRegistration() || await navigator.serviceWorker.register('sw.js');
+          const reg = await navigator.serviceWorker.getRegistration() || await navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' });
           await reg.update();
           if (reg.installing) await new Promise((resolve, reject) => {
             const worker = reg.installing, timer = setTimeout(() => finish(new Error('install timeout')), 30000);
@@ -1371,7 +1398,7 @@
         }
         // This marker only reports success when the reloaded app matches the refreshed worker.
         try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version: result && result.version || '', at: Date.now() })); } catch (e) {}
-        ui.updateStatus = result ? 'updateRestarting' : 'updateReloading'; refreshSheet(); toast(t(ui.updateStatus));
+        ui.updateStatus = result ? 'updateRestarting' : 'updateReloading'; refreshSheet(); toast(updateStatusText());
         setTimeout(() => location.reload(), 700);
       } catch (e) { ui.updateBusy = false; ui.updateStatus = 'updateFail'; refreshSheet(); toast(t('updateFail')); }
     },
@@ -1628,7 +1655,7 @@
   try {
     const result = JSON.parse(sessionStorage.getItem('gym-update-result') || 'null');
     sessionStorage.removeItem('gym-update-result');
-    if (result && Date.now() - result.at < 120000) { ui.updateStatus = result.version === APP_BUILD ? 'updateSuccess' : 'updateReloaded'; toast(t(ui.updateStatus)); }
+    if (result && Date.now() - result.at < 120000) { ui.updateStatus = result.version === APP_BUILD ? 'updateSuccess' : 'updateReloaded'; toast(updateStatusText()); }
   } catch (e) {}
   if (CL) {
     Store.onSave = syncSoon;
@@ -1639,7 +1666,7 @@
   setInterval(tick, 500);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
 
