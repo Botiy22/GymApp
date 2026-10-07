@@ -126,7 +126,23 @@ window.PlanImport = (() => {
         if(busy)return;busy=true;ctl=new AbortController();q('files').disabled=true;button.disabled=true;q('finish').hidden=true;status(tr('Dokumentumok feldolgozása…','Processing documents…'));
         const timeout=setTimeout(()=>ctl.abort(),180000);
         try{const sources=await PDFLocal.extract(files,ctl.signal,(file,page,total)=>status(file+' · '+page+' / '+total));raw=PDFLocal.draft(sources,options.catalog,hu);if(dialog.isConnected){q('source').hidden=false;q('text').textContent=sources.map(s=>s.name+'\n'+s.lines.map(l=>'['+l.page+'] '+l.text).join('\n')).join('\n\n');if(!sources.some(s=>s.lines.length))raw.warnings.push(tr('A dokumentumban nincs kiolvasható szöveg. Szkennelt képből itt nincs OCR; az adatokat kézzel kell felvinni.','No extractable text. Scanned images require manual entry; this importer has no OCR.'));preview();}}
-        catch(er){if(dialog.isConnected){const messages={size:tr('Egy vagy két PDF/DOCX/XLSX fájlt válassz, legfeljebb 12 MB összmérettel.','Select one or two PDF/DOCX/XLSX files, up to 12 MB total.'),file:tr('Nem olvasható vagy nem támogatott dokumentum. A régi .doc/.xls formátumot mentsd .docx/.xlsx fájlként.','Unreadable or unsupported document. Save old .doc/.xls files as .docx/.xlsx first.'),pages:tr('Legfeljebb 60 oldal tölthető be egyszerre.','At most 60 pages per import.'),length:tr('Túl hosszú szöveg. Válassz rövidebb PDF-et.','Text too long. Select a shorter PDF.')};status(messages[er.message]||tr('Nem sikerült helyben beolvasni. A dokumentum lehet sérült, jelszavas vagy nem támogatott.','Local extraction failed. The document may be damaged, password-protected or unsupported.'));}}
+        catch(er){if(dialog.isConnected){
+          const info=PDFLocal.describeError(er);
+          const messages={
+            size:tr('Egy vagy két PDF/DOCX/XLSX fájlt válassz, legfeljebb 12 MB összmérettel.','Select one or two PDF/DOCX/XLSX files, up to 12 MB total.'),
+            file:tr('Nem olvasható vagy nem támogatott dokumentum. A régi .doc/.xls formátumot mentsd .docx/.xlsx fájlként.','Unreadable or unsupported document. Save old .doc/.xls files as .docx/.xlsx first.'),
+            pages:tr('Legfeljebb 60 oldal tölthető be egyszerre.','At most 60 pages per import.'),
+            length:tr('Túl hosszú szöveg. Válassz rövidebb dokumentumot.','Text too long. Select a shorter document.'),
+            cancelled:tr('A beolvasás megszakadt vagy túllépte az időkorlátot. Próbáld újra.','Reading was cancelled or timed out. Try again.'),
+            password:tr('A PDF jelszóval védett. Válassz jelszó nélküli példányt.','The PDF is password-protected. Select an unlocked copy.'),
+            'invalid-pdf':tr('A PDF-olvasó érvénytelen PDF-szerkezetet jelzett.','The PDF reader reported an invalid PDF structure.'),
+            'pdf-library':tr('A PDF-olvasó nem töltődött be. Csatlakozz az internethez, keresd meg az app frissítését, majd próbáld újra.','The PDF reader could not load. Connect to the internet, check for an app update and retry.'),
+            'pdf-open':tr('A PDF megnyitása vagy a feldolgozó indítása sikertelen. Ez önmagában nem jelenti, hogy a fájl sérült.','Opening the PDF or starting its worker failed. This does not by itself mean the file is damaged.'),
+            'pdf-text':tr('A PDF megnyílt, de a szövegkiolvasás leállt.','The PDF opened, but text extraction stopped.'),
+            preview:tr('A dokumentum feldolgozása vagy az előnézet elkészítése leállt.','Document processing or preview creation stopped.')
+          };
+          status((messages[info.code]||messages.preview)+(info.detail?'\n'+info.detail:''));
+        }}
         finally{clearTimeout(timeout);busy=false;ctl=null;q('files').disabled=false;button.disabled=false;}
       }
       if(raw && ['add-routine','add-diet','add-exercise','remove-exercise','remove-routine','add-meal','remove-meal','add-food','remove-food','target','remove-diet'].includes(action)){
