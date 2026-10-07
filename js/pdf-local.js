@@ -4,6 +4,16 @@ window.PDFLocal = (() => {
   'use strict';
   const scriptURL = document.currentScript.src;
   const MAX = 12 * 1024 * 1024;
+  function readArrayBuffer(file) {
+    if (typeof file.arrayBuffer === 'function') return file.arrayBuffer();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('file'));
+      reader.onabort = () => reject(new DOMException('Aborted','AbortError'));
+      reader.readAsArrayBuffer(file);
+    });
+  }
   function atStage(error, stage) {
     const e = new Error(error && error.message ? error.message : String(error));
     e.name = error && error.name ? error.name : 'Error';
@@ -110,7 +120,7 @@ window.PDFLocal = (() => {
       if(/\.(docx|xlsx)$/i.test(file.name)){const source=await OfficeLocal.extract(file,signal,onProgress);characters+=source.lines.reduce((n,l)=>n+l.text.length,0);if(characters>200000)throw new Error('length');sources.push(source);continue;}
       if(!/\.pdf$/i.test(file.name)&&file.type!=='application/pdf')throw new Error('file');
       if(!lib){try{lib=await import(new URL('../vendor/pdfjs/pdf.min.mjs',scriptURL).href);lib.GlobalWorkerOptions.workerSrc=new URL('../vendor/pdfjs/pdf.worker.min.mjs',scriptURL).href;}catch(error){throw atStage(error,'pdf-library');}}
-      const data=new Uint8Array(await file.arrayBuffer());
+      const data=new Uint8Array(await readArrayBuffer(file));
       if(String.fromCharCode(...data.slice(0,5))!=='%PDF-')throw new Error('file');
       const task=lib.getDocument({data,isEvalSupported:false,useSystemFonts:false,disableFontFace:true,useWorkerFetch:false,enableXfa:false,stopAtErrors:true});
       const abort=()=>{task.destroy().catch(()=>{});};signal.addEventListener('abort',abort,{once:true});

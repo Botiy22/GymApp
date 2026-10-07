@@ -6,6 +6,10 @@ window.OfficeLocal=(()=>{
   const direct=(node,tag)=>Array.from(node.children).filter(x=>x.localName===tag);
   const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   let loading=null;
+  function readArrayBuffer(file){
+    if(typeof file.arrayBuffer==='function')return file.arrayBuffer();
+    return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('file'));r.onabort=()=>reject(new DOMException('Aborted','AbortError'));r.readAsArrayBuffer(file);});
+  }
   function zipLibrary(){if(window.JSZip)return Promise.resolve(window.JSZip);if(!loading)loading=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='vendor/jszip/jszip.min.js';s.onload=()=>ok(window.JSZip);s.onerror=()=>{loading=null;fail(new Error('file'));};document.head.append(s);});return loading;}
   function preflight(data){
     const v=new DataView(data);let e=-1;
@@ -54,7 +58,7 @@ window.OfficeLocal=(()=>{
   }
   async function extract(file,signal,onProgress){
     const extension=file.name.split('.').pop().toLowerCase();if(!['docx','xlsx'].includes(extension))throw new Error('file');
-    const data=await file.arrayBuffer();preflight(data);const ZIP=await zipLibrary(),zip=await ZIP.loadAsync(data);const lines=[],warnings=[];
+    const data=await readArrayBuffer(file);preflight(data);const ZIP=await zipLibrary(),zip=await ZIP.loadAsync(data);const lines=[],warnings=[];
     if(extension==='docx'){
       const doc=await xml(zip,'word/document.xml',signal),body=ns(doc,'body')[0];if(!body)throw new Error('file');let block=0;
       for(const child of body.children){

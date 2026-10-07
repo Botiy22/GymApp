@@ -1588,17 +1588,28 @@
     'tg-v'(el) { ui.tg.vals[el.dataset.k] = el.value; }
   };
   document.addEventListener('input', e => { const el = e.target, k = el.dataset && el.dataset.in; if (k && IN[k] && el.type !== 'file') IN[k](el); });
+  function readLocalText(file) {
+    if (typeof file.text === 'function') return file.text();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error || new Error('file'));
+      reader.onabort = () => reject(new DOMException('Aborted', 'AbortError'));
+      reader.readAsText(file, 'UTF-8');
+    });
+  }
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
-    if (k === 'ai-file' && el.files[0]) { const s0 = ui.ai; try { const r = await FoodAI.shrink(el.files[0], 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
-    if (k === 'mx-file' && el.files[0]) { const s0 = ui.myex; try { const u = await smallPic(el.files[0]); if (ui.myex === s0) { s0.img = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } el.value = ''; }
+    if (k === 'ai-file' && el.files[0]) { const file = el.files[0]; el.value = ''; const s0 = ui.ai; try { const r = await FoodAI.shrink(file, 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
+    if (k === 'mx-file' && el.files[0]) { const file = el.files[0]; el.value = ''; const s0 = ui.myex; try { const u = await smallPic(file); if (ui.myex === s0) { s0.img = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } }
     if (k === 'exm-file' && el.files[0]) {
-      const id = el.dataset.id, had = D().exMedia[id];
-      try { if (!(had && had.img) && picCount() >= 30) { toast(t('picLimit')); } else { const u = await smallPic(el.files[0]); if (EX[id]) { D().exMedia[id] = { img: u, vid: (had && had.vid) || '' }; Store.save(); refreshSheet(); if (!ui.wOpen) rerender(); toast(t('saved')); } } } catch (er) { toast(t('picBad')); }
-      el.value = '';
+      const file = el.files[0], id = el.dataset.id, had = D().exMedia[id]; el.value = '';
+      try { if (!(had && had.img) && picCount() >= 30) { toast(t('picLimit')); } else { const u = await smallPic(file); if (EX[id]) { D().exMedia[id] = { img: u, vid: (had && had.vid) || '' }; Store.save(); refreshSheet(); if (!ui.wOpen) rerender(); toast(t('saved')); } } } catch (er) { toast(t('picBad')); }
     }
     if (k === 'import' && el.files[0]) {
-      let plan = null; try { plan = JSON.parse(await el.files[0].text()); } catch (er) { plan = null; }
+      const file = el.files[0]; el.value = '';
+      let contents = ''; try { contents = await readLocalText(file); } catch (er) { toast(t('importBad')); return; }
+      let plan = null; try { plan = JSON.parse(contents); } catch (er) { plan = null; }
       if (plan && plan.app === 'gymapp' && plan.kind === 'plan') {                           // a plan file: routines, meal plan, rules; the log stays
         const nr = Array.isArray(plan.routines) ? plan.routines.length : 0, nm = plan.plan && Array.isArray(plan.plan.days) ? plan.plan.days.reduce((a, x) => a + (x && Array.isArray(x.meals) ? x.meals.length : 0), 0) : 0;
         if (!nr && !nm) toast(t('importBad'));
@@ -1606,9 +1617,8 @@
         else if (confirm(t('planConfirm', nr, nm))) { applyPlan(plan); ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded')); }
         el.value = ''; return;
       }
-      try { const o = JSON.parse(await el.files[0].text()), d = o && o.data ? o.data : o; if (!d || !Array.isArray(d.workouts) || !Array.isArray(d.routines)) throw 0;
+      try { const o = JSON.parse(contents), d = o && o.data ? o.data : o; if (!d || !Array.isArray(d.workouts) || !Array.isArray(d.routines)) throw 0;
         if (confirm(t('importConfirm', d.workouts.length))) { Store.replace(d); ui.wOpen = false; ui.foodDate = today(); closeSheet(true); render(); toast(t('imported')); } } catch (er) { toast(t('importBad')); }
-      el.value = '';
     }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset && e.target.dataset.in === 'w-reps') { e.preventDefault(); e.target.blur(); const b = $('.set-ok', e.target.closest('.set')); if (b && b.getAttribute('aria-pressed') !== 'true') b.click(); } });

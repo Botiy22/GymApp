@@ -113,7 +113,7 @@ window.PlanImport = (() => {
     }
     dialog.addEventListener('input',e=>{if(e.target===q('json')){jsonDirty=true;confirmed=null;q('review').checked=false;}});
     dialog.addEventListener('change',e=>{
-      if(e.target===q('files')){files=Array.from(e.target.files);raw=null;confirmed=null;q('finish').hidden=true;q('preview').replaceChildren();q('source').hidden=true;status('');}
+      if(e.target===q('files')){files=Array.from(e.target.files);e.target.value='';raw=null;confirmed=null;q('finish').hidden=true;q('preview').replaceChildren();q('source').hidden=true;status(files.length?'':tr('Előbb válassz ki egy vagy két fájlt.','Choose one or two files first.'));}
       const path=e.target.dataset.path;if(!path||!raw)return;
       const bits=path.split('.');let parent=raw;for(const part of bits.slice(0,-1))parent=parent[part];
       parent[bits[bits.length-1]]=e.target.type==='checkbox'?e.target.checked:e.target.type==='number'?(e.target.value===''?null:Number(e.target.value)):e.target.value;
