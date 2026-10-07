@@ -118,10 +118,11 @@
   };
   /* routine icons: chosen from the muscles of the routine, or picked by hand in the editor */
   const RICON = {
-    upper: '<svg viewBox="0 0 24 24"><path d="M8 3.500c1.100 1.300 2.500 2 4 2s2.900-.700 4-2l4.500 2.500-1.500 4.500-2.500-.800V20h-9v-10.300l-2.500.800L3.500 6z"/></svg>',
-    legs: '<svg viewBox="0 0 24 24"><path d="M7 3.500h10l1 17h-4.200L12 10l-1.800 10.500H6z"/><path d="M7 7h10"/></svg>',
-    push: '<svg viewBox="0 0 24 24"><path d="M3 8h18M6.500 5v6M17.500 5v6M12 21v-8.500M8.500 16L12 12.500l3.500 3.500"/></svg>',
-    pull: '<svg viewBox="0 0 24 24"><path d="M3 5h18M7 5v3M17 5v3M12 9v11M8.500 16.500L12 20l3.500-3.500"/></svg>',
+    upper: '<svg class="routine-symbol" viewBox="0 0 32 32" aria-hidden="true"><path d="M12 5v3l-6 3-3 8 4 2 3-6v11h12V15l3 6 4-2-3-8-6-3V5"/><path class="muscle" d="M11 12l5 2 5-2v6l-5 2-5-2z"/><path d="M16 14v9M12 5q4 4 8 0"/></svg>',
+    lower: '<svg class="routine-symbol" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 4h14l1 9-4 15h-5l1-12-1 12h-5L7 13z"/><path d="M8 10h15M16 10v6"/><path class="muscle" d="M10 12l4 1-1 8h-2zM18 13l3-1-2 9h-2z"/></svg>',
+    legs: '<svg class="routine-symbol" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 4h10l-1 7 6 8-4 9h-5l4-8-5-4-5 4 4 8h-5l-4-9 6-8z"/><path d="M11 8h10"/><path class="muscle" d="M12 13l3 2-5 5-2-2zM20 13l4 5-2 2-5-5z"/></svg>',
+    push: '<svg class="routine-symbol" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 28V17l-5-4V7M21 28V17l5-4V7M11 20h10M16 17v9M3 7h7M22 7h7M4 4v6M28 4v6"/><path class="muscle" d="M11 17l5-2 5 2v5l-5 2-5-2z"/><path d="M16 11V3m-3 3 3-3 3 3"/></svg>',
+    pull: '<svg class="routine-symbol" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 28V17l-5-4V5M21 28V17l5-4V5M3 4h26M16 18v8"/><path class="muscle" d="M10 16l6 2 6-2-3 8h-6z"/><path d="M16 7v7m-3-3 3 3 3-3"/></svg>',
     core: '<svg viewBox="0 0 24 24"><path d="M8.500 3.500h7a2 2 0 0 1 2 2v10a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5v-10a2 2 0 0 1 2-2zM12 3.500v17M6.500 9h11M6.500 14h11"/></svg>',
     arms: '<svg viewBox="0 0 24 24"><path d="M3 10v4M6.500 6.500v11M17.500 6.500v11M21 10v4M6.500 12h11"/></svg>',
     full: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.500" r="2"/><path d="M5 9.500h14M12 9.500v5.500M12 15l-4 6M12 15l4 6"/></svg>',
@@ -138,7 +139,7 @@
     const up = c.push + c.pull; if (up / k >= 0.7) return c.push / up >= 0.75 ? 'push' : c.pull / up >= 0.75 ? 'pull' : 'upper';
     return 'full';
   }
-  const rIcon = r => RICON[r.icon] ? r.icon : autoIcon(r);
+  const rIcon = r => RICON[r.icon] ? r.icon : r.builtin && ['upper','lower','push','pull','legs'].includes(r.id) ? r.id : autoIcon(r);
 
   /* ---------- history / stats ---------- */
   let hIdx = null, hRef = null, hLen = -1;
@@ -578,7 +579,7 @@
     return () => {
       const r = ui.edit;
       const h = `<label class="fld"><span>${esc(t('routineName'))}</span><input type="text" data-in="re-name" value="${esc(rName(r))}" placeholder="${esc(t('routineNamePh'))}" autocomplete="off"></label>
-        <p class="lbl">${esc(t('icon'))}</p><div class="icons">${[''].concat(Store.ICONS).map(v => `<button class="${(r.icon || '') === v ? 'on ' : ''}ic-${v || rIcon(Object.assign({}, r, { icon: '' }))}" data-a="re-icon" data-v="${v}" aria-pressed="${(r.icon || '') === v}" aria-label="${esc(v ? t('icon') + ' ' + v : t('iconAuto'))}"><span class="r-ic">${v ? RICON[v] : RICON[rIcon(Object.assign({}, r, { icon: '' }))]}</span>${v ? '' : `<i>${esc(t('iconAuto'))}</i>`}</button>`).join('')}</div>
+        <p class="lbl">${esc(t('icon'))}</p><div class="icons">${[''].concat(Store.ICONS).map(v => `<button class="${(r.icon || '') === v ? 'on ' : ''}ic-${v || rIcon(Object.assign({}, r, { icon: '' }))}" data-a="re-icon" data-v="${v}" aria-pressed="${(r.icon || '') === v}" aria-label="${esc(v ? t('icon') + ' ' + ((PLAN.days.find(day => day.id === v) || {})[L()] || v) : t('iconAuto'))}"><span class="r-ic">${v ? RICON[v] : RICON[rIcon(Object.assign({}, r, { icon: '' }))]}</span>${v ? '' : `<i>${esc(t('iconAuto'))}</i>`}</button>`).join('')}</div>
         <div class="re-list">${r.items.map((it, i) => `<div class="re-row"><div class="re-top"><img src="${thumb(it.ex)}" alt="" decoding="async"><b>${esc(itemName(it))}</b><button class="icon-btn sm" data-a="re-up" data-i="${i}" aria-label="${esc(t('moveUp'))}" ${i ? '' : 'disabled'}>${IC.up}</button><button class="icon-btn sm" data-a="re-down" data-i="${i}" aria-label="${esc(t('moveDown'))}" ${i < r.items.length - 1 ? '' : 'disabled'}>${IC.down}</button><button class="icon-btn sm" data-a="re-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
           <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label><label><span>RIR</span><input type="text" data-in="re-rir" data-i="${i}" value="${esc(it.rir || '')}" maxlength="8"></label></div></div>`).join('') || `<p class="empty">${esc(t('noItems'))}</p>`}</div>
         <button class="btn" data-a="re-add">${IC.plus}${esc(t('addExercise'))}</button>${r._old ? `<button class="btn" data-a="r-dup">${esc(t('saveCopy'))}</button>` : ''}${r._old && !r.builtin ? `<button class="btn danger" data-a="r-del">${esc(t('deleteRoutine'))}</button>` : ''}`;

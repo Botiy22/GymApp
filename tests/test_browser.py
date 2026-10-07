@@ -274,8 +274,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.4.0')
-        expect(self.page.locator('#sheet')).to_contain_text('20261007.9')
+        expect(self.page.locator('#sheet')).to_contain_text('2.4.1')
+        expect(self.page.locator('#sheet')).to_contain_text('20261007.10')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -349,7 +349,7 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.4.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.4.1',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
         for path in ['/css/design.css','/js/plan-sheet.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
@@ -361,6 +361,76 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         self.upload(pdf(self.files/'offline.pdf'));self.add()
         self.context.set_offline(False)
+
+    def test_import_preview_has_space_and_owns_scroll(self):
+        # Begin with a scrolled page; closing must restore this exact position.
+        self.page.evaluate("() => {document.body.style.minHeight='2000px';window.scrollTo(0,180);}")
+        before=self.page.evaluate('() => scrollY')
+        self.upload(self.hu_file)
+        for width,height,minimum in [(390,844,440),(320,568,250),(844,390,150)]:
+            self.page.set_viewport_size({'width':width,'height':height})
+            content=self.page.locator('[data-pdf="content"]')
+            expect(content).to_be_visible()
+            self.page.wait_for_timeout(250)
+            self.assertGreaterEqual(content.bounding_box()['height'],minimum)
+            footer=self.page.locator('[data-pdf="footer"]').bounding_box()
+            self.assertLessEqual(content.bounding_box()['y']+content.bounding_box()['height'],footer['y']+1)
+            self.assertLessEqual(footer['y']+footer['height'],height)
+            content.evaluate('(el) => el.scrollTop=0')
+            content.hover();self.page.mouse.wheel(0,600);self.page.wait_for_timeout(150)
+            self.assertGreater(content.evaluate('(el) => el.scrollTop'),0)
+            self.assertEqual('fixed',self.page.evaluate('() => getComputedStyle(document.body).position'))
+            self.assertEqual('-180px',self.page.evaluate('() => document.body.style.top'))
+            self.page.mouse.move(2,2);self.page.mouse.wheel(0,700)
+            self.page.evaluate('() => window.scrollTo(0,700)')
+            self.assertEqual(0,self.page.evaluate('() => scrollY'))
+        self.page.locator('[data-pdf="close"]').click()
+        self.assertEqual(before,self.page.evaluate('() => scrollY'))
+        self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+        self.assertEqual('',self.page.evaluate('() => document.documentElement.style.overflow'))
+        self.page.evaluate('() => window.scrollTo(0,350)')
+        self.assertEqual(350,self.page.evaluate('() => scrollY'))
+
+    def test_import_cancel_restores_existing_styles_and_can_reopen(self):
+        self.page.evaluate("() => {document.body.style.overflow='auto';document.documentElement.style.overflow='visible';}")
+        self.page.locator('[data-a="pdf-plan"]').first.click()
+        self.assertGreater(self.page.locator('[data-pdf="content"]').bounding_box()['height'],440)
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#pdf-plan-dialog')).to_have_count(0)
+        self.assertEqual('auto',self.page.evaluate('() => document.body.style.overflow'))
+        self.assertEqual('visible',self.page.evaluate('() => document.documentElement.style.overflow'))
+        self.upload(self.hu_file);self.add();self.page.locator('[data-pdf="open-workouts"]').click()
+        expect(self.page.locator('#pdf-plan-dialog')).to_have_count(0)
+        self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+        self.assertEqual('auto',self.page.evaluate('() => document.body.style.overflow'))
+
+    def test_import_tracks_reduced_visible_viewport(self):
+        self.upload(self.hu_file)
+        self.page.wait_for_timeout(250)
+        # Model the smaller, offset visible viewport caused by an onscreen keyboard.
+        self.page.evaluate("() => {Object.defineProperty(visualViewport,'height',{configurable:true,value:460});Object.defineProperty(visualViewport,'offsetTop',{configurable:true,value:100});visualViewport.dispatchEvent(new Event('resize'));}")
+        box=self.page.locator('#pdf-plan-dialog').bounding_box()
+        self.assertGreaterEqual(box['y'],112)
+        self.assertLessEqual(box['y']+box['height'],548)
+        self.assertGreater(self.page.locator('[data-pdf="content"]').bounding_box()['height'],140)
+        self.page.locator('[data-pdf="close"]').click()
+        self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+
+    def test_custom_workout_symbols_and_lower_icon_persist(self):
+        symbols=[]
+        for name in ['push','pull','legs','upper','lower']:
+            icon=self.page.locator('.rtile[data-id="'+name+'"] .routine-symbol')
+            expect(icon).to_have_count(1)
+            symbols.append(icon.evaluate('(el) => el.innerHTML'))
+        self.assertEqual(5,len(set(symbols)))
+        self.page.locator('[data-a="r-open"][data-id="upper"]').click()
+        self.page.locator('[data-a="r-edit"]').click()
+        self.page.locator('[data-a="re-icon"][data-v="lower"]').click()
+        expect(self.page.locator('[data-a="re-icon"][data-v="lower"]')).to_have_attribute('aria-pressed','true')
+        self.page.locator('[data-a="re-save"]').click()
+        self.page.reload(wait_until='networkidle')
+        self.assertEqual('lower',next(r for r in self.data()['routines'] if r['id']=='upper')['icon'])
+        expect(self.page.locator('.rtile[data-id="upper"]')).to_have_class(__import__('re').compile('.*ic-lower.*'))
 
     def test_layout_and_navigation_in_both_themes(self):
         self.upload(self.hu_file)

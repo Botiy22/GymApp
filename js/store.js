@@ -6,7 +6,7 @@ window.Store = (function () {
   const MODELS = ['claude-haiku-4-5-20251001', 'claude-sonnet-5-5', 'claude-opus-5-5'];
   const ACCENTS = ['volt', 'sky', 'orange', 'pink', 'mint'], BGS = ['aurora', 'deep', 'plain', 'light'];
   const OLD_HUE = { sky: 231, orange: 67, pink: 3, mint: 170 };                       // the four colours older versions offered, as places on the scale
-  const ICONS = ['upper', 'legs', 'push', 'pull', 'core', 'arms', 'full', 'cardio', 'star'];
+  const ICONS = ['upper', 'lower', 'legs', 'push', 'pull', 'core', 'arms', 'full', 'cardio', 'star'];
   const EXID = /^[A-Za-z0-9_\-]{1,90}$/, DAY = /^\d{4}-\d{2}-\d{2}$/, NUMSTR = /^[0-9.,]{0,8}$/;
   let data = null, mem = false, failed = false, onFail = null, onSave = null, snap = null;
 

@@ -1,3 +1,13 @@
+# Update — 2.4.1, 2026-10-07
+
+Fixed the collapsed import preview with explicit viewport sizing and independent scrolling. The document stays fixed while the importer is open, and its original scroll position/styles are restored on exit. Visible viewport resize/offset changes and safe areas are handled. Added custom Push, Pull, Legs, Upper and Lower SVG symbols and persistent Lower icon selection. In-app release history describes this update.
+
+Validation: 27 real Chromium browser tests, including new modal scrolling, landscape, simulated keyboard viewport and icon persistence checks. JavaScript syntax and Git whitespace checks passed; mobile/landscape screenshots reviewed. No physical iPhone or Safari test: the WebKit download remains blocked by the proxy.
+
+Backup: GitHub branch `backup/before-dialog-icons-20261007` preserves `7c2f91a`; a complete verified bundle is at `/workspace/GymApp-backups/GymApp-before-dialog-icons-20261007.bundle`.
+
+---
+
 # Update — 2.4.0, 2026-10-07
 
 The user explicitly requested browser tests for this change. Fixed XLSX recognition by preserving worksheet columns and grouping workout days and weekday meals, added compact automatic preview and safe appending, a weekly meal-plan view, mint/light design refresh and visible release history in Settings. Storage failure rolls back plan imports.

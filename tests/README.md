@@ -20,8 +20,10 @@ Coverage:
 - Starting and finishing an imported workout; logging and undoing an imported meal.
 - FileReader fallback for XLSX and JSON backup reading, malformed/oversized file handling and invalid advanced JSON.
 - PDF reader/worker and DOCX import, visible release history, all five navigation tabs in four themes at 320/390/768/1280 px, plus responsive import controls and footer.
-- Updating from an older cached HTML/release/service-worker shell to 2.4.0 without losing plans, then importing XLSX and PDF while offline.
+- Import preview minimum height, internal scroll, background lock and scroll/style restoration, cancellation/reopening, portrait/landscape dimensions and simulated keyboard viewport changes.
+- Five distinct custom workout symbols, Lower icon selection and persistence after reload.
+- Updating from an older cached HTML/release/service-worker shell to 2.4.1 without losing plans, then importing XLSX and PDF while offline.
 
-Validation on 2026-10-07: **23 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
+Validation on 2026-10-07: **27 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
 
 The user's exact XLSX was not supplied. These results cover the fixture layouts above. The Safari/WebKit binary download returned proxy `403 Domain forbidden`, so no WebKit or physical iPhone test was run. Live Supabase authentication/sync and Anthropic calls are not covered; the test contexts have no live account or API key.
