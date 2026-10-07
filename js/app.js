@@ -46,6 +46,7 @@
   const r1 = n => Math.round(n * 10) / 10;
   const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const VERSION = '2.0';
+  const APP_BUILD = 'v3-guides-ui-refinements-20261007';
   const norm = s => { s = String(s).toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; };   // search ignores accents
   /* play an element's leaving animation (class "closing"), then run done() */
   function leave(el, ms, done) {
@@ -211,17 +212,11 @@
       const label = fmtDate(key + 'T12:00', true) + ': ' + (future ? t('momentumFuture') : s.total ? t('momentumDaySummary', s.done, s.total) : t('habitsNoneDue'));
       return `<button class="momentum-cell${s.total ? ' due' : ''}${s.done === s.total && s.total ? ' full' : ''}${key === ui.habitDate ? ' selected' : ''}${key === today() ? ' today' : ''}" style="--fill:${Math.round(s.ratio * 100)}%" data-a="habit-select-date" data-d="${key}" ${future ? 'disabled' : ''} aria-pressed="${key === ui.habitDate}" ${key === today() ? 'aria-current="date"' : ''} aria-label="${esc(label)}" title="${esc(label)}">${day}</button>`;
     }).join('');
-    return `<section class="card momentum-month"><h2>${esc(t('momentumMonth'))}</h2><div class="datenav momentum-month-nav"><button class="icon-btn" data-a="habit-month-step" data-d="-1" aria-label="${esc(t('momentumPrevMonth'))}">${IC.back}</button><b aria-live="polite">${esc(first.toLocaleDateString(loc, { month: 'long', year: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-month-step" data-d="1" aria-label="${esc(t('momentumNextMonth'))}" ${month >= today().slice(0, 7) ? 'disabled' : ''}>${IC.back}</button></div><div class="momentum-weekdays" aria-hidden="true">${weekdays.map(n => `<span>${esc(n)}</span>`).join('')}</div><div class="momentum-heat">${cells}</div><p class="momentum-month-summary">${esc(scheduled ? t('momentumMonthSummary', completed, scheduled, Math.round(completed / scheduled * 100)) : t('momentumMonthEmpty'))}</p><p class="cap">${esc(t('momentumMonthCap'))}</p><button class="pill" data-a="habit-today">${esc(t('momentumBackToday'))}</button></section>`;
+    return `<section class="card momentum-month"><h2>${esc(t('momentumMonth'))}</h2><div class="datenav momentum-month-nav"><button class="icon-btn" data-a="habit-month-step" data-d="-1" aria-label="${esc(t('momentumPrevMonth'))}">${IC.back}</button><b aria-live="polite">${esc(first.toLocaleDateString(loc, { month: 'long', year: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-month-step" data-d="1" aria-label="${esc(t('momentumNextMonth'))}" ${month >= today().slice(0, 7) ? 'disabled' : ''}>${IC.back}</button></div><div class="momentum-weekdays" aria-hidden="true">${weekdays.map(n => `<span>${esc(n)}</span>`).join('')}</div><div class="momentum-heat">${cells}</div><p class="momentum-month-summary">${esc(scheduled ? t('momentumMonthSummary', completed, scheduled, Math.round(completed / scheduled * 100)) : t('momentumMonthEmpty'))}</p><p class="cap">${esc(t('momentumMonthCap'))}</p>${ui.habitDate !== today() ? `<button class="btn sm habit-today" data-a="habit-today">${esc(t('momentumBackToday'))}</button>` : ''}</section>`;
   }
   function vHabits() {
     const k = ui.habitDate, d = new Date(k + 'T12:00'), loc = L() === 'hu' ? 'hu-HU' : 'en-GB', due = D().habits.filter(h => habitDue(h, k)), done = due.filter(h => habitDone(h, k)).length;
     let h = head(t('tabHabits'), t('momentumSub'));
-    // The month is independent of the selected day and precedes the variable-height daily details.
-    h += habitMonthView();
-    let recentTotal = 0, recentDone = 0;
-    const recentStart = Momentum.shift(today(), -27);
-    for (let i = 0; i < 28; i++) { const s = Momentum.summary(D().habits, Momentum.shift(recentStart, i), D()); recentTotal += s.total; recentDone += s.done; }
-    h += `<section class="card momentum-recent"><h3>${esc(t('momentum28'))}</h3><p class="cap">${esc(fmtDate(recentStart + 'T12:00'))} – ${esc(fmtDate(today() + 'T12:00'))}</p><b>${esc(recentTotal ? t('momentumMonthSummary', recentDone, recentTotal, Math.round(recentDone / recentTotal * 100)) : t('momentumMonthEmpty'))}</b></section>`;
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
     h += `<section class="card momentum-hero"><div class="momentum-ring" style="--progress:${percent * 3.6}deg" role="img" aria-label="${percent}%"><b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
@@ -229,6 +224,11 @@
     h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
     h += `<section class="card"><h3>${esc(t('momentumTemplates'))}</h3><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></section>`;
+    let recentTotal = 0, recentDone = 0;
+    const recentStart = Momentum.shift(today(), -27);
+    for (let i = 0; i < 28; i++) { const s = Momentum.summary(D().habits, Momentum.shift(recentStart, i), D()); recentTotal += s.total; recentDone += s.done; }
+    h += `<section class="card momentum-recent"><h3>${esc(t('momentum28'))}</h3><p class="cap">${esc(fmtDate(recentStart + 'T12:00'))} – ${esc(fmtDate(today() + 'T12:00'))}</p><b>${esc(recentTotal ? t('momentumMonthSummary', recentDone, recentTotal, Math.round(recentDone / recentTotal * 100)) : t('momentumMonthEmpty'))}</b></section>`;
+    h += habitMonthView();
     return h;
   }
   function actRow(k) {
@@ -511,6 +511,15 @@
   const topIs = kind => { const f = ui.sheets[ui.sheets.length - 1]; return !!f && f.kind === kind; };
 
   /* ---------- exercise detail ---------- */
+  function drawingPicture(source, phase, board, label) {
+    return `<span class="drawing-picture"><img class="${board ? 'drawing-board phase-' + phase : ''}" src="${esc(source)}" alt="${esc(label)}"></span>`;
+  }
+  function exerciseDrawings(id, name, board, pair) {
+    return `<div class="drawing-pair">${[0, 1].map(phase => {
+      const source = board || pair[phase], label = name + ' · ' + t(phase ? 'artEnd' : 'artStart');
+      return source ? `<button class="drawing-phase" data-a="fig-big" data-id="${esc(id)}" data-phase="${phase}" data-source="${esc(source)}" data-board="${board ? '1' : '0'}" aria-label="${esc(t('figBig') + ': ' + label)}">${drawingPicture(source, phase, !!board, label)}<span class="drawing-caption">${esc(t(phase ? 'artEnd' : 'artStart'))}</span></button>` : `<div class="drawing-phase"><p class="cap">${esc(t('artUnavailable'))}</p></div>`;
+    }).join('')}</div><p class="cap figcap">${esc(t('guideTap'))}</p>`;
+  }
   function shEx(id, item) {
     return () => {
       const e = EX[id], pl0 = PLAN_BY_EX[id], special = pl0 && (pl0.similar || pl0.reps === '21'), name = item ? itemName(item) : exName(id);
@@ -519,7 +528,7 @@
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
       const guide = ExerciseGuide.get(id, e, L()), board = !ui.figBad[id] ? guide.board : '', phases = guide.pair;
-      let h = `<section class="exercise-guide"><button class="exercise-phases${ui.figBig ? ' big' : ''}" data-a="fig-big" data-id="${esc(id)}" aria-label="${esc(t('figBig'))}: ${esc(name)}">${[0,1].map(i => `<span class="exercise-phase"><span class="phase-picture">${board ? `<img class="board-half half-${i}" src="${esc(board)}" alt="${esc(name)} · ${esc(t(i ? 'artEnd' : 'artStart'))}">` : phases[i] ? `<img src="${esc(phases[i])}" alt="${esc(name)} · ${esc(t(i ? 'artEnd' : 'artStart'))}">` : `<span class="phase-missing">${esc(t('phaseMissing'))}</span>`}</span><span class="phase-caption">${esc(t(i ? 'artEnd' : 'artStart'))}</span></span>`).join('')}</button><p class="cap figcap">${esc(t('guideTap'))}</p></section>`;
+      let h = exerciseDrawings(id, name, board, phases);
       const st = exSteps(id);
       if (st.list.length) h += `<section class="card exercise-instructions"><h3>${esc(t('howTo'))}</h3><ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
@@ -997,7 +1006,7 @@
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now">${esc(t('updateNow'))}</button>
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${VERSION} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(t(ui.updateStatus)) : ''}</p>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
     };
   }
@@ -1237,7 +1246,13 @@
     },
     'habit-count'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return; h.logs[k] = { v: Math.max(0, Math.min(200000, r1(Momentum.value(h, k, D()) + num(el.dataset.n)))), t: Date.now() }; Store.save(); if (topIs('day')) refreshSheet(); rerender(); },
     'habit-amount'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || k > today() || !habitDue(h, k)) return; ui.habitAmount = { id: h.id, day: k }; openSheet(() => ({ title: h.name, html: `<form id="habit-amount-form" data-f="habit-amount"><label class="fld"><span>${esc(t('momentumAmount'))} ${esc(h.unit)}</span><input name="value" inputmode="decimal" required value="${Momentum.value(h, k, D())}"></label></form>`, foot: `<button class="btn primary" form="habit-amount-form">${esc(t('save'))}</button>` })); },
-    'habit-select-date'(el) { if (/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) && el.dataset.d <= today()) { const group = el.classList.contains('momentum-cell') ? '.momentum-heat' : '.momentum-week'; ui.habitDate = el.dataset.d; rerender(); const button = $(group + ' [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); } },
+    'habit-select-date'(el) {
+      if (!/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) || el.dataset.d > today()) return;
+      const group = el.classList.contains('momentum-cell') ? '.momentum-heat' : '.momentum-week', top = el.getBoundingClientRect().top;
+      ui.habitDate = el.dataset.d; rerender();
+      const button = $(group + ' [data-d="' + ui.habitDate + '"]');
+      if (button) { button.focus({ preventScroll: true }); window.scrollBy(0, button.getBoundingClientRect().top - top); }
+    },
     'habit-month-step'(el) { const d = new Date(ui.habitMonth + '-01T12:00'); d.setMonth(d.getMonth() + +el.dataset.d); const month = ymd(d).slice(0, 7); if (month > today().slice(0, 7)) return; const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); ui.habitMonth = month; ui.habitDate = month + '-' + pad(Math.min(Number(ui.habitDate.slice(-2)), last)); if (ui.habitDate > today()) ui.habitDate = today(); rerender(); const button = $('.momentum-month-nav [data-d="' + el.dataset.d + '"]'); const focus = button && !button.disabled ? button : $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (focus) focus.focus({ preventScroll: true }); },
     'habit-today'() { ui.habitDate = today(); ui.habitMonth = today().slice(0, 7); rerender(); const button = $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); },
     'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); ui.habitMonth = ui.habitDate.slice(0, 7); rerender(); } },
@@ -1338,9 +1353,13 @@
     'prep-done'() { const p = ui.prep; if (!p) return; const was = p.fin; p.run = false; prepMark(); if (!(D().active && ui.wOpen)) unwake(); closeSheet(); if (!was && (p.live || p.wid)) toast(t('saved')); if (topIs('prep') === false && ui.sheets.length) refreshSheet(); },
     'muscle-focus'(el) { const e = EX[el.dataset.id], group = el.dataset.group; if (!e || (group && !e.p.concat(e.s).includes(group))) return; ui.muscleFocus = { id: el.dataset.id, group }; refreshSheet(); },
     'circuit-next'() { jumpCircuit(); },
-    'fig-big'(el) { ui.figBig = !ui.figBig; el.classList.toggle('big', ui.figBig); },                        // start and end position: next to each other, or large one under the other
+    'fig-big'(el) {
+      const phase = el.dataset.phase === '1' ? 1 : 0, source = el.dataset.source;
+      if (!source) return;
+      const label = exName(el.dataset.id) + ' · ' + t(phase ? 'artEnd' : 'artStart');
+      openSheet(() => ({ title: label, html: `<div class="drawing-zoom" data-id="${esc(el.dataset.id)}">${drawingPicture(source, phase, el.dataset.board === '1', label)}</div>` }));
+    },
     'acc-help'() { openSheet(shAccHelp()); },
-    'fig-view'(el) { D().settings.figure = el.dataset.v === 'photo' ? 'photo' : 'draw'; Store.save(); refreshSheet(); },
     /* account */
     'gate-mode'(el) { const f = $('#gate input[name=email]'), v = el.dataset.v; if (f) ui.gate.email = f.value.trim(); if (ui.gate.busy || ['in', 'up', 'forgot'].indexOf(v) < 0) return; ui.gate.mode = v; ui.gate.err = ''; ui.gate.info = ''; renderGate(); },
     'gate-lang'(el) { const f = $('#gate input[name=email]'); if (f) ui.gate.email = f.value.trim(); D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; ui.gate.err = ''; renderGate(); render(); },
@@ -1351,25 +1370,35 @@
       await CL.signOut(); Store.wipe(); location.reload();                               // nothing of the account stays on this device
     },
     async 'update-now'(el) {
-      if (!('serviceWorker' in navigator) || !window.caches || location.protocol === 'file:') { location.reload(); return; }
-      toast(t('updating')); el.disabled = true;
+      if (ui.updateBusy) return;
+      ui.updateBusy = true; ui.updateStatus = 'updating'; refreshSheet(); toast(t('updating'));
       try {
-        const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' }); if (!probe.ok) throw new Error('offline');      // is the server reachable? (HEAD requests are never answered from the offline copy)
-        const reg = await navigator.serviceWorker.getRegistration(); if (reg) { try { await reg.update(); } catch (e) {} }
-        const sw = navigator.serviceWorker.controller;
-        const done = await new Promise(res => {                                                 // ask the offline helper to fetch every app file fresh
-          if (!sw) { res('none'); return; }
-          const ch = new MessageChannel(), tm = setTimeout(() => res('none'), 6000);
-          ch.port1.onmessage = ev => { clearTimeout(tm); res(ev.data === true ? 'ok' : 'failed'); };
-          sw.postMessage('refresh', [ch.port2]);
-        });
-        if (done === 'failed') throw new Error('refresh');                                      // nothing is thrown away unless the new files really arrived
-        if (done === 'none') {                                                                  // an older helper does not answer: drop it, it is set up again on restart
-          for (const name of (await caches.keys()).filter(k => k.indexOf('gym-shell-') === 0)) await caches.delete(name);
-          if (reg) await reg.unregister();
+        let result = null;
+        if ('serviceWorker' in navigator && window.caches && location.protocol !== 'file:') {
+          const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' });
+          if (!probe.ok) throw new Error('offline');
+          const reg = await navigator.serviceWorker.getRegistration() || await navigator.serviceWorker.register('sw.js');
+          await reg.update();
+          if (reg.installing) await new Promise((resolve, reject) => {
+            const worker = reg.installing, timer = setTimeout(() => finish(new Error('install timeout')), 30000);
+            function finish(error) { clearTimeout(timer); worker.removeEventListener('statechange', changed); error ? reject(error) : resolve(); }
+            function changed() { if (worker.state === 'installed' || worker.state === 'activated') finish(); else if (worker.state === 'redundant') finish(new Error('install failed')); }
+            worker.addEventListener('statechange', changed); changed();
+          });
+          const worker = reg.waiting || reg.active || navigator.serviceWorker.controller;
+          if (!worker) throw new Error('no worker');
+          result = await new Promise((resolve, reject) => {
+            const channel = new MessageChannel(), timer = setTimeout(() => finish(null, new Error('refresh timeout')), 30000);
+            function finish(value, error) { clearTimeout(timer); channel.port1.close(); error ? reject(error) : resolve(value); }
+            channel.port1.onmessage = event => { const value = event.data; if (value === true || (value && value.ok === true)) finish(value); else finish(null, new Error('refresh failed')); };
+            worker.postMessage({ type: 'refresh', versioned: true }, [channel.port2]);
+          });
         }
-        location.reload();
-      } catch (e) { el.disabled = false; toast(t('updateFail')); }
+        // This marker only reports success when the reloaded app matches the refreshed worker.
+        try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version: result && result.version || '', at: Date.now() })); } catch (e) {}
+        ui.updateStatus = result ? 'updateRestarting' : 'updateReloading'; refreshSheet(); toast(t(ui.updateStatus));
+        setTimeout(() => location.reload(), 700);
+      } catch (e) { ui.updateBusy = false; ui.updateStatus = 'updateFail'; refreshSheet(); toast(t('updateFail')); }
     },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
@@ -1594,7 +1623,13 @@
   /* A photo missing from this copy of the app is fetched from the open dataset instead (needs a connection). */
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
-    if (src.indexOf('img/guide/') === 0 || src.indexOf('img/fig/') === 0) { const a = el.closest('.exercise-phases'), id = a && a.dataset.id; if (id && !ui.figBad[id]) { ui.figBad[id] = 1; if (ui.sheets.length) refreshSheet(); } return; }   // Failed guide: keep the instructions and show the missing phase notice.
+    if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0) {
+      const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
+      if (id) ui.figBad[id] = 1;
+      const picture = el.closest('.drawing-picture');
+      if (picture) { picture.innerHTML = `<span class="phase-missing">${esc(t('artUnavailable'))}</span>`; const button = picture.closest('button'); if (button) button.disabled = true; }
+      return;
+    }
     if (src.indexOf('img/ex/') === 0 && /\/t\.jpg$/.test(src) && !el.dataset.t) { el.dataset.t = '1'; el.src = src.replace(/t\.jpg$/, '0.jpg'); return; }                                       // no small picture: use the large one
     if (src.indexOf('img/ex/') === 0 && !el.dataset.fb && (EX[decodeURIComponent(src.split('/')[2])] || {}).k) { el.dataset.fb = '1'; el.src = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/' + src.slice(7).replace(/t\.jpg$/, '0.jpg'); }
     else if (el.dataset.fb || src.indexOf('img/ex/') === 0) el.style.visibility = 'hidden';
@@ -1615,6 +1650,11 @@
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   render(); $('#rb-skip').textContent = t('skip');
   renderGate();
+  try {
+    const result = JSON.parse(sessionStorage.getItem('gym-update-result') || 'null');
+    sessionStorage.removeItem('gym-update-result');
+    if (result && Date.now() - result.at < 120000) { ui.updateStatus = result.version === APP_BUILD ? 'updateSuccess' : 'updateReloaded'; toast(t(ui.updateStatus)); }
+  } catch (e) {}
   if (CL) {
     Store.onSave = syncSoon;
     window.addEventListener('online', () => doSync(false));

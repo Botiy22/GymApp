@@ -1,6 +1,6 @@
 /* Tungsten service worker: makes the app start instantly and work with no connection.
    Bump VERSION whenever you upload changed files so phones pick them up. */
-const VERSION = 'v3-guides-goals-20261007';
+const VERSION = 'v3-guides-ui-refinements-20261007';
 const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v6';   // Invalidate replaced guide boards on update.
 const CORE = ['./', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js', 'data/exercise-guides.js', 'js/exercise-guide.js',
   'js/i18n.js', 'js/plan.js', 'js/musclemap.js', 'js/config.js', 'js/momentum.js', 'js/store.js', 'js/charts.js', 'js/ai.js', 'js/cloud.js', 'js/app.js',
@@ -23,11 +23,11 @@ self.addEventListener('activate', e => {
 });
 /* "Check for update" in Settings: fetch every app file fresh (bypassing all caches), then tell the page whether it worked. */
 self.addEventListener('message', e => {
-  if (e.data !== 'refresh') return;
+  if (e.data !== 'refresh' && !(e.data && e.data.type === 'refresh')) return;
   e.waitUntil((async () => {
     let ok = true;
     try { const c = await caches.open(SHELL); await c.addAll(CORE.map(u => new Request(u, { cache: 'reload' }))); } catch (err) { ok = false; }
-    if (e.ports && e.ports[0]) e.ports[0].postMessage(ok);
+    if (e.ports && e.ports[0]) e.ports[0].postMessage(e.data === 'refresh' ? ok : { ok, version: VERSION });
   })());
 });
 /* Hand cached app files to the page marked "always re-check", so a reload can never reuse an older in-memory copy. */

@@ -282,3 +282,7 @@ Object.assign(I18N.en, {
   momentumMonthEmpty: 'No goals scheduled in this period yet.',
   momentumMonthCap: 'Counts goals due up to today. Select a day to see its details.'
 });
+
+Object.assign(I18N.hu, {guideTap:'Koppints a kívánt rajzra a nagyításhoz.', figCap:'1 = kiindulás, 2 = véghelyzet. Koppints a kívánt rajzra.', updateSuccess:'Sikeres frissítés. Az alkalmazás naprakész.', updateRestarting:'A letöltés kész. Újraindítás…', updateReloading:'Az alkalmazás újraindul…', updateReloaded:'Az alkalmazás újratöltve. A frissítés nem igazolható.', updateCap:'Letölti a frissítést, majd újraindítás után jelzi az eredményt. Az adataid megmaradnak.'});
+Object.assign(I18N.en, {guideTap:'Tap the drawing you want to enlarge.', figCap:'1 = start, 2 = finish. Tap either drawing.', updateSuccess:'Update successful. The app is up to date.', updateRestarting:'Download complete. Restarting…', updateReloading:'Restarting the app…', updateReloaded:'The app has reloaded. The update could not be verified.', updateCap:'Downloads the update and reports the result after restarting. Your data stays.'});
+
