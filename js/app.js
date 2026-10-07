@@ -2,8 +2,8 @@
   'use strict';
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE) {
-    const src = 'js/release.js';
+  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PDFLocal || !window.PlanImport) {
+    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PDFLocal ? 'js/pdf-local.js' : 'js/plan-import.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -719,7 +719,7 @@
   function applyPlan(o) {
     return Store.apply(c => {
       if (o.plan) c.plan = o.plan;
-      if (Array.isArray(o.routines) && o.routines.length) { const ids = o.routines.map(r => r && r.id); c.routines = o.routines.concat(c.routines.filter(r => !r.builtin && ids.indexOf(r.id) < 0)); }
+      if (Array.isArray(o.routines) && o.routines.length) { const ids = o.routines.map(r => r && r.id); c.routines = o.routines.concat(c.routines.filter(r => (o.appendRoutines === true || !r.builtin) && ids.indexOf(r.id) < 0)); }
       ['myFoods', 'myEx'].forEach(k => { if (Array.isArray(o[k])) { const ids = o[k].map(z => z && z.id); c[k] = (c[k] || []).filter(z => ids.indexOf(z.id) < 0).concat(o[k]); } });
     });
   }
@@ -1007,7 +1007,7 @@
         <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}<button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
         ${D().plan ? `<section class="card"><h3>${esc(t('planCard'))}</h3><p class="cap">${esc(D().plan.name || t('mealPlan'))}</p>${sw('', t('planUseTg'), `data-in="plan-tg"${D().plan.targets ? ' checked' : ''}`)}<button class="btn" data-a="plan-notes">${esc(t('planRules'))}</button><button class="btn danger" data-a="plan-remove">${esc(t('planRemove'))}</button></section>` : ''}
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
-        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p>
+        <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(L() === 'hu' ? 'PDF / Word / Excel terv' : 'PDF / Word / Excel plan')}</button>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
         <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
@@ -1220,6 +1220,18 @@
 
   /* ================= ACTIONS ================= */
   const A = {
+    'pdf-plan'() {
+      if (!document.querySelector('link[href="css/plan-import.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/plan-import.css'; document.head.append(style); }
+      PlanImport.open({ lang: L(),
+        catalog: Object.values(EX).map(e => ({ id: e.id, hu: HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n })),
+        onExport: plan => saveFile('GymApp-terv.json', new Blob([JSON.stringify(plan, null, 2)], { type: 'application/json' })),
+        onApply: plan => {
+          if (D().routines.length + plan.routines.length > 100) { toast(L() === 'hu' ? 'Legfeljebb 100 edzésterv tárolható. Előbb távolíts el egy nem használt tervet.' : 'At most 100 routines can be saved. Remove an unused routine first.'); return false; }
+          const saved = applyPlan(plan); ui.foodDate = today(); closeSheet(true); render();
+          toast(saved ? t('planLoaded') : (L() === 'hu' ? 'A terv az alkalmazásban van, de az eszközre mentés nem sikerült. Készíts biztonsági másolatot.' : 'Plan loaded, but device storage failed. Export a backup.'));
+        }
+      });
+    },
     tab(el) { const k = el.dataset.tab; if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
     /* calendar, day, activity */
     cal(el) { const d = new Date((/^\d{4}-\d\d-\d\d$/.test(el.dataset.d || '') ? el.dataset.d : today()) + 'T12:00'); ui.cal = { y: d.getFullYear(), m: d.getMonth() }; openSheet(shCal()); },
@@ -1590,6 +1602,7 @@
       if (plan && plan.app === 'gymapp' && plan.kind === 'plan') {                           // a plan file: routines, meal plan, rules; the log stays
         const nr = Array.isArray(plan.routines) ? plan.routines.length : 0, nm = plan.plan && Array.isArray(plan.plan.days) ? plan.plan.days.reduce((a, x) => a + (x && Array.isArray(x.meals) ? x.meals.length : 0), 0) : 0;
         if (!nr && !nm) toast(t('importBad'));
+        else if (plan.appendRoutines === true && D().routines.filter(r => !plan.routines.some(n => n.id === r.id)).length + nr > 100) toast(L() === 'hu' ? 'Legfeljebb 100 edzésterv tárolható.' : 'At most 100 routines can be saved.');
         else if (confirm(t('planConfirm', nr, nm))) { applyPlan(plan); ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded')); }
         el.value = ''; return;
       }
@@ -1669,5 +1682,6 @@
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
+
 
 

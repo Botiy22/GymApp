@@ -1,0 +1,9 @@
+.pdf-plan-dialog{width:min(760px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 32px);padding:20px;box-sizing:border-box;border:1px solid var(--line,#777);border-radius:20px;background:var(--bg,#181c27);color:var(--ink,#eee);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+.pdf-plan-dialog::backdrop{background:#000b}
+.pdf-plan-dialog p,.pdf-plan-dialog li{overflow-wrap:anywhere;white-space:pre-wrap}
+.pdf-plan-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem;max-height:260px;overflow-y:auto}
+.pdf-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.pdf-head h2{margin:0;font-size:1.2rem}
+.pdf-head .btn{width:auto;flex:none}
+.pdf-plan-dialog .fld{min-width:0}.pdf-plan-dialog input,.pdf-plan-dialog select,.pdf-plan-dialog textarea{max-width:100%;box-sizing:border-box}.pdf-plan-dialog input[type=checkbox]{width:auto}
+.pdf-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pdf-ex{border-top:1px solid #8885;padding-top:12px;margin-top:12px}.pdf-plan-dialog [data-pdf=status]{font-size:.9rem}.pdf-plan-dialog button{white-space:normal}
+@media(max-width:380px){.pdf-plan-dialog{padding:12px}.pdf-fields{grid-template-columns:minmax(0,1fr)}}
