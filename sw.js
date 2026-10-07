@@ -1,6 +1,6 @@
 /* Tungsten service worker: makes the app start instantly and work with no connection.
    Bump VERSION whenever you upload changed files so phones pick them up. */
-const VERSION = 'v2-momentum-20261006';
+const VERSION = 'v2-goals-calendar-20261007';
 const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v3';   // v3: invalidate replaced movement boards as well as cached photos
 const CORE = ['./', 'index.html', 'css/app.css', 'manifest.webmanifest', 'data/exercises.js', 'data/exercises.hu.js', 'data/foods.js', 'data/recipes.js', 'data/figures.js', 'data/body.js', 'data/additions.js', 'data/muscle-details.js',
   'js/i18n.js', 'js/plan.js', 'js/musclemap.js', 'js/config.js', 'js/momentum.js', 'js/store.js', 'js/charts.js', 'js/ai.js', 'js/cloud.js', 'js/app.js',
@@ -47,3 +47,4 @@ self.addEventListener('fetch', e => {
     return (await net) || (req.mode === 'navigate' ? c.match('index.html') : Response.error());
   }));
 });
+

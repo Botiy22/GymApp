@@ -258,3 +258,25 @@ I18N.hu.aboutText += " További négy recept a beküldött videókból származi
 
 Object.assign(I18N.en, {"artPhases": "Start and finish positions", "artStart": "1 · Start", "artEnd": "2 · Finish", "artUnavailable": "The illustration could not load. Instructions are available below.", "muscleNames": "Specific muscles", "musclePrecision": "The map shows muscle groups, not measured activation or individual fibres. The full view preserves the workout plan’s map.", "circuitProgress": "Circuit workout progress", "circuitComplete": "All rounds complete", "ideasCap": "Original recipes use nutrition calculated from USDA data. Recipes from supplied clips use creator-reported figures; see each recipe for its source and missing values.", "videosCap": "Links open on TikTok. Four supplied recipes are also available among meal ideas."});
 I18N.en.aboutText += " Four additional recipes are transcribed from supplied clips with unverified creator-reported nutrition. Detailed WebP movement illustrations are AI-generated, separate from Everkinetic drawings.";
+Object.assign(I18N.hu, {
+  tabHabits: 'Célok', momentumSub: 'Napi célok, heti és havi haladás.',
+  momentumWeek: 'Heti haladás', momentumMonth: 'Havi haladás', momentum28: 'Az elmúlt 28 nap',
+  momentumDone: 'Minden cél teljesítve!', momentumRest: 'Erre a napra nincs cél.',
+  momentumPrevMonth: 'Előző hónap', momentumNextMonth: 'Következő hónap',
+  momentumBackToday: 'Vissza a mai naphoz', momentumFuture: 'Jövőbeli nap',
+  momentumDaySummary: '{0} / {1} cél teljesítve',
+  momentumMonthSummary: '{0} / {1} cél teljesítve · {2}%',
+  momentumMonthEmpty: 'Ebben az időszakban még nincs beütemezett cél.',
+  momentumMonthCap: 'A mai napig esedékes célokat számoljuk. Koppints egy napra a napi részletekhez.'
+});
+Object.assign(I18N.en, {
+  tabHabits: 'Goals', momentumSub: 'Daily goals, weekly and monthly progress.',
+  momentumWeek: 'Weekly progress', momentumMonth: 'Monthly progress', momentum28: 'The past 28 days',
+  momentumDone: 'All goals completed!', momentumRest: 'No goals for this day.',
+  momentumPrevMonth: 'Previous month', momentumNextMonth: 'Next month',
+  momentumBackToday: 'Back to today', momentumFuture: 'Future day',
+  momentumDaySummary: '{0} / {1} goals completed',
+  momentumMonthSummary: '{0} / {1} goals completed · {2}%',
+  momentumMonthEmpty: 'No goals scheduled in this period yet.',
+  momentumMonthCap: 'Counts goals due up to today. Select a day to see its details.'
+});
