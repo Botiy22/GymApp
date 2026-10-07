@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.4.3';
-  const build = '20261007.12';
+  const version = '2.5.0';
+  const build = '20261007.13';
   const history = [
     {version,build,date:'2026-10-07',
+      hu:['Kompakt tervfeltöltés a Beállítások mellett és összecsukható heti étrend.','Az Edzés oldal külön Edzés, Tervek, Napló és Rangok nézetet kapott.','Edzés közben közvetlenül választhatsz gyakorlatot; az összterhelésből látszanak a naplózott emelések.','Hat egyéni emelési rang négy rudas alapgyakorlathoz, tényleges munkasorozatok alapján.'],
+      en:['Compact plan upload beside Settings and collapsible weekly meals.','The Workout page now has Train, Plans, History and Ranks views.','Jump directly to exercises during a workout and expand volume to inspect your lifts.','Six personal lift ranks across four barbell exercises, using actual working sets.']},
+    {version:'2.4.3',build:'20261007.12',date:'2026-10-07',
       hu:['A frissítés minden alkalmazásfájlt ellenőriz, mielőtt az új verziót aktiválja.','A PDF-beolvasó és a többi alkalmazásfájl azonos kiadásból töltődik be.','A hiányzó rajzok helyén a meglévő kezdő- és véghelyzet-fotók jelennek meg.'],
       en:['Updates verify every app file before activating the new version.','The PDF reader and the rest of the app load from the same verified release.','Existing start/end photos fill the gaps where drawings are not ready.']},
     {version:'2.4.2',build:'20261007.11',date:'2026-10-07',

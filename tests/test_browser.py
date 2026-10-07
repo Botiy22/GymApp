@@ -313,8 +313,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.4.3')
-        expect(self.page.locator('#sheet')).to_contain_text('20261007.12')
+        expect(self.page.locator('#sheet')).to_contain_text('2.5.0')
+        expect(self.page.locator('#sheet')).to_contain_text('20261007.13')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -395,10 +395,10 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
-        for path in ['/css/design.css','/js/plan-sheet.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
+        for path in ['/css/design.css','/js/plan-sheet.js','/js/strength-ranks.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
         self.context.set_offline(True);self.page.reload(wait_until='load')
         expect(self.page.locator('[data-a="pdf-plan"]').first).to_be_visible()
         self.upload(self.en_file);self.add()
@@ -426,7 +426,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines'])
         self.assertEqual(before['plan'],self.data()['plan'])
         self.assertEqual('updateSuccess',self.page.evaluate('() => __gym.ui.updateStatus'))
@@ -448,7 +448,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-restart"]').click()
-        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
         expect(self.page.locator('#ready-update')).to_have_count(0)
 
     def test_release_manifest_matches_every_published_file(self):
@@ -458,10 +458,108 @@ class AppBrowserTests(unittest.TestCase):
         for path,digest in data['assets'].items():
             self.assertEqual(digest,hashlib.sha256((ROOT/('index.html' if path=='./' else path)).read_bytes()).hexdigest(),path+' requires regenerating the release manifest')
 
+    def test_compact_header_upload_is_available_on_all_pages(self):
+        for tab in ['home','food','habits','lib','prog']:
+            self.page.locator('[data-tab="'+tab+'"]').click()
+            button=self.page.locator('.top-actions [data-a="pdf-plan"]')
+            expect(button).to_be_visible();expect(button).to_have_attribute('aria-label','Upload a plan (PDF, Excel or Word)')
+            box=button.bounding_box();self.assertAlmostEqual(44,box['width'],places=1);self.assertAlmostEqual(44,box['height'],places=1)
+            button.click();expect(self.page.locator('#pdf-plan-dialog')).to_be_visible()
+            self.page.locator('[data-pdf="close"]').click()
+
+    def test_meal_plan_days_and_diary_plan_can_be_collapsed(self):
+        self.upload(self.hu_file);self.add();self.page.locator('[data-pdf="open-meals"]').click()
+        expect(self.page.locator('.meal-week > details')).to_have_count(7)
+        day=self.page.locator('[data-meal-day="0"]')
+        self.assertFalse(day.evaluate('(el) => el.open'))
+        day.locator(':scope > summary').click();expect(day.locator('.meal-plan-row')).to_be_visible()
+        day.locator(':scope > summary').click();expect(day.locator('.meal-plan-row')).not_to_be_visible()
+        self.page.locator('[data-v="diary"]').click()
+        self.page.evaluate('() => {__gym.ui.foodDate="2026-10-05";__gym.render();}')
+        plan=self.page.locator('.daily-plan');self.assertTrue(plan.evaluate('(el) => el.open'))
+        plan.locator(':scope > summary').click();expect(plan.locator('[data-a="pm-tick"]')).not_to_be_visible()
+        plan.locator(':scope > summary').click();plan.locator('[data-a="pm-tick"]').click()
+        self.assertEqual(340,self.data()['food']['2026-10-05'][0]['kcal'])
+
+    def test_rank_thresholds_ignore_warmups_ticks_variants_and_unfinished_sets(self):
+        values=self.page.evaluate("""() => {
+          const ex='Barbell_Bench_Press_-_Medium_Grip';
+          const rank=(kg,extra={})=>StrengthRanks.summary([{id:'test',entries:[{ex,sets:[{kg,reps:1,...extra}]}]}])[0].tier;
+          const boundaries=[0,19.5,20,39.5,40,60,80,100,139.5,140].map(kg=>rank(kg));
+          const ignored=StrengthRanks.summary([
+            {tick:true,entries:[{ex,sets:[{kg:200,reps:1}]}]},
+            {entries:[{ex,sets:[{kg:200,reps:1,w:true},{kg:200,reps:1,done:false},{kg:100,reps:0}]}]},
+            {entries:[{ex:'Dumbbell_Bench_Press',sets:[{kg:200,reps:1}]}]}
+          ])[0];
+          return {boundaries,ignored:ignored.tier,tiers:StrengthRanks.tiers.map(t=>t.en),ids:StrengthRanks.tracks.map(t=>t.ex),catalogue:EXERCISES.map(e=>e.id)};
+        }""")
+        self.assertEqual([-1,-1,0,0,1,2,3,4,4,5],values['boundaries'])
+        self.assertEqual(-1,values['ignored'])
+        self.assertEqual(['Spark','Ember','Steel','Sentinel','Titan','Apex'],values['tiers'])
+        self.assertTrue(set(values['ids']).issubset(values['catalogue']))
+
+    def test_finish_workout_expands_volume_and_unlocks_persistent_rank(self):
+        self.page.locator('[data-a="w-start"]').first.click()
+        self.page.locator('[data-a="w-warm"][data-i="0"][data-j="0"]').click()
+        for j,kg,reps in [(0,'200','3'),(1,'100','5')]:
+            self.page.locator('[data-in="w-kg"][data-i="0"][data-j="'+str(j)+'"]').fill(kg)
+            self.page.locator('[data-in="w-reps"][data-i="0"][data-j="'+str(j)+'"]').fill(reps)
+            self.page.locator('[data-a="w-check"][data-i="0"][data-j="'+str(j)+'"]').click()
+        self.page.on('dialog',lambda dialog:dialog.accept())
+        self.page.locator('[data-a="w-finish"]').click()
+        expect(self.page.locator('.rank-unlocks')).to_contain_text('Titan')
+        expect(self.page.locator('.volume-total b')).to_have_text('500')
+        self.page.locator('.volume-total').click()
+        details=self.page.locator('[data-volume]')
+        self.assertTrue(details.evaluate('(el) => el.open'))
+        expect(details).to_contain_text('100 kg × 5');expect(details).not_to_contain_text('200 kg')
+        self.page.locator('[data-a="open-ranks"]').click()
+        bench=self.page.locator('[data-rank="bench"]')
+        expect(bench.locator('.rank-heading b')).to_have_text('Titan')
+        expect(bench.locator('.rank-next')).to_have_text('Next: Apex at 140 kg · 40 kg to go')
+        self.page.reload(wait_until='networkidle')
+        self.page.locator('.workout-tabs [data-a="workout-view"][data-v="ranks"]').click()
+        expect(self.page.locator('[data-rank="bench"] .rank-heading b')).to_have_text('Titan')
+        self.page.locator('[data-a="workout-view"][data-v="history"]').click()
+        self.page.locator('.workout-history .workout-volume > summary').click()
+        expect(self.page.locator('.volume-breakdown')).to_contain_text('100 kg × 5')
+        self.page.locator('.history-title').click();self.page.locator('[data-a="wk-del"]').click()
+        self.page.locator('.workout-tabs [data-a="workout-view"][data-v="ranks"]').click()
+        expect(self.page.locator('[data-rank="bench"] .rank-heading b')).to_have_text('Unranked')
+
+    def test_workout_jump_select_scrolls_to_chosen_exercise(self):
+        self.page.locator('[data-a="w-start"]').first.click()
+        jump=self.page.locator('.workout-jump')
+        self.assertGreaterEqual(jump.bounding_box()['y'],self.page.locator('.w-head').bounding_box()['y']+self.page.locator('.w-head').bounding_box()['height']-1)
+        self.assertTrue(self.page.locator('[data-in="w-jump"]').evaluate('(el) => {const box=el.getBoundingClientRect();return el.contains(document.elementFromPoint(box.x+box.width/2,box.y+box.height/2));}'))
+        self.page.locator('[data-in="w-jump"]').select_option('5')
+        self.page.wait_for_timeout(500)
+        row=self.page.locator('[data-ex-index="5"]')
+        self.assertGreater(self.page.locator('.w-body').evaluate('(el) => el.scrollTop'),0)
+        self.assertGreaterEqual(row.bounding_box()['y'],self.page.locator('.workout-jump').bounding_box()['y'])
+        self.assertLess(row.bounding_box()['y'],350)
+        expect(self.page.locator('.workout-completion')).to_contain_text('0/')
+        self.page.locator('[data-a="w-min"]').click()
+        expect(self.page.locator('[data-a="w-open"]')).to_be_visible()
+
+    def test_workout_sections_are_responsive_in_both_languages_and_themes(self):
+        for width in [320,390,768,1280]:
+            self.page.set_viewport_size({'width':width,'height':844})
+            for lang in ['en','hu']:
+                self.page.evaluate('(lang) => {Store.d.settings.lang=lang;__gym.render();}',lang)
+                for theme in ['deep','light']:
+                    self.page.evaluate('(theme) => {__gym.A["set-bg"]({dataset:{v:theme}});}',theme)
+                    for tab in ['train','plans','history','ranks']:
+                        self.page.locator('[data-a="workout-view"][data-v="'+tab+'"]').first.click()
+                        self.assertFalse(self.page.evaluate('() => document.documentElement.scrollWidth>innerWidth+1'),(width,lang,theme,tab))
+                        expect(self.page.locator('.workout-tabs [data-v="'+tab+'"]')).to_have_attribute('aria-pressed','true')
+
     def test_import_preview_has_space_and_owns_scroll(self):
         # Begin with a scrolled page; closing must restore this exact position.
         self.page.evaluate("() => {document.body.style.minHeight='2000px';window.scrollTo(0,180);}")
         before=self.page.evaluate('() => scrollY')
+        # Open at this scroll position without clicking the offscreen header.
+        self.page.evaluate('() => __gym.A["pdf-plan"]()')
         self.upload(self.hu_file)
         for width,height,minimum in [(390,844,440),(320,568,250),(844,390,150)]:
             self.page.set_viewport_size({'width':width,'height':height})
@@ -540,6 +638,7 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('.drawing-zoom img')).to_have_attribute('src','img/ex/Barbell_Curl/1.jpg')
 
     def test_custom_workout_symbols_and_lower_icon_persist(self):
+        self.page.locator('[data-a="workout-view"][data-v="plans"]').first.click()
         symbols=[]
         for name in ['push','pull','legs','upper','lower']:
             icon=self.page.locator('.rtile[data-id="'+name+'"] .routine-symbol')
@@ -552,6 +651,7 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('[data-a="re-icon"][data-v="lower"]')).to_have_attribute('aria-pressed','true')
         self.page.locator('[data-a="re-save"]').click()
         self.page.reload(wait_until='networkidle')
+        self.page.locator('[data-a="workout-view"][data-v="plans"]').first.click()
         self.assertEqual('lower',next(r for r in self.data()['routines'] if r['id']=='upper')['icon'])
         expect(self.page.locator('.rtile[data-id="upper"]')).to_have_class(__import__('re').compile('.*ic-lower.*'))
 

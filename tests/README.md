@@ -13,6 +13,10 @@ The tests start a temporary HTTP server and run the real app in fresh Chromium c
 
 Coverage:
 
+- Compact header upload across all pages; collapsible weekly days and daily plan with retained diary logging.
+- Four Workout sections at mobile/desktop widths in English/Hungarian and dark/light themes; active exercise selector.
+- Actual workout finish, volume expansion excluding warm-ups, Titan unlock at a logged 100 kg bench, persistence after reload and recalculation after deletion. Exact rank boundaries, catalogue IDs and exclusions for ticked/warm-up/unfinished/other-variant sets.
+
 - XLSX recognition, explicit column mapping, worksheet-based workout/day names, merged day/meal groups, decimal commas, units, per-100-g scaling and zero-second rest.
 - Automatic preview, missing-value/exercise corrections, explicit default-rest selection, missing-weekday scheduling, selecting only the valid section and repeat file selection.
 - Appending workouts/meals, confirmed meal-plan replacement, capacity limits and persistence across reloads.
@@ -25,9 +29,9 @@ Coverage:
 - Five distinct custom workout symbols, Lower icon selection and persistence after reload.
 - Content-hash manifest validation, stale parser rejection/retry without data loss, immutable releases and a restart prompt that preserves an open preview.
 - Loaded start/end images for every built-in routine exercise, exact photo fallback, enlargement and broken-drawing recovery.
-- Updating from an older cached HTML/release/service-worker shell to 2.4.3 without losing plans, then importing XLSX and PDF while offline.
+- Updating from an older cached HTML/release/service-worker shell to 2.5.0 without losing plans, then importing XLSX and PDF while offline.
 
-Validation on 2026-10-07: **34 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
+Validation on 2026-10-07: **40 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
 
 The user's exact XLSX was not supplied. These results cover the fixture layouts above. The Safari/WebKit binary download returned proxy `403 Domain forbidden`, so no WebKit or physical iPhone test was run. Live Supabase authentication/sync and Anthropic calls are not covered; the test contexts have no live account or API key.
 

@@ -84,6 +84,14 @@ The phone needs to load the app once from an `https://` address. After that it r
 Any other static host with https works the same way (Netlify, Cloudflare Pages, your own server).
 The folder has about 3,000 files (about 115 MB), nearly all of them exercise photos and drawings.
 
+## Workout navigation and lift ranks
+
+The Workout page has **Train**, **Plans**, **History** and **Ranks** sections. Train starts/resumes a session; Plans selects or edits a routine; History opens previous sessions and expands their working-set volume. During a workout, use the exercise selector to jump directly to a lift. Tap the volume total after finishing to see the recorded weights, reps and exercise subtotals.
+
+Ranks use actual logged working-set weights for four barbell lifts. Existing history counts automatically. Spark → Ember → Steel → Sentinel → Titan → Apex each has a lift-specific target; a 100 kg flat barbell bench working set earns Titan. Warm-ups, tick-only workouts and estimated 1RM do not count. See [RANKS.md](RANKS.md) for every threshold and qualification rule.
+
+Plan upload is available through the compact file button beside Settings on every main page. Weekly meal-plan days are collapsible, with the current scheduled day expanded; the daily plan in the Food diary can also be folded.
+
 ## Updating the app
 
 Change the files, update `js/release.js`, then run `python3 tools/build_release.py` before publishing the complete checkout. The generated `release-manifest.json` lists the SHA-256 hash of every app-shell file. The service worker rejects incomplete or stale deployments and activates one verified release. Never upload only the new version metadata. Add new offline app files to `CORE` in `sw.js` before generating the manifest.

@@ -6,6 +6,16 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.5.0 — 2026-10-07, build 20261007.13
+
+- Compact 44-pixel plan upload button beside Settings on every main page; supports PDF, Excel and Word without repeated large import cards.
+- Workout navigation is divided into Train, Plans, History and Ranks. Train focuses on starting/resuming, switching plans and the latest session; Plans uses compact routine rows, and History includes expandable working-set volume.
+- Active workouts have a direct exercise selector and completed-set count. Finishing a workout exposes an expandable weight/reps/subtotal breakdown by tapping the volume total.
+- Weekly meal days and the diary's daily plan are collapsible; the current scheduled weekday is expanded initially. Existing one-tap meal logging and plan notes are retained.
+- Six personal ranks (Spark, Ember, Steel, Sentinel, Titan, Apex) track actual working-set weight in four exact barbell lifts. Existing history qualifies automatically; warm-ups and tick-only sessions are excluded. New tiers appear after finishing, with next targets and milestone ladders. See RANKS.md for thresholds and data rules.
+- 40 Chromium browser tests passed: new upload/collapse navigation, active exercise jumps, actual finish/volume/rank unlock, reload/delete recalculation, boundary/exclusion rules and mobile layouts in both languages/themes, plus existing import, storage rollback, image and verified offline-update checks. JavaScript syntax, content-hash manifest and whitespace checks passed. Physical Safari/iPhone remains untested.
+- Previous release backed up in a verified Git bundle and `backup/before-workout-ranks-20261007`. Release history is visible in Settings.
+
 ## 2.4.3 — 2026-10-07, build 20261007.12
 
 - Release manifests contain SHA-256 hashes for every app-shell file. Installation and explicit updates verify all downloads before replacing the release; active modules are immutable rather than individually refreshed. Stale/incomplete deployments are rejected without replacing the working cache.

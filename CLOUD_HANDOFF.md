@@ -1,3 +1,13 @@
+# Update — 2.5.0, 2026-10-07
+
+Implemented compact header plan upload, collapsible weekly/daily meals, a focused Workout page (Train/Plans/History/Ranks), active exercise jumps and expandable volume breakdowns. Six derived personal lift ranks track four exact barbell lifts using actual working sets, with upgrade feedback on finish and next milestones. Existing logs qualify; no account schema changes. RANKS.md documents thresholds and exclusions.
+
+Validation: 40 Chromium browser tests, syntax/whitespace/content-hash checks and mobile screenshot review. Includes actual 100 kg bench finish → Titan → volume breakdown → reload → delete/recalculate; responsive views in both languages and themes; prior XLSX/PDF/storage rollback/media/verified offline updates. Physical Safari/iPhone remains untested.
+
+Backup bundle: `/workspace/GymApp-backups/GymApp-before-workout-ranks-20261007.bundle`; remote branch `backup/before-workout-ranks-20261007` preserves the previous release. Regenerate `release-manifest.json` with `python3 tools/build_release.py` after any future core-file changes.
+
+---
+
 # Update — 2.4.3, 2026-10-07
 
 The screenshot exactly matched the old v2.4.1 PDF parser. Reproduced it using the historical app/parser/service worker, then verified the upgrade to this release and successful import/save/reload of all 28 meals from the supplied PDF. Releases now use a SHA-256 manifest and immutable app-module caches; stale/incomplete deployments are rejected before activation. Explicit updates verify the latest worker version, while automatic updates offer a restart without discarding open previews. Run `python3 tools/build_release.py` after any release/core-file change, and publish all app files plus the manifest together.

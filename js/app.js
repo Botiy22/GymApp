@@ -3,8 +3,8 @@
   if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport) {
-    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : 'js/plan-import.js';
+  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks) {
+    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : 'js/strength-ranks.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -88,10 +88,11 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
+    upload: '<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 17v-5m-3 3 3-3 3 3"/></svg>',
     gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.5-2-3.4-2.3 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.6A7.6 7.6 0 0 0 6.900 6.600l-2.300-1-2 3.400 2 1.500a7.600 7.600 0 0 0 0 3l-2 1.500 2 3.400 2.300-1a7.600 7.600 0 0 0 2.600 1.500l.5 2.600h4l.5-2.600a7.600 7.600 0 0 0 2.600-1.500l2.300 1 2-3.400z"/></svg>',
     home: '<svg viewBox="0 0 24 24"><path d="M3 10v4M6.500 6.500v11M17.500 6.500v11M21 10v4M6.500 12h11"/></svg>',
     lib: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.500"/><path d="M16 16l5 5"/></svg>',
@@ -153,6 +154,7 @@
   }
   const bestOf = sets => sets.filter(s => !s.w).reduce((m, s) => Math.max(m, e1rm(s.kg, s.reps)), 0);
   const volOf = w => w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).reduce((b, s) => b + s.kg * s.reps, 0), 0);
+  const volumeText = n => n.toLocaleString(L()==='hu'?'hu-HU':'en-GB',{maximumFractionDigits:2});
   const setsOf = w => w.tick ? (w.pl || []).reduce((a, x) => a + x.n, 0) : w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).length, 0);
   const wMeta = w => (w.tick ? t('tickedTag') : fmtDur(w.end - w.start)) + ' · ' + setsOf(w) + ' ' + t('setsWord') + (w.tick ? '' : ' · ' + compact(volOf(w)) + ' kg');
   function weekWorkouts() { const ws = weekStart(Date.now()).getTime(); return D().workouts.filter(w => w.start >= ws); }
@@ -182,7 +184,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal) => `<header class="top"><div><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></header>`;
+  const head = (title, sub, cal) => `<header class="top"><div><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -240,32 +242,46 @@
     return `<button class="qrow actrow" data-a="act" data-d="${esc(k)}"><span class="q-ic line">${IC.walk}</span><span class="rc-t"><b>${has ? `${compact(a.steps)} ${esc(t('steps'))} · ${compact(a.kcal)} kcal` : esc(t('actAdd'))}</b><i>${esc(t(has ? 'actEdit' : 'actAddSub'))}</i></span>${IC.chev}</button>`;
   }
 
+  function routineGrid() {
+    return `<div class="h2row"><h2>${esc(t('routines'))}</h2><button class="pill" data-a="r-new">${IC.plus}${esc(t('newPlan'))}</button></div><div class="rlist rgrid">`+D().routines.map(r=>{
+      const ic=rIcon(r);return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}${r.opt?' · '+esc(t('optional')):''}</i></span>${IC.chev}</button>`;
+    }).join('')+'</div>';
+  }
+  function volumeBreakdown(w) {
+    const rows=w.entries.map(e=>({entry:e,sets:e.sets.filter(s=>!s.w)})).filter(row=>row.sets.length);
+    return `<div class="volume-breakdown">${rows.map(({entry,sets})=>`<div class="volume-lift"><div><b>${esc(itemName(entry))}</b><strong>${volumeText(sets.reduce((n,s)=>n+s.kg*s.reps,0))} kg</strong></div><p>${sets.map(s=>`${dec(s.kg)} kg × ${s.reps}`).join(' · ')}</p></div>`).join('')}<p class="cap">${esc(t('volumeMethod'))}</p></div>`;
+  }
+  function workoutHistory(workouts) {
+    return workouts.length?workouts.map(w=>`<article class="workout-history"><button class="history-title" data-a="wk-open" data-id="${esc(w.id)}"><span><b>${esc(w.name)}</b><small>${esc(fmtDate(w.start))} · ${setsOf(w)} ${esc(t('setsWord'))}</small></span>${IC.chev}</button>${w.tick?`<p class="cap">${esc(t('tickedTag'))}</p>`:`<details class="workout-volume"><summary><span>${volumeText(volOf(w))} kg <small>${esc(t('volume'))}</small></span>${IC.down}</summary>${volumeBreakdown(w)}</details>`}</article>`).join(''):`<p class="empty">${esc(t('noWorkouts'))}</p>`;
+  }
+  function rankBadge(tier) {
+    return `<span class="rank-badge rank-${tier}" aria-hidden="true"><svg viewBox="0 0 40 44"><path d="M20 3 35 10v13c0 9-15 18-15 18S5 32 5 23V10z"/><path d="m12 22 8-9 8 9-8 9z"/>${tier>=2?'<path d="M12 10h16"/>':''}${tier>=4?'<path d="m16 21 4-4 4 4-4 4z"/>':''}</svg></span>`;
+  }
+  function vRanks() {
+    const ranks=StrengthRanks.summary(D().workouts),highest=Math.max(...ranks.map(r=>r.tier));
+    let h=`<section class="rank-hero">${rankBadge(highest)}<div><small>${esc(t('highestRank'))}</small><h2>${esc(highest<0?t('rankUnranked'):StrengthRanks.tiers[highest][L()])}</h2><p>${esc(t('rankIntro'))}</p></div></section><div class="rank-grid">`;
+    h+=ranks.map(r=>`<section class="rank-card" data-rank="${r.id}"><div class="rank-heading">${rankBadge(r.tier)}<div><h3>${esc(r[L()])}</h3><b>${esc(r.tier<0?t('rankUnranked'):StrengthRanks.tiers[r.tier][L()])}</b></div></div><p class="rank-best">${dec(r.best)} <small>kg${r.reps?' × '+r.reps:''}</small></p><p class="cap">${esc(t('heaviestSet'))}</p><div class="rank-progress" role="progressbar" aria-label="${esc(r[L()])}" aria-valuenow="${Math.round(r.progress*100)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${r.progress*100}%"></span></div><p class="rank-next">${r.next?esc(t('rankNext',StrengthRanks.tiers[r.tier+1][L()],dec(r.next),dec(r.next-r.best))):esc(t('rankTop'))}</p>${r.workout?`<button class="link" data-a="wk-open" data-id="${esc(r.workout)}">${esc(t('viewLift'))}</button>`:''}<details class="rank-ladder"><summary>${esc(t('rankMilestones'))}</summary>${r.weights.map((weight,i)=>`<div class="${i<=r.tier?'earned':''}"><span>${esc(StrengthRanks.tiers[i][L()])}</span><b>${weight} kg ${i<=r.tier?'✓':''}</b></div>`).join('')}</details></section>`).join('');
+    return h+'</div>'+`<p class="cap rank-method">${esc(t('rankMethod'))}</p>`;
+  }
   function vHome() {
-    const d = D(), nx = nextRoutine(), wk = weekWorkouts(), tk = d.workouts.filter(w => w.tick && ymd(w.start) === today()).pop();
-    const days = [0, 1, 2, 3, 4, 5, 6].map(i => { const dt = new Date(weekStart(Date.now())); dt.setDate(dt.getDate() + i); return dt; });
-    const done = new Set(wk.map(w => ymd(w.start)));
-    let h = head(t('appName'), fmtDate(Date.now(), true), true);
-    if (isIOS && !standalone) h += `<div class="note" data-a="install-help"><b>${esc(t('installTitle'))}</b><span>${esc(t('installShort'))}</span></div>`;
-    if (Store.memoryOnly) h += `<div class="note warn"><b>${esc(t('noStorage'))}</b></div>`;
-    if (Store.failed) h += `<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
-    if (!window.HTMLDialogElement) h += `<div class="note warn"><b>${esc(t('oldIOS'))}</b></div>`;
-    h += `<div class="week">${days.map(dt => `<button class="wd${done.has(ymd(dt)) ? ' on' : ''}${ymd(dt) === today() ? ' now' : ''}" data-a="day-open" data-d="${ymd(dt)}" aria-label="${esc(fmtDate(dt, true))}" ${ymd(dt) > today() ? 'disabled' : ''}><i>${dt.toLocaleDateString(L() === 'hu' ? 'hu-HU' : 'en-GB', { weekday: 'narrow' })}</i><b>${done.has(ymd(dt)) ? IC.check : dt.getDate()}</b></button>`).join('')}</div>`;
-    const goal = d.settings.weekGoal;
-    if (goal > 0) h += `<p class="goal${wk.length >= goal ? ' ok' : ''}"><b>${wk.length} / ${goal}</b> ${esc(t(wk.length >= goal ? 'goalDone' : 'goalText'))}</p>`;
-    if (d.active) {
-      h += `<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
-    } else if (tk) {
-      h += `<div class="hero done"><small>${esc(t('doneToday'))}</small><strong>${IC.check}${esc(tk.name)}</strong><span>${esc(t('tickedSub'))}</span><button class="link" data-a="w-untick" data-id="${esc(tk.id)}">${esc(t('undo'))}</button></div>`;
-    } else if (nx) {
-      h += `<div class="hero"><small>${esc(t('nextUp'))}</small><strong>${esc(rName(nx))}</strong><span>${nx.sub ? esc(nx.sub[L()]) + ' · ' : ''}${nx.items.length} ${esc(t('exercises'))} · ~${estMin(nx)} ${esc(t('min'))}</span>
-        <button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${esc(t('startWorkout'))}</button><button class="btn big tickbtn" data-a="w-tick" data-id="${esc(nx.id)}">${IC.check}${esc(t('tickWorkout'))}</button></div>`;
-    }
-    h += planCard(today(), false);
-    if (!d.active) h += `<button class="qrow" data-a="w-quick"><span class="q-ic">${IC.bolt}</span><span class="rc-t"><b>${esc(t('quickWorkout'))}</b><i>${esc(t('quickSub'))}</i></span>${IC.chev}</button>`;
-    h += planEntry();
-    h += `<div class="h2row"><h2>${esc(t('routines'))}</h2><button class="pill" data-a="r-new">${IC.plus}${esc(t('newPlan'))}</button></div><div class="rlist rgrid">` + d.routines.map(r => { const ic = rIcon(r);
-      return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ~${estMin(r)} ${esc(t('min'))}${r.opt ? ' · ' + esc(t('optional')) : ''}</i></span></button>`; }).join('') + `</div>`;
-    h += `<h2>${esc(t('actToday'))}</h2>` + actRow(today());
+    const d=D(),nx=nextRoutine(),wk=weekWorkouts(),tk=d.workouts.filter(w=>w.tick&&ymd(w.start)===today()).pop();
+    let h=head(t('tabHome'),fmtDate(Date.now(),true),true);
+    if(isIOS&&!standalone)h+=`<div class="note" data-a="install-help"><b>${esc(t('installTitle'))}</b><span>${esc(t('installShort'))}</span></div>`;
+    if(Store.memoryOnly)h+=`<div class="note warn"><b>${esc(t('noStorage'))}</b></div>`;
+    if(Store.failed)h+=`<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
+    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','history','ranks'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
+    if(ui.workout==='plans')return h+routineGrid();
+    if(ui.workout==='history')return h+`<div class="h2row"><h2>${esc(t('history'))}</h2><span class="cap">${d.workouts.length} ${esc(t('totalWorkouts'))}</span></div>`+workoutHistory(d.workouts.slice().reverse().slice(0,ui.homeHistLimit||40))+(d.workouts.length>(ui.homeHistLimit||40)?`<button class="btn" data-a="workout-history-more">${esc(t('showMore'))}</button>`:'');
+    if(ui.workout==='ranks')return h+vRanks();
+    const goal=d.settings.weekGoal;
+    h+=`<div class="training-week"><span>${esc(t('thisWeek'))}</span><b>${wk.length}${goal>0?' / '+goal:''} ${esc(t('workoutsWord'))}</b></div>`;
+    if(d.active)h+=`<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
+    else if(tk)h+=`<div class="hero done"><small>${esc(t('doneToday'))}</small><strong>${IC.check}${esc(tk.name)}</strong><span>${esc(t('tickedSub'))}</span><button class="link" data-a="w-untick" data-id="${esc(tk.id)}">${esc(t('undo'))}</button></div>`;
+    else if(nx)h+=`<div class="hero training-hero"><small>${esc(t('nextUp'))}</small><strong>${esc(rName(nx))}</strong><span>${nx.items.length} ${esc(t('exercises'))} · ~${estMin(nx)} ${esc(t('min'))}</span><button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${IC.play}${esc(t('startWorkout'))}</button><button class="link training-tick" data-a="w-tick" data-id="${esc(nx.id)}">${IC.check}${esc(t('tickWorkout'))}</button></div>`;
+    h+=`<div class="training-actions"><button class="btn" data-a="workout-view" data-v="plans">${IC.home}${esc(t('chooseWorkout'))}</button><button class="btn" data-a="w-quick">${IC.bolt}${esc(t('quickWorkout'))}</button></div>`;
+    const rank=Math.max(...StrengthRanks.summary(d.workouts).map(r=>r.tier));
+    h+=`<button class="rank-preview" data-a="workout-view" data-v="ranks">${rankBadge(rank)}<span><small>${esc(t('yourRanks'))}</small><b>${esc(rank<0?t('rankStart'):StrengthRanks.tiers[rank][L()])}</b></span>${IC.chev}</button>`;
+    h+=`<div class="h2row"><h2>${esc(t('latestWorkout'))}</h2><button class="link" data-a="workout-view" data-v="history">${esc(t('viewAll'))}</button></div>`+workoutHistory(d.workouts.slice(-1).reverse());
     return h;
   }
 
@@ -336,10 +352,10 @@
     const pd = planDay(k); if (!pd || !pd.meals.length) return '';
     const got = {}; (D().food[k] || []).forEach(f => { if (f.pm) got[f.pm] = 1; });
     const n = pd.meals.filter(m => got[m.id]).length, p = D().plan;
-    return `<div class="h2row"><h2>${esc(t('mealPlan'))}</h2><span class="plan-n${n === pd.meals.length ? ' ok' : ''}">${pd.type ? esc(t(pd.type === 'train' ? 'dayTrain' : 'dayRest')) + ' · ' : ''}${n} / ${pd.meals.length}</span></div><div class="plan">` + pd.meals.map(m => {
+    return `<details class="daily-plan" ${full?'open':''}><summary class="h2row"><h2>${esc(t('mealPlan'))}</h2><span class="plan-n${n === pd.meals.length ? ' ok' : ''}">${pd.type ? esc(t(pd.type === 'train' ? 'dayTrain' : 'dayRest')) + ' · ' : ''}${n} / ${pd.meals.length}</span>${IC.down}</summary><div class="plan">` + pd.meals.map(m => {
       const on = !!got[m.id];
       return `<button class="pmeal${on ? ' on' : ''}" data-a="pm-tick" data-m="${esc(m.id)}" data-d="${esc(k)}" role="checkbox" aria-checked="${on}"><span class="pm-box">${IC.check}</span><span class="pm-t"><b>${esc(pmName(m))}<small>${m.kcal} kcal</small></b>${full ? `<span class="pm-items">${m.items.map(i => `<span><span>${esc(i.n)}</span><em>${dec(i.g)} g</em></span>`).join('')}</span>` : `<i>${esc(m.items.map(i => i.n).join(', '))}</i>`}<i class="pm-m">${macroLine(m)}</i></span></button>`; }).join('') + `</div>` +
-      (full && (p.notes.length || p.train.length) ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
+      (full && (p.notes.length || p.train.length) ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '')+'</details>';
   }
   function shPlanNotes() {
     return () => { const p = D().plan || { notes: [], train: [], name: '' }, sec = (ttl, l) => l.length ? `<h3>${esc(ttl)}</h3><ul class="pnotes">${l.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '';
@@ -349,9 +365,10 @@
     return `<button class="plan-entry" data-a="pdf-plan"><span><b>${esc(t('addPlan'))}</b><small>Excel · PDF · Word</small></span>${IC.plus}</button>`;
   }
   function vMealPlan() {
-    const p=D().plan;if(!p)return planEntry();
+    const p=D().plan;if(!p)return `<section class="meal-plan-header"><h2>${esc(t('mealPlan'))}</h2><p>${esc(t('emptyPlanHint'))}</p></section>`;
     const days=L()==='hu'?['Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat','Vasárnap']:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    return `<section class="meal-plan-header"><h2>${esc(p.name||t('mealPlan'))}</h2><p>${esc(t('weeklyPlanHint'))}</p></section><div class="meal-week">`+p.days.map((d,i)=>`<section class="meal-day"><h3>${days[i]}<small>${d.meals.length} ${esc(L()==='hu'?'étkezés':d.meals.length===1?'meal':'meals')}</small></h3>${d.meals.length?d.meals.map(m=>`<div class="meal-plan-row"><div><b>${esc(pmName(m))}</b><strong>${m.kcal} kcal</strong></div><p>${macroLine(m)}</p><details><summary>${esc(t('foodsWord'))}</summary><ul>${m.items.map(f=>`<li>${esc(f.n)} · ${dec(f.g)} g</li>`).join('')}</ul></details></div>`).join(''):`<p class="meal-day-empty">${esc(t('noPlannedMeals'))}</p>`}</section>`).join('')+`</div>`+planEntry();
+    const current=(new Date().getDay()+6)%7;
+    return `<section class="meal-plan-header"><h2>${esc(p.name||t('mealPlan'))}</h2><p>${esc(t('collapsePlanHint'))}</p>${p.notes.length||p.train.length?`<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>`:''}</section><div class="meal-week">`+p.days.map((d,i)=>`<details class="meal-day" data-meal-day="${i}" ${i===current&&d.meals.length?'open':''}><summary><span><b>${days[i]}</b><small>${d.meals.length} ${esc(L()==='hu'?'étkezés':d.meals.length===1?'meal':'meals')}${d.type?' · '+esc(t(d.type==='train'?'dayTrain':'dayRest')):''}</small></span><span class="meal-day-total">${d.total?d.total.kcal+' kcal':''}${IC.down}</span></summary><div class="meal-day-body">${d.meals.length?d.meals.map(m=>`<div class="meal-plan-row"><div><b>${esc(pmName(m))}</b><strong>${m.kcal} kcal</strong></div><p>${macroLine(m)}</p><details><summary>${esc(t('foodsWord'))}</summary><ul>${m.items.map(f=>`<li>${esc(f.n)} · ${dec(f.g)} g</li>`).join('')}</ul></details></div>`).join(''):`<p class="meal-day-empty">${esc(t('noPlannedMeals'))}</p>`}</div></details>`).join('')+'</div>';
   }
   function vFood() {
     const d = D(), tg0 = dayTargets(ui.foodDate), fromPlan = !!tg0 && tg0 !== d.settings.targets, list = dayFood();
@@ -360,7 +377,6 @@
     let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button>${d.plan?`<button class="${ui.food === 'plan' ? 'on' : ''}" data-a="food-view" data-v="plan">${esc(t('mealPlan'))}</button>`:''}<button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
     if (ui.food === 'ideas') return h + vIdeas();
     if (ui.food === 'plan') return h + vMealPlan();
-    h += planEntry();
     h += `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><button class="datebtn" data-a="cal" data-d="${ui.foodDate}" aria-label="${esc(t('openCal'))}"><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b>${IC.down}</button><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     if (!tg) h += `<button class="note" data-a="targets"><b>${esc(t('setTargets'))}</b><span>${esc(t('setTargetsSub'))}</span></button>`;
     h += `<section class="card cal"><p class="bignum">${Math.round(sum.kcal)}<small> ${tg ? '/ ' + tg.kcal : ''} kcal</small></p>${tg ? Charts.meter(sum.kcal, tg.kcal) + `<p class="cap">${sum.kcal <= tg.kcal ? esc(t('remaining', Math.round(tg.kcal - sum.kcal))) : esc(t('over', Math.round(sum.kcal - tg.kcal)))}${burn ? ' · ' + esc(t('budgetCap', burn)) : ''}</p>` : ''}
@@ -651,9 +667,10 @@
     const old = $('.w-body', el), y = old ? old.scrollTop : 0;
     el.hidden = false;
     el.innerHTML = `<header class="w-head"><button class="icon-btn" data-a="w-min" aria-label="${esc(t('minimize'))}">${IC.down}</button><div><b>${esc(a.name)}</b><i id="w-el">0:00</i></div><button class="btn primary" data-a="w-finish">${esc(t('finish'))}</button></header>
+      <div class="workout-jump"><label><span>${esc(t('jumpExercise'))}</span><select data-in="w-jump" aria-label="${esc(t('jumpExercise'))}"><option value="">${esc(t('chooseExercise'))}</option>${a.entries.map((en,i)=>`<option value="${i}">${i+1}. ${esc(itemName(en))} · ${en.sets.filter(s=>s.done).length}/${en.sets.length}</option>`).join('')}</select></label><span class="workout-completion">${a.entries.reduce((n,e)=>n+e.sets.filter(s=>s.done).length,0)}/${a.entries.reduce((n,e)=>n+e.sets.length,0)} ${esc(t('setsWord'))}</span></div>
       <div class="w-body">${circuitGuide(a)}${a.info ? `<p class="cap rinfo">${esc(typeof a.info === 'object' ? a.info[L()] || a.info.en || '' : a.info)}</p>` : ''}${prepRow('warm', a, '')}${a.entries.map((en, i) => {
         const hst = exHistory(en.ex), prev = hst.length ? hst[hst.length - 1].sets : [];
-        return `<section class="wex"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)}${en.rir ? ' · RIR ' + esc(en.rir) : ''} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
+        return `<section class="wex" data-ex-index="${i}"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)}${en.rir ? ' · RIR ' + esc(en.rir) : ''} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
           ${ui.wTools === i ? `<div class="wex-tools${ui.fx === 'tools' ? ' in' : ''}"><button class="btn sm" data-a="w-up" data-i="${i}" ${i ? '' : 'disabled'}>${IC.up}${esc(t('moveUp'))}</button><button class="btn sm" data-a="w-down" data-i="${i}" ${i < a.entries.length - 1 ? '' : 'disabled'}>${IC.down}${esc(t('moveDown'))}</button><button class="btn sm danger" data-a="w-delex" data-i="${i}">${esc(t('remove'))}</button></div>` : ''}
           ${en.note ? `<p class="hint wnote">${esc(en.note)}</p>` : ''}<p class="hint">${esc(hintFor(en, hst))}</p>
           <div class="sets"><div class="set set-hd"><span>#</span><span>${esc(t('prev'))}</span><span>kg</span><span>${esc(t('reps'))}</span><span></span></div>
@@ -674,14 +691,18 @@
     const open = a.entries.reduce((n, e) => n + e.sets.filter(s => !s.done).length, 0);
     if (open && !confirm(t('finishOpen', open))) return;
     const prs = entries.map(e => { const before = exHistory(e.ex).reduce((m, x) => Math.max(m, bestOf(x.sets)), 0), now = bestOf(e.sets); return now > before && now > 0 ? { ex: e.ex, label: e.label, v: now, was: before } : null; }).filter(Boolean);
+    const ranksBefore=StrengthRanks.summary(D().workouts);
     const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries, warm: !!a.warm, cool: !!a.cool };
     D().workouts.push(w); D().workouts.sort((x, y) => x.start - y.start); D().active = null; Store.save(); ui.wOpen = false; unwake(); render();
-    openSheet(shWorkout(w.id, prs));
+    const rankUps=StrengthRanks.summary(D().workouts).filter((r,i)=>r.tier>ranksBefore[i].tier);
+    openSheet(shWorkout(w.id, prs, rankUps));
   }
-  function shWorkout(id, prs) {
+  function shWorkout(id, prs, rankUps) {
     return () => {
       const w = D().workouts.find(x => x.id === id); if (!w) return { title: '', html: '' };
-      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(w.end - w.start)}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><div><b>${compact(volOf(w))}</b><i>${esc(t('volume'))} kg</i></div></div>`;
+      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(w.end - w.start)}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><button class="volume-total" data-a="wk-volume" ${w.tick?'disabled':''} aria-label="${esc(t('volumeDetails'))}"><b>${volumeText(volOf(w))}</b><i>${esc(t('volume'))} kg ${IC.down}</i></button></div>`;
+      if(!w.tick)h+=`<details class="workout-volume completion-volume" data-volume><summary>${esc(t('volumeDetails'))}${IC.down}</summary>${volumeBreakdown(w)}</details>`;
+      if(rankUps&&rankUps.length)h+=`<section class="rank-unlocks"><h3>${esc(t('rankUnlocked'))}</h3>${rankUps.map(r=>`<div>${rankBadge(r.tier)}<span><b>${esc(StrengthRanks.tiers[r.tier][L()])}</b><small>${esc(r[L()])} · ${dec(r.best)} kg</small></span></div>`).join('')}<button class="link" data-a="open-ranks">${esc(t('yourRanks'))}</button></section>`;
       h += prs ? prepRow('cool', w, ` data-w="${esc(w.id)}"`) : (w.warm || w.cool ? `<p class="cap">${[w.warm ? t('warmTitle') : '', w.cool ? t('coolTitle') : ''].filter(Boolean).map(x => esc(x) + ' ✓').join(' · ')}</p>` : '');
       if (prs && prs.length) h += `<div class="tip pr"><b>${esc(t('newRecords'))}</b>${prs.map(p => `<span>${esc(itemName(p))}: ${r1(p.v)} kg${p.was ? ' (' + esc(t('was')) + ' ' + r1(p.was) + ')' : ''}</span>`).join('')}</div>`;
       if (w.tick) h += `<p class="cap">${esc(t('tickedInfo'))}</p>` + (w.pl || []).map(x => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(x.ex)}"><img src="${thumb(x.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(exName(x.ex))}</b><i>${x.n} ${esc(t('setsWord'))}</i></span>${IC.chev}</button></div>`).join('');
@@ -1251,7 +1272,7 @@
       PlanImport.open({ lang: L(), hasMealPlan: !!D().plan, restDefault: D().settings.restDefault,
         catalog: Object.values(EX).map(e => ({ id: e.id, hu: HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n, aliases: [e.id, (EXHU[e.id] || [])[0], (PLAN_BY_EX[e.id] || {}).en, (PLAN_BY_EX[e.id] || {}).hu].filter(Boolean) })),
         onExport: plan => saveFile('GymApp-terv.json', new Blob([JSON.stringify(plan, null, 2)], { type: 'application/json' })),
-        onOpen: tab => { ui.tab=tab;if(tab==='food')ui.food='plan';render(); },
+        onOpen: tab => { ui.tab=tab;if(tab==='home')ui.workout='plans';if(tab==='food')ui.food='plan';render(); },
         onApply: plan => {
           const newRoutines=plan.routines.filter(r=>!D().routines.some(x=>x.id===r.id)).length;
           if (D().routines.length + newRoutines > 100) throw new Error(t('routineImportLimit'));
@@ -1262,6 +1283,10 @@
         }
       });
     },
+    'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
+    'open-ranks'() {closeSheet(true);ui.tab='home';ui.workout='ranks';render();},
+    'workout-view'(el) { if(!['train','plans','history','ranks'].includes(el.dataset.v))return;ui.workout=el.dataset.v;render();window.scrollTo(0,0); },
+    'wk-volume'() { const panel=$('#sheet [data-volume]');if(panel)panel.open=!panel.open; },
     'update-restart'() { location.reload(); },
     'release-notes'() {
       openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
@@ -1590,6 +1615,7 @@
     'habit-goal'(el) { if (ui.habitEdit) ui.habitEdit.goal = el.value; },
     'habit-unit'(el) { if (ui.habitEdit) ui.habitEdit.unit = el.value; },
     'lib-q'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.q = el.value; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
+    'w-jump'(el) { if(el.value==='')return;const row=$('#workout [data-ex-index="'+Number(el.value)+'"]');if(row)row.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'}); },
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
     're-name'(el) { ui.edit.name = el.value; }, 're-sets'(el) { ui.edit.items[+el.dataset.i].sets = el.value; },
