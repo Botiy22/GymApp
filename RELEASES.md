@@ -6,6 +6,15 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.4.2 — 2026-10-07, build 20261007.11
+
+- PDF extraction retains text-column positions. An explicit Food / Amount / kcal header labels the ingredient calorie column, so unlabelled values in that column are read correctly. Unlabelled columns such as Price are left unresolved.
+- Meal total rows populate meal calories and Meal macros rows populate protein, carbs and fat; macro summaries are no longer mistaken for ingredients.
+- Fixed rules are saved as plan notes without creating extra Breakfast/Dinner entries. Printed daily totals and training/rest classifications are retained.
+- The supplied nine-page diet PDF was imported in an isolated real browser: all 7 days, 28 meals and 104 food entries matched an independent extraction of its grams, calories and macros, before and after saving/reloading. All 9 diet rules were retained. The document and its personal contents were not added to the repository.
+- 29 Chromium browser tests passed, including new generated table/summary fixtures and an unlabelled-price regression. JavaScript syntax and whitespace checks passed. Physical iPhone/Safari remains untested.
+- Backup branch `backup/before-pdf-calories-20261007` and a verified local Git bundle preserve the previous release.
+
 ## 2.4.1 — 2026-10-07, build 20261007.10
 
 - The import dialog has an explicit viewport height and a scrollable preview with a separate footer. Safe areas and changes to the visible viewport keep the dialog within the available space.

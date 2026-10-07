@@ -19,11 +19,14 @@ Coverage:
 - Preservation of existing routines, diary entries and active workouts; storage errors restore the previous state and do not produce false success or duplicate retries.
 - Starting and finishing an imported workout; logging and undoing an imported meal.
 - FileReader fallback for XLSX and JSON backup reading, malformed/oversized file handling and invalid advanced JSON.
+- PDF calorie columns with retained positions, meal totals/macros, rules saved as notes, and unlabelled numbers left unresolved.
 - PDF reader/worker and DOCX import, visible release history, all five navigation tabs in four themes at 320/390/768/1280 px, plus responsive import controls and footer.
 - Import preview minimum height, internal scroll, background lock and scroll/style restoration, cancellation/reopening, portrait/landscape dimensions and simulated keyboard viewport changes.
 - Five distinct custom workout symbols, Lower icon selection and persistence after reload.
-- Updating from an older cached HTML/release/service-worker shell to 2.4.1 without losing plans, then importing XLSX and PDF while offline.
+- Updating from an older cached HTML/release/service-worker shell to 2.4.2 without losing plans, then importing XLSX and PDF while offline.
 
-Validation on 2026-10-07: **27 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
+Validation on 2026-10-07: **29 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
 
 The user's exact XLSX was not supplied. These results cover the fixture layouts above. The Safari/WebKit binary download returned proxy `403 Domain forbidden`, so no WebKit or physical iPhone test was run. Live Supabase authentication/sync and Anthropic calls are not covered; the test contexts have no live account or API key.
+
+Additional validation for 2.4.2 used the supplied nine-page diet PDF in an isolated browser. All 7 days, 28 meals and 104 ingredients matched independently extracted amounts, calories and macros before and after save/reload; training/rest days and 9 rules were retained. The personal PDF is kept outside the repository and is not a committed fixture.

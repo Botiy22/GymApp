@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.4.1';
-  const build = '20261007.10';
+  const version = '2.4.2';
+  const build = '20261007.11';
   const history = [
     {version,build,date:'2026-10-07',
+      hu:['A PDF-táblázatok kcal oszlopából az ételek és étkezések kalóriái is beolvashatók.','A Meal total és Meal macros sorokból az étkezési összesítések készülnek.','Az étrendi szabályok megjegyzésként maradnak meg, nem új étkezésként.'],
+      en:['Calories are read from labelled kcal columns in PDF food tables.','Meal total and Meal macros lines populate meal nutrition.','Diet rules are retained as notes rather than extra meals.']},
+    {version:'2.4.1',build:'20261007.10',date:'2026-10-07',
       hu:['Az importálási előnézet stabil magasságú és külön görgethető; a háttér helyben marad.','Egyedi Push, Pull, Láb, Felsőtest és Alsótest ikonok.'],
       en:['The import preview keeps its height and scrolls independently while the background stays still.','Custom Push, Pull, Legs, Upper and Lower workout icons.']},
     {version:'2.4.0',build:'20261007.9',date:'2026-10-07',

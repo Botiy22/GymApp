@@ -1,3 +1,13 @@
+# Update — 2.4.2, 2026-10-07
+
+The supplied diet PDF revealed a parser defect: column-only kcal labels were discarded, Meal total lines were missed, and Meal macros lines became bogus food entries. PDF extraction now retains column coordinates; explicit kcal columns, meal totals/macros and fixed rules are handled correctly. Printed totals are preserved rather than recalculated from rounded ingredient values.
+
+Validation: 29 Chromium regression tests passed, including generated PDF table and unlabelled-price checks. The actual supplied PDF was verified independently against pdftotext output: 7 days, 28 meals, 104 ingredients, every amount/calorie/macro, day classification and 9 rules, including after save/reload. Mobile preview and saved-meal screenshots were reviewed. Physical Safari/iPhone remains untested. The personal PDF is not committed.
+
+Backup: `backup/before-pdf-calories-20261007` preserves `f59fc4c`; verified Git bundle at `/workspace/GymApp-backups/GymApp-before-pdf-calories-20261007.bundle`.
+
+---
+
 # Update — 2.4.1, 2026-10-07
 
 Fixed the collapsed import preview with explicit viewport sizing and independent scrolling. The document stays fixed while the importer is open, and its original scroll position/styles are restored on exit. Visible viewport resize/offset changes and safe areas are handled. Added custom Push, Pull, Legs, Upper and Lower SVG symbols and persistent Lower icon selection. In-app release history describes this update.

@@ -60,9 +60,10 @@ def xlsx(path, sheets, shared=False):
     return str(path)
 
 
-def pdf(path):
+def pdf(path, rows=None):
     lines = ['Day 1', 'Barbell bench press 3 x 8 rest 90 sec', 'Monday', 'Breakfast kcal 200 protein 10 carbs 20 fat 5', 'Oats 50 g']
-    stream = '\n'.join(f'BT /F1 12 Tf 50 {760-i*22} Td ({line}) Tj ET' for i, line in enumerate(lines)).encode()
+    rows = rows if rows is not None else [[(50,line)] for line in lines]
+    stream = '\n'.join(f'BT /F1 12 Tf {x} {760-i*22} Td ({text}) Tj ET' for i, cells in enumerate(rows) for x,text in cells).encode()
     objects = [b'<< /Type /Catalog /Pages 2 0 R >>', b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>', b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>', b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>', f'<< /Length {len(stream)} >>\nstream\n'.encode()+stream+b'\nendstream']
     data = b'%PDF-1.4\n'
     offsets = [0]
@@ -257,6 +258,43 @@ class AppBrowserTests(unittest.TestCase):
         self.assertEqual(1,len(raw['routines']));self.assertEqual(1,len(raw['plan']['days'][0]['meals']))
         self.assertEqual(200,raw['plan']['days'][0]['meals'][0]['kcal']);self.add()
 
+    def test_pdf_calorie_columns_meal_totals_and_macro_summary(self):
+        # Generated fixture uses the same column/summary layout, invented foods.
+        rows=[[(50,'MONDAY - REST DAY')],[(50,'Breakfast')],
+              [(50,'Food'),(360,'Amount'),(470,'kcal')],
+              [(50,'Test oats'),(360,'50 g'),(470,'200')],
+              [(50,'Test milk'),(360,'100 g'),(470,'60')],
+              [(50,'Meal total'),(470,'260')],
+              [(50,'Meal macros: 15.2 g protein / 36.5 g carbs / 7.0 g fat')],
+              [(50,'Meal 2')],[(50,'Food'),(360,'Amount'),(470,'kcal')],
+              [(50,'Test rice'),(360,'60 g'),(470,'210')],
+              [(50,'Meal total'),(470,'210')],
+              [(50,'Meal macros: 4.0 g protein / 45.0 g carbs / 0.8 g fat')],
+              [(50,'Daily total: 470 kcal / 19.2 g protein / 81.5 g carbs / 7.8 g fat')],
+              [(50,'FIXED RULES')],[(50,'Breakfast: weigh test oats dry.')],[(50,'Dinner: weigh test milk separately.')]]
+        raw=self.upload(pdf(self.files/'calorie-table.pdf',rows));day=raw['plan']['days'][0]
+        self.assertEqual(2,len(day['meals']))
+        self.assertEqual({'kcal':470,'p':19.2,'c':81.5,'f':7.8},day['total'])
+        m=day['meals'][0]
+        self.assertEqual([200,60],[i['kcal'] for i in m['items']])
+        self.assertEqual(['Test oats','Test milk'],[i['n'] for i in m['items']])
+        self.assertEqual((260,15.2,36.5,7),(m['kcal'],m['p'],m['c'],m['f']))
+        self.assertIn('Breakfast: weigh test oats dry.',raw['plan']['notes'])
+        self.add();self.page.locator('[data-pdf="close"]').click();self.page.reload(wait_until='networkidle')
+        saved=self.data()['plan']['days'][0]['meals'][0]
+        self.assertEqual((260,15.2,36.5,7),(saved['kcal'],saved['p'],saved['c'],saved['f']))
+
+    def test_pdf_unlabelled_numbers_do_not_become_calories(self):
+        rows=[[(50,'Monday')],[(50,'Breakfast')],
+              [(50,'Food'),(360,'Amount'),(470,'Price')],
+              [(50,'Test oats'),(360,'50 g'),(470,'200')],
+              [(50,'Meal total'),(470,'200')],
+              [(50,'Meal macros: 10 g protein / 20 g carbs / 5 g fat')]]
+        raw=self.upload(pdf(self.files/'unlabelled-table.pdf',rows));m=raw['plan']['days'][0]['meals'][0]
+        self.assertIsNone(m['kcal']);self.assertIsNone(m['items'][0]['kcal'])
+        self.assertEqual(1,len(m['items']))
+        expect(self.page.locator('[data-pdf="apply"]')).to_be_disabled()
+
     def test_docx_text_import(self):
         path=self.files/'plan.docx'
         lines=['Day 1','Barbell bench press 3 x 8 rest 90 sec','Monday','Breakfast kcal 200 protein 10 carbs 20 fat 5','Oats 50 g']
@@ -274,8 +312,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.4.1')
-        expect(self.page.locator('#sheet')).to_contain_text('20261007.10')
+        expect(self.page.locator('#sheet')).to_contain_text('2.4.2')
+        expect(self.page.locator('#sheet')).to_contain_text('20261007.11')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -349,7 +387,7 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.4.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.4.2',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
         for path in ['/css/design.css','/js/plan-sheet.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
