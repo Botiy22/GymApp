@@ -86,11 +86,11 @@ The folder has about 3,000 files (about 115 MB), nearly all of them exercise pho
 
 ## Updating the app
 
-Change the files and publish again. On the phone: Settings → Alkalmazás → **Frissítés keresése**
-downloads the new version and restarts the app. Without pressing it, the installed app picks the new
-version up by itself from the second start. Raise `VERSION` in `sw.js` only when you rename or delete
-files, so the old copies are cleared from phones; when you add a new file the app must work offline
-with, add it to the `CORE` list in `sw.js`.
+Change the files, update `js/release.js`, then run `python3 tools/build_release.py` before publishing the complete checkout. The generated `release-manifest.json` lists the SHA-256 hash of every app-shell file. The service worker rejects incomplete or stale deployments and activates one verified release. Never upload only the new version metadata. Add new offline app files to `CORE` in `sw.js` before generating the manifest.
+
+On the phone, Settings → **Check for update / Frissítés keresése** downloads the verified release and restarts the app while preserving saved data. When an automatic update is ready, a Restart button appears; an open preview or editor is not discarded automatically. Confirm the installed version/build in Settings after restarting.
+
+Exercise drawings remain the first choice. Missing or broken drawings use the exact existing start/end photo pair; previously viewed images and built-in workout photos are cached for offline use. See [MEDIA_WORKFLOW.md](MEDIA_WORKFLOW.md) for the prioritized batch-production process and `python3 tools/audit_media.py` for current coverage.
 
 ## Food database and recipes
 

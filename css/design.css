@@ -17,3 +17,5 @@ dialog#sheet{border-radius:28px 28px 0 0;border:1px solid var(--edge);background
 
 /* Bespoke workout symbols: a shared silhouette, highlighted muscle regions. */
 .r-ic svg.routine-symbol{width:30px;height:30px;stroke-width:1.6}.routine-symbol .muscle{fill:currentColor;fill-opacity:.22;stroke-width:1.2}
+
+.update-banner{position:fixed;top:max(12px,env(safe-area-inset-top));left:12px;right:12px;max-width:640px;margin:auto;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 30px #0005;font-size:.85rem}.update-banner .btn{width:auto;flex:none}

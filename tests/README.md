@@ -23,10 +23,14 @@ Coverage:
 - PDF reader/worker and DOCX import, visible release history, all five navigation tabs in four themes at 320/390/768/1280 px, plus responsive import controls and footer.
 - Import preview minimum height, internal scroll, background lock and scroll/style restoration, cancellation/reopening, portrait/landscape dimensions and simulated keyboard viewport changes.
 - Five distinct custom workout symbols, Lower icon selection and persistence after reload.
-- Updating from an older cached HTML/release/service-worker shell to 2.4.2 without losing plans, then importing XLSX and PDF while offline.
+- Content-hash manifest validation, stale parser rejection/retry without data loss, immutable releases and a restart prompt that preserves an open preview.
+- Loaded start/end images for every built-in routine exercise, exact photo fallback, enlargement and broken-drawing recovery.
+- Updating from an older cached HTML/release/service-worker shell to 2.4.3 without losing plans, then importing XLSX and PDF while offline.
 
-Validation on 2026-10-07: **29 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
+Validation on 2026-10-07: **34 Chromium browser tests passed**. JavaScript syntax checks and Git whitespace checks also passed. Mobile and desktop screenshots were visually reviewed.
 
 The user's exact XLSX was not supplied. These results cover the fixture layouts above. The Safari/WebKit binary download returned proxy `403 Domain forbidden`, so no WebKit or physical iPhone test was run. Live Supabase authentication/sync and Anthropic calls are not covered; the test contexts have no live account or API key.
 
 Additional validation for 2.4.2 used the supplied nine-page diet PDF in an isolated browser. All 7 days, 28 meals and 104 ingredients matched independently extracted amounts, calories and macros before and after save/reload; training/rest days and 9 rules were retained. The personal PDF is kept outside the repository and is not a committed fixture.
+
+Additional 2.4.3 verification reproduced the supplied screenshot with the actual v2.4.1 app/parser/service worker, upgraded that installation, then imported and saved all 28 meals from the supplied PDF. The website URL/build is pending; requests to the assumed GitHub Pages host were blocked by the environment proxy.

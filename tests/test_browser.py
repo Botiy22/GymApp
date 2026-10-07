@@ -2,6 +2,7 @@
 import functools
 import http.server
 import json
+import hashlib
 import os
 from pathlib import Path
 import tempfile
@@ -312,8 +313,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.4.2')
-        expect(self.page.locator('#sheet')).to_contain_text('20261007.11')
+        expect(self.page.locator('#sheet')).to_contain_text('2.4.3')
+        expect(self.page.locator('#sheet')).to_contain_text('20261007.12')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -369,12 +370,16 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('[data-pdf="status"]')).to_have_text('Invalid plan JSON.')
         expect(self.page.locator('[data-pdf="apply"]')).to_be_disabled()
 
-    def test_update_from_old_shell_then_offline_xlsx_import(self):
+    def start_legacy_shell(self):
         self.context.close()
         old_release="globalThis.GYM_RELEASE={version:'2.3.1',build:'20261007.8',cacheId:'v2.3.1-20261007.8'};"
         old_index=(ROOT/'index.html').read_text().replace('<script src="js/plan-sheet.js"></script>', '').replace('<link rel="stylesheet" href="css/design.css">','')
         old_worker=(ROOT/'sw.js').read_text().replace("'css/design.css', 'js/plan-sheet.js',",'')
-        self.server.legacy_payloads={'/':old_index,'/index.html':old_index,'/sw.js':old_worker,'/js/release.js':old_release}
+        old_manifest=json.loads((ROOT/'release-manifest.json').read_text())
+        old_manifest.update(version='2.3.1',build='20261007.8')
+        for path,content in [('./',old_index),('index.html',old_index),('js/release.js',old_release)]:
+            old_manifest['assets'][path]=hashlib.sha256(content.encode()).hexdigest()
+        self.server.legacy_payloads={'/':old_index,'/index.html':old_index,'/sw.js':old_worker,'/js/release.js':old_release,'/release-manifest.json':json.dumps(old_manifest)}
         self.context=self.browser.new_context(viewport={'width':390,'height':844},service_workers='allow')
         self.context.add_init_script("Object.defineProperty(window,'CLOUD',{value:{},writable:false});")
         self.page=self.context.new_page();self.page.on('pageerror',lambda e:self.errors.append(str(e)))
@@ -382,12 +387,15 @@ class AppBrowserTests(unittest.TestCase):
         self.page.evaluate('async () => {await navigator.serviceWorker.ready;}')
         self.page.reload(wait_until='networkidle')
         self.assertEqual('2.3.1',self.page.evaluate('() => GYM_RELEASE.version'))
+
+    def test_update_from_old_shell_then_offline_xlsx_import(self):
+        self.start_legacy_shell()
         self.upload(self.hu_file);self.add();self.page.locator('[data-pdf="close"]').click()
         before=self.data()
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.4.2',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
         for path in ['/css/design.css','/js/plan-sheet.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
@@ -399,6 +407,56 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         self.upload(pdf(self.files/'offline.pdf'));self.add()
         self.context.set_offline(False)
+
+    def test_update_rejects_stale_parser_then_recovers_without_data_loss(self):
+        self.start_legacy_shell()
+        self.upload(self.hu_file);self.add();self.page.locator('[data-pdf="close"]').click()
+        before=self.data()
+        # A CDN serves current metadata and one stale parser. Hash verification
+        # must reject this release, keep the working cache and allow a retry.
+        self.server.legacy_payloads={'/js/pdf-local.js':(ROOT/'js/pdf-local.js').read_text()+'\n/* stale deployed module */'}
+        self.page.locator('[data-a="settings"]').first.click()
+        self.page.locator('[data-a="update-now"]').click()
+        expect(self.page.locator('#update-status')).to_contain_text('Could not update',timeout=45000)
+        self.assertEqual('2.3.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual(before,self.data())
+        self.page.reload(wait_until='networkidle')
+        self.assertEqual('2.3.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.server.legacy_payloads=None
+        self.page.locator('[data-a="settings"]').first.click()
+        with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
+            self.page.locator('[data-a="update-now"]').click()
+        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual(before['routines'],self.data()['routines'])
+        self.assertEqual(before['plan'],self.data()['plan'])
+        self.assertEqual('updateSuccess',self.page.evaluate('() => __gym.ui.updateStatus'))
+        rows=[[(50,'Monday')],[(50,'Breakfast')],[(50,'Food'),(360,'Amount'),(470,'kcal')],
+              [(50,'Test oats'),(360,'50 g'),(470,'200')],[(50,'Meal total'),(470,'200')],
+              [(50,'Meal macros: 10 g protein / 20 g carbs / 5 g fat')]]
+        raw=self.upload(pdf(self.files/'updated-calories.pdf',rows));m=raw['plan']['days'][0]['meals'][0]
+        self.assertEqual((200,10,20,5),(m['kcal'],m['p'],m['c'],m['f']))
+        self.assertEqual(1,len(m['items']))
+        self.add()
+
+    def test_ready_update_offers_restart_without_discarding_open_preview(self):
+        self.start_legacy_shell();self.upload(self.hu_file)
+        self.server.legacy_payloads=None
+        self.page.evaluate('async () => {const reg=await navigator.serviceWorker.getRegistration();await reg.update();}')
+        expect(self.page.locator('#ready-update')).to_be_visible(timeout=45000)
+        expect(self.page.locator('#pdf-plan-dialog')).to_be_visible()
+        self.assertEqual('2.3.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.page.locator('[data-pdf="close"]').click()
+        with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
+            self.page.locator('[data-a="update-restart"]').click()
+        self.assertEqual('2.4.3',self.page.evaluate('() => GYM_RELEASE.version'))
+        expect(self.page.locator('#ready-update')).to_have_count(0)
+
+    def test_release_manifest_matches_every_published_file(self):
+        data=json.loads((ROOT/'release-manifest.json').read_text())
+        self.assertEqual(self.page.evaluate('() => GYM_RELEASE.version'),data['version'])
+        self.assertEqual(self.page.evaluate('() => GYM_RELEASE.build'),data['build'])
+        for path,digest in data['assets'].items():
+            self.assertEqual(digest,hashlib.sha256((ROOT/('index.html' if path=='./' else path)).read_bytes()).hexdigest(),path+' requires regenerating the release manifest')
 
     def test_import_preview_has_space_and_owns_scroll(self):
         # Begin with a scrolled page; closing must restore this exact position.
@@ -453,6 +511,33 @@ class AppBrowserTests(unittest.TestCase):
         self.assertGreater(self.page.locator('[data-pdf="content"]').bounding_box()['height'],140)
         self.page.locator('[data-pdf="close"]').click()
         self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+
+    def test_every_builtin_routine_exercise_has_loaded_start_end_images(self):
+        ids=sorted({i['ex'] for r in self.data()['routines'] if r['builtin'] for i in r['items']})
+        for eid in ids:
+            self.page.evaluate('(id) => __gym.A["ex-open"]({dataset:{id}})',eid)
+            images=self.page.locator('#sheet .drawing-pair img')
+            expect(images).to_have_count(2)
+            for image in images.all():
+                self.assertGreater(image.evaluate('(el) => el.decode().then(() => el.naturalWidth)'),0,eid)
+            self.page.locator('[data-a="sheet-close"]').click()
+            expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.page.evaluate('() => __gym.A["ex-open"]({dataset:{id:"Romanian_Deadlift"}})')
+        expect(self.page.locator('.figcap')).to_contain_text('Photo')
+        expect(self.page.locator('.drawing-phase').first).to_have_attribute('data-source','img/ex/Romanian_Deadlift/0.jpg')
+        self.page.locator('.drawing-phase').nth(1).click()
+        expect(self.page.locator('.drawing-zoom img')).to_have_attribute('src','img/ex/Romanian_Deadlift/1.jpg')
+
+    def test_broken_drawing_falls_back_to_exact_exercise_photos(self):
+        self.page.route('**/img/fig/0211-*.svg',lambda route:route.abort())
+        self.page.evaluate('() => __gym.A["ex-open"]({dataset:{id:"Barbell_Curl"}})')
+        for phase in [0,1]:
+            button=self.page.locator('.drawing-phase').nth(phase)
+            expect(button.locator('img')).to_have_attribute('src','img/ex/Barbell_Curl/'+str(phase)+'.jpg')
+            self.assertGreater(button.locator('img').evaluate('(el) => el.decode().then(() => el.naturalWidth)'),0)
+            expect(button).to_be_enabled()
+        self.page.locator('.drawing-phase').nth(1).click()
+        expect(self.page.locator('.drawing-zoom img')).to_have_attribute('src','img/ex/Barbell_Curl/1.jpg')
 
     def test_custom_workout_symbols_and_lower_icon_persist(self):
         symbols=[]

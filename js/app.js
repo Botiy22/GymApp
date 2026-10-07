@@ -529,11 +529,11 @@
   function drawingPicture(source, phase, board, label) {
     return `<span class="drawing-picture"><img class="${board ? 'drawing-board phase-' + phase : ''}" src="${esc(source)}" alt="${esc(label)}"></span>`;
   }
-  function exerciseDrawings(id, name, board, pair) {
+  function exerciseDrawings(id, name, board, pair, photos) {
     return `<div class="drawing-pair">${[0, 1].map(phase => {
       const source = board || pair[phase], label = name + ' · ' + t(phase ? 'artEnd' : 'artStart');
-      return source ? `<button class="drawing-phase" data-a="fig-big" data-id="${esc(id)}" data-phase="${phase}" data-source="${esc(source)}" data-board="${board ? '1' : '0'}" aria-label="${esc(t('figBig') + ': ' + label)}">${drawingPicture(source, phase, !!board, label)}<span class="drawing-caption">${esc(t(phase ? 'artEnd' : 'artStart'))}</span></button>` : `<div class="drawing-phase"><p class="cap">${esc(t('artUnavailable'))}</p></div>`;
-    }).join('')}</div><p class="cap figcap">${esc(t('guideTap'))}</p>`;
+      return source ? `<button class="drawing-phase" data-a="fig-big" data-id="${esc(id)}" data-phase="${phase}" data-source="${esc(source)}" data-board="${board ? '1' : '0'}" aria-label="${esc(t(photos ? 'figPhoto' : 'figBig') + ': ' + label)}">${drawingPicture(source, phase, !!board, label)}<span class="drawing-caption">${esc(t(phase ? 'artEnd' : 'artStart'))}</span></button>` : `<div class="drawing-phase"><p class="cap">${esc(t('artUnavailable'))}</p></div>`;
+    }).join('')}</div><p class="cap figcap">${photos ? esc(t('figPhoto')) + ' · ' : ''}${esc(t('guideTap'))}</p>`;
   }
   function shEx(id, item) {
     return () => {
@@ -543,8 +543,10 @@
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
       const art = (window.EX_ART || {})[id], figure = FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
-      const pair = !ui.figBad[id] && figure ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : [];
-      let h = e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair);
+      const drawing = !ui.figBad[id] && figure;
+      const photos = !board && !drawing && e.k >= 2;
+      const pair = drawing ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : photos ? [img(id,0),img(id,1)] : [];
+      let h = e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
       h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${e.p.map(m => `<span class="chip on">${esc(mus(m))}</span>`).join('')}${e.s.map(m => `<span class="chip">${esc(mus(m))}</span>`).join('')}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
@@ -1260,6 +1262,7 @@
         }
       });
     },
+    'update-restart'() { location.reload(); },
     'release-notes'() {
       openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
     },
@@ -1402,7 +1405,7 @@
       const phase = el.dataset.phase === '1' ? 1 : 0, source = el.dataset.source;
       if (!source) return;
       const label = exName(el.dataset.id) + ' · ' + t(phase ? 'artEnd' : 'artStart');
-      openSheet(() => ({ title: label, html: `<div class="drawing-zoom" data-id="${esc(el.dataset.id)}">${drawingPicture(source, phase, el.dataset.board === '1', label)}</div>` }));
+      openSheet(() => ({ title: label, html: `<div class="drawing-zoom" data-id="${esc(el.dataset.id)}" data-phase="${phase}">${drawingPicture(source, phase, el.dataset.board === '1', label)}</div>` }));
     },
     'acc-help'() { openSheet(shAccHelp()); },
     /* account */
@@ -1419,6 +1422,10 @@
       ui.updateBusy = true; ui.updateStatus = 'updating'; refreshSheet(); toast(t('updating'));
       try {
         let result = null;
+        const latestResponse=await fetch('release-manifest.json?check='+Date.now(),{cache:'no-store'});
+        if(!latestResponse.ok)throw new Error('release unavailable');
+        const latest=await latestResponse.json();
+        if(!latest.version||!latest.build)throw new Error('invalid release');
         if ('serviceWorker' in navigator && window.caches && location.protocol !== 'file:') {
           const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' });
           if (!probe.ok) throw new Error('offline');
@@ -1439,6 +1446,7 @@
             worker.postMessage({ type: 'refresh', versioned: true }, [channel.port2]);
           });
         }
+        if(result&&(!result.verified||result.version!=='v'+latest.version+'-'+latest.build))throw new Error('worker did not install the latest release');
         // This marker only reports success when the reloaded app matches the refreshed worker.
         try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version: result && result.version || '', at: Date.now() })); } catch (e) {}
         ui.updateStatus = result ? 'updateRestarting' : 'updateReloading'; refreshSheet(); toast(updateStatusText());
@@ -1683,6 +1691,7 @@
       const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
       if (id) ui.figBad[id] = 1;
       const picture = el.closest('.drawing-picture');
+      if (picture && id && EX[id] && EX[id].k >= 2) { const button=picture.closest('button'),phase=Number((button||holder).dataset.phase)||0;const source=img(id,phase);el.className='';el.src=source;if(button){button.dataset.source=source;button.dataset.board='0';button.setAttribute('aria-label',t('figPhoto')+': '+el.alt);}return; }
       if (picture) { picture.innerHTML = `<span class="phase-missing">${esc(t('artUnavailable'))}</span>`; const button = picture.closest('button'); if (button) button.disabled = true; }
       return;
     }
@@ -1720,7 +1729,20 @@
   setInterval(tick, 500);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+  function showReadyUpdate(){
+    const worker=navigator.serviceWorker.controller;if(!worker)return;
+    const channel=new MessageChannel(),timer=setTimeout(()=>channel.port1.close(),3000);
+    channel.port1.onmessage=event=>{
+      clearTimeout(timer);channel.port1.close();
+      if(!event.data||event.data.version===APP_BUILD||document.getElementById('ready-update'))return;
+      const banner=document.createElement('div');banner.id='ready-update';banner.className='update-banner';banner.setAttribute('role','status');
+      banner.innerHTML='<span>'+esc(L()==='hu'?'Új frissítés készen áll':'An update is ready')+'</span><button class="btn primary sm" data-a="update-restart">'+esc(L()==='hu'?'Újraindítás':'Restart')+'</button>';
+      document.body.append(banner);
+    };
+    worker.postMessage({type:'release-info'},[channel.port2]);
+  }
+  if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',showReadyUpdate);
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(() => navigator.serviceWorker.ready).then(reg => {if(reg.active)reg.active.postMessage('warm-images');showReadyUpdate();}).catch(() => {});
   window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
 

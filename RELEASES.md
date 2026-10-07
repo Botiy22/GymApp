@@ -6,6 +6,16 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.4.3 — 2026-10-07, build 20261007.12
+
+- Release manifests contain SHA-256 hashes for every app-shell file. Installation and explicit updates verify all downloads before replacing the release; active modules are immutable rather than individually refreshed. Stale/incomplete deployments are rejected without replacing the working cache.
+- Update checks compare the latest published version with the installed worker. Automatic updates offer a Restart button without discarding an open import preview. Planned photo warming runs after activation, avoiding an update delay from more than 100 image downloads.
+- The exact v2.4.1 app/parser/worker reproduced the user's screenshot. Updating that legacy installation to this verified release imported and saved the supplied PDF's 28 meals, with calories/macros and successful reload.
+- Missing/broken drawings now use exact local start/end photos, retaining the existing artwork as the first choice. Photo pairs can be enlarged. Three exercises still have no available image pair.
+- A reusable media audit and batch-production guide prioritize the 12 missing illustrations used by built-in routines. Current catalogue: 877 exercises, 188 illustrations, 873 photo pairs.
+- 34 Chromium browser tests passed, along with JavaScript syntax and whitespace checks. Browser regressions cover stale-parser rejection/retry, retained data, complete-release hashes, automatic restart prompts, built-in exercise images, photo enlargement and broken-drawing fallback. Actual website/iPhone verification remains pending the user's app URL/version; the default GitHub Pages domain is blocked by the environment proxy.
+- Pre-change backup is preserved in a verified Git bundle and `backup/before-verified-updates-20261007`.
+
 ## 2.4.2 — 2026-10-07, build 20261007.11
 
 - PDF extraction retains text-column positions. An explicit Food / Amount / kcal header labels the ingredient calorie column, so unlabelled values in that column are read correctly. Unlabelled columns such as Price are left unresolved.

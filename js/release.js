@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.4.2';
-  const build = '20261007.11';
+  const version = '2.4.3';
+  const build = '20261007.12';
   const history = [
     {version,build,date:'2026-10-07',
+      hu:['A frissítés minden alkalmazásfájlt ellenőriz, mielőtt az új verziót aktiválja.','A PDF-beolvasó és a többi alkalmazásfájl azonos kiadásból töltődik be.','A hiányzó rajzok helyén a meglévő kezdő- és véghelyzet-fotók jelennek meg.'],
+      en:['Updates verify every app file before activating the new version.','The PDF reader and the rest of the app load from the same verified release.','Existing start/end photos fill the gaps where drawings are not ready.']},
+    {version:'2.4.2',build:'20261007.11',date:'2026-10-07',
       hu:['A PDF-táblázatok kcal oszlopából az ételek és étkezések kalóriái is beolvashatók.','A Meal total és Meal macros sorokból az étkezési összesítések készülnek.','Az étrendi szabályok megjegyzésként maradnak meg, nem új étkezésként.'],
       en:['Calories are read from labelled kcal columns in PDF food tables.','Meal total and Meal macros lines populate meal nutrition.','Diet rules are retained as notes rather than extra meals.']},
     {version:'2.4.1',build:'20261007.10',date:'2026-10-07',

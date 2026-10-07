@@ -1,3 +1,15 @@
+# Update — 2.4.3, 2026-10-07
+
+The screenshot exactly matched the old v2.4.1 PDF parser. Reproduced it using the historical app/parser/service worker, then verified the upgrade to this release and successful import/save/reload of all 28 meals from the supplied PDF. Releases now use a SHA-256 manifest and immutable app-module caches; stale/incomplete deployments are rejected before activation. Explicit updates verify the latest worker version, while automatic updates offer a restart without discarding open previews. Run `python3 tools/build_release.py` after any release/core-file change, and publish all app files plus the manifest together.
+
+Missing drawings now fall back to exact local start/end exercise photos; existing artwork stays first. `tools/audit_media.py` and MEDIA_WORKFLOW.md provide a production queue and batch process. Catalogue coverage: 877 exercises, 188 illustration boards/pairs, 873 photo pairs, 3 without any image pair. Twelve illustrations are missing among built-in routine exercises.
+
+Validation: 34 Chromium tests, including corrupted-deployment rejection/retry, complete-release hashes, update prompts, all built-in exercise images and broken-drawing/photo enlargement checks. Live website URL/installed build is still pending; the assumed GitHub Pages URL was blocked by the proxy. No physical iPhone/Safari check. Optional user question about the temporary photo fallback was unanswered during the work; the reversible fallback was adopted to fill existing gaps.
+
+Backup bundle: `/workspace/GymApp-backups/GymApp-before-verified-updates-20261007.bundle`; remote branch `backup/before-verified-updates-20261007` preserves the prior release.
+
+---
+
 # Update — 2.4.2, 2026-10-07
 
 The supplied diet PDF revealed a parser defect: column-only kcal labels were discarded, Meal total lines were missed, and Meal macros lines became bogus food entries. PDF extraction now retains column coordinates; explicit kcal columns, meal totals/macros and fixed rules are handled correctly. Printed totals are preserved rather than recalculated from rounded ingredient values.
