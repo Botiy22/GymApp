@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.15.0';
-  const build = '20261008.17';
+  const version = '2.16.0';
+  const build = '20261009.1';
   const history = [
+    {version:'2.16.0',build:'20261009.1',date:'2026-10-09',
+      en:['Reppsy is the new app name, with a custom apricot-and-coral motion-loop logo.','New sign-in, header and install icons; backup and workout exports use the Reppsy name.'],
+      hu:['Az app új neve Reppsy, saját barack-korall mozgáshurok-logóval.','Új belépési, fejléc- és telepítési ikonok; a mentések és edzésexportok a Reppsy nevet használják.']},
     {version:'2.15.0',build:'20261008.17',date:'2026-10-08',
       en:['Food actions adapt to small screens without breaking labels. Navigation, cards and larger text fit their available space.','Every recipe has a separately generated sharp image, with lightweight thumbnails and full-size details available offline.','Tap a profile photo to enlarge it. Cleaner activity and calorie labels, with less empty-profile filler.'],
       hu:['Az ételműveletek feliratai kis képernyőn sem törnek szét. A navigáció, kártyák és nagyobb szöveg az elérhető helyhez igazodnak.','Minden recept külön generált, éles képet kapott, kis előnézettel és nagy részletképpel, offline is.','A profilkép koppintással nagyítható. Rövidebb aktivitás- és kalóriafeliratok, kevesebb üres profilkitöltő szöveg.']},

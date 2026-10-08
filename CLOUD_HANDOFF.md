@@ -1,3 +1,13 @@
+# Update — Reppsy 2.16.0, 2026-10-09
+
+User explicitly selected Reppsy as the current name and requested a cool logo that is not an R. Created a custom AI-generated apricot/coral interlocking motion-link mark on graphite, retained unmodified master at icons/reppsy-source.png and exported Apple180/browser192/install512/maskable512. Old icons remain. Updated HU/EN appName, header wordmark/symbol, login/onboarding, HTML/title/Apple metadata, manifest names, runtime cached-shell metadata refresh and export filename prefixes. Four deployed icons included in verified offline CORE. Storage keys, manifest id/start_url/scope, account configuration, diary/history/plans and custom theme settings unchanged. Name availability is unverified.
+
+Syntax/whitespace/hash checks and local Chromium at 320px HU/390px EN passed for names, header load, manifest identity/icon dimensions, old-metadata refresh, backup filenames and diary persistence. Fixture-only sign-in branding and real verified SW install/offline reload passed. Review script/screenshots /tmp/reppsy-brand-review*. No formal new test files, no live account calls, physical OS shortcut refresh or deployment verification. iOS shortcut metadata limitations and export-before-re-add guidance retained in BRANDING.md/Settings.
+
+Verified remote pre-edit backup backup/main-20261009-before-reppsy-brand preserves b7b4e596491f3512934ee8e379d78f626ff7a382. Restore through a normal reviewed restoration commit; never force-push/reset. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.15.0, 2026-10-08
 
 Completed responsive Food action tiles (Describe stays intact), content-sized/wrapping navigation and exercise filters, safe-area-aware fluid gutters, adaptive action/macro/footer layouts and dial text, plus recipe ingredient-note wrapping. Compact Hungarian Settings caption on narrow phones retains the full accessible name. Profile photos (own, editor and viewed friend) are independently clickable buttons only when a real avatar exists; small friend-row avatars stay spans inside their parent buttons. The shared modal and existing ModalLock preserve background blocking and nested-editor drafts. Empty-profile filler and an all-zero budget equation are suppressed; labels are shorter. Private data schemas, keys, sync protocol, plans/diaries and exercise media are unchanged.

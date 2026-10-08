@@ -1,3 +1,17 @@
+# Reppsy — working name, 2.16.0
+
+The user selected Reppsy as the current app name. The new custom AI-generated logo uses two interlocking angular apricot/coral motion links on graphite, expressing repetitions, strength and momentum. It contains no letter R, monogram or wordmark. No third-party logo was supplied or copied; name/trademark availability remains unverified.
+
+The unmodified generated master is `icons/reppsy-source.png` (1254 × 1254); the original also remains under `/workspace/generated_images`. ImageMagick exports supply `reppsy-apple-180.png`, `reppsy-192.png`, `reppsy-512.png` and `reppsy-maskable-512.png`. The centered mark is contained within the maskable central safe area; both 512 versions retain the full square graphite background. Old icon assets remain for cached-shell compatibility.
+
+Reppsy appears in HU/EN labels, headers with the small symbol, login/onboarding, HTML/browser/Apple titles and manifest name/short name. Runtime metadata refresh uses the new icon URLs for old cached HTML. All four deployed icons are verified offline CORE assets. Exports use `reppsy-backup-` and `reppsy-workouts-`; the backup schema is unchanged.
+
+App URL, manifest ID/start URL/scope, storage keys, private account configuration, diary/plan/history records and theme preferences are preserved. Existing iOS Home Screen shortcuts may retain their original name/icon even after the app updates. Settings → App → Update name and icon explains exporting before re-adding; keep the old installation until the new one contains your data. Physical OS icon refresh is not verified.
+
+Focused local Chromium checks at 320px HU/390px EN verified names, wordmark image loading, install icon dimensions, cached-metadata refresh, backup filename and diary persistence. Sign-in icon/name and a real verified service-worker offline reload also passed; no live account calls or hosting deployment were verified.
+
+---
+
 # Setora — working name, 2.9.0
 
 Setora replaces the visible Otisport name in the app, signup, manifest and browser/Home Screen metadata. Availability and trademarks have not been checked. The existing abstract mint icon assets remain. Paths, manifest identity/scope, `gymapp.v1` data keys, private onboarding metadata, account project and import schemas retain compatibility. New data exports use the `setora-` prefix. Existing iOS shortcuts can retain their original name; the Settings guide explains backup and re-adding limitations.

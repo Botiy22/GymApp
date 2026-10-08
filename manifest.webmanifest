@@ -1,7 +1,7 @@
 {
   "id": "./index.html",
-  "name": "Setora",
-  "short_name": "Setora",
+  "name": "Reppsy",
+  "short_name": "Reppsy",
   "description": "Edzésnapló gyakorlatfotókkal, fejlődéskövetéssel és kalórianaplóval.",
   "start_url": "./index.html",
   "scope": "./",
@@ -12,8 +12,8 @@
   "lang": "hu",
   "categories": ["health", "fitness"],
   "icons": [
-    { "src": "icons/otisport-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/otisport-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/otisport-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icons/reppsy-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/reppsy-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/reppsy-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

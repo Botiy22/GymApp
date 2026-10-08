@@ -457,3 +457,5 @@ button.profile-avatar{padding:0;cursor:zoom-in}.profile-identity>button.profile-
 
 .ing li{flex-wrap:wrap;line-height:1.6}.ing li>span{min-width:0;flex:1 1 8rem}.ing li>b{min-width:0;max-width:100%;white-space:normal;overflow-wrap:normal;text-align:right}
 .ing li.long-quantity{display:block}.ing li.long-quantity>b{display:block;text-align:left;color:var(--mut);font-weight:500;margin-top:4px}
+
+.app-wordmark{display:inline-flex;align-items:center;gap:7px}.app-wordmark::before{display:none}.app-wordmark>img{display:block;width:20px;height:20px;border-radius:6px;flex:none}

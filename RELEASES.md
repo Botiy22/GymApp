@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.16.0 — 2026-10-09, build 20261009.1
+
+Reppsy replaces the current visible Setora name. A new custom apricot/coral motion-link logo appears in headers, login/onboarding, browser and install icons. It is an abstract mark, not a letter R. New asset URLs and runtime metadata refresh update older cached HTML; all four deployment icons are in the verified offline shell. Backup/CSV filenames use `reppsy-`.
+
+Manifest identity/start URL/scope, app address, storage keys, accounts and private diary data remain unchanged. Source PNG and deployment sizes are recorded in BRANDING.md. Existing iOS shortcuts may retain their old OS-managed metadata; Settings already provides backup/re-add guidance.
+
+Validation: local Chromium at 320px HU/390px EN verified current names, loaded header images, manifest identity and icon dimensions, old-title/icon refresh, backup filenames and diary persistence. Sign-in branding and real verified offline reload also passed. Syntax, whitespace and release hashes checked. Physical iOS/Android shortcut refresh, live account operations and deployment not verified. Name availability remains unverified.
+
 ## 2.15.0 — 2026-10-08, build 20261008.17
 
 Food actions use equal-width icon/label tiles, with an adaptive two-column layout for tight content widths and larger text. Describe stays on one line. Page gutters account for safe areas; navigation and exercise filters size from content and wrap; macros, action rows and sheet footers adapt to the space available. Narrow phones use a compact Hungarian Settings caption with the full accessible name. Calorie readouts scale within the dial. Recipe ingredient notes wrap instead of running out of their card.

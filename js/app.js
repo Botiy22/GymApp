@@ -189,7 +189,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?`<button class="icon-btn update-app" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateNow'))}" aria-describedby="update-status" ${ui.updateBusy?'disabled':''}>${IC.refresh}</button>`:''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
+  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?`<button class="icon-btn update-app" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateNow'))}" aria-describedby="update-status" ${ui.updateBusy?'disabled':''}>${IC.refresh}</button>`:''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -1302,9 +1302,9 @@
     const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
     D().workouts.forEach(w => w.entries.forEach(e => e.sets.forEach((x, j) => rows.push([ymd(w.start), w.name, itemName(e), j + 1, x.kg, x.reps, x.w ? 1 : 0]))));
     const cell = v => { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };     // a name can never be read as a formula by a spreadsheet
-    saveFile('setora-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
+    saveFile('reppsy-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
   }
-  function exportData() { saveFile('setora-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
+  function exportData() { saveFile('reppsy-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
 
   /* ================= CALENDAR, DAY, ACTIVITY ================= */
   function shCal() {
@@ -1449,7 +1449,7 @@
     document.title = t('appName');
     const apple = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (apple) apple.content = t('appName');
     // A cached older HTML shell may still reference the old brand's icon files.
-    for (const [rel, path] of [['apple-touch-icon','icons/otisport-apple-180.png'],['icon','icons/otisport-192.png'],['manifest','manifest.webmanifest']]) {
+    for (const [rel, path] of [['apple-touch-icon','icons/reppsy-apple-180.png'],['icon','icons/reppsy-192.png'],['manifest','manifest.webmanifest']]) {
       let link = document.querySelector('link[rel="' + rel + '"]');
       if (!link) { link = document.createElement('link'); link.rel = rel; document.head.append(link); }
       if (link.getAttribute('href') !== path) link.href = path;
@@ -1511,9 +1511,9 @@
     document.documentElement.lang = L();
     const s = ui.gate, m = s.mode;
     if (m === 'up' && setupState().step < 4) {
-      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/otisport-192.png" alt=""><b>${esc(t('appName'))}</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
+      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/reppsy-192.png" alt=""><b>${esc(t('appName'))}</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
     }
-    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/otisport-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
+    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/reppsy-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
       ${s.err ? `<div class="note warn" role="alert"><b>${esc(s.err)}</b></div>` : ''}${s.info ? `<div class="note" role="status"><b>${esc(s.info)}</b></div>` : ''}
       ${m === 'up' ? `<div class="setup-account-summary"><span>${esc(t('setupYourTarget'))}<b>${compact(calcTargets(setupState().profile).kcal)} kcal</b></span><button type="button" class="link" data-a="setup-edit">${esc(t('edit'))}</button></div>` : ''}
