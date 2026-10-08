@@ -521,12 +521,16 @@
     d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title">${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
     $('.sheet-body', d).scrollTop = y;
   }
-  let closeT = 0;
+  let closeT = 0, unlockSheet = null;
   function openSheet(fn) {
     const d = dlg(); if (!d.showModal) { toast(t('oldIOS')); return; }
     const nested = d.open && !closeT;
     clearTimeout(closeT); closeT = 0; d.classList.remove('closing');          // a sheet that was sliding away is reused
-    ui.sheets.push(fn); drawSheet(nested ? 'fwd' : ''); if (!d.open) d.showModal();
+    ui.sheets.push(fn); drawSheet(nested ? 'fwd' : '');
+    if (!d.open) {
+      unlockSheet = ModalLock.acquire(d);
+      try { d.showModal(); } catch (error) { unlockSheet(); unlockSheet = null; ui.sheets = []; throw error; }
+    }
   }
   function refreshSheet() { ui.sheetKeep = true; drawSheet(); }
   function closeSheet(all) {
@@ -1731,7 +1735,11 @@
   const standalone = !!navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
   Store.load(); applyLook();
   let failT = 0; Store.onFail = () => { if (Date.now() - failT > 4000) { failT = Date.now(); setTimeout(() => toast(t('saveFailed')), 0); } };
-  dlg().addEventListener('close', () => { ui.sheets = []; });
+  dlg().addEventListener('close', () => {
+    if (dlg().open) return; // A queued close event can arrive after the sheet reopens.
+    ui.sheets = [];
+    if (unlockSheet) { unlockSheet(); unlockSheet = null; }
+  });
   dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });

@@ -1,3 +1,13 @@
+# Update — 2.5.1, 2026-10-08
+
+General exercise/detail/image sheets now use `js/modal-lock.js`, shared with the importer. The lock fixes the body at its original scroll position and makes background app containers inert. Capture guards block background actions and backdrop scrolling; internal dialog scrolling remains available. Multiple dialog owners retain the lock until the last closes, so import/save over Settings cannot unlock early. Existing page styles, inert states and position are restored on final close. The active workout's internal scroller is preserved. Closing animation still shields input.
+
+Validation: all 43 Chromium browser tests passed, alongside syntax, manifest-hash and whitespace checks. Added three browser regressions covering zoom/Back/close, background actions and scroll restoration, active workouts, and an upload whose underlying sheet closes on save. Mobile screenshot and physical-coordinate backdrop close checked in Chromium. Physical iPhone/Safari remains untested.
+
+Backup: `/workspace/GymApp-backups/GymApp-before-dialog-lock-20261008.bundle` (complete history verified). Release manifest includes the new lock module for offline startup.
+
+---
+
 # Update — 2.5.0, 2026-10-07
 
 Implemented compact header plan upload, collapsible weekly/daily meals, a focused Workout page (Train/Plans/History/Ranks), active exercise jumps and expandable volume breakdowns. Six derived personal lift ranks track four exact barbell lifts using actual working sets, with upgrade feedback on finish and next milestones. Existing logs qualify; no account schema changes. RANKS.md documents thresholds and exclusions.

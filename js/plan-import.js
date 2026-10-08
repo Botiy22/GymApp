@@ -70,13 +70,7 @@ window.PlanImport = (() => {
       <div class="import-default-rest" data-pdf="rest-default-wrap" hidden><span>${tr('Hiányzó pihenőidő','Rest times not provided')}</span><button type="button" class="btn sm" data-pdf="default-rest">${tr('Saját alapérték: ','My default: ')}${options.restDefault||90} s</button></div><div data-pdf="preview"></div><div data-pdf="mapping"></div>
       <details class="import-advanced" data-pdf="advanced" hidden><summary>${tr('Részletek és további lehetőségek','Details and more options')}</summary><div data-pdf="warnings"></div><details data-pdf="source"><summary>${tr('Kiolvasott szöveg','Extracted text')}</summary><pre data-pdf="text"></pre></details><div class="row2"><button type="button" class="btn sm" data-pdf="add-routine">${tr('Edzésnap hozzáadása','Add workout day')}</button><button type="button" class="btn sm" data-pdf="add-meal">${tr('Étkezés hozzáadása','Add meal')}</button></div><details><summary>JSON</summary><textarea data-pdf="json" rows="8" aria-label="${tr('Terv JSON','Plan JSON')}"></textarea><div class="row2"><button type="button" class="btn sm" data-pdf="rebuild">${tr('Előnézet frissítése','Refresh preview')}</button><button type="button" class="btn sm" data-pdf="export">${tr('Terv letöltése','Download plan')}</button></div></details></details></div>
       <div class="import-footer" data-pdf="footer"><span>${tr('Átnézés után a terv hozzáadható.','Review the plan before adding it.')}</span><button type="button" class="btn primary" data-pdf="apply" disabled>${tr('Tervek hozzáadása','Add plans')}</button></div>`;
-    // Native dialog does not lock the document on iOS. Preserve the page's
-    // position and inline styles while the preview owns scrolling.
-    const scrollX=window.scrollX,scrollY=window.scrollY;
-    const body=document.body,root=document.documentElement;
-    const saved=['position','top','left','width','overflow'].map(key=>[key,body.style.getPropertyValue(key),body.style.getPropertyPriority(key)]);
-    const rootOverflow=[root.style.getPropertyValue('overflow'),root.style.getPropertyPriority('overflow')];
-    body.style.position='fixed';body.style.top=-scrollY+'px';body.style.left=-scrollX+'px';body.style.width='100%';body.style.overflow='hidden';root.style.overflow='hidden';
+    const releasePage = ModalLock.acquire(dialog);
     const viewport=window.visualViewport;
     const size=()=>{dialog.style.setProperty('--import-viewport',(viewport?viewport.height:window.innerHeight)+'px');dialog.style.setProperty('--import-offset',(viewport?viewport.offsetTop:0)+'px');};
     size();window.addEventListener('resize',size);if(viewport){viewport.addEventListener('resize',size);viewport.addEventListener('scroll',size);}
@@ -84,9 +78,7 @@ window.PlanImport = (() => {
     const unlock=()=>{
       if(unlocked)return;unlocked=true;
       window.removeEventListener('resize',size);if(viewport){viewport.removeEventListener('resize',size);viewport.removeEventListener('scroll',size);}
-      saved.forEach(([key,value,priority])=>{if(value)body.style.setProperty(key,value,priority);else body.style.removeProperty(key);});
-      if(rootOverflow[0])root.style.setProperty('overflow',...rootOverflow);else root.style.removeProperty('overflow');
-      window.scrollTo(scrollX,scrollY);
+      releasePage();
     };
     dialog.addEventListener('close',unlock,{once:true});
     document.body.append(dialog);

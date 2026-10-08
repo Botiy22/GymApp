@@ -313,8 +313,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.5.0')
-        expect(self.page.locator('#sheet')).to_contain_text('20261007.13')
+        expect(self.page.locator('#sheet')).to_contain_text('2.5.1')
+        expect(self.page.locator('#sheet')).to_contain_text('20261008.1')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -395,7 +395,7 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
         for path in ['/css/design.css','/js/plan-sheet.js','/js/strength-ranks.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
@@ -426,7 +426,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines'])
         self.assertEqual(before['plan'],self.data()['plan'])
         self.assertEqual('updateSuccess',self.page.evaluate('() => __gym.ui.updateStatus'))
@@ -448,7 +448,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-restart"]').click()
-        self.assertEqual('2.5.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
         expect(self.page.locator('#ready-update')).to_have_count(0)
 
     def test_release_manifest_matches_every_published_file(self):
@@ -609,6 +609,66 @@ class AppBrowserTests(unittest.TestCase):
         self.assertGreater(self.page.locator('[data-pdf="content"]').bounding_box()['height'],140)
         self.page.locator('[data-pdf="close"]').click()
         self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+
+    def test_exercise_zoom_locks_background_until_last_sheet_closes(self):
+        self.page.evaluate("() => {document.body.style.minHeight='2400px';document.body.style.overflow='auto';document.documentElement.style.overflow='visible';document.querySelector('#coach').inert=true;window.scrollTo(0,180);}")
+        self.page.evaluate('() => __gym.A["ex-open"]({dataset:{id:"Romanian_Deadlift"}})')
+        body=self.page.locator('#sheet .sheet-body')
+        body.hover();self.page.mouse.wheel(0,500);self.page.wait_for_timeout(200)
+        self.assertGreater(body.evaluate('(el) => el.scrollTop'),0)
+        self.page.locator('.drawing-phase').first.click()
+        expect(self.page.locator('.drawing-zoom img')).to_be_visible()
+        self.page.mouse.move(2,2);self.page.mouse.wheel(0,700);self.page.wait_for_timeout(150)
+        self.assertEqual('-180px',self.page.evaluate('() => document.body.style.top'))
+        self.assertEqual(0,self.page.evaluate('() => scrollY'))
+        self.assertTrue(self.page.locator('#view').evaluate('(el) => el.inert'))
+        # A background action cannot run, even if delivered by an old mobile browser.
+        nav=self.page.locator('#tabbar').inner_html()
+        self.page.locator('#tabbar [data-a]').first.evaluate('(el) => el.click()')
+        self.assertEqual(nav,self.page.locator('#tabbar').inner_html())
+        self.page.locator('[data-a="sheet-back"]').click()
+        expect(self.page.locator('.drawing-pair')).to_be_visible()
+        self.assertEqual('fixed',self.page.evaluate('() => document.body.style.position'))
+        self.page.locator('[data-a="sheet-close"]').click()
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.assertEqual(180,self.page.evaluate('() => scrollY'))
+        self.assertFalse(self.page.locator('#view').evaluate('(el) => el.inert'))
+        self.assertTrue(self.page.locator('#coach').evaluate('(el) => el.inert'))
+        self.assertEqual('auto',self.page.evaluate('() => document.body.style.overflow'))
+        self.assertEqual('visible',self.page.evaluate('() => document.documentElement.style.overflow'))
+        self.page.mouse.move(100,200);self.page.mouse.wheel(0,400);self.page.wait_for_timeout(200)
+        self.assertGreater(self.page.evaluate('() => scrollY'),180)
+
+    def test_upload_over_sheet_keeps_page_locked_when_underlying_sheet_closes(self):
+        self.page.evaluate("() => {document.body.style.minHeight='2400px';window.scrollTo(0,160);__gym.A.settings();}")
+        self.page.locator('#sheet [data-a="pdf-plan"]').click()
+        self.upload(self.hu_file);self.add()
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        expect(self.page.locator('#pdf-plan-dialog')).to_be_visible()
+        self.assertEqual('fixed',self.page.evaluate('() => document.body.style.position'))
+        self.assertEqual('-160px',self.page.evaluate('() => document.body.style.top'))
+        self.assertTrue(self.page.locator('#view').evaluate('(el) => el.inert'))
+        self.page.locator('[data-pdf="close"]').click()
+        self.assertEqual('',self.page.evaluate('() => document.body.style.position'))
+        self.assertEqual(160,self.page.evaluate('() => scrollY'))
+        self.assertFalse(self.page.locator('#view').evaluate('(el) => el.inert'))
+
+    def test_zoom_over_active_workout_keeps_workout_scroll_and_inputs(self):
+        self.page.locator('[data-a="w-start"]').first.click()
+        scroller=self.page.locator('.w-body')
+        scroller.evaluate('(el) => el.scrollTop=320')
+        before=scroller.evaluate('(el) => el.scrollTop')
+        self.page.evaluate('() => __gym.A["ex-open"]({dataset:{id:"Romanian_Deadlift"}})')
+        self.page.locator('.drawing-phase').first.click()
+        self.page.mouse.move(2,2);self.page.mouse.wheel(0,600);self.page.wait_for_timeout(150)
+        self.assertEqual(before,scroller.evaluate('(el) => el.scrollTop'))
+        self.assertTrue(self.page.locator('#workout').evaluate('(el) => el.inert'))
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.assertEqual(before,scroller.evaluate('(el) => el.scrollTop'))
+        self.assertFalse(self.page.locator('#workout').evaluate('(el) => el.inert'))
+        scroller.hover();self.page.mouse.wheel(0,400);self.page.wait_for_timeout(200)
+        self.assertGreater(scroller.evaluate('(el) => el.scrollTop'),before)
 
     def test_every_builtin_routine_exercise_has_loaded_start_end_images(self):
         ids=sorted({i['ex'] for r in self.data()['routines'] if r['builtin'] for i in r['items']})

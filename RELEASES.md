@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.5.1 — 2026-10-08, build 20261008.1
+
+- Exercise details, enlarged images and other sheets now lock document scrolling and background controls, including active workout inputs. The dialog content remains scrollable.
+- Sheets and plan uploads share a lock: closing an underlying sheet leaves an upload locked; returning from image zoom leaves the detail sheet locked. Closing the final dialog restores the previous page position, inline styles and inert states.
+- Closing animations retain the input shield to avoid interactions through a departing sheet. Scroll/touch events on the backdrop cannot move the page.
+- Validation: all 43 Chromium browser tests passed, including verified offline updates; JavaScript syntax, manifest hashes and whitespace checks passed. Mobile zoom screenshot and actual backdrop-close restoration checked. Physical iPhone/Safari remains untested.
+- Added regressions for exercise zoom/back/close, preserved styles and background action blocking, uploads over Settings, and active workout scroll restoration. Backup: `/workspace/GymApp-backups/GymApp-before-dialog-lock-20261008.bundle` (verified complete history).
+
 ## 2.5.0 — 2026-10-07, build 20261007.13
 
 - Compact 44-pixel plan upload button beside Settings on every main page; supports PDF, Excel and Word without repeated large import cards.

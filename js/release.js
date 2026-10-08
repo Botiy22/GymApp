@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.5.0';
-  const build = '20261007.13';
+  const version = '2.5.1';
+  const build = '20261008.1';
   const history = [
-    {version,build,date:'2026-10-07',
+    {version,build,date:'2026-10-08',
+      hu:['A nagyított gyakorlatképek és más párbeszédablakok mögött a háttér nem görgethető és nem érinthető.','Bezáráskor az oldal az előző helyére tér vissza, egymásra nyitott ablakok után is.'],
+      en:['Exercise image zoom and other dialogs now block background scrolling and interaction.','Closing the last dialog restores the page position, including nested views and plan uploads.']},
+    {version:'2.5.0',build:'20261007.13',date:'2026-10-07',
       hu:['Kompakt tervfeltöltés a Beállítások mellett és összecsukható heti étrend.','Az Edzés oldal külön Edzés, Tervek, Napló és Rangok nézetet kapott.','Edzés közben közvetlenül választhatsz gyakorlatot; az összterhelésből látszanak a naplózott emelések.','Hat egyéni emelési rang négy rudas alapgyakorlathoz, tényleges munkasorozatok alapján.'],
       en:['Compact plan upload beside Settings and collapsible weekly meals.','The Workout page now has Train, Plans, History and Ranks views.','Jump directly to exercises during a workout and expand volume to inspect your lifts.','Six personal lift ranks across four barbell exercises, using actual working sets.']},
     {version:'2.4.3',build:'20261007.12',date:'2026-10-07',
