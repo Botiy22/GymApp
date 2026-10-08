@@ -22,7 +22,7 @@ window.Store = (function () {
     return {
       v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
@@ -49,7 +49,7 @@ window.Store = (function () {
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
-      accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
+      accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, addWorkoutCalories: s.addWorkoutCalories === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
       hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's mint accent
       photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',
       stretch: s.stretch !== false, hold: [20, 30, 45].indexOf(+s.hold) >= 0 ? +s.hold : 30,                      // warm-up and stretching suggestions; seconds per stretch
@@ -90,8 +90,12 @@ window.Store = (function () {
         return sets.length ? { ex: e.ex, label: pair(e.label), sets } : null;
       }).filter(Boolean);
       const tick = w.tick === true;                                              // ticked as done, without a set-by-set log; "pl" remembers the planned sets
-      if (!start || !(entries.length || tick)) return null;
+      const cardio=arr(w.cardio).slice(0,40).map(WorkoutEnergy.cleanCardio).filter(Boolean).map(c=>({...c,id:c.id||newId()}));
+      if (!start || !(entries.length || tick || cardio.length)) return null;
       const o = { id: idStr(w.id) || newId(), rid: idStr(w.rid) || null, name: str(w.name, 80) || 'Workout', start, end: num(w.end, start, 4e12, start), entries, warm: w.warm === true, cool: w.cool === true };
+      if(cardio.length||w.cardioAt)o.cardio=cardio;
+      if(w.cardioAt)o.cardioAt=num(w.cardioAt,0,4e12,0);if(w.energyAt)o.energyAt=num(w.energyAt,0,4e12,0);
+      const energy=WorkoutEnergy.cleanStrength(w.energy);if(energy&&!tick&&entries.length)o.energy=energy;
       if (tick && !entries.length) { o.tick = true; o.pl = arr(w.pl).slice(0, 60).map(z => { z = obj(z); return EXID.test(str(z.ex, 90)) ? { ex: z.ex, n: int(z.n, 1, 12, 3) } : null; }).filter(Boolean); }
       return o;
     }).filter(Boolean).sort((a, b) => a.start - b.start);
@@ -103,6 +107,7 @@ window.Store = (function () {
         return Object.assign({ ex: e.ex, label: pair(e.label), target: int(e.target, 1, 12, 3), reps: str(e.reps, 20) || '8–12', rest: int(e.rest, 0, 3600, 90),
           sets: arr(e.sets).slice(0, 40).map(z => { z = obj(z); return { kg: numStr(z.kg), reps: numStr(z.reps), done: z.done === true, w: z.w === true }; }) }, extra(e));
       }).filter(Boolean),
+      cardio: arr(a.cardio).slice(0,40).map(WorkoutEnergy.cleanCardio).filter(Boolean).map(c=>({...c,id:c.id||newId()})),
       restEnd: num(a.restEnd, 0, 4e12, 0), restTotal: num(a.restTotal, 0, 36000, 0), warm: a.warm === true, cool: a.cool === true, circuit: a.circuit === true, info: a.info && typeof a.info === 'object' ? { hu: str(a.info.hu, 1200), en: str(a.info.en, 1200) } : str(a.info, 1200)
     } : null;
     const seen = {};

@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.9.1';
-  const build = '20261008.8';
+  const version = '2.10.0';
+  const build = '20261008.9';
   const history = [
-    {version,build,date:'2026-10-08',en:['Profile macro totals show at most one decimal and stay inside their columns.'],hu:['A profil makróértékei legfeljebb egy tizedessel jelennek meg, és az oszlopaikon belül maradnak.']},
+    {version,build,date:'2026-10-08',
+      en:['Estimated active calories for lifting from confirmed duration, body weight and intensity.','Log walking, incline walking, running, stairs, cycling and elliptical cardio, separately or inside a workout.','Food and Profile separate lifting/cardio calories from your base target; adding them to the daily budget is optional.','Entered daily active calories replace workout estimates in the budget to avoid counting them twice.'],
+      hu:['Súlyzós aktív kalóriák becslése ellenőrzött időtartam, testsúly és intenzitás alapján.','Séta, emelkedős séta, futás, lépcsőzés, kerékpározás és elliptikus kardió rögzítése önállóan vagy edzésen belül.','Az Étkezés és Profil külön mutatja a súlyzós és kardió kalóriát, az alapcélt megtartva. A napi keretbe való beszámítás választható.','A megadott napi összes aktív kalória az edzésbecslést helyettesíti, így nem számoljuk kétszer.']},
+    {version:'2.9.1',build:'20261008.8',date:'2026-10-08',en:['Profile macro totals show at most one decimal and stay inside their columns.'],hu:['A profil makróértékei legfeljebb egy tizedessel jelennek meg, és az oszlopaikon belül maradnak.']},
     {version:'2.9.0',build:'20261008.7',date:'2026-10-08',
       en:['Setora is the new working name. Existing accounts and diaries stay in place.','Settings is a full tab with visible navigation, curated palettes and background previews.','Lined progress dials, clearer food actions, sticky workout navigation and corrected lift-rank arrows.','Friend search supports username, verified email and verified phone. Contact discovery requires the new database migration and optional SMS configuration.'],
       hu:['Az új munkanév Setora. A fiókok és naplók megmaradnak.','A Beállítások teljes fület kapott látható navigációval, színpalettákkal és háttérelőnézetekkel.','Vonalas haladásmérő, egyértelműbb étkezési műveletek, rögzített edzésnavigáció és javított rangnyilak.','Barátkeresés felhasználónévvel, igazolt emaillel és telefonnal. Az elérhetőség alapú kereséshez új adatbázis-bővítés és opcionálisan SMS-beállítás szükséges.']},

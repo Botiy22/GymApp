@@ -365,3 +365,28 @@ Object.assign(window.I18N.hu, {
   phoneVerificationError:'Nem sikerült igazolni a számot. Ellenőrizd a kódot, vagy próbáld később. Felhasználónévvel vagy emaillel is hozzáadhatsz barátot.',
   friendNotFound:'Nincs ilyen kereshető fiók. Ellenőrizd az adatot, vagy kérd el a felhasználónevét.'
 });
+Object.assign(window.I18N.en, {
+  date:'Date',baseCalorieTarget:'Base target',strengthEnergy:'Lifting',cardioEnergy:'Cardio',estimatedActiveEnergy:'Estimated active calories',
+  includeWorkoutEnergy:'Add workout calories to my daily budget',manualEnergyTotal:'Entered daily activity: {0} kcal',manualEnergyPriority:'Your entered daily activity total replaces workout calories in the budget.',
+  energyMissing:'Complete {0} workout estimate(s)',energyAbout:'About these estimates',energyEstimateHint:'An estimate above resting calories, based on duration, body weight and intensity. Lifted kilos alone cannot tell us calories burned.',
+  energyBudgetHint:'If your target’s activity level already includes these workouts, leave this off to avoid counting them twice.',
+  calculateEnergy:'Calculate lifting calories',editEnergy:'Edit lifting estimate',liftingMinutes:'Lifting minutes',energyBodyweight:'Body weight (kg)',energyIntensity:'Intensity',energy_moderate:'Moderate',energy_vigorous:'Vigorous',
+  liftingDurationHint:'Include normal rests between sets. Exclude cardio and long breaks. Check the timer-based duration before saving.',skipEnergy:'Finish without a calorie estimate',
+  logCardio:'Log cardio',cardioActivity:'Activity',cardio_walk:'Walking',cardio_incline:'Incline walking',cardio_run:'Running',cardio_stairs:'Stairs',cardio_cycle:'Cycling',cardio_elliptical:'Elliptical',cardioSpeed:'Speed',cardioIncline:'Incline',
+  cardioEstimateHint:'Walking and running use speed and incline; other activities use typical intensity estimates. A machine or watch may show different numbers.',
+  cardioShortcutHint:'Walking, stairs, running and more.',cardioLimit:'A workout can hold up to 40 cardio entries.',cardioRemoveConfirm:'Remove this cardio entry?',strengthOnly:'Lifting',energyTotal:'Workout estimate'
+});
+Object.assign(window.I18N.hu, {
+  date:'Dátum',baseCalorieTarget:'Alap kalóriacél',strengthEnergy:'Súlyzós edzés',cardioEnergy:'Kardió',estimatedActiveEnergy:'Becsült aktív kalória',
+  includeWorkoutEnergy:'Edzéskalóriák hozzáadása a napi kerethez',manualEnergyTotal:'Megadott napi aktivitás: {0} kcal',manualEnergyPriority:'A megadott napi aktív kalória az edzésbecslés helyett kerül a keretbe.',
+  energyMissing:'{0} edzés becslésének kiegészítése',energyAbout:'A becslésről',energyEstimateHint:'Időtartam, testsúly és intenzitás alapján becsült többlet a nyugalmi kalóriákhoz képest. A megmozgatott kilókból önmagukban nem számítható az elégetett kalória.',
+  energyBudgetHint:'Ha a kalóriacél aktivitási szintje már tartalmazza ezeket az edzéseket, hagyd kikapcsolva a dupla beszámítás elkerüléséhez.',
+  calculateEnergy:'Súlyzós kalóriák becslése',editEnergy:'Súlyzós becslés módosítása',liftingMinutes:'Súlyzós edzés (perc)',energyBodyweight:'Testsúly (kg)',energyIntensity:'Intenzitás',energy_moderate:'Közepes',energy_vigorous:'Intenzív',
+  liftingDurationHint:'A szokásos sorozatközi pihenők beleszámítanak. A kardiót és hosszú szüneteket hagyd ki. Ellenőrizd az időmérőből javasolt időt mentés előtt.',skipEnergy:'Befejezés kalóriabecslés nélkül',
+  logCardio:'Kardió rögzítése',cardioActivity:'Mozgás',cardio_walk:'Séta',cardio_incline:'Emelkedős séta',cardio_run:'Futás',cardio_stairs:'Lépcsőzés',cardio_cycle:'Kerékpározás',cardio_elliptical:'Elliptikus tréner',cardioSpeed:'Sebesség',cardioIncline:'Emelkedő',
+  cardioEstimateHint:'A séta és futás sebesség és emelkedő alapján számol; a többi mozgás jellemző intenzitásból becsül. A gép vagy óra mást mutathat.',
+  cardioShortcutHint:'Séta, lépcsőzés, futás és több más mozgás.',cardioLimit:'Egy edzéshez legfeljebb 40 kardió tétel adható.',cardioRemoveConfirm:'Eltávolítod ezt a kardiót?',strengthOnly:'Súlyzós edzés',energyTotal:'Becsült edzéskalória'
+});
+
+Object.assign(window.I18N.en,{manualEnergyHint:'Enter a full daily active-calorie total, including workouts. If included in your budget, it replaces workout estimates.'});
+Object.assign(window.I18N.hu,{manualEnergyHint:'A teljes napi aktív kalóriát add meg, az edzésekkel együtt. Beszámításkor ez az összeg az edzésbecslés helyére kerül.'});

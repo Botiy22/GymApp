@@ -1,3 +1,13 @@
+# Update — Setora 2.10.0, 2026-10-08
+
+User requested calories from lifting data, cardio logging and optional inclusion in daily intake. Implemented net active estimates from logged lifting + confirmed minutes/body weight/intensity; kg×reps does not become calories per exercise. Finish can skip estimates; old logs require missing inputs. Cardio supports walk/incline/run/stairs/cycle/elliptical, standalone/active/saved workouts. Food/Profile keep the base target and show lifting/cardio separately, using optional base+active−eaten. Existing manual daily activity inclusion replaces estimates, never stacks. Default workout inclusion is off; activity multipliers can already include workouts. See WORKOUT_ENERGY.md.
+
+New js/workout-energy.js is loaded before Store, available through cached-shell fallback and included in verified offline assets. Store sanitizes/preserves session energy and cardio, allows cardio-only logs and active-cardio drafts, and saves independent energyAt/cardioAt timestamps. Cloud merge preserves newer field edits while keeping original entries/deletion/warm/cool behavior. JSON formats/data keys retain compatibility, but all devices should update before editing added fields. No SQL migration is required; social activation remains separate.
+
+No tests added/run. Syntax/whitespace and manual Chromium screenshots at 320/390px EN/HU reviewed Food/Profile, workout summary, lifting/incline/stairs forms with synthetic local data. Example net strength184+cardio166=350 yields 726 remaining from2410 base/2034 eaten. No runtime errors or horizontal overflow recorded. Live sync, real calorimetry, physical Safari and served deployment remain unverified. Backup backup/main-20261008-190313-before-workout-calories preserves 88aefd36749b4826c24b8aa1e75b605604b3e88c, created and verified before edits. Restore through a normal reviewed commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.9.1, 2026-10-08
 
 User screenshot showed Profile Carbs displaying a floating-point sum (`208.60000000000002`) across the Fat column. Profile now formats macro totals through the existing one-decimal rounding helper before language-specific decimal formatting. Value/unit flex rows constrain and wrap within the three grid columns; bars remain aligned. Nutrition storage, calculations and other displays are unchanged.

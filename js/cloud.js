@@ -58,7 +58,17 @@ window.Cloud = (function () {
     const out = JSON.parse(JSON.stringify(a)), list = v => Array.isArray(v) ? v : [], map = v => v && typeof v === 'object' && !Array.isArray(v) ? v : {};
     const del = Object.assign({}, map(b.del)); Object.keys(map(a.del)).forEach(k => { del[k] = Math.max(+del[k] || 0, +a.del[k] || 0); });
     out.del = del; out.mt = {}; Object.keys(A).concat(Object.keys(B)).forEach(k => { out.mt[k] = Math.max(+A[k] || 0, +B[k] || 0); });
-    const w = {}; list(b.workouts).forEach(x => { if (x && x.id) w[x.id] = x; }); list(a.workouts).forEach(x => { if (!x || !x.id) return; const o = w[x.id]; w[x.id] = o && ((o.warm && !x.warm) || (o.cool && !x.cool)) ? Object.assign({}, x, { warm: !!(x.warm || o.warm), cool: !!(x.cool || o.cool) }) : x; });        // workouts and meals: everything from both sides, minus what was deleted
+    const w = {}; list(b.workouts).forEach(x => { if (x && x.id) w[x.id] = x; }); list(a.workouts).forEach(x => {
+      if(!x||!x.id)return;
+      const remote=w[x.id],merged=Object.assign({},x);
+      if(remote){
+        merged.warm=!!(x.warm||remote.warm);merged.cool=!!(x.cool||remote.cool);
+        for(const [key,stamp] of [['energy','energyAt'],['cardio','cardioAt']]) {
+          if((+remote[stamp]||0)>(+x[stamp]||0)){merged[key]=remote[key];merged[stamp]=remote[stamp];}
+        }
+      }
+      w[x.id]=merged;
+    });        // workouts and meals: everything from both sides, minus what was deleted
     out.workouts = Object.keys(w).filter(id => !del[id]).map(id => w[id]).sort((x, y) => (x.start || 0) - (y.start || 0));
     out.food = {}; const fa = map(a.food), fb = map(b.food), days = {}; Object.keys(fa).concat(Object.keys(fb)).forEach(d => { days[d] = 1; });
     Object.keys(days).sort().forEach(d => { const m = {}; list(fb[d]).forEach(f => { if (f && f.id) m[f.id] = f; }); list(fa[d]).forEach(f => { if (f && f.id) m[f.id] = f; }); const l = Object.keys(m).filter(id => !del[id]).map(id => m[id]).sort((x, y) => (x.t || 0) - (y.t || 0)); if (l.length) out.food[d] = l; });

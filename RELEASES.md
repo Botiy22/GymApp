@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.10.0 — 2026-10-08, build 20261008.9
+
+- Lifting calories are estimated from confirmed duration/body weight/intensity after logging sets; older logs can be completed without invented estimates.
+- Walking, incline walking, running, stairs, cycling and elliptical cardio can be logged alone, during an active workout, or in a saved session.
+- Food/Profile retain the base calorie target and show lifting/cardio energy separately. Optional exercise inclusion uses base + active exercise − food; entered daily active totals replace estimates to avoid double counting.
+- Sanitized session inputs and independent edit timestamps persist through the existing private sync and JSON backup. No extra database migration/API is needed.
+- See WORKOUT_ENERGY.md for net-active formulas, effort assumptions, supported inputs and activity-multiplier limits. No tests added/run; syntax/whitespace and manual mobile screenshots reviewed. Live sync, physical Safari and deployment remain unverified.
+
 ## 2.9.1 — 2026-10-08, build 20261008.8
 
 Profile macro totals are rounded for display to one decimal, avoiding floating-point strings such as `208.60000000000002`. Flexible value/unit rows and constrained columns prevent overlap while retaining complete values; bars align beneath each total. Stored nutrition values are unchanged. No tests added/run; syntax/whitespace and manual screenshot review only.

@@ -5,8 +5,8 @@
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
-    const src = !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
+  if (!window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
+    const src = !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -160,7 +160,8 @@
   const volOf = w => w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).reduce((b, s) => b + s.kg * s.reps, 0), 0);
   const volumeText = n => n.toLocaleString(L()==='hu'?'hu-HU':'en-GB',{maximumFractionDigits:2});
   const setsOf = w => w.tick ? (w.pl || []).reduce((a, x) => a + x.n, 0) : w.entries.reduce((a, e) => a + e.sets.filter(s => !s.w).length, 0);
-  const wMeta = w => (w.tick ? t('tickedTag') : fmtDur(w.end - w.start)) + ' · ' + setsOf(w) + ' ' + t('setsWord') + (w.tick ? '' : ' · ' + compact(volOf(w)) + ' kg');
+  const workoutDuration = w => !w.entries.length&&(w.cardio||[]).length?w.cardio.reduce((n,c)=>n+c.minutes*60000,0):w.end-w.start;
+  const wMeta = w => (w.tick ? t('tickedTag') : fmtDur(workoutDuration(w))) + ' · ' + setsOf(w) + ' ' + t('setsWord') + (w.tick ? '' : ' · ' + compact(volOf(w)) + ' kg');
   function weekWorkouts() { const ws = weekStart(Date.now()).getTime(); return D().workouts.filter(w => w.start >= ws); }
   function muscleSets(ws) {
     const m = {};
@@ -241,6 +242,59 @@
     h += habitMonthView();
     return h;
   }
+  function weightFor(day) {
+    const latest=D().body.filter(b=>b.d<=day).sort((a,b)=>b.d.localeCompare(a.d))[0];
+    const weight=latest?latest.kg:num(D().settings.profile.weight);
+    return weight>=30&&weight<=300?weight:'';
+  }
+  function energyDay(day) {return WorkoutEnergy.daily(D().workouts,day,ymd);}
+  function energyBudget(day,eaten,base) {return WorkoutEnergy.budget(base, eaten,energyDay(day).total,actOf(day).kcal,D().settings);}
+  function energyBudgetPanel(day,eaten,base) {
+    const e=energyDay(day),b=energyBudget(day,eaten,base),manual=actOf(day).kcal;
+    return `<div class="energy-budget"><div class="energy-base"><span>${esc(t('baseCalorieTarget'))}</span><b>${base?compact(base)+' kcal':esc(t('noCalorieTarget'))}</b></div><div class="energy-split"><div><small>${esc(t('strengthEnergy'))}</small><b>~${compact(e.strength)} <span>kcal</span></b></div><div><small>${esc(t('cardioEnergy'))}</small><b>~${compact(e.cardio)} <span>kcal</span></b></div></div>${manual?`<p class="cap">${esc(t('manualEnergyTotal',compact(manual)))}</p>`:''}<label class="sw"><input type="checkbox" data-in="set-flag" data-k="addWorkoutCalories" ${D().settings.addWorkoutCalories?'checked':''}><span>${esc(t('includeWorkoutEnergy'))}</span></label>${base?`<p class="energy-equation">${compact(base)} + ${compact(b.included)} − ${compact(eaten)} = <b>${compact(b.remaining)} kcal</b></p>`:''}${b.source==='manual'?`<p class="cap">${esc(t('manualEnergyPriority'))}</p>`:''}${e.missing?`<button class="link" data-a="energy-history">${esc(t('energyMissing',e.missing))}</button>`:''}<details class="energy-explain"><summary>${esc(t('energyAbout'))}</summary><p class="cap">${esc(t('energyEstimateHint'))}</p><p class="cap">${esc(t('energyBudgetHint'))}</p></details></div>`;
+  }
+  function cardioRows(w,target) {
+    return (w.cardio||[]).map(c=>`<div class="cardio-row"><span><b>${esc(t('cardio_'+c.type))}</b><small>${dec(c.minutes)} ${esc(t('min'))}${c.speed?' · '+dec(c.speed)+' km/h · '+dec(c.incline)+'%':''}</small></span><strong>~${compact(WorkoutEnergy.cardio(c)||0)} kcal</strong><button class="icon-btn sm" data-a="cardio-remove" data-target="${esc(target)}" data-id="${esc(c.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('');
+  }
+  function workoutEnergyPanel(w) {
+    const e=WorkoutEnergy.workout(w);
+    return `<section class="card workout-energy"><h3>${esc(t('estimatedActiveEnergy'))}</h3><div class="energy-split"><div><small>${esc(t('strengthEnergy'))}</small><b>${e.missing?'—':'~'+compact(e.strength)} <span>kcal</span></b></div><div><small>${esc(t('cardioEnergy'))}</small><b>~${compact(e.cardio)} <span>kcal</span></b></div></div><p class="cap">${esc(t('energyEstimateHint'))}</p>${!w.tick&&w.entries.length?`<button class="link" data-a="energy-edit" data-id="${esc(w.id)}">${esc(t(e.missing?'calculateEnergy':'editEnergy'))}</button>`:''}${cardioRows(w,w.id)}<button class="btn" data-a="cardio-add" data-target="${esc(w.id)}">${IC.plus}${esc(t('logCardio'))}</button></section>`;
+  }
+  function shEnergy(target) {
+    const fn=()=>{
+      const w=target==='active'?D().active:D().workouts.find(x=>x.id===target),v=ui.energyDraft;if(!w)return {title:'',html:''};
+      return {title:t('estimatedActiveEnergy'),html:`<form data-f="workout-energy"><p class="cap">${esc(t('energyEstimateHint'))}</p><div class="grid2"><label class="fld"><span>${esc(t('liftingMinutes'))}</span><input name="minutes" type="number" min="1" max="360" step="0.1" value="${esc(v.minutes)}" required></label><label class="fld"><span>${esc(t('energyBodyweight'))}</span><input name="weight" type="number" min="30" max="300" step="0.1" value="${esc(v.weight)}" required></label></div><label class="fld"><span>${esc(t('energyIntensity'))}</span><select name="intensity">${['moderate','vigorous'].map(k=>`<option value="${k}" ${v.intensity===k?'selected':''}>${esc(t('energy_'+k))}</option>`).join('')}</select></label><p class="cap">${esc(t('liftingDurationHint'))}</p><button class="btn primary wide">${esc(t(target==='active'?'finish':'save'))}</button>${target==='active'?`<button type="button" class="link" data-a="energy-skip">${esc(t('skipEnergy'))}</button>`:''}</form>`};
+    };fn.kind='energy';return fn;
+  }
+  function openEnergy(target) {
+    const w=target==='active'?D().active:D().workouts.find(x=>x.id===target);if(!w)return;
+    const cardioMinutes=(w.cardio||[]).reduce((n,c)=>n+c.minutes,0),elapsed=((target==='active'?Date.now():w.end)-w.start)/60000-cardioMinutes;
+    ui.energyTarget=target;ui.energyDraft=w.energy||{weight:weightFor(ymd(w.start)),minutes:elapsed>=1&&elapsed<=360?r1(elapsed):'',intensity:'moderate'};
+    openSheet(shEnergy(target));
+  }
+  function shCardio() {
+    const fn=()=>{const c=ui.cardioDraft,withSpeed=['walk','incline','run'].includes(c.type);return {title:t('logCardio'),html:`<form data-f="cardio"><label class="fld"><span>${esc(t('cardioActivity'))}</span><select name="type" data-in="cardio-type">${WorkoutEnergy.types.map(k=>`<option value="${k}" ${c.type===k?'selected':''}>${esc(t('cardio_'+k))}</option>`).join('')}</select></label>${ui.cardioTarget?'':`<label class="fld"><span>${esc(t('date'))}</span><input type="date" name="day" value="${esc(c.day)}" min="2000-01-01" max="${today()}" data-in="cardio-field" data-k="day" required></label>`}<div class="grid2"><label class="fld"><span>${esc(t('duration'))} (${esc(t('min'))})</span><input type="number" name="minutes" min="1" max="480" step="0.1" value="${esc(c.minutes)}" data-in="cardio-field" data-k="minutes" required></label><label class="fld"><span>${esc(t('energyBodyweight'))}</span><input type="number" name="weight" min="30" max="300" step="0.1" value="${esc(c.weight)}" data-in="cardio-field" data-k="weight" required></label></div>${withSpeed?`<div class="grid2"><label class="fld"><span>${esc(t('cardioSpeed'))} (km/h)</span><input type="number" name="speed" min="${c.type==='run'?8.1:3}" max="${c.type==='run'?20:6}" step="0.1" value="${esc(c.speed)}" data-in="cardio-field" data-k="speed" required></label><label class="fld"><span>${esc(t('cardioIncline'))} (%)</span><input type="number" name="incline" min="0" max="15" step="0.5" value="${esc(c.incline)}" data-in="cardio-field" data-k="incline" required></label></div>`:`<label class="fld"><span>${esc(t('energyIntensity'))}</span><select name="intensity" data-in="cardio-field" data-k="intensity">${['moderate','vigorous'].map(k=>`<option value="${k}" ${c.intensity===k?'selected':''}>${esc(t('energy_'+k))}</option>`).join('')}</select></label>`}<p class="cap">${esc(t('cardioEstimateHint'))}</p><button class="btn primary wide">${esc(t('save'))}</button></form>`};};fn.kind='cardio';return fn;
+  }
+  function openCardio(target) {
+    if(target==='active'&&!D().active)return;
+    if(target&&target!=='active'&&!D().workouts.some(w=>w.id===target))return;
+    ui.cardioTarget=target||'';const w=target==='active'?D().active:D().workouts.find(w=>w.id===target),day=w?ymd(w.start):today();
+    ui.cardioDraft={type:'incline',day,minutes:'',weight:weightFor(day),speed:5,incline:5,intensity:'moderate'};openSheet(shCardio());
+  }
+  function saveCardio(values) {
+    const c=WorkoutEnergy.cleanCardio({...values,id:uid()}),target=ui.cardioTarget,day=String(values.day||ui.cardioDraft.day);
+    if(!c||!/^\d{4}-\d\d-\d\d$/.test(day)||ymd(new Date(day+'T12:00'))!==day||day>today()||day<'2000-01-01'){toast(t('badValue'));return;}
+    const w=target==='active'?D().active:D().workouts.find(w=>w.id===target);
+    if(target&&!w)return;
+    if(w){const before=w.cardio||[];if(before.length>=40){toast(t('cardioLimit'));return;}const at=w.cardioAt;w.cardio=before.concat(c);w.cardioAt=Date.now();if(!Store.save()){w.cardio=before;w.cardioAt=at;return;}}
+    else {
+      const end=day===today()?Date.now():new Date(day+'T12:00').getTime()+c.minutes*60000;
+      const start=day===today()?Math.max(new Date(day+'T00:00').getTime(),end-c.minutes*60000):new Date(day+'T12:00').getTime();
+      const doc={id:uid(),rid:null,name:t('cardio_'+c.type),start,end,entries:[],cardio:[c],cardioAt:Date.now(),warm:false,cool:false};
+      if(!Store.apply(d=>{d.workouts.push(doc);d.workouts.sort((a,b)=>a.start-b.start);})){toast(t('saveFailed'));return;}
+    }
+    closeSheet();if(ui.sheets.length)refreshSheet();rerender();toast(t('saved'));
+  }
   function actRow(k) {
     const a = actOf(k), has = a.steps > 0 || a.kcal > 0;
     return `<button class="qrow actrow" data-a="act" data-d="${esc(k)}"><span class="q-ic line">${IC.walk}</span><span class="rc-t"><b>${has ? `${compact(a.steps)} ${esc(t('steps'))} · ${compact(a.kcal)} kcal` : esc(t('actAdd'))}</b><i>${esc(t(has ? 'actEdit' : 'actAddSub'))}</i></span>${IC.chev}</button>`;
@@ -256,7 +310,7 @@
     return `<div class="volume-breakdown">${rows.map(({entry,sets})=>`<div class="volume-lift"><div><b>${esc(itemName(entry))}</b><strong>${volumeText(sets.reduce((n,s)=>n+s.kg*s.reps,0))} kg</strong></div><p>${sets.map(s=>`${dec(s.kg)} kg × ${s.reps}`).join(' · ')}</p></div>`).join('')}<p class="cap">${esc(t('volumeMethod'))}</p></div>`;
   }
   function workoutHistory(workouts) {
-    return workouts.length?workouts.map(w=>`<article class="workout-history"><button class="history-title" data-a="wk-open" data-id="${esc(w.id)}"><span><b>${esc(w.name)}</b><small>${esc(fmtDate(w.start))} · ${setsOf(w)} ${esc(t('setsWord'))}</small></span>${IC.chev}</button>${w.tick?`<p class="cap">${esc(t('tickedTag'))}</p>`:`<details class="workout-volume"><summary><span>${volumeText(volOf(w))} kg <small>${esc(t('volume'))}</small></span>${IC.down}</summary>${volumeBreakdown(w)}</details>`}</article>`).join(''):`<p class="empty">${esc(t('noWorkouts'))}</p>`;
+    return workouts.length?workouts.map(w=>`<article class="workout-history"><button class="history-title" data-a="wk-open" data-id="${esc(w.id)}"><span><b>${esc(w.name)}</b><small>${esc(fmtDate(w.start))} · ${setsOf(w)} ${esc(t('setsWord'))}</small></span>${IC.chev}</button>${w.tick?`<p class="cap">${esc(t('tickedTag'))}</p>`:!w.entries.length?'':`<details class="workout-volume"><summary><span>${volumeText(volOf(w))} kg <small>${esc(t('volume'))}</small></span>${IC.down}</summary>${volumeBreakdown(w)}</details>`}${!w.tick?`<p class="history-energy">${esc(t('strengthEnergy'))}: ${WorkoutEnergy.workout(w).missing?'—':'~'+compact(WorkoutEnergy.workout(w).strength)} kcal · ${esc(t('cardioEnergy'))}: ~${compact(WorkoutEnergy.workout(w).cardio)} kcal</p>`:''}</article>`).join(''):`<p class="empty">${esc(t('noWorkouts'))}</p>`;
   }
   function rankBadge(tier) {
     return `<span class="rank-badge rank-${tier}" aria-hidden="true"><svg viewBox="0 0 40 44"><path d="M20 3 35 10v13c0 9-15 18-15 18S5 32 5 23V10z"/><path d="m12 22 8-9 8 9-8 9z"/>${tier>=2?'<path d="M12 10h16"/>':''}${tier>=4?'<path d="m16 21 4-4 4 4-4 4z"/>':''}</svg></span>`;
@@ -285,6 +339,7 @@
     h+=`<div class="training-actions"><button class="btn" data-a="workout-view" data-v="plans">${IC.home}${esc(t('chooseWorkout'))}</button><button class="btn" data-a="w-quick">${IC.bolt}${esc(t('quickWorkout'))}</button></div>`;
     const rank=Math.max(...StrengthRanks.summary(d.workouts).map(r=>r.tier));
     h+=`<button class="rank-preview" data-a="open-ranks">${rankBadge(rank)}<span><small>${esc(t('yourRanks'))}</small><b>${esc(rank<0?t('rankStart'):StrengthRanks.tiers[rank][L()])}</b></span>${IC.chev}</button>`;
+    h+=`<section class="card cardio-shortcut"><div><h3>${esc(t('logCardio'))}</h3><p class="cap">${esc(t('cardioShortcutHint'))}</p></div><button class="btn" data-a="cardio-add">${IC.plus}${esc(t('add'))}</button></section>`;
     h+=`<div class="h2row"><h2>${esc(t('latestWorkout'))}</h2><button class="link" data-a="workout-view" data-v="history">${esc(t('viewAll'))}</button></div>`+workoutHistory(d.workouts.slice(-1).reverse());
     return h;
   }
@@ -376,7 +431,7 @@
   }
   function vFood() {
     const d = D(), tg0 = dayTargets(ui.foodDate), fromPlan = !!tg0 && tg0 !== d.settings.targets, list = dayFood();
-    const burn = tg0 && d.settings.addActive ? actOf(ui.foodDate).kcal : 0, tg = tg0 ? Object.assign({}, tg0, { kcal: tg0.kcal + burn }) : null;   // active calories can be added to the day's budget
+    const burn = energyBudget(ui.foodDate,0,tg0&&tg0.kcal).included, tg = tg0 ? Object.assign({}, tg0, { kcal: tg0.kcal + burn }) : null;   // active calories can be added to the day's budget
     const sum = list.reduce((a, f) => ({ kcal: a.kcal + f.kcal, p: a.p + f.p, c: a.c + f.c, f: a.f + f.f }), { kcal: 0, p: 0, c: 0, f: 0 });
     let h = head(t('tabFood')) + `<div class="seg"><button class="${ui.food === 'diary' ? 'on' : ''}" data-a="food-view" data-v="diary">${esc(t('diary'))}</button>${d.plan?`<button class="${ui.food === 'plan' ? 'on' : ''}" data-a="food-view" data-v="plan">${esc(t('mealPlan'))}</button>`:''}<button class="${ui.food === 'ideas' ? 'on' : ''}" data-a="food-view" data-v="ideas">${esc(t('ideas'))}</button></div>`;
     if (ui.food === 'ideas') return h + vIdeas();
@@ -384,7 +439,7 @@
     h += `<div class="datenav"><button class="icon-btn" data-a="food-day" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><button class="datebtn" data-a="cal" data-d="${ui.foodDate}" aria-label="${esc(t('openCal'))}"><b>${ui.foodDate === today() ? esc(t('today')) : esc(fmtDate(ui.foodDate + 'T12:00', true))}</b>${IC.down}</button><button class="icon-btn flip" data-a="food-day" data-d="1" aria-label="${esc(t('nextDay'))}" ${ui.foodDate >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     if (!tg) h += `<button class="note" data-a="targets"><b>${esc(t('setTargets'))}</b><span>${esc(t('setTargetsSub'))}</span></button>`;
     h += `<section class="card cal"><p class="bignum">${Math.round(sum.kcal)}<small> ${tg ? '/ ' + tg.kcal : ''} kcal</small></p>${tg ? Charts.meter(sum.kcal, tg.kcal) + `<p class="cap">${sum.kcal <= tg.kcal ? esc(t('remaining', Math.round(tg.kcal - sum.kcal))) : esc(t('over', Math.round(sum.kcal - tg.kcal)))}${burn ? ' · ' + esc(t('budgetCap', burn)) : ''}</p>` : ''}
-      <div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + dec(tg[k]) : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
+      ${energyBudgetPanel(ui.foodDate,sum.kcal,tg0&&tg0.kcal)}<div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + dec(tg[k]) : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
       ${fromPlan ? `<p class="cap plancap">${esc(t('planTgCap'))}</p>` : tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
     h += planCard(ui.foodDate, true);
     h += `<div class="row3"><button class="btn primary" data-a="food-manual">${IC.plus}${esc(t('foodSearchBtn'))}</button><button class="btn" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button></div>`;
@@ -527,11 +582,11 @@
   function vProfile() {
     const p=profileLocal(),stats=Profile.summary(D().workouts),rank=stats.highest<0?t('rankUnranked'):StrengthRanks.tiers[stats.highest][L()];
     const td=today(),list=D().food[td]||[],sum=list.reduce((a,f)=>({kcal:a.kcal+f.kcal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f}),{kcal:0,p:0,c:0,f:0});
-    const base=dayTargets(td),goal=base?base.kcal+(D().settings.addActive?actOf(td).kcal:0):0;
+    const base=dayTargets(td),goal=base?energyBudget(td,sum.kcal,base.kcal).total:0;
     const display=stats.badges.filter(b=>b.earned&&p.showcase.includes(b.id)).sort((a,b)=>p.showcase.indexOf(a.id)-p.showcase.indexOf(b.id));
     const claimed=Social.state.data&&Social.state.data.profile&&Social.state.data.profile.username===p.username;
     let h=head(t('tabProfile'))+`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p)}<div><small class="eyebrow">${esc(t('yourStory'))}</small><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:`<p class="profile-bio mut">${esc(t('profileBioHint'))}</p>`}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
-    h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div><div class="dial-wrap">${Profile.dial(sum.kcal,goal,t('calorieDialLabel',compact(sum.kcal),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(sum.kcal)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(sum.kcal>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-sum.kcal)))):`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`}</p><div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b><span class="macro-value">${dec(r1(sum[k]))}</span><span class="macro-unit">g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
+    h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div><div class="dial-wrap">${Profile.dial(sum.kcal,goal,t('calorieDialLabel',compact(sum.kcal),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(sum.kcal)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(sum.kcal>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-sum.kcal)))):`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`}</p>${energyBudgetPanel(td,sum.kcal,base&&base.kcal)}<div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b><span class="macro-value">${dec(r1(sum[k]))}</span><span class="macro-unit">g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
     h+=`<div class="profile-stats"><div><b>${stats.workouts}</b><small>${esc(t('loggedSessions'))}</small></div><div><b>${stats.days}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${stats.volume>=1000?dec(r1(stats.volume/1000)):compact(stats.volume)} <span>${stats.volume>=1000?'t':'kg'}</span></b><small>${esc(t('lifetimeVolume'))}</small></div></div><section class="card"><div class="h2row"><h2>${esc(t('achievements'))}</h2><button class="link" data-a="profile-badges">${esc(t('chooseBadges'))}</button></div><div class="achievement-grid">${stats.badges.map(b=>badgeChip(b,true)).join('')}</div></section>`;
     return h+`<details class="profile-lifts" ${ui.profileRanks?'open':''}><summary>${esc(t('yourRanks'))}${IC.down}</summary>${vRanks()}</details>`+socialCard();
   }
@@ -783,20 +838,21 @@
               <button class="set-ok" data-a="w-check" data-i="${i}" data-j="${j}" aria-label="${esc(t('setDone'))}" aria-pressed="${s.done}">${IC.check}</button></div>`; }).join('')}</div>
           <div class="wex-f"><button class="link" data-a="w-addset" data-i="${i}">+ ${esc(t('set'))}</button>${en.sets.length > 1 ? `<button class="link mut" data-a="w-delset" data-i="${i}">− ${esc(t('set'))}</button>` : ''}</div></section>`; }).join('')}
         ${a.entries.length ? '' : `<p class="empty">${esc(t('emptyHint'))}</p>`}
-        <button class="btn" data-a="w-addex">${IC.plus}${esc(t('addExercise'))}</button>${prepRow('cool', a, '')}<button class="btn danger ghost" data-a="w-cancel">${esc(t('cancelWorkout'))}</button></div>`;
+        <section class="card active-cardio"><h3>${esc(t('cardioEnergy'))}</h3>${cardioRows(a,'active')}<button class="btn" data-a="cardio-add" data-target="active">${IC.plus}${esc(t('logCardio'))}</button></section><button class="btn" data-a="w-addex">${IC.plus}${esc(t('addExercise'))}</button>${prepRow('cool', a, '')}<button class="btn danger ghost" data-a="w-cancel">${esc(t('cancelWorkout'))}</button></div>`;
     $('.w-body', el).scrollTop = y; ui.fx = ''; tick();
   }
-  function finishWorkout() {
+  function finishWorkout(energy,reviewed) {
     const a = D().active; if (!a) return;
     const entries = a.entries.map(e => ({ ex: e.ex, label: e.label, sets: e.sets.filter(s => s.done && num(s.reps) > 0).map(s => ({ kg: Math.min(2000, Math.max(0, num(s.kg))), reps: Math.min(1000, Math.round(num(s.reps))), w: !!s.w })) })).filter(e => e.sets.length);
-    if (!entries.length) { if (confirm(t('nothingLogged'))) { D().active = null; Store.save(); ui.wOpen = false; unwake(); render(); } return; }
+    if (!entries.length && !(a.cardio||[]).length) { if (confirm(t('nothingLogged'))) { D().active = null; Store.save(); ui.wOpen = false; unwake(); render(); } return; }
     const open = a.entries.reduce((n, e) => n + e.sets.filter(s => !s.done).length, 0);
-    if (open && !confirm(t('finishOpen', open))) return;
+    if (!reviewed && open && !confirm(t('finishOpen', open))) return;
+    if(entries.length && energy===undefined){openEnergy('active');return;}
     const prs = entries.map(e => { const before = exHistory(e.ex).reduce((m, x) => Math.max(m, bestOf(x.sets)), 0), now = bestOf(e.sets); return now > before && now > 0 ? { ex: e.ex, label: e.label, v: now, was: before } : null; }).filter(Boolean);
     const ranksBefore=StrengthRanks.summary(D().workouts);
     const badgesBefore=Profile.summary(D().workouts).badges.filter(b=>b.earned).map(b=>b.id);
-    const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries, warm: !!a.warm, cool: !!a.cool };
-    D().workouts.push(w); D().workouts.sort((x, y) => x.start - y.start); D().active = null; Store.save(); ui.wOpen = false; unwake(); render();
+    const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries, energy:energy||null, energyAt:Date.now(), cardio:a.cardio||[], cardioAt:Date.now(), warm: !!a.warm, cool: !!a.cool };
+    const before=D().workouts.slice();D().workouts.push(w); D().workouts.sort((x, y) => x.start - y.start); D().active = null; if(!Store.save()){D().workouts=before;D().active=a;toast(t('saveFailed'));return;} closeSheet(true);ui.wOpen = false; unwake(); render();
     const rankUps=StrengthRanks.summary(D().workouts).filter((r,i)=>r.tier>ranksBefore[i].tier);
     const badgeUps=Profile.summary(D().workouts).badges.filter(b=>b.earned&&!badgesBefore.includes(b.id));
     openSheet(shWorkout(w.id, prs, rankUps, badgeUps));
@@ -804,15 +860,16 @@
   function shWorkout(id, prs, rankUps, badgeUps) {
     return () => {
       const w = D().workouts.find(x => x.id === id); if (!w) return { title: '', html: '' };
-      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(w.end - w.start)}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><button class="volume-total" data-a="wk-volume" ${w.tick?'disabled':''} aria-label="${esc(t('volumeDetails'))}"><b>${volumeText(volOf(w))}</b><i>${esc(t('volume'))} kg ${IC.down}</i></button></div>`;
-      if(!w.tick)h+=`<details class="workout-volume completion-volume" data-volume><summary>${esc(t('volumeDetails'))}${IC.down}</summary>${volumeBreakdown(w)}</details>`;
+      let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(workoutDuration(w))}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><button class="volume-total" data-a="wk-volume" ${w.tick?'disabled':''} aria-label="${esc(t('volumeDetails'))}"><b>${volumeText(volOf(w))}</b><i>${esc(t('volume'))} kg ${IC.down}</i></button></div>`;
+      h+=workoutEnergyPanel(w);
+      if(!w.tick&&w.entries.length)h+=`<details class="workout-volume completion-volume" data-volume><summary>${esc(t('volumeDetails'))}${IC.down}</summary>${volumeBreakdown(w)}</details>`;
       if(badgeUps&&badgeUps.length)h+=`<section class="badge-unlocks"><h3>${esc(t('newBadges'))}</h3><div class="profile-showcase">${badgeUps.map(b=>badgeChip(b,false)).join('')}</div><button class="link" data-a="open-profile">${esc(t('chooseBadges'))}</button></section>`;
       if(rankUps&&rankUps.length)h+=`<section class="rank-unlocks"><h3>${esc(t('rankUnlocked'))}</h3>${rankUps.map(r=>`<div>${rankBadge(r.tier)}<span><b>${esc(StrengthRanks.tiers[r.tier][L()])}</b><small>${esc(r[L()])} · ${dec(r.best)} kg</small></span></div>`).join('')}<button class="link" data-a="open-ranks">${esc(t('yourRanks'))}</button></section>`;
       h += prs ? prepRow('cool', w, ` data-w="${esc(w.id)}"`) : (w.warm || w.cool ? `<p class="cap">${[w.warm ? t('warmTitle') : '', w.cool ? t('coolTitle') : ''].filter(Boolean).map(x => esc(x) + ' ✓').join(' · ')}</p>` : '');
       if (prs && prs.length) h += `<div class="tip pr"><b>${esc(t('newRecords'))}</b>${prs.map(p => `<span>${esc(itemName(p))}: ${r1(p.v)} kg${p.was ? ' (' + esc(t('was')) + ' ' + r1(p.was) + ')' : ''}</span>`).join('')}</div>`;
       if (w.tick) h += `<p class="cap">${esc(t('tickedInfo'))}</p>` + (w.pl || []).map(x => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(x.ex)}"><img src="${thumb(x.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(exName(x.ex))}</b><i>${x.n} ${esc(t('setsWord'))}</i></span>${IC.chev}</button></div>`).join('');
       h += w.entries.map(e => `<div class="wk-ex"><button class="exrow" data-a="ex-open" data-id="${esc(e.ex)}"><img src="${thumb(e.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(e))}</b><i>${e.sets.map(s => (s.w ? 'W ' : '') + (s.kg ? s.kg + '×' : '') + s.reps).join(' · ')}</i></span>${IC.chev}</button></div>`).join('');
-      const keep = w.rid ? '' : `<button class="btn" data-a="wk-to-routine" data-id="${esc(w.id)}">${esc(t('saveAsRoutine'))}</button>`;
+      const keep = w.rid || !w.entries.length ? '' : `<button class="btn" data-a="wk-to-routine" data-id="${esc(w.id)}">${esc(t('saveAsRoutine'))}</button>`;
       return { title: prs ? t('workoutDone') : w.name, html: h, foot: prs ? `<button class="btn primary" data-a="sheet-close">${esc(t('done'))}</button>${keep}` : `${keep}<button class="btn danger" data-a="wk-del" data-id="${esc(w.id)}">${esc(t('deleteWorkout'))}</button>` };
     };
   }
@@ -1158,7 +1215,7 @@
           ${sel('restDefault', t('restDefault'), [60, 90, 120, 150, 180].map(v => [v, clock(v)]))}${sel('weekGoal', t('weekGoal'), [[0, t('goalOff')]].concat([2, 3, 4, 5, 6, 7].map(v => [v, v + ' ' + t('times')])))}${sel('weekStart', t('weekStartLbl'), [[1, t('monday')], [0, t('sunday')]])}
           <button class="link" data-a="reset-routines">${esc(t('resetRoutines'))}</button></section>
         <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}${sw('coach', t('setCoach'))}</section>
-        <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}<button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
+        <section class="card"><h3>${esc(t('nutrition'))}</h3>${sw('addActive', t('setAddActive'))}${sw('addWorkoutCalories', t('includeWorkoutEnergy'))}<p class="cap">${esc(t('energyBudgetHint'))}</p><button class="btn" data-a="targets">${esc(s.targets ? t('editTargets') : t('setTargets'))}</button></section>
         ${D().plan ? `<section class="card"><h3>${esc(t('planCard'))}</h3><p class="cap">${esc(D().plan.name || t('mealPlan'))}</p>${sw('', t('planUseTg'), `data-in="plan-tg"${D().plan.targets ? ' checked' : ''}`)}<button class="btn" data-a="plan-notes">${esc(t('planRules'))}</button><button class="btn danger" data-a="plan-remove">${esc(t('planRemove'))}</button></section>` : ''}
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button>
@@ -1230,7 +1287,7 @@
         ${w ? `<button class="link" data-a="act-est">${esc(t('actEst'))}</button>` : ''}
         <section class="card"><h3>${esc(t('actImport'))}</h3><p class="cap">${esc(t('actImportLead'))}</p>${canPaste ? `<button class="btn" data-a="act-paste">${esc(t('actPaste'))}</button>` : ''}<label class="fld"><span>${esc(t('actPasteLbl'))}</span><input type="text" data-in="act-paste" placeholder="steps=8432;kcal=412" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label></section>
         <section class="card"><h3>${esc(t('actHow'))}</h3><ol class="steps">${[1, 2, 3, 4, 5, 6].map(i => `<li>${esc(t('actHow' + i))}</li>`).join('')}</ol><p class="cap">${esc(t('actHowCap'))}</p></section>
-        <label class="sw"><input type="checkbox" data-in="set-flag" data-k="addActive" ${D().settings.addActive ? 'checked' : ''}><span>${esc(t('setAddActive'))}</span></label>`,
+        <p class="cap">${esc(t('manualEnergyHint'))}</p><label class="sw"><input type="checkbox" data-in="set-flag" data-k="addActive" ${D().settings.addActive ? 'checked' : ''}><span>${esc(t('setAddActive'))}</span></label>`,
         foot: `<button class="btn primary" data-a="act-save" data-d="${esc(k)}">${esc(t('save'))}</button>` };
     };
     fn.kind = 'act'; return fn;
@@ -1439,6 +1496,16 @@
 
   /* ================= ACTIONS ================= */
   const A = {
+    'energy-history'() {closeSheet(true);ui.tab='home';ui.workout='history';render();},
+    'cardio-add'(el) {openCardio(el.dataset.target);},
+    'energy-edit'(el) {openEnergy(el.dataset.id);},
+    'energy-skip'() {finishWorkout(null,true);},
+    'cardio-remove'(el) {
+      const target=el.dataset.target,w=target==='active'?D().active:D().workouts.find(w=>w.id===target);if(!w||!confirm(t('cardioRemoveConfirm')))return;
+      const before=w.cardio||[],next=before.filter(c=>c.id!==el.dataset.id);if(next.length===before.length)return;
+      if(target!=='active'&&!w.entries.length&&!next.length){if(!Store.apply(d=>{d.workouts=d.workouts.filter(x=>x.id!==target);})){toast(t('saveFailed'));return;}closeSheet(true);rerender();return;}
+      const at=w.cardioAt;w.cardio=next;w.cardioAt=Date.now();if(!Store.save()){w.cardio=before;w.cardioAt=at;return;}if(ui.sheets.length)refreshSheet();rerender();
+    },
     'pdf-plan'() {
       if (!document.querySelector('link[href="css/plan-import.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/plan-import.css'; document.head.append(style); }
       PlanImport.open({ lang: L(), hasMealPlan: !!D().plan, restDefault: D().settings.restDefault,
@@ -1847,9 +1914,11 @@
     'key-draft'(el) { ui.keyDraft = el.value; const b = $('[data-a="key-save"]'); if (b) b.disabled = !el.value.trim(); },
     'set-model'(el) { if (Store.MODELS.indexOf(el.value) >= 0) { D().settings.model = el.value; Store.save(); } },
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
-    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
+    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'addWorkoutCalories', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'addWorkoutCalories' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
     'coach-q'(el) { ui.coach.draft = el.value; },
     'friend-kind'(el) { if(!['username','email','phone'].includes(el.value))return;ui.friendKind=el.value;rerender();$('#friend-identifier')?.focus(); },
+    'cardio-field'(el) {ui.cardioDraft[el.dataset.k]=el.value;},
+    'cardio-type'(el) {const type=el.value;if(!WorkoutEnergy.types.includes(type))return;ui.cardioDraft.type=type;ui.cardioDraft.speed=type==='run'?8.5:5;ui.cardioDraft.incline=type==='incline'?5:0;refreshSheet();},
     'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v; applyLook(); clearTimeout(hueT); hueT = setTimeout(() => { Store.save(); $$('.palette').forEach(b=>{const on=String(v)===b.dataset.v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));const check=$('.palette-check',b);if(check)check.innerHTML=on?IC.check:'';}); }, 500); },   // colour follows the finger; saved when it rests
     'set-photo-model'(el) { D().settings.photoModel = Store.MODELS.indexOf(el.value) >= 0 ? el.value : ''; Store.save(); },
     'lib-eq'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.eq = EQS.indexOf(el.value) >= 0 ? el.value : ''; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
@@ -1923,6 +1992,12 @@
     }
     if (k === 'coach') coachSend(v.q);
     if (k === 'profile-edit') saveProfile(v);
+    if(k==='cardio')saveCardio(v);
+    if(k==='workout-energy'){
+      const energy=WorkoutEnergy.cleanStrength(v);if(!energy){toast(t('badValue'));return;}
+      if(ui.energyTarget==='active')finishWorkout(energy,true);
+      else {const w=D().workouts.find(w=>w.id===ui.energyTarget);if(!w)return;const before=w.energy,at=w.energyAt;w.energy=energy;w.energyAt=Date.now();if(!Store.save()){w.energy=before;w.energyAt=at;return;}closeSheet();refreshSheet();rerender();}
+    }
     if (k === 'friend-add') {const value=String(v.identifier||'').trim();if(v.kind==='username')socialAction('social_request_friend',{p_username:value.toLowerCase()});else if(['email','phone'].includes(v.kind))socialAction('social_request_friend_contact',{p_identifier:value,p_kind:v.kind});}
     if (k === 'contact-settings') socialAction('social_save_contact_settings',{p_email:v.email==='on',p_phone:v.phone==='on'});
     if (k === 'phone-verify') phoneVerification(v);
