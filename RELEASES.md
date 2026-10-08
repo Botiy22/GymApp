@@ -6,6 +6,12 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.8.1 — 2026-10-08, build 20261008.6
+
+- Restored the previous detailed anatomical drawing from data/body.js and removed the rejected schematic. Exercise details open with the existing movement images again; muscle selection remains available.
+- Personalized signup, calories, navigation, account data and stored media are retained.
+- No tests run. JavaScript syntax and whitespace reviewed. Backup: `backup/main-20261008-161655-before-drawing-restore` at `50018935f9d808f2d18910304243657aa402692c`. Normal restoration commit, no reset/force push.
+
 ## 2.8.0 — 2026-10-08, build 20261008.5
 
 - Navigation now places Goals in the center and Settings immediately left of Profile. The main header keeps upload only.

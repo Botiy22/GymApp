@@ -5,8 +5,8 @@
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.PersonalSetup || !window.OTISPORT_BODY || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
-    const src = !window.PersonalSetup ? 'js/personal-setup.js' : !window.OTISPORT_BODY ? 'data/otisport-body.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
+  if (!window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
+    const src = !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -646,7 +646,7 @@
       const drawing = !ui.figBad[id] && figure;
       const photos = !board && !drawing && e.k >= 2;
       const pair = drawing ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : photos ? [img(id,0),img(id,1)] : [];
-      const visual = ui.exVisual && ui.exVisual.id === id ? ui.exVisual.mode : 'muscles';
+      const visual = ui.exVisual && ui.exVisual.id === id ? ui.exVisual.mode : 'movement';
       const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
       const mapLabel = focus ? t('muscleSelected', muscleName(focus)) : [t('musclesWorked'), t('primary') + ': ' + e.p.map(muscleName).join(', '), t('secondary') + ': ' + e.s.map(muscleName).join(', ')].join('. ');
       const map = `<section class="muscle-spotlight"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'), mapLabel)}</div><p class="cap muscle-legend"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p>${e.p.length || e.s.length ? `<p class="cap">${esc(t('muscleMapHint'))}</p><div class="muscle-picks"><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary',e.p],['secondary',e.s]].map(([key,list]) => list.length ? `<div><small>${esc(t(key))}</small><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div></div>` : '').join('')}</div>` : `<p class="cap">${esc(t('muscleMapEmpty'))}</p>`}<details class="muscle-precision"><summary>${esc(t('muscleMapAbout'))}</summary><p class="cap">${esc(t('musclePrecision'))}</p></details></section>`;

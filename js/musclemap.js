@@ -15,7 +15,7 @@ window.MuscleMap = (function () {
   }
   // dataset muscle name -> [front regions, back regions]
   const GEN = {
-    'abdominals': [['abs'], []], 'abductors': [['abductors'], ['glutes']], 'adductors': [['adductors'], ['adductors_b']],
+    'abdominals': [['abs'], []], 'abductors': [[], ['glutes']], 'adductors': [['adductors'], ['adductors_b']],
     'biceps': [['biceps'], []], 'calves': [['calves_f'], ['calves']], 'chest': [['pec'], []], 'forearms': [['forearm'], ['forearm_ext']],
     'glutes': [[], ['glutes']], 'hamstrings': [[], ['hams']], 'lats': [[], ['lats']], 'lower back': [[], ['erectors']],
     'middle back': [[], ['midback']], 'neck': [['neck'], ['neck']], 'quadriceps': [['quads'], []],
@@ -29,26 +29,7 @@ window.MuscleMap = (function () {
     return [f, b];
   }
   const txt = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  function originalSide(data, map, hl, offset, label) {
-    const level = {};
-    Object.keys(map).forEach(k => {
-      const v = hl[k]; if (v !== 1 && v !== 2) return;
-      const [slug, indices] = map[k];
-      (data.parts[slug] || []).forEach((_, i) => { if (indices && !indices.includes(i)) return; const key = slug + '#' + i; if (!level[key] || v < level[key]) level[key] = v; });
-    });
-    // Lateral hip regions have their own shapes in the original front illustration.
-    if (hl.abductors) (data.parts.abductors || []).forEach((_, i) => { level['abductors#' + i] = hl.abductors; });
-    let content = `<path class="body-silhouette" d="${data.outline}"/>`;
-    Object.keys(data.parts).forEach(slug => data.parts[slug].forEach((part, i) => {
-      const l = level[slug + '#' + i];
-      content += `<path class="body-region${l === 1 ? ' body-primary' : l === 2 ? ' body-secondary' : ''}" d="${part.d}"${part.mirror ? ' transform="translate(240 0) scale(-1 1)"' : ''}/>`;
-    }));
-    content += data.face.map(d => `<path class="body-face" d="${d}"/>`).join('');
-    return `<g transform="translate(${offset} 0)">${content}<text class="body-label" x="120" y="512" text-anchor="middle">${txt(label)}</text></g>`;
-  }
   function svg(f, b, lblFront, lblBack, label) {
-    const own = window.OTISPORT_BODY;
-    if (own) return `<svg class="otisport-anatomy" viewBox="0 0 500 524" role="img" aria-label="${txt(label || [lblFront, lblBack].join(' · '))}"><title>${txt(label || [lblFront, lblBack].join(' · '))}</title>${originalSide(own.front, FRONT, f || {}, 0, lblFront)}${originalSide(own.back, BACK, b || {}, 260, lblBack)}</svg>`;
     return `<svg viewBox="0 70 1448 1400" role="img" aria-label="${txt(label || 'muscle map')}">${side(B.front, FRONT, f || {})}${side(B.back, BACK, b || {})}` +
       `<text class="mm-lbl" x="362" y="1452" text-anchor="middle">${txt(lblFront)}</text><text class="mm-lbl" x="1086" y="1452" text-anchor="middle">${txt(lblBack)}</text></svg>`;
   }

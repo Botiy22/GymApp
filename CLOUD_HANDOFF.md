@@ -1,3 +1,9 @@
+# Update — Otisport 2.8.1, 2026-10-08
+
+User rejected the new schematic. Restored the previous detailed data/body.js anatomy and its colors; movement images open first again. Removed the custom body asset/renderer/cache dependency. Personalized signup and navigation remain. No tests run; syntax/whitespace reviewed. Remote backup backup/main-20261008-161655-before-drawing-restore preserves 50018935f9d808f2d18910304243657aa402692c. Restore by normal reviewed commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Otisport 2.8.0, 2026-10-08
 
 Navigation is Workout/Food/Goals/Settings/Profile, with header Settings removed. Personalized signup previews calories from goal, sex, age, height, weight and activity; validated private Auth metadata survives email confirmation and feeds the initial profile/diary target after sync. Existing targets and reset epochs are protected. The shared calculator retains the earlier formula. Original Otisport front/back SVG anatomy adds red primary/rose secondary highlights and Muscles/Movement tabs, retaining existing exercise images/zoom/actions. Settings provides honest home-screen name/icon update guidance; runtime metadata and stable manifest ID help ordinary browser/PWA updates without claiming forced iOS shortcut refresh.

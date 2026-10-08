@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.8.0';
-  const build = '20261008.5';
+  const version = '2.8.1';
+  const build = '20261008.6';
   const history = [
     {version,build,date:'2026-10-08',
+      hu:['Visszaállítottuk a korábbi, részletes izomrajzokat.','A gyakorlatok megnyitásakor ismét a mozdulatképek jelennek meg először.','A személyre szabott regisztráció és az új navigáció megmaradt.'],
+      en:['Restored the previous detailed muscle drawings.','Exercise details show movement images first again.','Personalized registration and the updated navigation are retained.']},
+    {version:'2.8.0',build:'20261008.5',date:'2026-10-08',
       hu:['Személyre szabott regisztráció: cél, nem, kor, magasság, testsúly és aktivitás alapján kezdő kalóriacél.','Saját elöl–hátul izomtérkép piros főizom-kiemeléssel. Külön Izmok és Mozdulat nézet.','A Célok középre, a Beállítások a Profil mellé került. Felül csak a feltöltés maradt.','Frissítési útmutató a főképernyős névhez és ikonhoz; a régi iPhone-könyvjelzők átnevezését az iOS kezeli.'],
       en:['Personalized signup calculates starting calories from your goal, sex, age, height, weight and activity.','Original front/back anatomy highlights primary muscles in red. Separate Muscles and Movement views.','Goals is centered and Settings is beside Profile. The header keeps the upload button.','Home-screen name/icon update guidance, including iOS bookmark limitations.']},
     {version:'2.7.0',build:'20261008.4',date:'2026-10-08',

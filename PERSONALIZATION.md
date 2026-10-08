@@ -1,6 +1,6 @@
-# Otisport 2.8 — private signup and original anatomy
+# Otisport 2.8 — private signup and exercise anatomy
 
-Release 2.8.0 / build 20261008.5, continuing main 7283b1e59e6db77301070a12804afca8a374afc7.
+Updated in 2.8.1 / build 20261008.6: the user requested restoring the earlier detailed drawing. The original schematic added in 2.8.0 was removed; data/body.js supplies the drawing again. Movement opens first, while the muscle picker remains available. Signup and navigation are unchanged. The 2.8.0 implementation notes below describe the preceding release; its original-anatomy section is superseded by this restoration.
 
 ## Navigation
 

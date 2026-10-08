@@ -14,7 +14,7 @@ Otisport 2.7 uses a shared graphite, apricot and lavender design with a matching
 
 ## Personalized registration
 
-Register starts with your goal, sex, age, height, weight and activity, then previews a calculated daily calorie target before creating the account. Your initial target appears in the food diary and profile after sign-in. Existing personal targets are retained. Exercise details have an original front/back muscle map with red primary and rose secondary highlights; Movement keeps the drawings/photos and zoom. [PERSONALIZATION.md](PERSONALIZATION.md) describes account persistence, review limits and the verified backup.
+Register starts with your goal, sex, age, height, weight and activity, then previews a calculated daily calorie target before creating the account. Your initial target appears in the food diary and profile after sign-in. Existing personal targets are retained. Exercise details have the previous detailed front/back muscle drawing with primary and secondary highlights; Movement keeps the drawings/photos and zoom. [PERSONALIZATION.md](PERSONALIZATION.md) describes account persistence, review limits and the verified backup.
 
 ## Navigation and profiles
 
