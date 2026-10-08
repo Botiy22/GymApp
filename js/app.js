@@ -189,7 +189,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
+  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?`<button class="icon-btn update-app" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateNow'))}" aria-describedby="update-status" ${ui.updateBusy?'disabled':''}>${IC.refresh}</button>`:''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -1228,7 +1228,7 @@
       const end=content.indexOf('</section>',start),body=content.slice(start+22+heading.length,end);
       content=content.slice(0,start)+`<details class="card settings-group" data-group="${key}" ${ui.settingsGroups?.[key]?'open':''}><summary>${esc(t(key))}${IC.down}</summary>${body}</details>`+content.slice(end+10);
     }
-    return head(t('settings'),t('settingsIntro')) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
+    return head(t('settings'),t('settingsIntro'),false,true) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
   }
 
   function shSettings() {
@@ -1787,6 +1787,7 @@
       Social.reset();
       await CL.signOut(); Store.wipe(); location.reload();                               // nothing of the account stays on this device
     },
+    'settings-update'(el) {return A['update-now'](el);},
     async 'update-now'(el) {
       if (ui.updateBusy) return;
       ui.updateBusy = true; ui.updateStatus = 'updating'; refreshSheet(); toast(t('updating'));

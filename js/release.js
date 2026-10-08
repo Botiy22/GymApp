@@ -1,8 +1,9 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.13.1';
-  const build = '20261008.14';
+  const version = '2.13.2';
+  const build = '20261008.15';
   const history = [
+    {version:'2.13.2',build:'20261008.15',date:'2026-10-08',en:['Settings has a compact update button beside Upload in the header.'],hu:['A Beállítások fejlécében a Feltöltés mellett kompakt frissítésgomb található.']},
     {version:'2.13.1',build:'20261008.14',date:'2026-10-08',
       en:['Cardio actions stay inside their card; phones show the Add button below the description.','Shared button, action-grid and heading-row sizing lets long labels wrap without squeezing adjacent content.'],
       hu:['A kardió műveletei a kártyán belül maradnak; telefonon a Hozzáadás gomb a leírás alá kerül.','A közös gombok, műveleti sorok és címsorok hosszabb feliratai is törhetők, a szomszédos tartalom összenyomása nélkül.']},

@@ -89,7 +89,7 @@ h3 { font-size: .95rem; letter-spacing: -.02em; }
 .icon-btn { background: var(--raised); border-color: var(--edge); border-radius: 14px; box-shadow: none; }
 .icon-btn.sm { background: var(--raised); }
 .top-actions .icon-btn { background: var(--card); }
-.top-actions .upload-plan { background: rgba(var(--acc-rgb),.09); border-color: rgba(var(--acc-rgb),.17); }
+.top-actions .upload-plan,.top-actions .update-app { background: rgba(var(--acc-rgb),.09); border-color: rgba(var(--acc-rgb),.17); }
 .link { color: var(--acc-tx); }
 .link.mut { color: var(--mut); }
 .btn:disabled,.icon-btn:disabled { opacity: .45; }

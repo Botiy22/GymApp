@@ -1,3 +1,11 @@
+# Update — Setora 2.13.2, 2026-10-08
+
+User requested an update action beside Upload, only in Settings. head() accepts an explicit update flag enabled only by vSettings; an accessible update-app icon appears immediately before Upload and uses settings-update to forward to the existing update-now handler. This preserves the existing App-section control/selector, busy/disabled state and update-status announcement. Other headers remain unchanged.
+
+Syntax/whitespace and focused local Chromium review at 320px EN/390px HU confirmed Settings-only button counts, contained header bounds, release-check request and re-enabled button/error status after a deliberately unavailable local release response. No tests added/run for this low-impact UI change; user now permits relevant tests when useful, superseding the former blanket no-tests rule. No live successful installation or physical Safari verification. Remote backup backup/main-20261008-204107-before-settings-update-button preserves 02194715b94d61636202a2bca31f0e88de897a67, verified before editing. Normal restoration commit only; code backup is not private diary data.
+
+---
+
 # Update — Setora 2.13.1, 2026-10-08
 
 User screenshot showed the Workout cardio Add button extending beyond its card while the text collapsed into a narrow strip. Root cause: shared .btn width:100% combined with cardio-shortcut flex:none. The shortcut now uses minmax(0,1fr)/auto grid at wider widths and a single-column layout at <=480px, with the Add button below full-width copy. Shared .btn bounds/wrapping, zero-minimum row2/row3/inline grid tracks, and wrapping h2row headings prevent related intrinsic-width action overflow. Existing button actions, diaries, routine/sync/storage formats, themes and modal locks are unchanged.

@@ -6,6 +6,10 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.13.2 — 2026-10-08, build 20261008.15
+
+Settings adds an accessible compact update icon immediately before Upload in its header. Other headers are unchanged. The header action forwards to the existing updater, retaining busy/disabled state and update-status feedback; the existing App-section update button remains. Syntax/whitespace and focused local Chromium review at 320px EN/390px HU confirmed Settings-only placement, contained header actions, release-check invocation and recovery from an intentionally unavailable local release response. No tests added/run for this small UI change; successful live installation and physical Safari were not verified.
+
 ## 2.13.1 — 2026-10-08, build 20261008.14
 
 - Cardio shortcut uses a constrained layout: phones up to 480px place the full-width Add button below the description; wider views use a content-sized button alongside flexible text. This removes the inherited 100%-width, non-shrinking flex button that squeezed the description and escaped its card.
