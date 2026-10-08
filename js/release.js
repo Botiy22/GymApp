@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.6.1';
-  const build = '20261008.3';
+  const version = '2.7.0';
+  const build = '20261008.4';
   const history = [
     {version,build,date:'2026-10-08',
+      hu:['Új, egységes grafit–barack–levendula arculat, hozzá illő világos témával.','Megújult az Edzés, Étkezés, Célok, Profil, Beállítások és a tervfeltöltés megjelenése.','Egységesebb kártyák, gombok, mezők, naptárak és alsó navigáció. A saját szín- és akadálymentesítési beállítások megmaradnak.'],
+      en:['A cohesive graphite, apricot and lavender design, with a matching light theme.','Refreshed Workout, Food, Goals, Profile, Settings and plan uploads.','Consistent cards, controls, calendars and bottom navigation. Custom colors and accessibility preferences are retained.']},
+    {version:'2.6.1',build:'20261008.3',date:'2026-10-08',
       en:['A new name: Otisport, with a fresh mint O app icon.','New home-screen, browser and sign-in branding. Your existing workouts, meals and account stay in place.'],
       hu:['Új név: Otisport, új mentaszínű O alkalmazásikonnal.','Új kezdőképernyős, böngészős és bejelentkezési arculat. Az edzések, étkezések és a fiókod megmaradnak.']},
     {version:'2.6.0',build:'20261008.2',date:'2026-10-08',

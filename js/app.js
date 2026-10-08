@@ -2,6 +2,7 @@
   'use strict';
   if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/profile.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/profile.css'; document.head.append(style); }
+  if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
   if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
@@ -187,7 +188,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal) => `<header class="top"><div><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></div></header>`;
+  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">OTISPORT</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -1100,18 +1101,18 @@
     let C = 0.2, lin = conv(C); while (C > 0.02 && lin.some(v => v < -0.0005 || v > 1.0005)) { C -= 0.01; lin = conv(C); }
     return lin.map(v => { v = Math.min(1, Math.max(0, v)); return Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); });
   }
-  const DEF_HUE = 168;                                                                 // where the app's mint accent sits on the scale
+  const DEF_HUE = 55;                                                                 // default apricot hue; explicitly saved hues remain unchanged
   function applyLook() {
     const s = D().settings, e = document.documentElement;
     const light = s.bg === 'light', hue = s.hue == null ? DEF_HUE : s.hue;
-    if (s.hue == null && !light) ['--acc', '--acc-rgb', '--acc-ink', '--acc-tx'].forEach(k => e.style.removeProperty(k));
+    if (s.hue == null) ['--acc', '--acc-rgb', '--acc-ink', '--acc-tx'].forEach(k => e.style.removeProperty(k));
     else {
       const c = hueRGB(hue, light ? 0.74 : 0.82);                                    // on the bright background the fill is a little deeper, and accent-coloured text much darker, so both stay readable
       e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', '#0c0e12');
       if (light) e.style.setProperty('--acc-tx', 'rgb(' + hueRGB(hue, 0.45).join(',') + ')'); else e.style.removeProperty('--acc-tx');
     }
     e.dataset.bg = s.bg;
-    const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f1f6f3' : '#0b171b');
+    const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f8f5f0' : '#14151b');
     if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
   }

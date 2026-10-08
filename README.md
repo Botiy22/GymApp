@@ -10,6 +10,8 @@ you can reach it from any device after signing in.
 
 Branding assets and installed-icon refresh guidance: [BRANDING.md](BRANDING.md).
 
+Otisport 2.7 uses a shared graphite, apricot and lavender design with a matching warm light theme. Saved custom colors and accessibility preferences remain available. Scope, review notes and the pre-change restoration backup: [DESIGN_REFRESH.md](DESIGN_REFRESH.md).
+
 ## Navigation and profiles
 
 The bottom bar is **Workout · Food · Settings · Goals · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. Customize its photo, short bio and cover color, then select up to four earned badges individually. New badges are announced when you finish a qualifying workout.

@@ -1,0 +1,311 @@
+/* Otisport 2.7 — graphite, apricot and lavender.
+   Loaded last: one visual system for the existing app, without changing its data. */
+:root {
+  --bg: #14151b;
+  --card: #1e2028;
+  --raised: #292c36;
+  --ink: #f6f3ef;
+  --mut: #aaa9b6;
+  --line: #383b47;
+  --edge: #323540;
+  --acc: #efad82;
+  --acc-rgb: 239,173,130;
+  --acc-ink: #281a12;
+  --acc-tx: #efad82;
+  --secondary: #bcb1e4;
+  --secondary-rgb: 188,177,228;
+  --hi: #f09093;
+  --warn: #e9c17e;
+  --glass: linear-gradient(145deg,#242631,#1e2028);
+  --glass-2: #2c2e3b;
+  --panel: #1b1d25;
+  --bar: rgba(30,32,40,.97);
+  --frost: blur(18px);
+  --shine: 0 12px 30px rgba(0,0,0,.12);
+  --shine-s: none;
+  --ambient: radial-gradient(85% 60% at 5% 0%,rgba(var(--secondary-rgb),.09),transparent 70%),radial-gradient(75% 55% at 100% 45%,rgba(var(--acc-rgb),.055),transparent 70%);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  color-scheme: dark;
+}
+:root[data-bg=deep] {
+  --ambient: radial-gradient(90% 65% at 100% 0%,rgba(var(--secondary-rgb),.055),transparent 75%);
+}
+:root[data-bg=plain] { --ambient: none; }
+:root[data-bg=light] {
+  --bg: #f8f5f0;
+  --card: #ffffff;
+  --raised: #f0ece7;
+  --ink: #292833;
+  --mut: #6e6a78;
+  --line: #ded9d4;
+  --edge: #e5dfd9;
+  --acc: #edaf89;
+  --acc-rgb: 237,175,137;
+  --acc-ink: #352318;
+  --acc-tx: #914b27;
+  --secondary: #74668e;
+  --secondary-rgb: 116,102,142;
+  --hi: #a7444f;
+  --warn: #805e25;
+  --glass: linear-gradient(145deg,#ffffff,#fdfbf9);
+  --glass-2: #f0ece7;
+  --panel: #fdfbf8;
+  --bar: rgba(255,253,250,.97);
+  --shine: 0 10px 30px rgba(62,45,30,.045);
+  --shine-s: none;
+  --ambient: radial-gradient(90% 65% at 0% 0%,rgba(var(--acc-rgb),.12),transparent 70%),radial-gradient(90% 65% at 100% 45%,rgba(var(--secondary-rgb),.055),transparent 70%);
+  background: var(--bg);
+  color-scheme: light;
+}
+html { background: var(--bg); }
+body { line-height: 1.55; letter-spacing: -.012em; }
+body::after { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+#view { max-width: 680px; padding: calc(var(--st) + 24px) 20px calc(var(--sb) + 150px); }
+.top { align-items: center; gap: 12px; margin: 0 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--edge); }
+.app-wordmark { display: flex; align-items: center; gap: 7px; color: var(--mut); font-size: .62rem; letter-spacing: .19em; font-weight: 700; margin-bottom: 8px; }
+.app-wordmark::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--acc-tx); }
+.top h1 { font-size: clamp(1.65rem,7vw,2.2rem); font-weight: 760; letter-spacing: -.055em; line-height: 1.12; }
+.top p,.top .datebtn { color: var(--mut); font-size: .78rem; margin-top: 8px; }
+h2 { font-size: 1.06rem; font-weight: 700; letter-spacing: -.025em; }
+h3 { font-size: .95rem; letter-spacing: -.02em; }
+.cap,.lbl { color: var(--mut); line-height: 1.6; }
+.bignum,.kpis b,.rank-best,.dial-readout>b,.profile-stats b { font-variant-numeric: tabular-nums; }
+.card,.hero,.wex,.rank-card,.rank-hero,.profile-cover,.profile-nutrition,.meal-plan-header,.workout-history,.momentum-month {
+  border-radius: var(--radius-lg); border-color: var(--edge); background: var(--card); box-shadow: var(--shine);
+}
+.card { padding: 22px; margin-top: 16px; }
+.hero,.profile-cover,.meal-plan-header,.rank-hero { border-radius: var(--radius-xl); }
+.note,.tip,.qrow,.frow,.re-row,.ai-item,.import-card { background: var(--card); border-color: var(--edge); box-shadow: none; border-radius: var(--radius-md); }
+.note,.tip { border-left-color: var(--acc-tx); }
+.note.warn { border-left-color: var(--warn); }
+.btn { min-height: 48px; border-radius: 14px; background: var(--raised); border-color: var(--line); box-shadow: none; font-size: .88rem; font-weight: 650; }
+.btn.primary { color: var(--acc-ink); background: var(--acc); border-color: transparent; box-shadow: none; }
+.btn.big { min-height: 54px; border-radius: 16px; }
+.btn.sm { border-radius: 10px; }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--hi); }
+.icon-btn { background: var(--raised); border-color: var(--edge); border-radius: 14px; box-shadow: none; }
+.icon-btn.sm { background: var(--raised); }
+.top-actions .icon-btn { background: var(--card); }
+.top-actions .upload-plan { background: rgba(var(--acc-rgb),.09); border-color: rgba(var(--acc-rgb),.17); }
+.link { color: var(--acc-tx); }
+.link.mut { color: var(--mut); }
+.btn:disabled,.icon-btn:disabled { opacity: .45; }
+input[type=text],input[type=password],input[type=number],input[type=email],textarea,select,.search input {
+  background-color: var(--bg); border-color: var(--line); border-radius: 12px; color: var(--ink); font-size: 16px;
+}
+input::placeholder,textarea::placeholder { color: var(--mut); opacity: .8; }
+input:focus,textarea:focus,select:focus { border-color: var(--acc-tx); box-shadow: 0 0 0 3px rgba(var(--acc-rgb),.08); }
+:focus-visible { outline: 2px solid var(--acc-tx); outline-offset: 3px; }
+.sw input { accent-color: var(--acc-tx); }
+.seg { background: var(--card); border-color: var(--edge); border-radius: 16px; padding: 5px; gap: 3px; box-shadow: none; }
+.seg button { min-height: 44px; border-radius: 11px; color: var(--mut); font-size: .76rem; }
+.seg .on { color: var(--ink); background: var(--raised); box-shadow: none; }
+.workout-tabs,.goals-tabs { margin: 18px 0 22px; }
+.chip,.pill { background: var(--card); border-color: var(--edge); border-radius: 12px; box-shadow: none; }
+.chip.on { background: rgba(var(--acc-rgb),.12); color: var(--acc-tx); border-color: rgba(var(--acc-rgb),.3); }
+.chips { gap: 8px; }
+.radios input:checked+span { background: var(--acc); color: var(--acc-ink); border-color: var(--acc); }
+
+/* Persistent navigation; all five destinations retain their existing actions. */
+#tabbar { width: calc(100% - 32px); max-width: 620px; height: 72px; padding: 7px; gap: 2px; bottom: calc(var(--sb) + 12px); border-radius: 22px; background: var(--bar); border: 1px solid var(--edge); box-shadow: 0 12px 32px rgba(0,0,0,.16); backdrop-filter: var(--frost); -webkit-backdrop-filter: var(--frost); }
+#tabbar button { height: 56px; min-height: 48px; border-radius: 15px; gap: 5px; position: relative; }
+#tabbar svg { width: 20px; height: 20px; stroke-width: 1.75; }
+#tabbar span { font-size: .63rem; font-weight: 650; }
+#tabbar .on,:root[data-bg=light] #tabbar .on { color: var(--acc-tx); background: rgba(var(--acc-rgb),.11); box-shadow: none; }
+#tabbar .on::after { content: ''; width: 12px; height: 2px; border-radius: 2px; background: var(--acc-tx); position: absolute; bottom: 3px; }
+:root[data-bg=light] #tabbar { box-shadow: 0 8px 24px rgba(62,45,30,.09); }
+#coach { width: 48px; height: 48px; border-radius: 16px; bottom: calc(var(--sb) + 101px); color: var(--acc-ink); box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+
+/* Training: distinct focus panel, quieter routine and history rows. */
+.training-week { font-size: .74rem; padding: 0 3px 12px; }
+.training-week b { color: var(--secondary); }
+.hero { padding: 26px; background: radial-gradient(90% 140% at 100% 0%,rgba(var(--secondary-rgb),.11),transparent 75%),var(--card); border-color: rgba(var(--secondary-rgb),.19); }
+.hero small { color: var(--acc-tx); letter-spacing: .12em; font-size: .65rem; }
+.hero strong { font-size: clamp(1.65rem,7vw,2.25rem); line-height: 1.18; margin: 10px 0 8px; overflow-wrap: anywhere; }
+.hero>span { font-size: .8rem; }
+.hero .btn { margin-top: 24px; }
+.hero.resume { border-color: var(--acc-tx); }
+.training-actions { gap: 12px; margin: 16px 0; }
+.training-actions .btn { min-height: 52px; background: var(--card); font-size: .78rem; }
+.rank-preview { padding: 17px; border-radius: 18px; border-color: var(--edge); background: var(--card); }
+.rank-preview .rank-badge { background: rgba(var(--secondary-rgb),.055); border-radius: 14px; }
+.rgrid { gap: 12px; }
+.rcard.rtile { border-radius: 18px; background: var(--card); border-color: var(--edge); padding: 18px; min-height: 96px; }
+.rtile .r-ic { width: 48px; height: 48px; border-radius: 15px; background: rgba(var(--secondary-rgb),.09); color: var(--secondary); }
+.rtile.ic-push .r-ic,.rtile.ic-upper .r-ic { background: rgba(var(--acc-rgb),.09); color: var(--acc-tx); }
+:root[data-bg=light] .rtile .r-ic { color: var(--secondary); }
+:root[data-bg=light] .rtile.ic-push .r-ic,:root[data-bg=light] .rtile.ic-upper .r-ic { color: var(--acc-tx); }
+.rtile .rc-t b { font-size: .92rem; }
+.rtile .rc-t i { font-size: .73rem; line-height: 1.5; }
+.exlist>.extile { border-radius: 18px; border-color: var(--edge); background: var(--card); box-shadow: none; }
+.extile img { aspect-ratio: 4/3; }
+.extile span { padding: 13px 14px; }
+.extile b { font-size: .88rem; line-height: 1.4; }
+.workout-history { margin: 12px 0; padding: 19px; }
+.workout-volume>summary { min-height: 44px; }
+.volume-total { background: rgba(var(--acc-rgb),.09); border: 1px solid rgba(var(--acc-rgb),.13); }
+.rank-badge svg { fill: rgba(var(--secondary-rgb),.075); }
+.rank-progress { height: 5px; }
+.rank-unlocks,.badge-unlocks { background: rgba(var(--acc-rgb),.045); border-color: rgba(var(--acc-rgb),.3); }
+#workout,:root[data-bg=light] #workout { background: var(--bg); }
+#workout .w-head { background: var(--panel); border-bottom-color: var(--edge); padding: calc(var(--st) + 12px) 16px 12px; }
+.workout-jump { background: var(--panel); padding: 12px 16px; border-bottom-color: var(--edge); }
+.workout-jump select { background: var(--card); }
+#workout .w-body { padding: 16px 16px calc(var(--sb) + 30px); }
+.wex { padding: 16px; margin-bottom: 16px; background: var(--card); }
+.set input { background: var(--bg); }
+.set-n,.set-ok { background: var(--raised); border-color: var(--line); box-shadow: none; }
+.set.done input { background: rgba(var(--acc-rgb),.045); border-color: rgba(var(--acc-rgb),.3); }
+.set.done .set-ok { background: var(--acc); color: var(--acc-ink); }
+#restbar { bottom: calc(var(--sb) + 96px); }
+.rb-in,:root[data-bg=light] .rb-in,:root[data-solid] .rb-in { background: var(--acc); color: var(--acc-ink); border-color: transparent; border-radius: 18px; box-shadow: var(--shine); }
+.rb-in .btn,:root[data-bg=light] .rb-in .btn { background: rgba(0,0,0,.08); color: var(--acc-ink); }
+.rb-in .btn.primary,:root[data-bg=light] .rb-in .btn.primary { background: var(--acc-ink); color: var(--acc); border-color: transparent; }
+.rb-track,:root[data-bg=light] .rb-track { background: rgba(0,0,0,.12); }
+#rb-fill,:root[data-bg=light] #rb-fill { background: var(--acc-ink); }
+
+/* Food and weekly plans use the same surfaces, with nutrition accents. */
+.card.cal { background: linear-gradient(145deg,rgba(var(--acc-rgb),.07),transparent 80%),var(--card); }
+.cal .bignum { font-size: 2.6rem; line-height: 1.2; margin: 5px 0 18px; }
+.cal .bignum small { font-size: .8rem; font-weight: 500; color: var(--mut); letter-spacing: 0; }
+.cal .macros { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--edge); gap: 12px; }
+.macros>div>span { font-size: .68rem; }
+.macros b { font-size: .8rem; font-weight: 650; }
+.meter { background: rgba(var(--acc-rgb),.12); border-radius: 8px; }
+.macros>div:nth-child(2) .meter i { background: var(--secondary); }
+.macros>div:nth-child(3) .meter i { background: var(--mut); }
+.frow { padding: 15px; }
+.frow>strong { color: var(--acc-tx); font-variant-numeric: tabular-nums; }
+.pmeal { padding: 18px; background: var(--card); border-color: var(--edge); border-radius: 16px; }
+.pmeal.on { background: rgba(var(--acc-rgb),.055); border-color: rgba(var(--acc-rgb),.3); }
+.meal-plan-header { background: linear-gradient(130deg,rgba(var(--secondary-rgb),.085),transparent 85%),var(--card); }
+.meal-day { background: var(--card); border-color: var(--edge); border-radius: 18px; }
+.meal-day>summary { padding: 18px 20px; min-height: 78px; }
+.meal-day[open]>summary { background: rgba(var(--secondary-rgb),.045); }
+.meal-day-body { padding: 0 20px 16px; }
+.daily-plan>summary { min-height: 48px; }
+.plan-n { background: var(--raised); color: var(--mut); border-radius: 9px; padding: 5px 8px; }
+.plan-n.ok { color: var(--acc-tx); background: rgba(var(--acc-rgb),.12); }
+
+/* Goals, calendar and charts keep their existing values and schedules. */
+.kpis { gap: 10px; }
+.kpis div { border-radius: 16px; border-color: var(--edge); background: var(--card); box-shadow: none; padding: 16px 10px; }
+.kpis b { font-weight: 750; }
+.kpis i { font-size: .67rem; }
+.hb-t { background: var(--raised); }
+.momentum-ring { background: conic-gradient(var(--acc-tx) var(--progress),var(--line) 0); }
+.momentum-ring::before { inset: 6px; background: var(--card); }
+.momentum-hero { background: linear-gradient(130deg,rgba(var(--secondary-rgb),.065),transparent 80%),var(--card); }
+.momentum-week button { min-height: 80px; background: var(--card); border-radius: 15px; border-color: var(--edge); }
+.momentum-week .selected { border-color: var(--acc-tx); background: rgba(var(--acc-rgb),.07); }
+.habit-row { border-bottom-color: var(--edge); }
+.momentum-cell { border-radius: 10px; }
+.datenav { background: var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 5px; margin: 16px 0; }
+.datenav .icon-btn { background: transparent; border-color: transparent; box-shadow: none; }
+.cd { border-radius: 12px; }
+.cd.on,.cd.now { border-color: var(--acc-tx); }
+.momentum-month-nav { background: transparent; border: 0; padding: 0; }
+
+/* Profile color choices stay personal; the frame follows the common theme. */
+.profile-cover { background: radial-gradient(ellipse at 100% 0%,rgba(var(--profile-rgb),.13),transparent 70%),var(--card); border-color: var(--edge); padding: 24px; }
+.profile-avatar { border-radius: 22px; background: rgba(var(--profile-rgb,108,222,187),.1); border-color: rgba(var(--profile-rgb,108,222,187),.2); }
+.profile-identity h2 { letter-spacing: -.035em; }
+.profile-identity>.icon-btn { border-color: var(--edge); background: var(--raised); }
+.profile-bio { color: var(--mut); font-size: .82rem; line-height: 1.7; }
+.profile-rank { padding-top: 18px; }
+.profile-showcase .achievement { background: rgba(var(--acc-rgb),.055); border-color: rgba(var(--acc-rgb),.16); border-radius: 10px; }
+.profile-nutrition { padding-top: 22px; }
+.dial-disc { fill: rgba(var(--secondary-rgb),.035); stroke: var(--edge); }
+.dial-tick { stroke: var(--line); }
+.dial-tick.filled { stroke: var(--acc-tx); }
+.dial-readout>b { font-size: 3rem; font-weight: 750; }
+.profile-macros>div:nth-child(2) i span { background: var(--secondary); }
+.profile-macros>div:nth-child(3) i span { background: var(--mut); }
+.profile-stats { border-radius: 18px; padding: 20px 8px; background: var(--card); border-color: var(--edge); }
+.achievement { border-radius: 16px; padding: 15px 12px; }
+.achievement.earned { background: rgba(var(--acc-rgb),.035); border-color: rgba(var(--acc-rgb),.2); }
+.achievement.locked { background: var(--card); border-color: var(--edge); }
+.badge-choice.selected { background: rgba(var(--acc-rgb),.065); border-color: var(--acc-tx); }
+.eyebrow { font-size: .6rem; letter-spacing: .15em; }
+.leaderboard li { min-height: 78px; border-color: var(--edge); }
+.leaderboard li.you { background: rgba(var(--acc-rgb),.06); border-radius: 14px; }
+.competition-heading { margin-top: 22px; }
+.friend-list summary { color: var(--secondary); }
+
+/* All dialogs, document review and account screens share the new palette. */
+dialog#sheet { background: var(--panel); border-color: var(--edge); border-radius: 28px 28px 0 0; box-shadow: 0 -10px 50px rgba(0,0,0,.22); }
+dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { background: rgba(9,9,15,.74); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+.sheet-head { padding: 18px 16px 14px; background: var(--panel); border-bottom-color: var(--edge); }
+.sheet-head h2 { font-size: 1.08rem; font-weight: 700; }
+.sheet-body { padding: 18px 20px calc(var(--sb) + 24px); }
+.sheet-body>.card:first-child { margin-top: 0; }
+.sheet-head .icon-btn { background: var(--raised); border: 1px solid var(--edge); border-radius: 13px; }
+.sheet-foot { background: var(--panel); padding: 14px 20px calc(var(--sb) + 14px); border-top-color: var(--edge); }
+.pdf-plan-dialog { background: var(--panel); border-color: var(--edge); border-radius: 28px; }
+.pdf-head h2 { font-weight: 750; letter-spacing: -.045em; }
+.import-upload { background: rgba(var(--acc-rgb),.04); border-color: rgba(var(--acc-rgb),.4); border-radius: 19px; }
+.import-upload svg { color: var(--acc-tx); }
+.import-card { background: var(--card); border-radius: 18px; }
+.import-card summary { background: transparent; border-color: var(--edge); }
+.import-selection label,.import-default-rest,.import-empty { background: var(--card); border-color: var(--edge); border-radius: 14px; }
+.import-footer { background: var(--panel); border-top-color: var(--edge); }
+.import-card input,.import-card select,.import-card textarea { background: var(--bg); }
+.import-card input[aria-invalid=true] { border-color: var(--warn); }
+#gate { background: var(--ambient),var(--bg); }
+.gate-in { max-width: 430px; }
+.gate-in h1 { font-size: 2rem; font-weight: 760; letter-spacing: -.05em; }
+.gate-in>.lead { font-size: .85rem; }
+.gate-in .seg { background: var(--card); }
+.gate-in .fld input { background: var(--card); }
+.gate-logo.brand-logo { width: 72px; height: 72px; border-radius: 23px; }
+.gate-logo.brand-logo img { border-radius: 23px; }
+#toast,:root[data-solid] #toast,:root[data-bg=light] #toast,.update-banner { background: var(--panel); color: var(--ink); border-color: var(--edge); box-shadow: var(--shine); }
+.msg.ai,:root[data-bg=light] .msg.ai { background: var(--card); border-color: var(--edge); }
+.msg.me { background: rgba(var(--acc-rgb),.1); border-color: rgba(var(--acc-rgb),.2); }
+
+/* Opaque and reduced-motion preferences apply to every new surface too. */
+:root[data-solid],:root[data-bg=light][data-solid] { --glass: var(--card); --glass-2: var(--raised); --panel: var(--card); --bar: var(--card); --frost: none; }
+:root[data-solid] #tabbar,:root[data-solid] dialog#sheet,:root[data-solid] .w-head,:root[data-solid] .pdf-plan-dialog { backdrop-filter: none; -webkit-backdrop-filter: none; }
+:root[data-solid] dialog#sheet::backdrop,:root[data-solid] .pdf-plan-dialog::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
+:root[data-calm] .btn:active { transform: none; }
+@media(prefers-reduced-transparency:reduce) {
+  :root,:root[data-bg=light] { --glass: var(--card); --glass-2: var(--raised); --panel: var(--card); --bar: var(--card); --frost: none; }
+  .rb-in { background: var(--acc); }
+  dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .btn:active { transform: none; }
+  dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media(hover:hover) {
+  .rcard:hover,.rank-preview:hover,.history-title:hover { border-color: var(--line); }
+  .btn:not(.primary):not(:disabled):hover { background: var(--glass-2); }
+}
+@media(min-width:800px) {
+  #view { padding-top: calc(var(--st) + 36px); }
+  dialog#sheet { border-radius: 28px; }
+}
+@media(max-width:350px) {
+  #view { padding-left: 14px; padding-right: 14px; }
+  .top { gap: 8px; }
+  .top h1 { font-size: 1.65rem; }
+  .top .top-actions { gap: 6px; }
+  .card,.profile-cover,.hero,.rank-card { padding: 18px; }
+  #tabbar { width: calc(100% - 20px); padding: 6px; }
+  #tabbar span { font-size: .59rem; }
+  .training-actions { gap: 8px; }
+  .training-actions .btn { font-size: .73rem; padding: 10px; }
+  .meal-day>summary { padding: 16px; }
+  .meal-day-body { padding-left: 16px; padding-right: 16px; }
+  .cal .bignum { font-size: 2.25rem; }
+  .profile-identity { gap: 10px; }
+  .profile-identity>.icon-btn { width: 40px; height: 40px; }
+  .workout-tabs button { font-size: .68rem; padding: 9px 2px; }
+}
+@media(max-height:500px) {
+  .pdf-plan-dialog { border-radius: 20px; }
+  .sheet-head { padding: 10px 14px; }
+}

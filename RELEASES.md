@@ -6,6 +6,13 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.7.0 — 2026-10-08, build 20261008.4
+
+- Full shared appearance refresh: graphite, apricot and lavender, plus a warm light theme. Consistent headers, cards, forms, calendars, dialogs and five-button navigation cover Workout, Food, Goals, Profile, Settings and document uploads.
+- Keeps custom hue/background/profile-cover choices, opaque surfaces and reduced motion. Exercise IDs, routines, logs, backups, account configuration and sync remain compatible. The new stylesheet is included in verified offline precaching.
+- No tests added or run, per explicit user instruction. Separate syntax/whitespace checks and manual Chromium layout review covered small/large mobile, desktop workout/dialog views, light and custom themes, and the actual attached PDF preview/saved collapsible meal plan. Physical Safari/iPhone and live deployment remain unverified. See DESIGN_REFRESH.md for limits.
+- Verified remote backup: `backup/main-20261008-112335-before-design`, preserving main `fd69d37e867dc5406c7bd02209a668ab6aba2aa0`; complete local history bundle also retained. Restore through a normal restoration commit with a newer release, never force-push.
+
 ## 2.6.1 — 2026-10-08, build 20261008.3
 
 - Renamed the app to Otisport, following the user's suggested name direction. HTML, Apple home-screen metadata, manifest names, Hungarian/English labels, sign-in and export filenames use the new brand. App URL/scope, storage keys, account configuration and data schema stay compatible.

@@ -1,3 +1,13 @@
+# Update — Otisport 2.7.0, 2026-10-08
+
+Continued the design handoff after comparing it with current main (2.6.1). The whole app now shares a graphite/apricot/lavender theme and matching warm light theme in css/otisport-theme.css. Headers, navigation, workout views, Food/weekly plans, Goals, Profile, Settings and import dialogs use consistent surfaces and controls. Custom hue/background/cover colors, reduced motion and opaque surfaces are retained. No data or account migration. See DESIGN_REFRESH.md for scope and safe restoration.
+
+No tests added or run under the user's instruction. Syntax/whitespace checks and manual Chromium screenshot/layout review were performed separately, including the attached 28-meal PDF's review/saved weekly plan, small mobile, desktop dialogs, and light/custom themes. Screenshots are local only. No claim of physical Safari/iPhone or live deployment verification. Historical automated checks still reference 2.6.1; updating/running them requires separate authorization.
+
+Verified backup before editing: remote branch backup/main-20261008-112335-before-design at fd69d37e867dc5406c7bd02209a668ab6aba2aa0; verified history bundle /workspace/GymApp-backups/GymApp-before-full-design-20261008-112335.bundle. Backup covers code, not private diary/account data. Preserve older backups. The prior unfinished exercise-media migration and live social activation remain separate work.
+
+---
+
 # Update — Otisport 2.6.1, 2026-10-08
 
 Renamed Tungsten to Otisport and installed a new generated O icon. The manifest, document/Apple title, both language labels, sign-in logo, placeholder profile initial and export filenames use the new identity. New icon paths are referenced and included in verified offline precaching; the Android maskable asset has safe-circle padding. BRANDING.md records the assets and iOS shortcut refresh guidance. URL/scope/storage keys/account configuration stay unchanged.
