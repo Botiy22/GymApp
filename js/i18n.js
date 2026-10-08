@@ -1,6 +1,6 @@
 window.I18N = {
   hu: {
-    appName: 'Otisport', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
+    appName: 'Setora', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
     settings: 'Beállítások', back: 'Vissza', close: 'Bezárás', save: 'Mentés', saved: 'Elmentve', added: 'Hozzáadva', done: 'Kész', edit: 'Szerkesztés', delete: 'Törlés', remove: 'Eltávolítás', more: 'Továbbiak', details: 'Részletek', name: 'Név', all: 'Mind',
     min: 'perc', h: 'ó', exercises: 'gyakorlat', setsWord: 'sorozat', set: 'sorozat', reps: 'ism.', rest: 'pihenő', prev: 'előző', today: 'Ma',
     installTitle: 'Telepítés iPhone-ra', installShort: 'Safari: Megosztás gomb → „Főképernyőhöz adás”. Koppints a részletekért.',
@@ -114,7 +114,7 @@ window.I18N = {
     eq: { barbell: 'kétkezes rúd', dumbbell: 'kézisúlyzó', other: 'egyéb', 'body only': 'saját testsúly', cable: 'kábel', machine: 'gép', kettlebells: 'kettlebell', bands: 'gumiszalag', 'medicine ball': 'medicinlabda', 'exercise ball': 'fitlabda', 'foam roll': 'SMR-henger', 'e-z curl bar': 'EZ-rúd' }
   },
   en: {
-    appName: 'Otisport', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
+    appName: 'Setora', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
     settings: 'Settings', back: 'Back', close: 'Close', save: 'Save', saved: 'Saved', added: 'Added', done: 'Done', edit: 'Edit', delete: 'Delete', remove: 'Remove', more: 'More', details: 'Details', name: 'Name', all: 'All',
     min: 'min', h: 'h', exercises: 'exercises', setsWord: 'sets', set: 'set', reps: 'reps', rest: 'rest', prev: 'prev', today: 'Today',
     installTitle: 'Install on iPhone', installShort: 'Safari: Share button → “Add to Home Screen”. Tap for details.',
@@ -336,4 +336,32 @@ Object.assign(window.I18N.en, {
   shortcutTitle: 'Update name and icon', shortcutHint: 'App content updates. Home-screen names and icons are managed by your browser or iOS.',
   shortcutIOS: 'An iPhone can retain the old name or icon. An app update cannot rewrite an existing bookmark. Export your data from Settings before adding a new Home Screen installation. Keep the old one until your data appears in the new one.',
   shortcutOther: 'On Android, the browser may update an installed app’s name and icon. An ordinary bookmark title must be renamed or re-added manually.', shortcutBackup: 'Back up your data'
+});
+Object.assign(window.I18N.en, {
+  tabSettings:'Settings', settingsIntro:'Make it yours. Everything stays within reach.',
+  paletteApricot:'Apricot',paletteSage:'Sage',paletteSky:'Sky',paletteLavender:'Lavender',customAccent:'Custom color',
+  friendIdentifier:'Username, email or phone',findBy:'Find a friend by',phoneNumber:'Phone number',friendEmail:'Exact email address',friendPhone:'+36 20 123 4567',
+  contactSearchHint:'Use an exact username. Email and phone search work when your friend enables discovery.',
+  contactDiscovery:'How friends can find you',contactPrivacy:'Only verified contacts can be used. Your email and phone are never shown on your shared profile.',
+  findMeEmail:'Let friends find me by email',findMePhone:'Let friends find me by phone',contactUnavailable:'Contact discovery is unavailable.',
+  contactLookupLimit:'Too many contact lookups. Try again in an hour.',contactUnverified:'Verify this contact before enabling discovery.',
+  phoneFormat:'Include your country code, for example +36 20 123 4567.',phoneVerified:'Your phone is verified.',
+  phoneVerificationHint:'Verify your number by SMS, then enable phone discovery.',
+  verificationCode:'SMS verification code',verifyPhone:'Verify number',sendCode:'Send code',changePhone:'Use a different number',codeSent:'Code sent. Enter it below.',
+  phoneVerificationError:'Phone verification failed. Check your code or try again later. You can also add friends by username or email.',
+  friendNotFound:'No discoverable account matches. Check the exact details or ask for their username.'
+});
+Object.assign(window.I18N.hu, {
+  tabSettings:'Beállítások',settingsIntro:'Alakítsd magadra. Minden kéznél marad.',
+  paletteApricot:'Barack',paletteSage:'Zsálya',paletteSky:'Égkék',paletteLavender:'Levendula',customAccent:'Egyéni szín',
+  friendIdentifier:'Felhasználónév, email vagy telefon',findBy:'Barát keresése ezzel',phoneNumber:'Telefonszám',friendEmail:'Pontos email-cím',friendPhone:'+36 20 123 4567',
+  contactSearchHint:'Pontos felhasználónevet adj meg. Emaillel és telefonnal akkor kereshető a barátod, ha engedélyezi.',
+  contactDiscovery:'Hogyan találhatnak meg a barátaid?',contactPrivacy:'Csak igazolt elérhetőséggel kereshetnek meg. Az emailed és telefonszámod nem jelenik meg a megosztott profilodon.',
+  findMeEmail:'Megtalálhatnak email alapján',findMePhone:'Megtalálhatnak telefonszám alapján',contactUnavailable:'Az elérhetőség alapú keresés nem érhető el.',
+  contactLookupLimit:'Túl sok keresés. Próbáld újra egy óra múlva.',contactUnverified:'Előbb igazold ezt az elérhetőséget.',
+  phoneFormat:'Országkóddal add meg, például +36 20 123 4567.',phoneVerified:'A telefonszámod igazolva van.',
+  phoneVerificationHint:'Igazold a számod SMS-ben, majd engedélyezd a telefonos keresést.',
+  verificationCode:'SMS-ellenőrzőkód',verifyPhone:'Szám igazolása',sendCode:'Kód küldése',changePhone:'Másik telefonszám',codeSent:'Kód elküldve. Add meg alább.',
+  phoneVerificationError:'Nem sikerült igazolni a számot. Ellenőrizd a kódot, vagy próbáld később. Felhasználónévvel vagy emaillel is hozzáadhatsz barátot.',
+  friendNotFound:'Nincs ilyen kereshető fiók. Ellenőrizd az adatot, vagy kérd el a felhasználónevét.'
 });

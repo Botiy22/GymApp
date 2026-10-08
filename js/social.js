@@ -1,11 +1,14 @@
 /* Authenticated RPCs expose only profiles shared through accepted friendships. */
 window.Social = (() => {
-  const state={data:null,error:'',busy:false,userId:null};
+  const state={data:null,error:'',busy:false,userId:null,contacts:null,contactError:''};
   let pending=null;
   function message(error) {
     if(error.backendCode==='PGRST202'||error.backendCode==='42P01')return 'socialSetup';
     if(error.backendCode==='23505')return 'usernameTaken';
     if(/profile_required/.test(error.message))return 'socialNeedProfile';
+    if(/contact_lookup_limit/.test(error.message))return 'contactLookupLimit';
+    if(/invalid_phone/.test(error.message))return 'phoneFormat';
+    if(/contact_unverified/.test(error.message))return 'contactUnverified';
     if(/friend_not_found/.test(error.message))return 'friendNotFound';
     if(/self_request/.test(error.message))return 'friendSelf';
     if(/request_limit|friend_limit/.test(error.message))return 'friendLimit';
@@ -13,7 +16,7 @@ window.Social = (() => {
     if(error.code==='network')return 'socialOffline';
     return 'socialError';
   }
-  function reset() {state.data=null;state.error='';state.userId=null;}
+  function reset() {state.data=null;state.error='';state.userId=null;state.contacts=null;state.contactError='';}
   async function refresh() {
     const cloud=window.Cloud;
     if(!cloud||!cloud.on||!cloud.user){reset();state.error='socialSignIn';return;}
@@ -21,14 +24,16 @@ window.Social = (() => {
     if(pending)return pending;
     const owner=state.userId;state.busy=true;state.error='';
     pending=(async()=>{
-      try {await cloud.sync();const data=await cloud.rpc('social_dashboard',{});if(cloud.user&&cloud.user.id===owner)state.data=data;}
+      try {await cloud.sync();const data=await cloud.rpc('social_dashboard',{});if(cloud.user&&cloud.user.id===owner){state.data=data;try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
       catch(error){if(cloud.user&&cloud.user.id===owner)state.error=message(error);}
       finally{state.busy=false;pending=null;}
     })();return pending;
   }
   async function mutate(name,body) {
     if(!Cloud.on||!Cloud.user)throw Object.assign(new Error('sign in'),{code:'auth'});
-    return Cloud.rpc(name,body);
+    const result=await Cloud.rpc(name,body);
+    if(result&&result.error)throw new Error(result.error);
+    return result;
   }
   let publishing=Promise.resolve();
   function publish(profile) {

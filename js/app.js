@@ -188,7 +188,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">OTISPORT</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
+  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -229,11 +229,11 @@
     let h = head(t('tabHabits'), t('momentumSub'));
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
-    h += `<section class="card momentum-hero"><div class="momentum-ring" style="--progress:${percent * 3.6}deg" role="img" aria-label="${percent}%"><b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
+    h += `<section class="card momentum-hero"><div class="momentum-dial">${Profile.dial(percent,100,percent+"%")}<b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
     const start = ymd(weekStart(k + 'T12:00'));
     h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
-    h += `<section class="card"><h3>${esc(t('momentumTemplates'))}</h3><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></section>`;
+    h += `<details class="card goal-templates"><summary>${esc(t('momentumTemplates'))}${IC.down}</summary><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></details>`;
     let recentTotal = 0, recentDone = 0;
     const recentStart = Momentum.shift(today(), -27);
     for (let i = 0; i < 28; i++) { const s = Momentum.summary(D().habits, Momentum.shift(recentStart, i), D()); recentTotal += s.total; recentDone += s.done; }
@@ -387,7 +387,7 @@
       <div class="macros">${[['p', t('protein')], ['c', t('carbs')], ['f', t('fat')]].map(([k, n]) => `<div><span>${esc(n)}</span><b>${Math.round(sum[k])}${tg ? ' / ' + dec(tg[k]) : ''} g</b>${tg ? Charts.meter(sum[k], tg[k], 'thin') : ''}</div>`).join('')}</div>
       ${fromPlan ? `<p class="cap plancap">${esc(t('planTgCap'))}</p>` : tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
     h += planCard(ui.foodDate, true);
-    h += `<div class="row3"><button class="btn primary" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button><button class="btn" data-a="food-manual">${IC.lib}${esc(t('foodSearchBtn'))}</button></div>`;
+    h += `<div class="row3"><button class="btn primary" data-a="food-manual">${IC.plus}${esc(t('foodSearchBtn'))}</button><button class="btn" data-a="food-ai" data-m="photo">${IC.cam}${esc(t('scanPhoto'))}</button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}${esc(t('describe'))}</button></div>`;
     h += actRow(ui.foodDate) + `<h2>${esc(t('meals'))}</h2>` + (list.length ? `<div class="flist">` + list.map(f => `<div class="frow"><span><b>${esc(f.name)}</b><i>${f.g ? f.g + ' g · ' : ''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src === 'ai' ? ' · AI' : f.src === 'plan' ? ' · ' + esc(t('planTag')) : ''}</i></span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('') + `</div>` : `<p class="empty">${esc(t('noMeals'))}</p>`);
     return h;
   }
@@ -493,7 +493,7 @@
       ui.fa = { food: f, g: String(each ? each[0] : 100) }; openSheet(shFoodAmount()); }
   const profileLocal = () => Profile.clean(D().settings.publicProfile);
   function avatar(p, small) {
-    const initial=(p.displayName||p.username||'O').slice(0,1).toUpperCase();
+    const initial=(p.displayName||p.username||t('appName')).slice(0,1).toUpperCase();
     return `<span class="profile-avatar${small?' small':''}">${p.avatar?`<img src="${esc(p.avatar)}" alt="${esc(p.displayName||p.username||t('tabProfile'))}">`:esc(initial)}</span>`;
   }
   function badgeChip(b, detailed) {
@@ -517,7 +517,7 @@
     h+=`<div class="competition-heading"><span>${esc(t('thisWeek'))}</span><small>${esc(t('competitionReset'))}</small></div><ol class="leaderboard">`+rows.map((r,i)=>{
       const p=Profile.clean({username:r.username,displayName:r.display_name,avatar:r.avatar,theme:r.theme});
       return `<li class="${r.user_id===CL.user.id?'you':''}"><span class="board-place">${i&&rows[i-1].score===r.score?rows.findIndex(x=>x.score===r.score)+1:i+1}</span><button class="board-person" data-a="friend-profile" data-id="${esc(r.user_id)}">${avatar(p,true)}<span><b>${esc(p.displayName||p.username)}${r.user_id===CL.user.id?' · '+esc(t('you')):''}</b><small>@${esc(p.username)} · ${r.days} ${esc(t('trainingDays'))}</small></span></button><strong>${compact(r.score)}<small>${esc(t('points'))}</small></strong></li>`;
-    }).join('')+'</ol>'+`<details class="competition-method"><summary>${esc(t('howPointsWork'))}</summary><p class="cap">${esc(t('competitionMethod'))}</p></details><form class="friend-search" data-f="friend-add"><label class="sr" for="friend-username">${esc(t('username'))}</label><input id="friend-username" name="username" placeholder="${esc(t('friendUsername'))}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocomplete="off" autocapitalize="none" spellcheck="false" required><button class="btn primary" ${ui.friendBusy?'disabled':''}>${esc(t('addFriend'))}</button></form>`;
+    }).join('')+'</ol>'+`<details class="competition-method"><summary>${esc(t('howPointsWork'))}</summary><p class="cap">${esc(t('competitionMethod'))}</p></details><form class="friend-search" data-f="friend-add"><label class="sr" for="friend-identifier">${esc(t('friendIdentifier'))}</label><select name="kind" data-in="friend-kind" aria-label="${esc(t('findBy'))}">${['username','email','phone'].map(k=>`<option value="${k}" ${ui.friendKind===k?'selected':''}>${esc(t(k==='username'?'username':k==='email'?'email':'phoneNumber'))}</option>`).join('')}</select><div class="friend-search-row"><input id="friend-identifier" name="identifier" type="${ui.friendKind==='email'?'email':ui.friendKind==='phone'?'tel':'text'}" ${(!ui.friendKind||ui.friendKind==='username')?'pattern="[A-Za-z0-9_]{3,24}"':''} placeholder="${esc(t(ui.friendKind==='email'?'friendEmail':ui.friendKind==='phone'?'friendPhone':'friendUsername'))}" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false" required><button class="btn primary" ${ui.friendBusy?'disabled':''}>${esc(t('addFriend'))}</button></div><p class="cap">${esc(t('contactSearchHint'))}</p></form>${contactDiscovery()}`;
     const incoming=data.incoming||[],outgoing=data.outgoing||[],friends=data.friends||[];
     if(incoming.length)h+=`<h3>${esc(t('friendRequests'))}</h3>`+incoming.map(r=>`<div class="friend-request"><button class="link" data-a="friend-profile" data-id="${esc(r.user_id)}">@${esc(r.username)}</button><div><button class="btn sm" data-a="friend-respond" data-id="${esc(r.request_id)}" data-accept="true">${esc(t('acceptFriend'))}</button><button class="icon-btn" data-a="friend-respond" data-id="${esc(r.request_id)}" data-accept="false" aria-label="${esc(t('declineFriend'))}">${IC.close}</button></div></div>`).join('');
     if(outgoing.length)h+=`<details class="friend-list"><summary>${esc(t('sentRequests'))} (${outgoing.length})</summary>`+outgoing.map(r=>`<div class="friend-request"><span>@${esc(r.username)}</span><button class="link" data-a="friend-remove" data-id="${esc(r.user_id)}">${esc(t('cancelRequest'))}</button></div>`).join('')+'</details>';
@@ -533,7 +533,7 @@
     let h=head(t('tabProfile'))+`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p)}<div><small class="eyebrow">${esc(t('yourStory'))}</small><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:`<p class="profile-bio mut">${esc(t('profileBioHint'))}</p>`}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
     h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div><div class="dial-wrap">${Profile.dial(sum.kcal,goal,t('calorieDialLabel',compact(sum.kcal),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(sum.kcal)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(sum.kcal>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-sum.kcal)))):`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`}</p><div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b>${dec(sum[k])} <span>g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
     h+=`<div class="profile-stats"><div><b>${stats.workouts}</b><small>${esc(t('loggedSessions'))}</small></div><div><b>${stats.days}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${stats.volume>=1000?dec(r1(stats.volume/1000)):compact(stats.volume)} <span>${stats.volume>=1000?'t':'kg'}</span></b><small>${esc(t('lifetimeVolume'))}</small></div></div><section class="card"><div class="h2row"><h2>${esc(t('achievements'))}</h2><button class="link" data-a="profile-badges">${esc(t('chooseBadges'))}</button></div><div class="achievement-grid">${stats.badges.map(b=>badgeChip(b,true)).join('')}</div></section>`;
-    return h+socialCard()+`<details class="profile-lifts" ${ui.profileRanks?'open':''}><summary>${esc(t('yourRanks'))}${IC.down}</summary>${vRanks()}</details>`;
+    return h+`<details class="profile-lifts" ${ui.profileRanks?'open':''}><summary>${esc(t('yourRanks'))}${IC.down}</summary>${vRanks()}</details>`+socialCard();
   }
   function shProfileEdit() {
     const fn=()=>{
@@ -544,10 +544,26 @@
   function shBadges() {
     const fn=()=>{const p=profileLocal(),stats=Profile.summary(D().workouts);return {title:t('chooseBadges'),html:`<p class="cap">${esc(t('badgeChooseHint'))}</p><div class="badge-picker">${stats.badges.map(b=>`<button class="badge-choice ${p.showcase.includes(b.id)&&b.earned?'selected':''}" data-a="profile-badge" data-id="${b.id}" aria-pressed="${p.showcase.includes(b.id)&&b.earned}" ${b.earned?'':'disabled'}>${badgeChip(b,true)}<span>${b.earned?p.showcase.includes(b.id)?'✓':'+':esc(t('badgeLocked'))}</span></button>`).join('')}</div>`};};fn.kind='badges';return fn;
   }
-  async function loadSocial() {await Social.refresh();if(ui.tab==='profile')rerender();}
+  function contactDiscovery() {
+    const c=Social.state.contacts;
+    if(!c)return `<p class="cap">${esc(t(Social.state.contactError||'contactUnavailable'))}</p>`;
+    return `<details class="contact-discovery" ${ui.contactOpen?'open':''}><summary>${esc(t('contactDiscovery'))}${IC.down}</summary><p class="cap">${esc(t('contactPrivacy'))}</p><form data-f="contact-settings"><label class="sw"><input type="checkbox" name="email" ${c.by_email?'checked':''} ${c.email_verified?'':'disabled'}><span>${esc(t('findMeEmail'))}</span></label><label class="sw"><input type="checkbox" name="phone" ${c.by_phone?'checked':''} ${c.phone_verified?'':'disabled'}><span>${esc(t('findMePhone'))}</span></label><button class="btn" ${ui.friendBusy?'disabled':''}>${esc(t('save'))}</button></form><p class="cap">${esc(t(c.phone_verified?'phoneVerified':'phoneVerificationHint'))}</p><form data-f="phone-verify" class="phone-verification"><label class="fld"><span>${esc(t('phoneNumber'))}</span><input type="tel" name="phone" placeholder="+36 20 123 4567" value="${esc(ui.pendingPhone||'')}" required autocomplete="tel" maxlength="24"></label>${ui.pendingPhone?`<label class="fld"><span>${esc(t('verificationCode'))}</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4,10}" required maxlength="10"></label>`:''}<button class="btn" ${ui.friendBusy?'disabled':''}>${esc(t(ui.pendingPhone?'verifyPhone':'sendCode'))}</button>${ui.pendingPhone?`<button type="button" class="link" data-a="phone-restart">${esc(t('changePhone'))}</button>`:''}</form></details>`;
+  }
+  async function phoneVerification(values) {
+    if(ui.friendBusy)return;
+    const phone=String(values.phone||'').replace(/[ ()-]/g,'');
+    if(!/^\+[1-9][0-9]{6,14}$/.test(phone)){toast(t('phoneFormat'));return;}
+    const owner=CL&&CL.user&&CL.user.id;if(!owner)return;ui.friendBusy=true;
+    try {
+      if(ui.pendingPhone&&phone===ui.pendingPhone){await CL.verifyPhone(phone,String(values.code||'').trim());if(!CL.user||CL.user.id!==owner)return;ui.pendingPhone='';await Social.refresh();toast(t('phoneVerified'));}
+      else {await CL.requestPhone(phone);if(!CL.user||CL.user.id!==owner)return;ui.pendingPhone=phone;toast(t('codeSent'));}
+    }catch(error){toast(t(error.code==='rate'?'contactLookupLimit':'phoneVerificationError'));}
+    finally{ui.friendBusy=false;if(ui.tab==='profile')rerender();}
+  }
+  async function loadSocial() {const owner=CL&&CL.user&&CL.user.id;if(ui.contactOwner!==owner){ui.contactOwner=owner;ui.pendingPhone='';ui.contactOpen=false;}await Social.refresh();if(ui.tab==='profile')rerender();}
   async function socialAction(name,args) {
     if(ui.friendBusy)return;ui.friendBusy=true;
-    try {await Social.mutate(name,args);await Social.refresh();toast(t(name==='social_request_friend'?'requestSent':'saved'));}
+    try {await Social.mutate(name,args);await Social.refresh();toast(t(name.startsWith('social_request_friend')?'requestSent':'saved'));}
     catch(error){Social.state.error=Social.message(error);}
     finally {ui.friendBusy=false;if(ui.tab==='profile')rerender();}
   }
@@ -565,7 +581,7 @@
     }catch(error){ui.profileBusy=false;ui.profileError=Social.message(error);Social.state.error=ui.profileError;if(topIs('profile-edit'))refreshSheet();if(ui.tab==='profile')rerender();}
   }
 
-  const VIEWS = { home: vHome, food: vFood, goals: vGoals, profile: vProfile, lib: vLib, prog: vProg, habits: vHabits };
+  const VIEWS = { settings: vSettings, home: vHome, food: vFood, goals: vGoals, profile: vProfile, lib: vLib, prog: vProg, habits: vHabits };
 
   let animT = 0;
   function render() {
@@ -612,7 +628,7 @@
       try { d.showModal(); } catch (error) { unlockSheet(); unlockSheet = null; ui.sheets = []; throw error; }
     }
   }
-  function refreshSheet() { ui.sheetKeep = true; drawSheet(); }
+  function refreshSheet() { if (!ui.sheets.length && ui.tab === "settings") { rerender(); return; } ui.sheetKeep = true; drawSheet(); }
   function closeSheet(all) {
     if (all) ui.sheets = []; else ui.sheets.pop();
     if (!ui.sheets.length && ui.stale) { ui.stale = false; setTimeout(rerender, 0); }      // data arrived from the account while a panel was open
@@ -623,7 +639,7 @@
     d.classList.add('closing');                                               // slide down first, then really close
     closeT = setTimeout(() => { closeT = 0; d.classList.remove('closing'); if (d.open && !ui.sheets.length) d.close(); }, 200);
   }
-  const topIs = kind => { const f = ui.sheets[ui.sheets.length - 1]; return !!f && f.kind === kind; };
+  const topIs = kind => { const f = ui.sheets[ui.sheets.length - 1]; return f ? f.kind === kind : kind === "settings" && ui.tab === "settings"; };
 
   /* ---------- exercise detail ---------- */
   function drawingPicture(source, phase, board, label) {
@@ -1083,6 +1099,19 @@
       `<p class="cap">${esc(t('aiExplain'))}</p><label class="fld"><span>${esc(t('apiKey'))}</span><input type="password" data-in="key-draft" value="${esc(ui.keyDraft || '')}" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" ${ui.keyBusy ? 'disabled' : ''}></label>
       <button class="btn primary${ui.keyBusy ? ' busy' : ''}" data-a="key-save" ${ui.keyBusy || !(ui.keyDraft || '').trim() ? 'disabled' : ''}>${esc(t(ui.keyBusy ? 'keyChecking' : 'keySave'))}</button>`;
   }
+  function vSettings() {
+    let content = shSettingsBody()().html;
+    const folded=['workout','aiTitle','myDb','data'];
+    for(const key of folded){
+      const heading='<h3>'+esc(t(key))+'</h3>';
+      const start=content.indexOf('<section class="card">'+heading);
+      if(start<0)continue;
+      const end=content.indexOf('</section>',start),body=content.slice(start+22+heading.length,end);
+      content=content.slice(0,start)+`<details class="card settings-group" data-group="${key}" ${ui.settingsGroups?.[key]?'open':''}><summary>${esc(t(key))}${IC.down}</summary>${body}</details>`+content.slice(end+10);
+    }
+    return head(t('settings'),t('settingsIntro')) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
+  }
+
   function shSettings() {
     const fn = shSettingsBody(); fn.kind = 'settings'; return fn;
   }
@@ -1120,9 +1149,9 @@
           ${sw('syncKey', t('setSyncKey'))}<div class="row2"><button class="btn" data-a="sync-now">${esc(t('syncNow'))}</button><button class="btn" data-a="sign-out">${esc(t('signOut'))}</button></div><p class="cap">${esc(t('accountCap'))}</p></section>`;
       const accOff = cs || CL ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="cap">${esc(t('accOff'))}</p><button class="btn" data-a="acc-help">${esc(t('accHelp'))}</button></section>`;
       return { title: t('settings'), html: `${account}${accOff}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
-          <p class="lbl">${esc(t('accent'))}</p><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 359].map(h => 'rgb(' + hueRGB(h).join(',') + ')').join(',')})"></div>
-          ${s.hue == null ? '' : `<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button>`}
-          <p class="lbl">${esc(t('background'))}</p>${seg('set-bg', s.bg, (Store.BGS || ['aurora']).map(b => [b, t('bg_' + b)]))}
+          <p class="lbl">${esc(t('accent'))}</p><div class="accent-palettes">${[[null,'paletteApricot'],[155,'paletteSage'],[250,'paletteSky'],[300,'paletteLavender']].map(([h,key])=>`<button class="palette ${s.hue===h?'on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${s.hue===h}" style="--swatch:${h==null?'#efad82':'rgb('+hueRGB(h).join(',')+')'}"><span class="palette-preview" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t(key))}</b><span class="palette-check">${s.hue===h?IC.check:''}</span></button>`).join('')}</div>
+          <details class="custom-accent"><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0,60,120,180,240,300,359].map(h=>'rgb('+hueRGB(h).join(',')+')').join(',')})"></div><button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></details>
+          <p class="lbl">${esc(t('background'))}</p><div class="surface-choices">${(Store.BGS||['aurora']).map(b=>`<button class="surface-choice ${s.bg===b?'on':''}" data-a="set-bg" data-v="${b}" aria-pressed="${s.bg===b}"><span class="surface-preview surface-${b}" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t('bg_'+b))}</b>${s.bg===b?IC.check:''}</button>`).join('')}</div>
           ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
           ${sw('stretch', t('setStretch'))}${s.stretch ? sel('hold', t('holdLbl'), [20, 30, 45].map(v => [v, v + ' ' + t('secShort')])) : ''}
@@ -1149,9 +1178,9 @@
     const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
     D().workouts.forEach(w => w.entries.forEach(e => e.sets.forEach((x, j) => rows.push([ymd(w.start), w.name, itemName(e), j + 1, x.kg, x.reps, x.w ? 1 : 0]))));
     const cell = v => { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };     // a name can never be read as a formula by a spreadsheet
-    saveFile('otisport-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
+    saveFile('setora-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
   }
-  function exportData() { saveFile('otisport-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
+  function exportData() { saveFile('setora-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
 
   /* ================= CALENDAR, DAY, ACTIVITY ================= */
   function shCal() {
@@ -1358,7 +1387,7 @@
     document.documentElement.lang = L();
     const s = ui.gate, m = s.mode;
     if (m === 'up' && setupState().step < 4) {
-      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/otisport-192.png" alt=""><b>Otisport</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
+      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/otisport-192.png" alt=""><b>${esc(t('appName'))}</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
     }
     g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/otisport-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
@@ -1445,6 +1474,7 @@
       if(CL&&CL.user&&p.username){try{await Social.publish(p);await Social.refresh();}catch(error){Social.state.error=Social.message(error);}if(ui.tab==='profile')rerender();}
     },
     'social-refresh'() {loadSocial();},
+    'phone-restart'() {ui.pendingPhone='';rerender();},
     'friend-respond'(el) {socialAction('social_respond_friend',{p_request:el.dataset.id,p_accept:el.dataset.accept==='true'});},
     'friend-remove'(el) {if(confirm(t('removeFriendConfirm')))socialAction('social_remove_friend',{p_other:el.dataset.id});},
     async 'friend-profile'(el) {
@@ -1462,7 +1492,7 @@
     'release-notes'() {
       openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
     },
-    tab(el) { let k = el.dataset.tab; if(k==='lib'){k='home';ui.workout='exercises';}if(k==='prog'||k==='habits'){ui.goals=k==='prog'?'progress':'habits';k='goals';}if(k==='profile')loadSocial(); if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
+    tab(el) { let k = el.dataset.tab; if(k==='lib'){k='home';ui.workout='exercises';}if(k==='prog'||k==='habits'){ui.goals=k==='prog'?'progress':'habits';k='goals';}if(k==='settings'){A.settings();return;}if(k==='profile')loadSocial(); if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
     /* calendar, day, activity */
     cal(el) { const d = new Date((/^\d{4}-\d\d-\d\d$/.test(el.dataset.d || '') ? el.dataset.d : today()) + 'T12:00'); ui.cal = { y: d.getFullYear(), m: d.getMonth() }; openSheet(shCal()); },
     'cal-mo'(el) { const c = ui.cal, d = new Date(c.y, c.m + +el.dataset.d, 1), now = new Date(); if (d.getFullYear() * 12 + d.getMonth() > now.getFullYear() * 12 + now.getMonth() || d.getFullYear() < 2000) return; ui.cal = { y: d.getFullYear(), m: d.getMonth() }; refreshSheet(); },
@@ -1517,7 +1547,7 @@
     'ai-forget'() { if (!confirm(t('aiForgetConfirm'))) return; D().aiNotes = []; Store.save(); refreshSheet(); },
     'ai-rm'(el) { ui.ai.imgs.splice(+el.dataset.i, 1); refreshSheet(); },
     're-icon'(el) { const v = el.dataset.v; ui.edit.icon = Store.ICONS.indexOf(v) >= 0 ? v : ''; refreshSheet(); },
-    settings() { ui.keyDraft = ''; openSheet(shSettings()); checkSavedKey(); },
+    settings() { ui.settingsNavigate = dlg().open; ui.keyDraft = ''; closeSheet(true); ui.tab = 'settings'; render(); checkSavedKey(); },
     'shortcut-help'() { openSheet(() => ({ title: t('shortcutTitle'), html: `<p class="lead">${esc(t('shortcutHint'))}</p><p>${esc(t('shortcutIOS'))}</p><p>${esc(t('shortcutOther'))}</p><button class="btn primary" data-a="export">${esc(t('shortcutBackup'))}</button>` })); },
     'install-help'() { openSheet(shInstall()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
@@ -1537,6 +1567,8 @@
     'coach-hist'() { openSheet(shCoachHist()); },
     'coach-open'(el) { const ch = D().chats.find(x => x.id === el.dataset.id); if (!ch || ui.coach.busy) return; ui.coach = Object.assign(newCoach(), { id: ch.id, msgs: ch.msgs.map(m => ({ role: m.role, content: m.content })) }); closeSheet(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight; },
     'coach-del'(el) { if (!confirm(t('coachDelConfirm'))) return; const d = D(); d.chats = d.chats.filter(x => x.id !== el.dataset.id); if (ui.coach.id === el.dataset.id && !ui.coach.busy) ui.coach = newCoach(); Store.save(); refreshSheet(); },
+    'settings-jump'(el) { const section=$$('#view .settings-content section,#view .settings-group').find(s=>(s.querySelector('h3')||s.querySelector('summary'))?.textContent===t(el.dataset.v)); if(section?.tagName==='DETAILS')section.open=true;if(section)section.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'}); },
+    'set-palette'(el) { const hue=el.dataset.v==='default'?null:+el.dataset.v;if(hue!==null&&![155,250,300].includes(hue))return;D().settings.hue=hue;Store.save();applyLook();refreshSheet(); },
     'hue-reset'() { D().settings.hue = null; Store.save(); applyLook(); refreshSheet(); },
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
@@ -1817,7 +1849,8 @@
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
     'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
     'coach-q'(el) { ui.coach.draft = el.value; },
-    'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v; applyLook(); clearTimeout(hueT); hueT = setTimeout(() => { Store.save(); if (topIs('settings') && !$('#sheet [data-a="hue-reset"]')) refreshSheet(); }, 500); },   // colour follows the finger; saved when it rests
+    'friend-kind'(el) { if(!['username','email','phone'].includes(el.value))return;ui.friendKind=el.value;rerender();$('#friend-identifier')?.focus(); },
+    'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v; applyLook(); clearTimeout(hueT); hueT = setTimeout(() => { Store.save(); $$('.palette').forEach(b=>{const on=String(v)===b.dataset.v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));const check=$('.palette-check',b);if(check)check.innerHTML=on?IC.check:'';}); }, 500); },   // colour follows the finger; saved when it rests
     'set-photo-model'(el) { D().settings.photoModel = Store.MODELS.indexOf(el.value) >= 0 ? el.value : ''; Store.save(); },
     'lib-eq'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.eq = EQS.indexOf(el.value) >= 0 ? el.value : ''; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'act-f'(el) { if (el.dataset.k === 'steps' || el.dataset.k === 'kcal') ui.act[el.dataset.k] = el.value; },
@@ -1890,7 +1923,9 @@
     }
     if (k === 'coach') coachSend(v.q);
     if (k === 'profile-edit') saveProfile(v);
-    if (k === 'friend-add') socialAction('social_request_friend',{p_username:String(v.username||'').trim().toLowerCase()});
+    if (k === 'friend-add') {const value=String(v.identifier||'').trim();if(v.kind==='username')socialAction('social_request_friend',{p_username:value.toLowerCase()});else if(['email','phone'].includes(v.kind))socialAction('social_request_friend_contact',{p_identifier:value,p_kind:v.kind});}
+    if (k === 'contact-settings') socialAction('social_save_contact_settings',{p_email:v.email==='on',p_phone:v.phone==='on'});
+    if (k === 'phone-verify') phoneVerification(v);
     if (k === 'gate-setup') setupSubmit(v);
     if (k === 'gate') gateSubmit(v);
   });
@@ -1920,12 +1955,14 @@
     if (dlg().open) return; // A queued close event can arrive after the sheet reopens.
     ui.sheets = [];
     if (unlockSheet) { unlockSheet(); unlockSheet = null; }
+    if (ui.tab === "settings") { if(ui.settingsNavigate){ui.settingsNavigate=false;render();}else rerender(); }
   });
   dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
+  document.addEventListener('toggle', e => { if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);
-  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" ${k==='settings'?`aria-label="${esc(t('settings'))}" aria-haspopup="dialog"`:`data-tab="${k}"`}>${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
+  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" data-tab="${k}">${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   render(); $('#rb-skip').textContent = t('skip');

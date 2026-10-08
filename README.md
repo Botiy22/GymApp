@@ -1,6 +1,6 @@
-# Otisport
+# Setora
 
-(Formerly "Tungsten", "GymApp", "Súlypont" and "Rep Riot". The folder and the web address keep the old name on purpose: the address is what the
+(Working name; availability has not been checked. Formerly "Otisport", "Tungsten", "GymApp", "Súlypont" and "Rep Riot". The folder and the web address keep the old name on purpose: the address is what the
 installed app and its saved data are tied to.)
 
 A workout tracker and calorie diary that installs on a phone from the browser, with no App Store and no

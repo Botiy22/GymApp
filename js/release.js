@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.8.1';
-  const build = '20261008.6';
+  const version = '2.9.0';
+  const build = '20261008.7';
   const history = [
     {version,build,date:'2026-10-08',
+      en:['Setora is the new working name. Existing accounts and diaries stay in place.','Settings is a full tab with visible navigation, curated palettes and background previews.','Lined progress dials, clearer food actions, sticky workout navigation and corrected lift-rank arrows.','Friend search supports username, verified email and verified phone. Contact discovery requires the new database migration and optional SMS configuration.'],
+      hu:['Az új munkanév Setora. A fiókok és naplók megmaradnak.','A Beállítások teljes fület kapott látható navigációval, színpalettákkal és háttérelőnézetekkel.','Vonalas haladásmérő, egyértelműbb étkezési műveletek, rögzített edzésnavigáció és javított rangnyilak.','Barátkeresés felhasználónévvel, igazolt emaillel és telefonnal. Az elérhetőség alapú kereséshez új adatbázis-bővítés és opcionálisan SMS-beállítás szükséges.']},
+    {version:'2.8.1',build:'20261008.6',date:'2026-10-08',
       hu:['Visszaállítottuk a korábbi, részletes izomrajzokat.','A gyakorlatok megnyitásakor ismét a mozdulatképek jelennek meg először.','A személyre szabott regisztráció és az új navigáció megmaradt.'],
       en:['Restored the previous detailed muscle drawings.','Exercise details show movement images first again.','Personalized registration and the updated navigation are retained.']},
     {version:'2.8.0',build:'20261008.5',date:'2026-10-08',

@@ -1,3 +1,11 @@
+# Setora — working name, 2.9.0
+
+Setora replaces the visible Otisport name in the app, signup, manifest and browser/Home Screen metadata. Availability and trademarks have not been checked. The existing abstract mint icon assets remain. Paths, manifest identity/scope, `gymapp.v1` data keys, private onboarding metadata, account project and import schemas retain compatibility. New data exports use the `setora-` prefix. Existing iOS shortcuts can retain their original name; the Settings guide explains backup and re-adding limitations.
+
+The earlier icon provenance and brand history follow.
+
+---
+
 # Otisport
 
 The name comes from the user's suggested **Otisport** direction: a personal, sport-focused name that fits workouts, meals, goals and friends. It replaces Tungsten without changing the app URL, manifest scope, account project or `gymapp.v1` storage keys.

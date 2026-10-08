@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.9.0 — 2026-10-08, build 20261008.7
+
+- Setora working name in app, signup, manifest and browser metadata; existing account/data/PWA identity retained.
+- Settings is a full tab with visible, usable bottom navigation. Quick section links, curated palettes, background previews and collapsible advanced sections replace the crowded chooser; custom hue and accessibility settings remain.
+- Goals uses the shared lined dial and collapsible starter ideas. Workout navigation stays within reach while scrolling; Food puts search first. Profile keeps ranks before friends and correctly rotates/preserves its disclosure arrow.
+- Exact friend lookup by verified email or phone, with opt-in discovery, private contact settings, bounded lookup and optional Auth SMS verification. Run `migrations/20261008_social.sql`, then `migrations/20261008_social_contacts.sql` on your existing Supabase project; configure SMS only if enabling phone verification. Neither migration was activated on the live project by this release.
+- No tests added or run. Source/syntax/whitespace review and manual Chromium screenshots at 320/390 px covered all tabs in dark/light/custom appearances. Disposable account fixtures rendered contact controls and the upward open-rank arrow without runtime errors or horizontal overflow. SQL execution, live social/SMS, physical iOS and deployed serving remain unverified.
+
 ## 2.8.1 — 2026-10-08, build 20261008.6
 
 - Restored the previous detailed anatomical drawing from data/body.js and removed the rejected schematic. Exercise details open with the existing movement images again; muscle selection remains available.

@@ -130,6 +130,14 @@ window.Cloud = (function () {
     async signIn(email, password) { keep(await call('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password } })); if (!ses) throw fail('api'); return 'in'; },
     async signOut() { const tk = ses && ses.access_token; keep(null); if (tk) { try { await call('/auth/v1/logout', { method: 'POST', auth: tk }); } catch (e) {} } },
     recover(email) { return call('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', body: { email } }); },
+    async requestPhone(phone) {
+      if(!/^\+[1-9][0-9]{6,14}$/.test(phone))throw fail('api','invalid_phone');
+      await call('/auth/v1/user',{method:'PUT',auth:await token(),body:{phone}});
+    },
+    async verifyPhone(phone,code) {
+      const r=await call('/auth/v1/verify',{method:'POST',auth:await token(),body:{phone,token:code,type:'phone_change'}});
+      if(r&&r.access_token)keep(r);
+    },
     async setPassword(password) { const tk = await token(); await call('/auth/v1/user', { method: 'PUT', auth: tk, body: { password } }); },
     /* coming back from a link in an e-mail (confirm address, reset password): the session arrives in the address after "#" */
     async fromLink() {

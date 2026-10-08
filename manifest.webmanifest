@@ -1,7 +1,7 @@
 {
   "id": "./index.html",
-  "name": "Otisport",
-  "short_name": "Otisport",
+  "name": "Setora",
+  "short_name": "Setora",
   "description": "Edzésnapló gyakorlatfotókkal, fejlődéskövetéssel és kalórianaplóval.",
   "start_url": "./index.html",
   "scope": "./",

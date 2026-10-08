@@ -1,6 +1,6 @@
 # Profiles and friends
 
-The bottom bar is **Workout · Food · Settings · Goals · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Lift ranks, earned badges and friend competition are in Profile.
+The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Lift ranks, earned badges and friend competition are in Profile.
 
 ## Activate friends in Supabase
 
@@ -8,9 +8,20 @@ The bottom bar is **Workout · Food · Settings · Goals · Profile**. Workout c
 2. Run [migrations/20261008_social.sql](migrations/20261008_social.sql). The existing `supabase.sql` account table must already be installed. The migration is additive and can be rerun; it does not replace private user data.
 3. Keep the existing public project URL/key in `js/config.js`. No service-role key belongs in the app.
 4. Update the app, then open **Profile → Edit profile**, choose a username and save. Usernames are globally unique, case-insensitive, and use 3–24 letters, numbers or underscores.
-5. Add a friend's exact username. The other person accepts under **Profile → Friends & competition**. Both can refresh scores, inspect each other's profiles or remove the connection. Sent requests can be cancelled; received requests can be declined.
+5. Run [migrations/20261008_social_contacts.sql](migrations/20261008_social_contacts.sql) after the first migration for email/phone discovery.
+6. Add a friend's exact username, email, or international phone number. The other person accepts under **Profile → Friends & competition**. Both can refresh scores, inspect each other's profiles or remove the connection. Sent requests can be cancelled; received requests can be declined.
 
 The cloud coding environment cannot reach the configured Supabase project (proxy 403) and has no database admin connection. The migration has been tested on disposable PostgreSQL, but **has not been applied to the live project**. The UI reports an unavailable backend/missing migration without fabricating friends, points or claimed usernames. Profile edits remain on the device after a network or username error; saving again retries publication.
+
+## Email and phone discovery (2.9.0)
+
+The contact migration is additive and idempotent; run it after the original social migration. Both still require activation in your live Supabase SQL Editor. This environment has no database admin connection, so the new migration has **not been applied or executed**. No tests were run for 2.9.0.
+
+In Profile → Friends & competition, choose Username, Email, or Phone. Username lookup remains compatible with the original migration. Contact lookup matches exact details of users who have published a username and explicitly enabled that discovery option. Missing, opted-out and unverified contacts receive the same unavailable-account message. Lookup is limited to 20 attempts per account per hour, including unsuccessful contact matches. Existing requests remain idempotent and require acceptance; accepted friends can view each other's public profile and aggregate statistics.
+
+Profile → How friends can find you controls email and phone discovery independently. Both default to off and are saved server-side in a private table. Only the owner's contact settings RPC returns their own verified phone; contact details are never added to public profiles, requests, leaderboards or friends' responses. Email must be confirmed by Supabase Auth. Phones use international `+` country-code format and must be confirmed in Auth; unverified profile text cannot impersonate a number.
+
+To enable SMS verification, configure your own supported SMS provider in Supabase Authentication → Providers → Phone. This app does not create a provider, incur SMS charges or claim SMS was sent when the API fails. The app uses the authenticated phone-change request and SMS verification endpoints; existing-number changes follow your Supabase phone-change/security configuration. SMS delivery, live email, actual accounts and server-side permissions remain unverified in this release. Do not put a service-role/admin secret in the browser.
 
 ## Profile customization
 

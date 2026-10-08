@@ -1,3 +1,15 @@
+# Update — Setora 2.9.0, 2026-10-08
+
+Latest user request: persistent menu navigation, lined dials, username/email/phone friends, rank-arrow correction, simpler tabs, premium appearance chooser, new name. Setora is a working name (availability unchecked). Settings is now a regular page with functional bottom navigation; editors/images keep their modal background lock. Quick section jumps and remembered collapsed advanced sections; curated OKLCH palettes/background previews preserve numeric custom hue and calm/solid/light modes. Workout/Goals subtabs are sticky, Food search primary, Goals tick dial and optional templates, ranks moved above friends with native-toggle state and open-arrow rotation. Detailed drawings remain restored.
+
+Social client adds exact contact modes and own opt-in discovery settings; additive migrations/20261008_social_contacts.sql uses verified Auth email/phone, private RLS tables, RPC grants, generic unavailable-account responses and 20/hour contact limits. Auth SMS phone-change/verify UI requires configured provider. Original social migration and contact migration still need live SQL Editor activation; no DB admin credentials are available. No new private contacts are published to friends. No live users/messages created. Existing data keys, schemas and onboarding metadata stay compatible.
+
+No tests added/run. Syntax and whitespace reviewed; manual Chromium screenshot review covered all tabs and subviews at 320/390 px, dark/light/custom/solid preferences. Disposable authenticated fixtures rendered discovery/phone controls and open rank arrow; no page errors or horizontal overflow recorded. SQL was not executed; live Supabase/SMS/physical Safari and served deployment remain unverified. release-manifest.json regenerated for 2.9.0 / 20261008.7.
+
+Backup initial branch backup/main-20261008-180000-before-navigation-friends was verified before edits at 4e12a14f47342f0204571d4578bb100d0e69a267 (its label used a fixed time). The same original main is also saved with the actual UTC timestamp at backup/main-20261008-164148-before-navigation-friends. Preserve both and older backups. Roll back by a normal reviewed restoration commit with a newer release, never force-push/reset. Code backup is not private diary data.
+
+---
+
 # Update — Otisport 2.8.1, 2026-10-08
 
 User rejected the new schematic. Restored the previous detailed data/body.js anatomy and its colors; movement images open first again. Removed the custom body asset/renderer/cache dependency. Personalized signup and navigation remain. No tests run; syntax/whitespace reviewed. Remote backup backup/main-20261008-161655-before-drawing-restore preserves 50018935f9d808f2d18910304243657aa402692c. Restore by normal reviewed commit, never force-push. Code backup is not private diary data.
