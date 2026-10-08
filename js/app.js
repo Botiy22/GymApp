@@ -5,8 +5,8 @@
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
-    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
+  if (!window.PersonalSetup || !window.OTISPORT_BODY || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
+    const src = !window.PersonalSetup ? 'js/personal-setup.js' : !window.OTISPORT_BODY ? 'data/otisport-body.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -188,7 +188,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">OTISPORT</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button><button class="icon-btn" data-a="settings" aria-label="${esc(t('settings'))}">${IC.gear}</button></div></header>`;
+  const head = (title, sub, cal) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true">OTISPORT</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions"><button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -571,11 +571,13 @@
   function render() {
     ownSync();
     document.documentElement.lang = L();
+    refreshBrandMetadata();
     const y = ui.keepScroll ? window.scrollY : 0; ui.keepScroll = false;
     const v = $('#view'); v.dataset.anim = ui.anim || ''; ui.anim = '';
     clearTimeout(animT); if (v.dataset.anim) animT = setTimeout(() => { v.dataset.anim = ''; }, 600);
     v.innerHTML = VIEWS[ui.tab]();
     $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); b.querySelector('span').textContent = t('tab' + b.dataset.tab[0].toUpperCase() + b.dataset.tab.slice(1)); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
+    const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.textContent = t('settings'); settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
     window.scrollTo(0, y);
     const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); }
     renderWorkout();
@@ -644,14 +646,16 @@
       const drawing = !ui.figBad[id] && figure;
       const photos = !board && !drawing && e.k >= 2;
       const pair = drawing ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : photos ? [img(id,0),img(id,1)] : [];
-      let h = e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
+      const visual = ui.exVisual && ui.exVisual.id === id ? ui.exVisual.mode : 'muscles';
+      const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
+      const mapLabel = focus ? t('muscleSelected', muscleName(focus)) : [t('musclesWorked'), t('primary') + ': ' + e.p.map(muscleName).join(', '), t('secondary') + ': ' + e.s.map(muscleName).join(', ')].join('. ');
+      const map = `<section class="muscle-spotlight"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'), mapLabel)}</div><p class="cap muscle-legend"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p>${e.p.length || e.s.length ? `<p class="cap">${esc(t('muscleMapHint'))}</p><div class="muscle-picks"><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary',e.p],['secondary',e.s]].map(([key,list]) => list.length ? `<div><small>${esc(t(key))}</small><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div></div>` : '').join('')}</div>` : `<p class="cap">${esc(t('muscleMapEmpty'))}</p>`}<details class="muscle-precision"><summary>${esc(t('muscleMapAbout'))}</summary><p class="cap">${esc(t('musclePrecision'))}</p></details></section>`;
+      let h = `<div class="seg exercise-visual-tabs" aria-label="${esc(t('details'))}">${['muscles','movement'].map(mode => `<button class="${visual === mode ? 'on' : ''}" data-a="ex-visual" data-id="${esc(id)}" data-v="${mode}" aria-pressed="${visual === mode}">${esc(t(mode === 'muscles' ? 'muscleMapTitle' : 'movementTitle'))}</button>`).join('')}</div>`;
+      h += visual === 'muscles' ? map : e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
-      h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${e.p.map(m => `<span class="chip on">${esc(mus(m))}</span>`).join('')}${e.s.map(m => `<span class="chip">${esc(mus(m))}</span>`).join('')}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
+      h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${visual !== 'muscles' ? e.p.map(m => `<button class="chip on" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}">${esc(mus(m))}</button>`).join('') : ''}${visual !== 'muscles' ? e.s.map(m => `<button class="chip" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}">${esc(mus(m))}</button>`).join('') : ''}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
       if (pl && pl.tip) h += `<div class="tip"><b>${esc(t('coachNote'))}</b>${esc(pl.tip[L()])}</div>`;
-      h += `<section class="card"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'))}</div><p class="cap"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p></section>`;
-      const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
-      h += `<section class="card muscle-detail"><h3>${esc(t('muscleNames'))}</h3><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary', e.p], ['secondary', e.s]].map(([key, list]) => `<h4>${esc(t(key))}</h4><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div>`).join('')}<p class="cap">${esc(t('musclePrecision'))}</p></section>`;
       h += `<section class="card"><h3>${esc(t('myStats'))}</h3>` + (hst.length ? `<div class="kpis"><div><b>${best ? r1(best) : '–'}</b><i>${esc(t('est1rm'))}</i></div><div><b>${top ? (top.kg ? top.kg + '×' + top.reps : top.reps) : '–'}</b><i>${esc(t('bestSet'))}</i></div><div><b>${hst.length}</b><i>${esc(t('sessions'))}</i></div></div>${pts.length > 1 ? Charts.line(pts.slice(-20), { unit: ' kg' }) + `<p class="cap">${esc(t('e1rmChart'))}</p>` : ''}
         <div class="lastlist">${hst.slice(-3).reverse().map(x => `<p><i>${esc(fmtDate(x.d))}</i>${x.sets.map(s => `<span>${s.w ? 'W ' : ''}${s.kg ? s.kg + '×' : ''}${s.reps}</span>`).join('')}</p>`).join('')}</div>` : `<p class="empty">${esc(t('noHistoryEx'))}</p>`) + `</section>`;
       if (st.list.length) h += `<section class="card"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
@@ -1048,18 +1052,7 @@
   /* Mifflin-St Jeor resting energy x activity factor, then the goal. Checked against hand-calculated cases in the tests.
      Guards: values outside a plausible range give no result; no deficit under 18; a deficit never goes below 1500 kcal (men) / 1200 kcal (women);
      protein and fat per kg count at most the weight at BMI 27, so they do not run away at a high body weight. */
-  function calcTargets(p) {
-    const w = num(p.weight), hgt = num(p.height), a = num(p.age); if (!w || !hgt || !a) return null;
-    if (a < 14 || a > 100 || hgt < 120 || hgt > 230 || w < 30 || w > 300) return { bad: true };
-    const act = [1.2, 1.375, 1.55, 1.725, 1.9].indexOf(+p.activity) >= 0 ? +p.activity : 1.55;
-    const bmr = 10 * w + 6.25 * hgt - 5 * a + (p.sex === 'm' ? 5 : -161), tdee = bmr * act, m2 = (hgt / 100) * (hgt / 100);
-    const goal = ['cut', 'maintain', 'bulk'].indexOf(p.goal) < 0 ? 'maintain' : a < 18 && p.goal === 'cut' ? 'maintain' : p.goal, floor = p.sex === 'm' ? 1500 : 1200;
-    let kcal = Math.round(tdee * (1 + { cut: -0.18, maintain: 0, bulk: 0.1 }[goal]) / 10) * 10, floored = false;
-    if (goal === 'cut' && kcal < floor) { kcal = Math.min(floor, Math.round(tdee / 10) * 10); floored = true; }
-    const ref = Math.min(w, 27 * m2);
-    const pr = Math.round(ref * (goal === 'cut' ? 2.0 : 1.8)), fat = Math.round(Math.max(ref * 0.8, kcal * 0.25 / 9));
-    return { bmr: Math.round(bmr / 10) * 10, tdee: Math.round(tdee / 10) * 10, kcal, p: pr, c: Math.max(0, Math.round((kcal - pr * 4 - fat * 9) / 4)), f: fat, bmi: Math.round(w / m2 * 10) / 10, goal, floored, floor, minor: a < 18 && p.goal === 'cut' };
-  }
+  const calcTargets = p => PersonalSetup.calculate(p);
   const tgOut = (c, p) => !c ? `<p class="empty">${esc(t('fillProfile'))}</p>` : c.bad ? `<p class="empty">${esc(t('tgRange'))}</p>`
     : `<div class="kpis"><div><b>${c.bmr}</b><i>${esc(t('bmr'))}</i></div><div><b>${c.tdee}</b><i>${esc(t('tdee'))}</i></div><div class="hl"><b>${c.kcal}</b><i>${esc(t('tg_' + c.goal))}</i></div></div><p class="cap">BMI ${dec(c.bmi)}${c.floored ? ' · ' + esc(t('tgFloor', c.floor)) : ''}${c.minor ? ' · ' + esc(t('tgMinor')) : ''}</p>`;
   function shTargets() {
@@ -1141,12 +1134,12 @@
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="release-notes">${esc(t('whatsNew'))} · ${esc(VERSION)}</button><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
+        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="release-notes">${esc(t('whatsNew'))} · ${esc(VERSION)}</button><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><button class="link" data-a="shortcut-help">${esc(t('shortcutTitle'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
           <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
     };
   }
   /* shown only from the note an iPhone user sees in Safari before the app is on the Home Screen */
-  function shInstall() { return () => ({ title: t('installTitle'), html: `<ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol>` }); }
+  function shInstall() { return () => ({ title: t('installTitle'), html: `<ol class="steps">${[1, 2, 3, 4].map(i => `<li>${esc(t('install' + i))}</li>`).join('')}</ol><h3>${esc(t('shortcutTitle'))}</h3><p class="cap">${esc(t('shortcutIOS'))}</p><button class="btn" data-a="export">${esc(t('shortcutBackup'))}</button>` }); }
   function shAccHelp() { return () => ({ title: t('account'), html: `<p class="lead">${esc(t('accHelpLead'))}</p><ol class="steps">${[1, 2, 3, 4, 5].map(i => `<li>${esc(t('accStep' + i))}</li>`).join('')}</ol><p class="cap">${esc(t('accHelpCap'))}</p>` }); }
   async function saveFile(name, blob) {
     try { const f = new File([blob], name, { type: blob.type }); if (isIOS && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
@@ -1299,21 +1292,85 @@
   /* ================= ACCOUNT: only when js/config.js names a Supabase project ================= */
   const CL = window.Cloud && window.Cloud.on ? window.Cloud : null;
   const AC_CODES = ['network', 'creds', 'confirm', 'exists', 'weak', 'closed', 'email', 'rate', 'auth'];
+  function refreshBrandMetadata() {
+    document.title = t('appName');
+    const apple = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (apple) apple.content = t('appName');
+    // A cached older HTML shell may still reference the old brand's icon files.
+    for (const [rel, path] of [['apple-touch-icon','icons/otisport-apple-180.png'],['icon','icons/otisport-192.png'],['manifest','manifest.webmanifest']]) {
+      let link = document.querySelector('link[rel="' + rel + '"]');
+      if (!link) { link = document.createElement('link'); link.rel = rel; document.head.append(link); }
+      if (link.getAttribute('href') !== path) link.href = path;
+    }
+  }
+
+  const setupState = () => ui.gate.setup || (ui.gate.setup = PersonalSetup.fresh());
+  function setupCapture(values) {
+    const draft = setupState();
+    ['sex','goal','age','height','weight','activity'].forEach(k => { if (values[k] != null) draft.profile[k] = String(values[k]).trim().slice(0, 12); });
+    return draft;
+  }
+  function setupView() {
+    const draft = setupState(), p = draft.profile, step = draft.step;
+    const headings = ['setupGoal','setupBody','setupActivity','setupReady'];
+    const descriptions = ['setupGoalHint','setupBodyHint','setupActivityHint','setupReadyHint'];
+    const option = (key, value, label, hint) => `<label class="setup-choice"><input type="radio" name="${key}" data-in="setup-field" data-k="${key}" value="${value}" ${String(p[key]) === String(value) ? 'checked' : ''}><span><b>${esc(label)}</b>${hint ? `<small>${esc(hint)}</small>` : ''}</span>${IC.check}</label>`;
+    let body = '';
+    if (step === 0) body = `<fieldset class="setup-options"><legend class="sr">${esc(t('goal'))}</legend>${['cut','maintain','bulk'].map(v => option('goal', v, t(v), t('setup_' + v))).join('')}</fieldset>`;
+    if (step === 1) {
+      const field = (key, label, unit, min, max) => `<label class="fld"><span>${esc(label)}${unit ? ' · ' + unit : ''}</span><input type="text" inputmode="${key === 'age' ? 'numeric' : 'decimal'}" name="${key}" data-in="setup-field" data-k="${key}" value="${esc(p[key])}" autocomplete="off" maxlength="8" aria-describedby="setup-error" placeholder="${min}–${max}" required></label>`;
+      body = `<fieldset class="setup-options setup-sex"><legend>${esc(t('sex'))}</legend>${option('sex', 'f', t('female'))}${option('sex', 'm', t('male'))}</fieldset><div class="grid2">${field('age', t('age'), '', 14, 100)}${field('height', t('height'), '', 120, 230)}</div>${field('weight', t('bodyweight'), 'kg', 30, 300)}`;
+    }
+    if (step === 2) body = `<fieldset class="setup-options"><legend class="sr">${esc(t('activity'))}</legend>${ACT.map(([v, key], i) => option('activity', v, t('setupAct' + (i + 1)), t(key))).join('')}</fieldset>`;
+    if (step === 3) {
+      const c = calcTargets(p);
+      if (!c || c.bad || !PersonalSetup.normalize(p)) { draft.step = 1; ui.gate.err = t('setupBodyError'); return setupView(); }
+      body = `<section class="setup-result"><small>${esc(t('tg_' + c.goal))}</small><strong>${compact(c.kcal)} <span>kcal</span></strong><p>${esc(t('setupPerDay'))}</p><div class="setup-macros">${[['p','protein'],['c','carbs'],['f','fat']].map(([k,label]) => `<div><small>${esc(t(label))}</small><b>${c[k]} g</b></div>`).join('')}</div></section><p class="cap">${esc(t('setupEstimate'))}${c.minor ? ' ' + esc(t('tgMinor')) : ''}${c.floored ? ' ' + esc(t('tgFloor', c.floor)) : ''}</p>`;
+    }
+    return `<div class="setup-progress" aria-label="${esc(t('setupStep', step + 1, 4))}">${headings.map((_, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div><small class="eyebrow">${esc(t('setupStep', step + 1, 4))}</small><h2 class="setup-title" tabindex="-1">${esc(t(headings[step]))}</h2><p class="setup-intro">${esc(t(descriptions[step]))}</p>${body}<div id="setup-error" ${ui.gate.err ? 'class="note warn" role="alert"' : ''}>${ui.gate.err ? esc(ui.gate.err) : ''}</div><div class="setup-actions">${step > 0 ? `<button type="button" class="btn" data-a="setup-back">${esc(t('back'))}</button>` : ''}<button class="btn primary" type="submit">${esc(t(step === 3 ? 'setupCreateAccount' : 'next'))}${IC.chev}</button></div><button type="button" class="link setup-signin" data-a="gate-mode" data-v="in">${esc(t('backToSignIn'))}</button>`;
+  }
+  function setupSubmit(values) {
+    const draft = setupCapture(values), p = draft.profile;
+    const error = draft.step === 0 && !['cut','maintain','bulk'].includes(p.goal) ? 'setupGoalError' : draft.step === 1 && !PersonalSetup.bodyValid(p) ? 'setupBodyError' : draft.step === 2 && !ACT.some(([v]) => v === +p.activity) ? 'setupActivityError' : '';
+    if (error) { ui.gate.err = t(error); renderGate(); return; }
+    ui.gate.err = ''; draft.step = Math.min(4, draft.step + 1); renderGate();
+    const title = $('#gate .setup-title'); if (title) title.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+  function adoptRegistrationProfile() {
+    const s = D().settings, profile = PersonalSetup.normalize(CL && CL.user && CL.user.setup);
+    if (!profile || s.onboardingVersion === 1 || D().epoch > 0) return false;
+    // Synced targets and existing personal settings take precedence over the initial signup draft.
+    const hasProfile = !!(s.profile.age || s.profile.height || s.profile.weight || s.targets);
+    const c = calcTargets(profile);
+    const saved = Store.apply(doc => {
+      if (!hasProfile) { doc.settings.profile = profile; doc.settings.targets = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; }
+      doc.settings.onboardingVersion = 1;
+    });
+    if (!saved) { toast(t('saveFailed')); return false; }
+    if (!hasProfile) { ui.tab = 'profile'; toast(t('setupSaved', compact(c.kcal))); }
+    return !hasProfile;
+  }
+
   function renderGate() {
     const g = $('#gate'); if (!g) return;
     const need = !!CL && (!CL.user || ui.gate.mode === 'newpw');
     document.body.classList.toggle('gated', need); g.hidden = !need; if (!need) { g.innerHTML = ''; return; }
     document.documentElement.lang = L();
     const s = ui.gate, m = s.mode;
+    if (m === 'up' && setupState().step < 4) {
+      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/otisport-192.png" alt=""><b>Otisport</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
+    }
     g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/otisport-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
       ${s.err ? `<div class="note warn" role="alert"><b>${esc(s.err)}</b></div>` : ''}${s.info ? `<div class="note" role="status"><b>${esc(s.info)}</b></div>` : ''}
+      ${m === 'up' ? `<div class="setup-account-summary"><span>${esc(t('setupYourTarget'))}<b>${compact(calcTargets(setupState().profile).kcal)} kcal</b></span><button type="button" class="link" data-a="setup-edit">${esc(t('edit'))}</button></div>` : ''}
       ${m !== 'newpw' ? `<label class="fld"><span>${esc(t('email'))}</span><input type="email" name="email" value="${esc(s.email)}" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" required></label>` : ''}
       ${m !== 'forgot' ? `<label class="fld"><span>${esc(t(m === 'newpw' ? 'newPassword' : 'password'))}</span><input type="password" name="password" autocomplete="${m === 'in' ? 'current-password' : 'new-password'}" minlength="8" required></label>` : ''}
       ${m === 'up' || m === 'newpw' ? `<p class="cap">${esc(t('pwRule'))}</p>` : ''}
       <button class="btn primary big${s.busy ? ' busy' : ''}" ${s.busy ? 'disabled' : ''}>${esc(t({ in: 'signIn', up: 'signUp', forgot: 'sendReset', newpw: 'savePassword' }[m]))}</button>
       ${m === 'in' ? `<button type="button" class="link" data-a="gate-mode" data-v="forgot">${esc(t('forgot'))}</button>` : ''}${m === 'forgot' ? `<button type="button" class="link" data-a="gate-mode" data-v="in">${esc(t('backToSignIn'))}</button>` : ''}
       <p class="cap">${esc(t('gateCap'))}</p><div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`;
+    g.scrollTop = 0;
   }
   /* a session exists: make sure the data on this device belongs to that account, then bring both sides up to date */
   async function signedIn() {
@@ -1321,7 +1378,7 @@
     let d = D();
     if (d.owner && d.owner !== u.id) { Store.wipe(); d = D(); ui.wOpen = false; ui.foodDate = today(); ui.coach = newCoach(); }      // another person's data is never mixed in
     if (d.owner !== u.id) Store.stamp(u.id, d.workouts.length > 0 || Object.keys(d.food).length > 0 || d.body.length > 0 || !!d.settings.targets);
-    applyLook(); renderGate(); render(); await doSync(true);
+    applyLook(); await doSync(true); adoptRegistrationProfile(); renderGate(); render();
   }
   let syncT = 0;
   async function doSync(loud) {
@@ -1338,13 +1395,14 @@
   async function gateSubmit(v) {
     const s = ui.gate, email = String(v.email || '').trim().toLowerCase(), pw = String(v.password || ''); if (s.busy || !CL) return;
     s.info = '';
+    if (s.mode === 'up' && (!s.setup || s.setup.step !== 4 || !PersonalSetup.normalize(s.setup.profile))) { setupState().step = 0; renderGate(); return; }
     if (s.mode !== 'newpw') { s.email = email; if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { s.err = t('ac_email'); renderGate(); return; } }
     if (s.mode !== 'forgot' && pw.length < 8) { s.err = t('ac_weak'); renderGate(); return; }
     s.busy = true; s.err = ''; renderGate();
     try {
       if (s.mode === 'forgot') { await CL.recover(email); s.info = t('resetSent'); s.mode = 'in'; }
       else if (s.mode === 'newpw') { await CL.setPassword(pw); s.mode = 'in'; toast(t('pwSaved')); }
-      else if (s.mode === 'up') { if (await CL.signUp(email, pw) !== 'in') { s.info = t('confirmSent'); s.mode = 'in'; } }
+      else if (s.mode === 'up') { if (await CL.signUp(email, pw, PersonalSetup.normalize(s.setup.profile)) !== 'in') { s.info = t('confirmSent'); s.mode = 'in'; } }
       else await CL.signIn(email, pw);
     } catch (e) { s.err = t('ac_' + (AC_CODES.indexOf(e.code) >= 0 ? e.code : 'api')) + (AC_CODES.indexOf(e.code) < 0 && e.message ? ' (' + String(e.message).slice(0, 120) + ')' : ''); }
     s.busy = false; if (CL.user && s.mode !== 'newpw') await signedIn(); else renderGate();
@@ -1460,6 +1518,7 @@
     'ai-rm'(el) { ui.ai.imgs.splice(+el.dataset.i, 1); refreshSheet(); },
     're-icon'(el) { const v = el.dataset.v; ui.edit.icon = Store.ICONS.indexOf(v) >= 0 ? v : ''; refreshSheet(); },
     settings() { ui.keyDraft = ''; openSheet(shSettings()); checkSavedKey(); },
+    'shortcut-help'() { openSheet(() => ({ title: t('shortcutTitle'), html: `<p class="lead">${esc(t('shortcutHint'))}</p><p>${esc(t('shortcutIOS'))}</p><p>${esc(t('shortcutOther'))}</p><button class="btn primary" data-a="export">${esc(t('shortcutBackup'))}</button>` })); },
     'install-help'() { openSheet(shInstall()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; render(); refreshSheet(); },
@@ -1537,7 +1596,11 @@
     'prep-pause'() { const p = ui.prep; if (!p || p.fin || p.i < 0) return; if (p.run) { p.left = Math.max(0, p.end - Date.now()); p.run = false; } else { audio(); wake(); p.end = Date.now() + p.left; p.run = true; } refreshSheet(); },
     'prep-next'() { const p = ui.prep; if (!p || p.fin || p.i < 0) return; audio(); prepStep(p.i + 1); },
     'prep-done'() { const p = ui.prep; if (!p) return; const was = p.fin; p.run = false; prepMark(); if (!(D().active && ui.wOpen)) unwake(); closeSheet(); if (!was && (p.live || p.wid)) toast(t('saved')); if (topIs('prep') === false && ui.sheets.length) refreshSheet(); },
-    'muscle-focus'(el) { const e = EX[el.dataset.id], group = el.dataset.group; if (!e || (group && !e.p.concat(e.s).includes(group))) return; ui.muscleFocus = { id: el.dataset.id, group }; refreshSheet(); },
+    'ex-visual'(el) { if (!EX[el.dataset.id] || !['muscles','movement'].includes(el.dataset.v)) return; ui.exVisual = { id: el.dataset.id, mode: el.dataset.v }; refreshSheet(); },
+    'muscle-focus'(el) { const e = EX[el.dataset.id], group = el.dataset.group; if (!e || (group && !e.p.concat(e.s).includes(group))) return; ui.muscleFocus = { id: el.dataset.id, group }; ui.exVisual = { id: el.dataset.id, mode: 'muscles' }; refreshSheet();
+      const active = $('#sheet .muscle-picks [data-group="' + group + '"]'); if (active) active.focus({ preventScroll: true });
+      const body = $('#sheet .sheet-body'); if (body) body.scrollTo({ top: 0, behavior: calm() ? 'auto' : 'smooth' });
+    },
     'circuit-next'() { jumpCircuit(); },
     'fig-big'(el) {
       const phase = el.dataset.phase === '1' ? 1 : 0, source = el.dataset.source;
@@ -1547,6 +1610,8 @@
     },
     'acc-help'() { openSheet(shAccHelp()); },
     /* account */
+    'setup-back'() { const draft = setupState(); draft.step = Math.max(0, draft.step - 1); ui.gate.err = ''; renderGate(); window.scrollTo(0, 0); },
+    'setup-edit'() { const email = $('#gate input[name=email]'); if (email) ui.gate.email = email.value.trim(); setupState().step = 0; ui.gate.err = ''; renderGate(); window.scrollTo(0, 0); },
     'gate-mode'(el) { const f = $('#gate input[name=email]'), v = el.dataset.v; if (f) ui.gate.email = f.value.trim(); if (ui.gate.busy || ['in', 'up', 'forgot'].indexOf(v) < 0) return; ui.gate.mode = v; ui.gate.err = ''; ui.gate.info = ''; renderGate(); },
     'gate-lang'(el) { const f = $('#gate input[name=email]'); if (f) ui.gate.email = f.value.trim(); D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; ui.gate.err = ''; renderGate(); render(); },
     async 'sync-now'(el) { if (!CL || !CL.user) return; el.disabled = true; await doSync(true); toast(t(CL.state.err ? 'syncErr' : 'synced')); },
@@ -1765,6 +1830,7 @@
       ui.tg.profile[el.dataset.k] = el.value; const c = calcTargets(ui.tg.profile); $('#tg-out').innerHTML = tgOut(c, ui.tg.profile);
       if (c && !c.bad) { ui.tg.vals = { kcal: c.kcal, p: c.p, c: c.c, f: c.f }; ['kcal', 'p', 'c', 'f'].forEach(k => { $('#tg-' + k).value = c[k]; }); }
     },
+    'setup-field'(el) { if (el.type === 'radio' && !el.checked) return; setupCapture({ [el.dataset.k]: el.value }); },
     'tg-v'(el) { ui.tg.vals[el.dataset.k] = el.value; }
   };
   document.addEventListener('input', e => { const el = e.target, k = el.dataset && el.dataset.in; if (k && IN[k] && el.type !== 'file') IN[k](el); });
@@ -1825,6 +1891,7 @@
     if (k === 'coach') coachSend(v.q);
     if (k === 'profile-edit') saveProfile(v);
     if (k === 'friend-add') socialAction('social_request_friend',{p_username:String(v.username||'').trim().toLowerCase()});
+    if (k === 'gate-setup') setupSubmit(v);
     if (k === 'gate') gateSubmit(v);
   });
 
@@ -1858,7 +1925,7 @@
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);
-  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['settings', IC.gear], ['goals', IC.habit], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" ${k==='settings'?`aria-label="${esc(t('settings'))}" aria-haspopup="dialog"`:`data-tab="${k}"`}>${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
+  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" ${k==='settings'?`aria-label="${esc(t('settings'))}" aria-haspopup="dialog"`:`data-tab="${k}"`}>${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   render(); $('#rb-skip').textContent = t('skip');

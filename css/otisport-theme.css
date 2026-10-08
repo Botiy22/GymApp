@@ -106,8 +106,10 @@ input:focus,textarea:focus,select:focus { border-color: var(--acc-tx); box-shado
 .workout-tabs,.goals-tabs { margin: 18px 0 22px; }
 .chip,.pill { background: var(--card); border-color: var(--edge); border-radius: 12px; box-shadow: none; }
 .chip.on { background: rgba(var(--acc-rgb),.12); color: var(--acc-tx); border-color: rgba(var(--acc-rgb),.3); }
+:root[data-bg=light] .chip.on { color: var(--acc-tx); }
 .chips { gap: 8px; }
 .radios input:checked+span { background: var(--acc); color: var(--acc-ink); border-color: var(--acc); }
+:root[data-bg=light] .radios input:checked+span { color: var(--acc-ink); }
 
 /* Persistent navigation; all five destinations retain their existing actions. */
 #tabbar { width: calc(100% - 32px); max-width: 620px; height: 72px; padding: 7px; gap: 2px; bottom: calc(var(--sb) + 12px); border-radius: 22px; background: var(--bar); border: 1px solid var(--edge); box-shadow: 0 12px 32px rgba(0,0,0,.16); backdrop-filter: var(--frost); -webkit-backdrop-filter: var(--frost); }
@@ -308,4 +310,85 @@ dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { background: rgba(9,9,15,.74)
 @media(max-height:500px) {
   .pdf-plan-dialog { border-radius: 20px; }
   .sheet-head { padding: 10px 14px; }
+}
+
+/* Private registration: goal, body, activity, then a clear daily target. */
+.setup-in { gap: 18px; }
+.setup-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: .9rem; }
+.setup-brand img { width: 38px; height: 38px; border-radius: 12px; }
+.setup-progress { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; }
+.setup-progress i { height: 3px; background: var(--line); border-radius: 3px; }
+.setup-progress .on { background: var(--acc-tx); }
+.setup-in .eyebrow { margin: 0; }
+.setup-title { font-size: clamp(1.65rem,7vw,2rem); line-height: 1.15; letter-spacing: -.05em; margin: 0; outline: none; }
+.setup-intro { color: var(--mut); font-size: .85rem; margin: 0; }
+.setup-options { padding: 0; border: 0; margin: 2px 0; min-width: 0; display: grid; gap: 10px; }
+.setup-options legend { margin-bottom: 12px; color: var(--mut); font-size: .8rem; }
+.setup-choice { position: relative; display: flex; min-width: 0; cursor: pointer; }
+.setup-choice>input { position: absolute; width: 100%; height: 100%; inset: 0; opacity: 0; cursor: pointer; margin: 0; z-index: 1; }
+.setup-choice>span { width: 100%; padding: 14px 45px 14px 17px; border: 1px solid var(--edge); background: var(--card); border-radius: 16px; }
+.setup-choice b,.setup-choice small { display: block; }
+.setup-choice b { font-size: .9rem; font-weight: 650; }
+.setup-choice small { color: var(--mut); font-size: .73rem; margin-top: 4px; line-height: 1.5; }
+.setup-choice>svg { position: absolute; top: 17px; right: 16px; width: 20px; height: 20px; fill: none; stroke: var(--acc-tx); stroke-width: 2; opacity: 0; }
+.setup-choice input:checked~span { border-color: var(--acc-tx); background: rgba(var(--acc-rgb),.065); }
+.setup-choice input:checked~svg { opacity: 1; }
+.setup-choice input:focus-visible~span { outline: 2px solid var(--acc-tx); outline-offset: 3px; }
+.setup-sex { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.setup-sex .setup-choice>span { padding-right: 35px; }
+.setup-sex .setup-choice>svg { right: 12px; }
+.setup-in .fld { min-width: 0; }
+.setup-in .fld input { background: var(--card); }
+.setup-in .grid2 { gap: 12px; }
+.setup-actions { display: flex; gap: 10px; margin-top: 8px; }
+.setup-actions .primary { flex: 1; width: auto; min-width: 0; }
+.setup-actions>.btn:not(.primary) { flex: 0 0 auto; width: auto; min-width: 80px; }
+.setup-actions .btn { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.setup-signin { font-size: .8rem; padding: 5px; }
+.setup-result { padding: 25px 22px; border: 1px solid rgba(var(--acc-rgb),.3); border-radius: 24px; background: rgba(var(--acc-rgb),.055); text-align: center; }
+.setup-result>small { color: var(--acc-tx); }
+.setup-result>strong { display: block; font-size: 3rem; font-weight: 750; letter-spacing: -.05em; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.setup-result>strong span { font-size: 1rem; color: var(--mut); font-weight: 500; letter-spacing: 0; }
+.setup-result>p { color: var(--mut); font-size: .75rem; margin: 0 0 22px; }
+.setup-macros { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; border-top: 1px solid var(--edge); padding-top: 18px; }
+.setup-macros small { font-size: .65rem; color: var(--mut); display: block; }
+.setup-macros b { font-size: .9rem; }
+.setup-in>.cap { text-align: left; }
+.setup-account-summary { display: flex; align-items: center; gap: 16px; padding: 15px; border-radius: 16px; background: rgba(var(--acc-rgb),.07); border: 1px solid rgba(var(--acc-rgb),.2); }
+.setup-account-summary>span { flex: 1; font-size: .75rem; color: var(--mut); }
+.setup-account-summary b { display: block; font-size: 1rem; color: var(--ink); }
+
+/* Original anatomy art: primary red, secondary rose, quiet neutral muscles. */
+.exercise-visual-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin-bottom: 16px; }
+.muscle-spotlight { padding: 18px 16px; border-radius: 22px; background: var(--card); border: 1px solid var(--edge); }
+.muscle-spotlight>h3 { margin: 0 0 12px; }
+.muscle-spotlight .mm { background: radial-gradient(ellipse at 50% 45%,rgba(var(--secondary-rgb),.055),transparent 75%); padding: 4px 0; }
+.mm .otisport-anatomy { display: block; width: 100%; max-height: 340px; }
+.body-silhouette { fill: #292d39; stroke: #697083; stroke-width: 1.4; stroke-linejoin: round; }
+.body-region { fill: #42485a; stroke: #242833; stroke-width: 1.2; stroke-linejoin: round; }
+.body-primary { fill: #ee646c; stroke: #8d3542; }
+.body-secondary { fill: #d795a1; stroke: #84555f; }
+.body-face { fill: none; stroke: #8990a0; stroke-width: 1.3; stroke-linecap: round; }
+.body-label { fill: var(--mut); font-size: 14px; font-weight: 600; }
+:root[data-bg=light] .body-silhouette { fill: #ebe7e2; stroke: #a9a2a4; }
+:root[data-bg=light] .body-region { fill: #cfc9c7; stroke: #ebe7e2; }
+:root[data-bg=light] .body-primary { fill: #cf4554; stroke: #a93c4a; }
+:root[data-bg=light] .body-secondary { fill: #e2a0aa; stroke: #c57e8b; }
+:root[data-bg=light] .body-face { stroke: #a39a9c; }
+.muscle-legend { display: flex; align-items: center; justify-content: center; font-size: .7rem; margin: 12px 0; }
+.muscle-legend .k1 { background: #ee646c; }.muscle-legend .k2 { background: #d795a1; }
+:root[data-bg=light] .muscle-legend .k1 { background: #cf4554; }:root[data-bg=light] .muscle-legend .k2 { background: #e2a0aa; }
+.muscle-picks { display: grid; gap: 14px; margin-top: 14px; }
+.muscle-picks>.chip { justify-self: start; }
+.muscle-picks small { display: block; color: var(--mut); font-size: .67rem; margin-bottom: 7px; }
+.muscle-picks .chip { font-size: .72rem; min-height: 36px; padding: 8px 10px; text-align: left; }
+.muscle-precision { margin-top: 16px; border-top: 1px solid var(--edge); padding-top: 12px; font-size: .72rem; color: var(--mut); }
+@media(prefers-reduced-motion:no-preference) {
+  :root:not([data-calm]) .body-primary { animation: muscle-light .55s ease-out; }
+  @keyframes muscle-light { from { opacity: .5; } to { opacity: 1; } }
+}
+@media(max-width:350px) {
+  .setup-result { padding: 22px 16px; }.setup-result>strong { font-size: 2.6rem; }
+  .setup-choice>span { padding-left: 14px; }.setup-choice small { font-size: .7rem; }
+  .muscle-spotlight { padding: 16px 12px; }
 }

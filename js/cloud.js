@@ -11,7 +11,9 @@ window.Cloud = (function () {
   let st = get(YK) || {}; const state = { seen: +st.seen || 0, hash: +st.hash || 0, at: +st.at || 0, err: '' };
   const keepState = () => put(YK, { seen: state.seen, hash: state.hash, at: state.at });
   function keep(s) {
-    ses = s && s.access_token && s.user && s.user.id ? { access_token: String(s.access_token), refresh_token: String(s.refresh_token || ''), expires_at: +s.expires_at || Math.floor(Date.now() / 1000) + (+s.expires_in || 3600), user: { id: String(s.user.id), email: String(s.user.email || '') } } : null;
+    const previous = ses;
+    ses = s && s.access_token && s.user && s.user.id ? { access_token: String(s.access_token), refresh_token: String(s.refresh_token || ''), expires_at: +s.expires_at || Math.floor(Date.now() / 1000) + (+s.expires_in || 3600), user: { id: String(s.user.id), email: String(s.user.email || ''), setup: window.PersonalSetup ? PersonalSetup.normalize((s.user.user_metadata && s.user.user_metadata.otisport_onboarding && s.user.user_metadata.otisport_onboarding.profile) || s.user.setup) : null } } : null;
+    if (ses && !ses.user.setup && previous && previous.user.id === ses.user.id && window.PersonalSetup) ses.user.setup = PersonalSetup.normalize(previous.user.setup);
     put(SK, ses); if (!ses) { state.seen = 0; state.hash = 0; state.at = 0; put(YK, null); }
   }
   const fail = (code, msg) => { const e = new Error(msg || code); e.code = code; return e; };
@@ -115,8 +117,12 @@ window.Cloud = (function () {
       catch(error) { if(error.code !== 'auth' || !ses) throw error; return run(await refresh()); }
     },
     get user() { return ses ? ses.user : null; },
-    async signUp(email, password) {
-      const r = await call('/auth/v1/signup', { method: 'POST', body: { email, password } });
+    async signUp(email, password, profile) {
+      const setup = window.PersonalSetup && PersonalSetup.normalize(profile);
+      if (profile && !setup) throw fail('api');
+      const body = { email, password };
+      if (setup) body.data = { otisport_onboarding: { version: 1, profile: setup } };
+      const r = await call('/auth/v1/signup', { method: 'POST', body });
       if (r && r.access_token) { keep(r); return 'in'; }
       const u = r && (r.user || r); if (u && Array.isArray(u.identities) && !u.identities.length) throw fail('exists');     // an address that already has an account
       return 'confirm';                                                                                                  // the project asks for the e-mail to be confirmed first

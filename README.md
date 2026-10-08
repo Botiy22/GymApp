@@ -12,9 +12,13 @@ Branding assets and installed-icon refresh guidance: [BRANDING.md](BRANDING.md).
 
 Otisport 2.7 uses a shared graphite, apricot and lavender design with a matching warm light theme. Saved custom colors and accessibility preferences remain available. Scope, review notes and the pre-change restoration backup: [DESIGN_REFRESH.md](DESIGN_REFRESH.md).
 
+## Personalized registration
+
+Register starts with your goal, sex, age, height, weight and activity, then previews a calculated daily calorie target before creating the account. Your initial target appears in the food diary and profile after sign-in. Existing personal targets are retained. Exercise details have an original front/back muscle map with red primary and rose secondary highlights; Movement keeps the drawings/photos and zoom. [PERSONALIZATION.md](PERSONALIZATION.md) describes account persistence, review limits and the verified backup.
+
 ## Navigation and profiles
 
-The bottom bar is **Workout · Food · Settings · Goals · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. Customize its photo, short bio and cover color, then select up to four earned badges individually. New badges are announced when you finish a qualifying workout.
+The bottom bar is **Workout · Food · Goals · Settings · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. Customize its photo, short bio and cover color, then select up to four earned badges individually. New badges are announced when you finish a qualifying workout.
 
 Usernames, friend requests, friend profiles and weekly competition use the additive [social migration](migrations/20261008_social.sql). **Run it in your existing Supabase SQL Editor to activate friends.** The migration is prepared and tested, but is not installed on the live project from this environment. [SOCIAL.md](SOCIAL.md) explains activation, points, milestones and sharing rules. Local customization works without a social connection.
 

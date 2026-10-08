@@ -16,3 +16,5 @@ ImageMagick resized the master for deployment. The maskable version centers a 44
 Visible names are updated in the web manifest, HTML title, Apple home-screen title, both languages' app labels and the sign-in screen. Export filenames now begin with `otisport-`; existing backups still restore through the same schema.
 
 An installed iPhone shortcut can retain the name/icon from its original installation. Updating app files does not guarantee iOS will replace that OS-managed shortcut metadata. If it remains old, export a data backup from Settings before re-adding the Home Screen app. Keep the old installation until the new one shows your data; restore the export if needed. Physical iOS shortcut refresh is not verified in this environment.
+
+Since 2.8.0, runtime title/icon/manifest references are refreshed for older cached HTML and the manifest has an explicit ID matching its previous start_url identity. Settings → App → Update name and icon explains installed PWA versus bookmark behavior and offers a backup export. These changes do not force iOS to rewrite existing shortcut names/icons.

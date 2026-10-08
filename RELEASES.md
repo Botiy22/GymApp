@@ -6,6 +6,15 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.8.0 — 2026-10-08, build 20261008.5
+
+- Navigation now places Goals in the center and Settings immediately left of Profile. The main header keeps upload only.
+- Private signup asks goal/body/activity before account credentials, previews calculated calories/macros, and restores the initial target after confirmation/sign-in through validated Auth metadata. Existing profiles, targets and reset epochs take precedence; the regular calculator shares its unchanged formula. No SQL migration required.
+- Original front/back SVG anatomy, red/rose muscle highlights and individual group selection. Exercise details provide Muscles and Movement views; existing images, zoom, instructions and logging remain available.
+- Runtime metadata repairs cached old branding references; stable manifest ID and Settings shortcut guidance explain iOS/browser limits. No automatic iPhone shortcut rewrite claim.
+- No tests added/run. Separate syntax/whitespace and manual Chromium screenshot review used isolated demo account responses and synthetic profiles in HU/EN, dark/light, 320/390 px, including confirmation-required sign-in, profile meter and exercise views. Real Supabase/email, physical Safari/iPhone and live deployment unverified. See PERSONALIZATION.md.
+- Verified pre-change code backup: `backup/main-20261008-114552-before-personalization` at `7283b1e59e6db77301070a12804afca8a374afc7`, plus complete local history bundle. Restore with a normal reviewed commit and newer release, never force-push.
+
 ## 2.7.0 — 2026-10-08, build 20261008.4
 
 - Full shared appearance refresh: graphite, apricot and lavender, plus a warm light theme. Consistent headers, cards, forms, calendars, dialogs and five-button navigation cover Workout, Food, Goals, Profile, Settings and document uploads.

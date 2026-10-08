@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.7.0';
-  const build = '20261008.4';
+  const version = '2.8.0';
+  const build = '20261008.5';
   const history = [
     {version,build,date:'2026-10-08',
+      hu:['Személyre szabott regisztráció: cél, nem, kor, magasság, testsúly és aktivitás alapján kezdő kalóriacél.','Saját elöl–hátul izomtérkép piros főizom-kiemeléssel. Külön Izmok és Mozdulat nézet.','A Célok középre, a Beállítások a Profil mellé került. Felül csak a feltöltés maradt.','Frissítési útmutató a főképernyős névhez és ikonhoz; a régi iPhone-könyvjelzők átnevezését az iOS kezeli.'],
+      en:['Personalized signup calculates starting calories from your goal, sex, age, height, weight and activity.','Original front/back anatomy highlights primary muscles in red. Separate Muscles and Movement views.','Goals is centered and Settings is beside Profile. The header keeps the upload button.','Home-screen name/icon update guidance, including iOS bookmark limitations.']},
+    {version:'2.7.0',build:'20261008.4',date:'2026-10-08',
       hu:['Új, egységes grafit–barack–levendula arculat, hozzá illő világos témával.','Megújult az Edzés, Étkezés, Célok, Profil, Beállítások és a tervfeltöltés megjelenése.','Egységesebb kártyák, gombok, mezők, naptárak és alsó navigáció. A saját szín- és akadálymentesítési beállítások megmaradnak.'],
       en:['A cohesive graphite, apricot and lavender design, with a matching light theme.','Refreshed Workout, Food, Goals, Profile, Settings and plan uploads.','Consistent cards, controls, calendars and bottom navigation. Custom colors and accessibility preferences are retained.']},
     {version:'2.6.1',build:'20261008.3',date:'2026-10-08',

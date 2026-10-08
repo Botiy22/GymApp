@@ -1,3 +1,13 @@
+# Update — Otisport 2.8.0, 2026-10-08
+
+Navigation is Workout/Food/Goals/Settings/Profile, with header Settings removed. Personalized signup previews calories from goal, sex, age, height, weight and activity; validated private Auth metadata survives email confirmation and feeds the initial profile/diary target after sync. Existing targets and reset epochs are protected. The shared calculator retains the earlier formula. Original Otisport front/back SVG anatomy adds red primary/rose secondary highlights and Muscles/Movement tabs, retaining existing exercise images/zoom/actions. Settings provides honest home-screen name/icon update guidance; runtime metadata and stable manifest ID help ordinary browser/PWA updates without claiming forced iOS shortcut refresh.
+
+See PERSONALIZATION.md for persistence and limits. No tests added/run. Syntax/whitespace and manual Chromium screenshots used disposable demo account responses and synthetic body data in HU/EN, dark/light, small mobile, including confirmation-required sign-in and resulting meter. No live users were created. Lyfta's public website was inaccessible (proxy 403); the original schematic follows the user's description. Physical iPhone/Safari, live Supabase/email and live deployment remain unverified. The broader unfinished exercise-media migration and social SQL activation remain separate.
+
+Verified backup before edits: backup/main-20261008-114552-before-personalization at 7283b1e59e6db77301070a12804afca8a374afc7; complete history bundle /workspace/GymApp-backups/GymApp-before-personalization-20261008-114552.bundle. Preserve previous backups and restore via a normal reviewed commit with a newer release, never force-push. Code backup is not a private diary export.
+
+---
+
 # Update — Otisport 2.7.0, 2026-10-08
 
 Continued the design handoff after comparing it with current main (2.6.1). The whole app now shares a graphite/apricot/lavender theme and matching warm light theme in css/otisport-theme.css. Headers, navigation, workout views, Food/weekly plans, Goals, Profile, Settings and import dialogs use consistent surfaces and controls. Custom hue/background/cover colors, reduced motion and opaque surfaces are retained. No data or account migration. See DESIGN_REFRESH.md for scope and safe restoration.
