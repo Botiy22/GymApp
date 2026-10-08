@@ -1,10 +1,11 @@
 (function startGymApp() {
   'use strict';
   if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
+  if (!document.querySelector('link[href="css/profile.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/profile.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks) {
-    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : 'js/strength-ranks.js';
+  if (!window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
+    const src = !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     script.src = src;
     script.onload = startGymApp;
@@ -88,10 +89,12 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', goals: 'habits', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
+    profile: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg>',
+    refresh: '<svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></svg>',
     upload: '<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 17v-5m-3 3 3-3 3 3"/></svg>',
     gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.5-2-3.4-2.3 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.5 2.6A7.6 7.6 0 0 0 6.900 6.600l-2.300-1-2 3.400 2 1.500a7.600 7.600 0 0 0 0 3l-2 1.500 2 3.400 2.300-1a7.600 7.600 0 0 0 2.600 1.500l.5 2.600h4l.5-2.600a7.600 7.600 0 0 0 2.600-1.500l2.300 1 2-3.400z"/></svg>',
     home: '<svg viewBox="0 0 24 24"><path d="M3 10v4M6.500 6.500v11M17.500 6.500v11M21 10v4M6.500 12h11"/></svg>',
@@ -269,10 +272,10 @@
     if(isIOS&&!standalone)h+=`<div class="note" data-a="install-help"><b>${esc(t('installTitle'))}</b><span>${esc(t('installShort'))}</span></div>`;
     if(Store.memoryOnly)h+=`<div class="note warn"><b>${esc(t('noStorage'))}</b></div>`;
     if(Store.failed)h+=`<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
-    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','history','ranks'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
+    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
     if(ui.workout==='plans')return h+routineGrid();
     if(ui.workout==='history')return h+`<div class="h2row"><h2>${esc(t('history'))}</h2><span class="cap">${d.workouts.length} ${esc(t('totalWorkouts'))}</span></div>`+workoutHistory(d.workouts.slice().reverse().slice(0,ui.homeHistLimit||40))+(d.workouts.length>(ui.homeHistLimit||40)?`<button class="btn" data-a="workout-history-more">${esc(t('showMore'))}</button>`:'');
-    if(ui.workout==='ranks')return h+vRanks();
+    if(ui.workout==='exercises')return h+libControls()+`<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`;
     const goal=d.settings.weekGoal;
     h+=`<div class="training-week"><span>${esc(t('thisWeek'))}</span><b>${wk.length}${goal>0?' / '+goal:''} ${esc(t('workoutsWord'))}</b></div>`;
     if(d.active)h+=`<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
@@ -280,7 +283,7 @@
     else if(nx)h+=`<div class="hero training-hero"><small>${esc(t('nextUp'))}</small><strong>${esc(rName(nx))}</strong><span>${nx.items.length} ${esc(t('exercises'))} · ~${estMin(nx)} ${esc(t('min'))}</span><button class="btn primary big" data-a="w-start" data-id="${esc(nx.id)}">${IC.play}${esc(t('startWorkout'))}</button><button class="link training-tick" data-a="w-tick" data-id="${esc(nx.id)}">${IC.check}${esc(t('tickWorkout'))}</button></div>`;
     h+=`<div class="training-actions"><button class="btn" data-a="workout-view" data-v="plans">${IC.home}${esc(t('chooseWorkout'))}</button><button class="btn" data-a="w-quick">${IC.bolt}${esc(t('quickWorkout'))}</button></div>`;
     const rank=Math.max(...StrengthRanks.summary(d.workouts).map(r=>r.tier));
-    h+=`<button class="rank-preview" data-a="workout-view" data-v="ranks">${rankBadge(rank)}<span><small>${esc(t('yourRanks'))}</small><b>${esc(rank<0?t('rankStart'):StrengthRanks.tiers[rank][L()])}</b></span>${IC.chev}</button>`;
+    h+=`<button class="rank-preview" data-a="open-ranks">${rankBadge(rank)}<span><small>${esc(t('yourRanks'))}</small><b>${esc(rank<0?t('rankStart'):StrengthRanks.tiers[rank][L()])}</b></span>${IC.chev}</button>`;
     h+=`<div class="h2row"><h2>${esc(t('latestWorkout'))}</h2><button class="link" data-a="workout-view" data-v="history">${esc(t('viewAll'))}</button></div>`+workoutHistory(d.workouts.slice(-1).reverse());
     return h;
   }
@@ -487,7 +490,81 @@
   }
   function pickFood(x) { const f = foodOf(x.i, x.h); const each = f.ports.find(pt => f.own || /item|sandwich|slice|\bsub\b|\bbar\b|large|medium|small|link|patty|biscuit|taco|burrito|pieces|container|\bcan\b|packet/i.test(pt[2] || ''));   // start from a natural unit (1 sandwich, 1 slice…), otherwise from 100 g
       ui.fa = { food: f, g: String(each ? each[0] : 100) }; openSheet(shFoodAmount()); }
-  const VIEWS = { home: vHome, lib: vLib, prog: vProg, food: vFood, habits: vHabits };
+  const profileLocal = () => Profile.clean(D().settings.publicProfile);
+  function avatar(p, small) {
+    const initial=(p.displayName||p.username||'T').slice(0,1).toUpperCase();
+    return `<span class="profile-avatar${small?' small':''}">${p.avatar?`<img src="${esc(p.avatar)}" alt="${esc(p.displayName||p.username||t('tabProfile'))}">`:esc(initial)}</span>`;
+  }
+  function badgeChip(b, detailed) {
+    return `<span class="achievement${b.earned?' earned':' locked'}" data-badge="${esc(b.id)}">${Profile.symbol(b.icon)}<span><b>${esc(b[L()])}</b>${detailed?`<small>${esc(b[L()+'Hint'])}</small>`:''}</span></span>`;
+  }
+  function vGoals() {
+    const navigation=`<nav class="seg goals-tabs" aria-label="${esc(t('tabGoals'))}">${['habits','progress'].map(v=>`<button data-a="goals-view" data-v="${v}" class="${ui.goals===v?'on':''}" aria-pressed="${ui.goals===v}">${esc(t(v==='habits'?'tabHabits':'tabProg'))}</button>`).join('')}</nav>`;
+    const content=ui.goals==='progress'?vProg():vHabits();
+    const end=content.indexOf('</header>')+9;
+    return head(t('tabGoals'),t(ui.goals==='progress'?'tabProg':'tabHabits'))+navigation+content.slice(end);
+  }
+  function socialCard() {
+    const s=Social.state,data=s.data,connected=!!(CL&&CL.user),me=data&&data.profile;
+    let h=`<section class="card social-card" id="profile-friends"><div class="h2row"><div><small class="eyebrow">${esc(t('yourCircle'))}</small><h2>${esc(t('friendsCompete'))}</h2></div><button class="icon-btn" data-a="social-refresh" aria-label="${esc(t('refreshFriends'))}" ${s.busy?'disabled':''}>${IC.refresh}</button></div>`;
+    if(!connected)return h+`<p class="cap">${esc(t('socialSignIn'))}</p></section>`;
+    if(s.error)h+=`<p class="note warn social-status" role="status">${esc(t(s.error))}</p>`;
+    if(s.busy)h+=`<p class="cap" role="status">${esc(t('socialLoading'))}</p>`;
+    if(!data)return h+(s.busy||s.error?'':`<button class="btn" data-a="social-refresh">${esc(t('loadFriends'))}</button>`)+'</section>';
+    if(!me)return h+`<p class="cap">${esc(t('socialNeedProfile'))}</p><button class="btn" data-a="profile-edit">${esc(t('editProfile'))}</button></section>`;
+    const rows=(data.leaderboard||[]).slice().sort((a,b)=>b.score-a.score||a.username.localeCompare(b.username));
+    h+=`<div class="competition-heading"><span>${esc(t('thisWeek'))}</span><small>${esc(t('competitionReset'))}</small></div><ol class="leaderboard">`+rows.map((r,i)=>{
+      const p=Profile.clean({username:r.username,displayName:r.display_name,avatar:r.avatar,theme:r.theme});
+      return `<li class="${r.user_id===CL.user.id?'you':''}"><span class="board-place">${i&&rows[i-1].score===r.score?rows.findIndex(x=>x.score===r.score)+1:i+1}</span><button class="board-person" data-a="friend-profile" data-id="${esc(r.user_id)}">${avatar(p,true)}<span><b>${esc(p.displayName||p.username)}${r.user_id===CL.user.id?' · '+esc(t('you')):''}</b><small>@${esc(p.username)} · ${r.days} ${esc(t('trainingDays'))}</small></span></button><strong>${compact(r.score)}<small>${esc(t('points'))}</small></strong></li>`;
+    }).join('')+'</ol>'+`<details class="competition-method"><summary>${esc(t('howPointsWork'))}</summary><p class="cap">${esc(t('competitionMethod'))}</p></details><form class="friend-search" data-f="friend-add"><label class="sr" for="friend-username">${esc(t('username'))}</label><input id="friend-username" name="username" placeholder="${esc(t('friendUsername'))}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocomplete="off" autocapitalize="none" spellcheck="false" required><button class="btn primary" ${ui.friendBusy?'disabled':''}>${esc(t('addFriend'))}</button></form>`;
+    const incoming=data.incoming||[],outgoing=data.outgoing||[],friends=data.friends||[];
+    if(incoming.length)h+=`<h3>${esc(t('friendRequests'))}</h3>`+incoming.map(r=>`<div class="friend-request"><button class="link" data-a="friend-profile" data-id="${esc(r.user_id)}">@${esc(r.username)}</button><div><button class="btn sm" data-a="friend-respond" data-id="${esc(r.request_id)}" data-accept="true">${esc(t('acceptFriend'))}</button><button class="icon-btn" data-a="friend-respond" data-id="${esc(r.request_id)}" data-accept="false" aria-label="${esc(t('declineFriend'))}">${IC.close}</button></div></div>`).join('');
+    if(outgoing.length)h+=`<details class="friend-list"><summary>${esc(t('sentRequests'))} (${outgoing.length})</summary>`+outgoing.map(r=>`<div class="friend-request"><span>@${esc(r.username)}</span><button class="link" data-a="friend-remove" data-id="${esc(r.user_id)}">${esc(t('cancelRequest'))}</button></div>`).join('')+'</details>';
+    h+=`<details class="friend-list"><summary>${esc(t('friends'))} (${friends.length})</summary>`+(friends.length?friends.map(r=>`<div class="friend-request"><button class="link" data-a="friend-profile" data-id="${esc(r.user_id)}">@${esc(r.username)}</button><button class="link mut" data-a="friend-remove" data-id="${esc(r.user_id)}">${esc(t('removeFriend'))}</button></div>`).join(''):`<p class="cap">${esc(t('friendsEmpty'))}</p>` )+'</details></section>';
+    return h;
+  }
+  function vProfile() {
+    const p=profileLocal(),stats=Profile.summary(D().workouts),rank=stats.highest<0?t('rankUnranked'):StrengthRanks.tiers[stats.highest][L()];
+    const td=today(),list=D().food[td]||[],sum=list.reduce((a,f)=>({kcal:a.kcal+f.kcal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f}),{kcal:0,p:0,c:0,f:0});
+    const base=dayTargets(td),goal=base?base.kcal+(D().settings.addActive?actOf(td).kcal:0):0;
+    const display=stats.badges.filter(b=>b.earned&&p.showcase.includes(b.id)).sort((a,b)=>p.showcase.indexOf(a.id)-p.showcase.indexOf(b.id));
+    const claimed=Social.state.data&&Social.state.data.profile&&Social.state.data.profile.username===p.username;
+    let h=head(t('tabProfile'))+`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p)}<div><small class="eyebrow">${esc(t('yourStory'))}</small><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:`<p class="profile-bio mut">${esc(t('profileBioHint'))}</p>`}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
+    h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div><div class="dial-wrap">${Profile.dial(sum.kcal,goal,t('calorieDialLabel',compact(sum.kcal),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(sum.kcal)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(sum.kcal>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-sum.kcal)))):`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`}</p><div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b>${dec(sum[k])} <span>g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
+    h+=`<div class="profile-stats"><div><b>${stats.workouts}</b><small>${esc(t('loggedSessions'))}</small></div><div><b>${stats.days}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${stats.volume>=1000?dec(r1(stats.volume/1000)):compact(stats.volume)} <span>${stats.volume>=1000?'t':'kg'}</span></b><small>${esc(t('lifetimeVolume'))}</small></div></div><section class="card"><div class="h2row"><h2>${esc(t('achievements'))}</h2><button class="link" data-a="profile-badges">${esc(t('chooseBadges'))}</button></div><div class="achievement-grid">${stats.badges.map(b=>badgeChip(b,true)).join('')}</div></section>`;
+    return h+socialCard()+`<details class="profile-lifts" ${ui.profileRanks?'open':''}><summary>${esc(t('yourRanks'))}${IC.down}</summary>${vRanks()}</details>`;
+  }
+  function shProfileEdit() {
+    const fn=()=>{
+      const p=ui.profileDraft;
+      return {title:t('editProfile'),html:`<form id="profile-edit-form" data-f="profile-edit"><div class="avatar-edit">${avatar(p)}<label class="btn sm">${esc(t('changePhoto'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="profile-photo"></label>${p.avatar?`<button type="button" class="link" data-a="profile-photo-remove">${esc(t('removePhoto'))}</button>`:''}</div><label class="fld"><span>${esc(t('displayName'))}</span><input name="displayName" maxlength="40" data-in="profile-draft" value="${esc(p.displayName)}" autocomplete="nickname"></label><label class="fld"><span>${esc(t('username'))}</span><input name="username" value="${esc(p.username)}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocapitalize="none" spellcheck="false" data-in="profile-draft" ${CL?'required':''}><small>${esc(t('usernameRule'))}</small></label><label class="fld"><span>${esc(t('profileBio'))}</span><textarea name="bio" maxlength="160" rows="3" data-in="profile-draft">${esc(p.bio)}</textarea></label><p class="lbl">${esc(t('profileColor'))}</p><div class="profile-colors">${['mint','violet','amber','slate'].map(v=>`<button type="button" class="theme-${v} ${p.theme===v?'on':''}" data-a="profile-color" data-v="${v}" aria-label="${esc(t('profile_'+v))}" aria-pressed="${p.theme===v}"><span></span>${p.theme===v?IC.check:''}</button>`).join('')}</div><p class="cap">${esc(t('profileShared'))}</p><p class="profile-edit-error note warn" role="status" ${ui.profileError?'':'hidden'}>${esc(t(ui.profileError||''))}</p></form>`,foot:`<button class="btn primary" form="profile-edit-form" ${ui.profileBusy?'disabled':''}>${esc(t(ui.profileBusy?'savingProfile':'saveProfile'))}</button>`};
+    };fn.kind='profile-edit';return fn;
+  }
+  function shBadges() {
+    const fn=()=>{const p=profileLocal(),stats=Profile.summary(D().workouts);return {title:t('chooseBadges'),html:`<p class="cap">${esc(t('badgeChooseHint'))}</p><div class="badge-picker">${stats.badges.map(b=>`<button class="badge-choice ${p.showcase.includes(b.id)&&b.earned?'selected':''}" data-a="profile-badge" data-id="${b.id}" aria-pressed="${p.showcase.includes(b.id)&&b.earned}" ${b.earned?'':'disabled'}>${badgeChip(b,true)}<span>${b.earned?p.showcase.includes(b.id)?'✓':'+':esc(t('badgeLocked'))}</span></button>`).join('')}</div>`};};fn.kind='badges';return fn;
+  }
+  async function loadSocial() {await Social.refresh();if(ui.tab==='profile')rerender();}
+  async function socialAction(name,args) {
+    if(ui.friendBusy)return;ui.friendBusy=true;
+    try {await Social.mutate(name,args);await Social.refresh();toast(t(name==='social_request_friend'?'requestSent':'saved'));}
+    catch(error){Social.state.error=Social.message(error);}
+    finally {ui.friendBusy=false;if(ui.tab==='profile')rerender();}
+  }
+  async function saveProfile(values) {
+    if(ui.profileBusy)return;
+    const draft=Profile.clean({...ui.profileDraft,...values});
+    if((values.username||'').trim()&&!draft.username){ui.profileError='usernameRule';refreshSheet();return;}
+    ui.profileBusy=true;ui.profileError='';ui.profileDraft=draft;
+    const before=D().settings.publicProfile;D().settings.publicProfile=draft;
+    if(!Store.save()){D().settings.publicProfile=before;ui.profileBusy=false;ui.profileError='saveFailed';refreshSheet();return;}
+    refreshSheet();
+    try {
+      if(CL&&CL.user){await Social.publish(draft);await Social.refresh();}
+      ui.profileBusy=false;if(topIs('profile-edit'))closeSheet(true);rerender();toast(t('saved'));
+    }catch(error){ui.profileBusy=false;ui.profileError=Social.message(error);Social.state.error=ui.profileError;if(topIs('profile-edit'))refreshSheet();if(ui.tab==='profile')rerender();}
+  }
+
+  const VIEWS = { home: vHome, food: vFood, goals: vGoals, profile: vProfile, lib: vLib, prog: vProg, habits: vHabits };
 
   let animT = 0;
   function render() {
@@ -497,7 +574,7 @@
     const v = $('#view'); v.dataset.anim = ui.anim || ''; ui.anim = '';
     clearTimeout(animT); if (v.dataset.anim) animT = setTimeout(() => { v.dataset.anim = ''; }, 600);
     v.innerHTML = VIEWS[ui.tab]();
-    $$('#tabbar button').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); b.querySelector('span').textContent = t('tab' + b.dataset.tab[0].toUpperCase() + b.dataset.tab.slice(1)); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
+    $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); b.querySelector('span').textContent = t('tab' + b.dataset.tab[0].toUpperCase() + b.dataset.tab.slice(1)); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     window.scrollTo(0, y);
     const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); }
     renderWorkout();
@@ -696,16 +773,19 @@
     if (open && !confirm(t('finishOpen', open))) return;
     const prs = entries.map(e => { const before = exHistory(e.ex).reduce((m, x) => Math.max(m, bestOf(x.sets)), 0), now = bestOf(e.sets); return now > before && now > 0 ? { ex: e.ex, label: e.label, v: now, was: before } : null; }).filter(Boolean);
     const ranksBefore=StrengthRanks.summary(D().workouts);
+    const badgesBefore=Profile.summary(D().workouts).badges.filter(b=>b.earned).map(b=>b.id);
     const w = { id: a.id, rid: a.rid, name: a.name, start: a.start, end: Date.now(), entries, warm: !!a.warm, cool: !!a.cool };
     D().workouts.push(w); D().workouts.sort((x, y) => x.start - y.start); D().active = null; Store.save(); ui.wOpen = false; unwake(); render();
     const rankUps=StrengthRanks.summary(D().workouts).filter((r,i)=>r.tier>ranksBefore[i].tier);
-    openSheet(shWorkout(w.id, prs, rankUps));
+    const badgeUps=Profile.summary(D().workouts).badges.filter(b=>b.earned&&!badgesBefore.includes(b.id));
+    openSheet(shWorkout(w.id, prs, rankUps, badgeUps));
   }
-  function shWorkout(id, prs, rankUps) {
+  function shWorkout(id, prs, rankUps, badgeUps) {
     return () => {
       const w = D().workouts.find(x => x.id === id); if (!w) return { title: '', html: '' };
       let h = `<p class="lead">${esc(fmtDate(w.start, true))}</p><div class="kpis"><div><b>${w.tick ? IC.check : fmtDur(w.end - w.start)}</b><i>${esc(t(w.tick ? 'tickedTag' : 'duration'))}</i></div><div><b>${setsOf(w)}</b><i>${esc(t('setsWord'))}</i></div><button class="volume-total" data-a="wk-volume" ${w.tick?'disabled':''} aria-label="${esc(t('volumeDetails'))}"><b>${volumeText(volOf(w))}</b><i>${esc(t('volume'))} kg ${IC.down}</i></button></div>`;
       if(!w.tick)h+=`<details class="workout-volume completion-volume" data-volume><summary>${esc(t('volumeDetails'))}${IC.down}</summary>${volumeBreakdown(w)}</details>`;
+      if(badgeUps&&badgeUps.length)h+=`<section class="badge-unlocks"><h3>${esc(t('newBadges'))}</h3><div class="profile-showcase">${badgeUps.map(b=>badgeChip(b,false)).join('')}</div><button class="link" data-a="open-profile">${esc(t('chooseBadges'))}</button></section>`;
       if(rankUps&&rankUps.length)h+=`<section class="rank-unlocks"><h3>${esc(t('rankUnlocked'))}</h3>${rankUps.map(r=>`<div>${rankBadge(r.tier)}<span><b>${esc(StrengthRanks.tiers[r.tier][L()])}</b><small>${esc(r[L()])} · ${dec(r.best)} kg</small></span></div>`).join('')}<button class="link" data-a="open-ranks">${esc(t('yourRanks'))}</button></section>`;
       h += prs ? prepRow('cool', w, ` data-w="${esc(w.id)}"`) : (w.warm || w.cool ? `<p class="cap">${[w.warm ? t('warmTitle') : '', w.cool ? t('coolTitle') : ''].filter(Boolean).map(x => esc(x) + ' ✓').join(' · ')}</p>` : '');
       if (prs && prs.length) h += `<div class="tip pr"><b>${esc(t('newRecords'))}</b>${prs.map(p => `<span>${esc(itemName(p))}: ${r1(p.v)} kg${p.was ? ' (' + esc(t('was')) + ' ' + r1(p.was) + ')' : ''}</span>`).join('')}</div>`;
@@ -1287,15 +1367,43 @@
         }
       });
     },
+    'goals-view'(el) {if(!['habits','progress'].includes(el.dataset.v))return;ui.goals=el.dataset.v;render();},
+    'open-profile'() {closeSheet(true);ui.tab='profile';render();loadSocial();},
+    'profile-edit'() {ui.profileDraft=profileLocal();ui.profileError='';ui.profileBusy=false;openSheet(shProfileEdit());},
+    'profile-color'(el) {ui.profileDraft.theme=el.dataset.v;refreshSheet();},
+    'profile-photo-remove'() {ui.profileDraft.avatar='';refreshSheet();},
+    'profile-ranks'() {ui.profileRanks=true;const panel=$('.profile-lifts');if(panel){panel.open=true;panel.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'});}},
+    'profile-food'() {ui.tab='food';ui.food='diary';ui.foodDate=today();render();},
+    'profile-badges'() {openSheet(shBadges());},
+    async 'profile-badge'(el) {
+      const id=el.dataset.id;if(!Profile.summary(D().workouts).badges.some(b=>b.id===id&&b.earned))return;
+      const p=profileLocal(),earned=Profile.summary(D().workouts).badges.filter(b=>b.earned).map(b=>b.id);
+      p.showcase=p.showcase.filter(x=>earned.includes(x));if(p.showcase.includes(id))p.showcase=p.showcase.filter(x=>x!==id);
+      else {if(p.showcase.length>=4){toast(t('badgeLimit'));return;}p.showcase.push(id);}
+      const before=D().settings.publicProfile;D().settings.publicProfile=p;
+      if(!Store.save()){D().settings.publicProfile=before;toast(t('saveFailed'));return;}
+      refreshSheet();rerender();
+      if(CL&&CL.user&&p.username){try{await Social.publish(p);await Social.refresh();}catch(error){Social.state.error=Social.message(error);}if(ui.tab==='profile')rerender();}
+    },
+    'social-refresh'() {loadSocial();},
+    'friend-respond'(el) {socialAction('social_respond_friend',{p_request:el.dataset.id,p_accept:el.dataset.accept==='true'});},
+    'friend-remove'(el) {if(confirm(t('removeFriendConfirm')))socialAction('social_remove_friend',{p_other:el.dataset.id});},
+    async 'friend-profile'(el) {
+      try {const r=await Social.mutate('social_view_profile',{p_user:el.dataset.id});if(!r)return;
+        const p=Profile.clean({username:r.username,displayName:r.display_name,bio:r.bio,avatar:r.avatar,theme:r.theme,showcase:r.badges});
+        const stats=r.stats||{},earned=Profile.badges.filter(b=>(stats.badges||[]).includes(b.id)).map(b=>({...b,earned:true}));
+        openSheet(()=>({title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.filter(b=>p.showcase.includes(b.id)).map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest][L()]:t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>`}));
+      }catch(error){Social.state.error=Social.message(error);rerender();}
+    },
     'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
-    'open-ranks'() {closeSheet(true);ui.tab='home';ui.workout='ranks';render();},
-    'workout-view'(el) { if(!['train','plans','history','ranks'].includes(el.dataset.v))return;ui.workout=el.dataset.v;render();window.scrollTo(0,0); },
+    'open-ranks'() {closeSheet(true);ui.tab='profile';ui.profileRanks=true;render();loadSocial();},
+    'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises'].includes(el.dataset.v))return;ui.tab='home';ui.workout=el.dataset.v;render();window.scrollTo(0,0); },
     'wk-volume'() { const panel=$('#sheet [data-volume]');if(panel)panel.open=!panel.open; },
     'update-restart'() { location.reload(); },
     'release-notes'() {
       openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
     },
-    tab(el) { const k = el.dataset.tab; if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
+    tab(el) { let k = el.dataset.tab; if(k==='lib'){k='home';ui.workout='exercises';}if(k==='prog'||k==='habits'){ui.goals=k==='prog'?'progress':'habits';k='goals';}if(k==='profile')loadSocial(); if (!VIEWS[k]) return; if (ui.tab !== k) go('tab', () => { ui.tab = k; render(); }); else render(); },
     /* calendar, day, activity */
     cal(el) { const d = new Date((/^\d{4}-\d\d-\d\d$/.test(el.dataset.d || '') ? el.dataset.d : today()) + 'T12:00'); ui.cal = { y: d.getFullYear(), m: d.getMonth() }; openSheet(shCal()); },
     'cal-mo'(el) { const c = ui.cal, d = new Date(c.y, c.m + +el.dataset.d, 1), now = new Date(); if (d.getFullYear() * 12 + d.getMonth() > now.getFullYear() * 12 + now.getMonth() || d.getFullYear() < 2000) return; ui.cal = { y: d.getFullYear(), m: d.getMonth() }; refreshSheet(); },
@@ -1444,6 +1552,7 @@
     async 'sign-out'() {
       if (!CL || !CL.user || !confirm(t('signOutConfirm'))) return;
       try { await CL.sync(); } catch (e) { if (!confirm(t('signOutUnsynced'))) return; }
+      Social.reset();
       await CL.signOut(); Store.wipe(); location.reload();                               // nothing of the account stays on this device
     },
     async 'update-now'(el) {
@@ -1614,6 +1723,7 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
+    'profile-draft'(el) {if(ui.profileDraft)ui.profileDraft[el.name]=el.value;},
     'habit-name'(el) { if (ui.habitEdit) ui.habitEdit.name = el.value; },
     'habit-source'(el) { if (!ui.habitEdit || !Momentum.sources.includes(el.value)) return; ui.habitEdit.source = el.value; ui.habitEdit.goal = ({ check: 1, workout: 1, count: 8, steps: 8000, protein: 150 })[el.value]; refreshSheet(); },
     'habit-goal'(el) { if (ui.habitEdit) ui.habitEdit.goal = el.value; },
@@ -1669,6 +1779,7 @@
   }
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
+    if(k==='profile-photo'&&el.files[0]){const file=el.files[0],draft=ui.profileDraft;el.value='';try{const pic=await smallPic(file);if(draft===ui.profileDraft&&topIs('profile-edit')){draft.avatar=pic;refreshSheet();}}catch(error){toast(t('picBad'));}}
     if (k === 'ai-file' && el.files[0]) { const file = el.files[0]; el.value = ''; const s0 = ui.ai; try { const r = await FoodAI.shrink(file, 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
     if (k === 'mx-file' && el.files[0]) { const file = el.files[0]; el.value = ''; const s0 = ui.myex; try { const u = await smallPic(file); if (ui.myex === s0) { s0.img = u; if (topIs('myex')) refreshSheet(); } } catch (er) { toast(t('picBad')); } }
     if (k === 'exm-file' && el.files[0]) {
@@ -1711,6 +1822,8 @@
       if (EX[id]) { if (vid || (had && had.img)) D().exMedia[id] = { img: (had && had.img) || '', vid }; else delete D().exMedia[id]; Store.save(); closeSheet(); toast(t('saved')); }
     }
     if (k === 'coach') coachSend(v.q);
+    if (k === 'profile-edit') saveProfile(v);
+    if (k === 'friend-add') socialAction('social_request_friend',{p_username:String(v.username||'').trim().toLowerCase()});
     if (k === 'gate') gateSubmit(v);
   });
 
@@ -1744,7 +1857,7 @@
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);
-  $('#tabbar').innerHTML = [['home', IC.home], ['habits', IC.habit], ['lib', IC.lib], ['prog', IC.prog], ['food', IC.food]].map(([k, ic]) => `<button data-a="tab" data-tab="${k}">${ic}<span></span></button>`).join('');
+  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['settings', IC.gear], ['goals', IC.habit], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" ${k==='settings'?`aria-label="${esc(t('settings'))}" aria-haspopup="dialog"`:`data-tab="${k}"`}>${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   render(); $('#rb-skip').textContent = t('skip');

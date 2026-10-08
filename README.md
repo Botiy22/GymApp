@@ -8,6 +8,12 @@ developer account. It is a web app (PWA): plain HTML, CSS and JavaScript, no bui
 on the device; if you set up accounts (optional, see below) it is also kept in your own database, so
 you can reach it from any device after signing in.
 
+## Navigation and profiles
+
+The bottom bar is **Workout · Food · Settings · Goals · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. Customize its photo, short bio and cover color, then select up to four earned badges individually. New badges are announced when you finish a qualifying workout.
+
+Usernames, friend requests, friend profiles and weekly competition use the additive [social migration](migrations/20261008_social.sql). **Run it in your existing Supabase SQL Editor to activate friends.** The migration is prepared and tested, but is not installed on the live project from this environment. [SOCIAL.md](SOCIAL.md) explains activation, points, milestones and sharing rules. Local customization works without a social connection.
+
 ## What is in it
 
 - **Workout**: the five ULPPL routines (35 exercises), live logging of kg and reps per set, previous
@@ -86,7 +92,7 @@ The folder has about 3,000 files (about 115 MB), nearly all of them exercise pho
 
 ## Workout navigation and lift ranks
 
-The Workout page has **Train**, **Plans**, **History** and **Ranks** sections. Train starts/resumes a session; Plans selects or edits a routine; History opens previous sessions and expands their working-set volume. During a workout, use the exercise selector to jump directly to a lift. Tap the volume total after finishing to see the recorded weights, reps and exercise subtotals.
+The Workout page has **Train**, **Plans**, **Exercises** and **History** sections. Lift ranks are in Profile. Train starts/resumes a session; Plans selects or edits a routine; History opens previous sessions and expands their working-set volume. During a workout, use the exercise selector to jump directly to a lift. Tap the volume total after finishing to see the recorded weights, reps and exercise subtotals.
 
 Ranks use actual logged working-set weights for four barbell lifts. Existing history counts automatically. Spark → Ember → Steel → Sentinel → Titan → Apex each has a lift-specific target; a 100 kg flat barbell bench working set earns Titan. Warm-ups, tick-only workouts and estimated 1RM do not count. See [RANKS.md](RANKS.md) for every threshold and qualification rule.
 

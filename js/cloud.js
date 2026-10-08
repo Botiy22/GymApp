@@ -33,7 +33,7 @@ window.Cloud = (function () {
     if (c === 'signup_disabled' || /signups? (not allowed|disabled)/i.test(m)) throw fail('closed', m);
     if (c === 'email_address_invalid' || c === 'validation_failed' || /valid (e-?mail|password)|invalid format/i.test(m)) throw fail('email', m);
     if (res.status === 401 || res.status === 403 || c === 'invalid_grant' || /jwt|refresh token/i.test(c + m)) throw fail('auth', m);
-    throw fail('api', m || ('HTTP ' + res.status));
+    const error=fail('api', m || ('HTTP ' + res.status));error.backendCode=c;error.status=res.status;throw error;
   }
   let refreshing = null;
   function refresh() {
@@ -108,6 +108,12 @@ window.Cloud = (function () {
 
   return {
     on, merge, sync, state,
+    async rpc(name, body) {
+      if (!on || !/^[a-z_]+$/.test(name)) throw fail('api');
+      const run = tk => call('/rest/v1/rpc/' + name, {method:'POST', auth:tk, body:body || {}});
+      try { return await run(await token()); }
+      catch(error) { if(error.code !== 'auth' || !ses) throw error; return run(await refresh()); }
+    },
     get user() { return ses ? ses.user : null; },
     async signUp(email, password) {
       const r = await call('/auth/v1/signup', { method: 'POST', body: { email, password } });

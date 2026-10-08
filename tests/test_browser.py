@@ -313,8 +313,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.5.1')
-        expect(self.page.locator('#sheet')).to_contain_text('20261008.1')
+        expect(self.page.locator('#sheet')).to_contain_text('2.6.0')
+        expect(self.page.locator('#sheet')).to_contain_text('20261008.2')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -395,10 +395,10 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
-        for path in ['/css/design.css','/js/plan-sheet.js','/js/strength-ranks.js','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
+        for path in ['/css/design.css','/js/plan-sheet.js','/js/strength-ranks.js','/js/profile.js','/js/social.js','/css/profile.css','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
         self.context.set_offline(True);self.page.reload(wait_until='load')
         expect(self.page.locator('[data-a="pdf-plan"]').first).to_be_visible()
         self.upload(self.en_file);self.add()
@@ -426,7 +426,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines'])
         self.assertEqual(before['plan'],self.data()['plan'])
         self.assertEqual('updateSuccess',self.page.evaluate('() => __gym.ui.updateStatus'))
@@ -448,7 +448,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-restart"]').click()
-        self.assertEqual('2.5.1',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
         expect(self.page.locator('#ready-update')).to_have_count(0)
 
     def test_release_manifest_matches_every_published_file(self):
@@ -459,7 +459,7 @@ class AppBrowserTests(unittest.TestCase):
             self.assertEqual(digest,hashlib.sha256((ROOT/('index.html' if path=='./' else path)).read_bytes()).hexdigest(),path+' requires regenerating the release manifest')
 
     def test_compact_header_upload_is_available_on_all_pages(self):
-        for tab in ['home','food','habits','lib','prog']:
+        for tab in ['home','food','goals','profile']:
             self.page.locator('[data-tab="'+tab+'"]').click()
             button=self.page.locator('.top-actions [data-a="pdf-plan"]')
             expect(button).to_be_visible();expect(button).to_have_attribute('aria-label','Upload a plan (PDF, Excel or Word)')
@@ -508,23 +508,26 @@ class AppBrowserTests(unittest.TestCase):
         self.page.on('dialog',lambda dialog:dialog.accept())
         self.page.locator('[data-a="w-finish"]').click()
         expect(self.page.locator('.rank-unlocks')).to_contain_text('Titan')
+        expect(self.page.locator('.badge-unlocks')).to_contain_text('First rep')
+        expect(self.page.locator('.badge-unlocks')).to_contain_text('Triple digits')
         expect(self.page.locator('.volume-total b')).to_have_text('500')
         self.page.locator('.volume-total').click()
         details=self.page.locator('[data-volume]')
         self.assertTrue(details.evaluate('(el) => el.open'))
         expect(details).to_contain_text('100 kg × 5');expect(details).not_to_contain_text('200 kg')
-        self.page.locator('[data-a="open-ranks"]').click()
+        self.page.locator('#sheet [data-a="open-ranks"]').click()
+        expect(self.page.locator('.profile-stats b').nth(2)).to_have_text('500 kg')
         bench=self.page.locator('[data-rank="bench"]')
         expect(bench.locator('.rank-heading b')).to_have_text('Titan')
         expect(bench.locator('.rank-next')).to_have_text('Next: Apex at 140 kg · 40 kg to go')
         self.page.reload(wait_until='networkidle')
-        self.page.locator('.workout-tabs [data-a="workout-view"][data-v="ranks"]').click()
+        self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-ranks"]').click()
         expect(self.page.locator('[data-rank="bench"] .rank-heading b')).to_have_text('Titan')
-        self.page.locator('[data-a="workout-view"][data-v="history"]').click()
+        self.page.locator('[data-tab="home"]').click();self.page.locator('.workout-tabs [data-a="workout-view"][data-v="history"]').click()
         self.page.locator('.workout-history .workout-volume > summary').click()
         expect(self.page.locator('.volume-breakdown')).to_contain_text('100 kg × 5')
         self.page.locator('.history-title').click();self.page.locator('[data-a="wk-del"]').click()
-        self.page.locator('.workout-tabs [data-a="workout-view"][data-v="ranks"]').click()
+        self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-ranks"]').click()
         expect(self.page.locator('[data-rank="bench"] .rank-heading b')).to_have_text('Unranked')
 
     def test_workout_jump_select_scrolls_to_chosen_exercise(self):
@@ -549,7 +552,7 @@ class AppBrowserTests(unittest.TestCase):
                 self.page.evaluate('(lang) => {Store.d.settings.lang=lang;__gym.render();}',lang)
                 for theme in ['deep','light']:
                     self.page.evaluate('(theme) => {__gym.A["set-bg"]({dataset:{v:theme}});}',theme)
-                    for tab in ['train','plans','history','ranks']:
+                    for tab in ['train','plans','exercises','history']:
                         self.page.locator('[data-a="workout-view"][data-v="'+tab+'"]').first.click()
                         self.assertFalse(self.page.evaluate('() => document.documentElement.scrollWidth>innerWidth+1'),(width,lang,theme,tab))
                         expect(self.page.locator('.workout-tabs [data-v="'+tab+'"]')).to_have_attribute('aria-pressed','true')
@@ -715,6 +718,181 @@ class AppBrowserTests(unittest.TestCase):
         self.assertEqual('lower',next(r for r in self.data()['routines'] if r['id']=='upper')['icon'])
         expect(self.page.locator('.rtile[data-id="upper"]')).to_have_class(__import__('re').compile('.*ic-lower.*'))
 
+    def test_new_bottom_navigation_and_nested_exercise_library(self):
+        self.assertEqual(['Workout','Food','Settings','Goals','Profile'],self.page.locator('#tabbar button').all_text_contents())
+        expect(self.page.locator('#tabbar [data-tab="lib"]')).to_have_count(0)
+        self.page.locator('[data-a="workout-view"][data-v="exercises"]').click()
+        self.page.locator('[data-in="lib-q"]').fill('Romanian Deadlift')
+        expect(self.page.locator('#lib-list')).to_contain_text('Romanian Deadlift')
+        self.page.locator('#lib-list [data-a="ex-open"]').first.click()
+        expect(self.page.locator('.drawing-pair')).to_be_visible()
+        self.page.locator('[data-a="sheet-close"]').click()
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.page.locator('[data-tab="goals"]').click()
+        expect(self.page.locator('.habit-card')).to_be_visible()
+        self.page.locator('[data-a="goals-view"][data-v="progress"]').click()
+        expect(self.page.locator('[data-f="bw"]')).to_be_visible()
+        self.page.locator('#tabbar [data-a="settings"]').click()
+        expect(self.page.locator('#sheet')).to_contain_text('Appearance')
+
+    def test_profile_photo_bio_color_and_draft_survive_save_and_reload(self):
+        import base64
+        self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-edit"]').click()
+        photo=self.files/'profile-fixture.png'
+        content=self.page.evaluate("() => {const c=document.createElement('canvas');c.width=120;c.height=100;const x=c.getContext('2d');x.fillStyle='#aabbee';x.fillRect(0,0,120,100);return c.toDataURL('image/png').split(',')[1];}")
+        photo.write_bytes(base64.b64decode(content))
+        self.page.locator('[name="displayName"]').fill('Boti <strong>Gym</strong>')
+        self.page.locator('#sheet [name="username"]').fill('Boti_Gym')
+        self.page.locator('[name="bio"]').fill('Working on my next milestone.')
+        self.page.locator('[data-in="profile-photo"]').set_input_files(str(photo))
+        expect(self.page.locator('.avatar-edit img')).to_be_visible()
+        expect(self.page.locator('[name="displayName"]')).to_have_value('Boti <strong>Gym</strong>')
+        self.page.locator('[data-a="profile-color"][data-v="violet"]').click()
+        expect(self.page.locator('[name="bio"]')).to_have_value('Working on my next milestone.')
+        self.page.locator('button[form="profile-edit-form"]').click()
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.page.reload(wait_until='networkidle');self.page.locator('[data-tab="profile"]').click()
+        expect(self.page.locator('.profile-identity h2')).to_have_text('Boti <strong>Gym</strong>')
+        expect(self.page.locator('.profile-identity h2 strong')).to_have_count(0)
+        expect(self.page.locator('.profile-cover')).to_have_class(__import__('re').compile('.*theme-violet.*'))
+        self.assertGreater(self.page.locator('.profile-avatar img').evaluate('(el) => el.decode().then(() => el.naturalWidth)'),0)
+        self.assertEqual('boti_gym',self.data()['settings']['publicProfile']['username'])
+        self.page.locator('[data-a="profile-edit"]').click();self.page.locator('[data-a="profile-photo-remove"]').click()
+        self.page.locator('button[form="profile-edit-form"]').click()
+        expect(self.page.locator('#sheet')).not_to_be_visible()
+        expect(self.page.locator('.profile-avatar img')).to_have_count(0)
+
+    def test_profile_calorie_clock_uses_today_target_and_active_budget(self):
+        self.page.evaluate("() => {const d=Store.d,k=__gym.ui.foodDate;d.settings.targets={kcal:1600,p:120,c:200,f:60};d.settings.addActive=true;d.act[k]={kcal:200,steps:5000};d.food[k]=[{id:'calorie-test',name:'Meal',g:300,kcal:900,p:45,c:100,f:30,t:Date.now()}];__gym.ui.foodDate='2020-01-01';Store.save();}")
+        self.page.locator('[data-tab="profile"]').click()
+        expect(self.page.locator('[data-calorie-total]')).to_have_text('900')
+        expect(self.page.locator('[data-calorie-goal]')).to_have_text('of 1,800 kcal')
+        expect(self.page.locator('.calorie-remaining')).to_have_text('900 kcal remaining')
+        expect(self.page.locator('.dial-tick')).to_have_count(60)
+        expect(self.page.locator('.dial-tick.filled')).to_have_count(30)
+        self.page.evaluate("() => {const k=Object.keys(Store.d.food)[0];Store.d.food[k][0].kcal=2000;__gym.render();}")
+        expect(self.page.locator('.dial-tick.filled')).to_have_count(60)
+        expect(self.page.locator('.calorie-remaining')).to_have_text('200 kcal above your target')
+        self.page.evaluate('() => {Store.d.settings.targets=null;__gym.render();}')
+        expect(self.page.locator('[data-calorie-goal]')).to_have_text('No target set')
+        expect(self.page.locator('.dial-tick.filled')).to_have_count(0)
+
+    def test_badges_are_earned_and_selected_individually_with_four_slot_limit(self):
+        self.page.evaluate("""() => {const now=Date.now()-10000;Store.d.workouts=Array.from({length:10},(_,i)=>({id:'badge'+i,name:'Fixture',start:now-i*86400000-60000,end:now-i*86400000,entries:[{ex:'Barbell_Bench_Press_-_Medium_Grip',sets:[{kg:100,reps:100,w:false}]},{ex:'Barbell_Full_Squat',sets:[{kg:20,reps:5,w:false}]},{ex:'Barbell_Deadlift',sets:[{kg:40,reps:5,w:false}]},{ex:'Standing_Military_Press',sets:[{kg:10,reps:5,w:false}]}]}));Store.save();} """)
+        self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-badges"]').first.click()
+        expect(self.page.locator('[data-id="fifty"]')).to_be_disabled()
+        for bid in ['bench','first','days','volume']:self.page.locator('.badge-choice[data-id="'+bid+'"]').click()
+        self.assertEqual(['bench','first','days','volume'],self.data()['settings']['publicProfile']['showcase'])
+        self.page.locator('.badge-choice[data-id="ten"]').click()
+        self.assertEqual(4,len(self.data()['settings']['publicProfile']['showcase']))
+        self.page.locator('.badge-choice[data-id="days"]').click()
+        self.page.locator('.badge-choice[data-id="ten"]').click()
+        self.page.locator('[data-a="sheet-close"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.assertEqual(['bench','first','volume','ten'],self.page.locator('.profile-showcase [data-badge]').evaluate_all('(els)=>els.map(el=>el.dataset.badge)'))
+        self.page.reload();self.page.locator('[data-tab="profile"]').click()
+        expect(self.page.locator('.profile-showcase .achievement')).to_have_count(4)
+        self.page.evaluate('() => {Store.d.workouts=[];Store.save();__gym.render();}')
+        expect(self.page.locator('.profile-showcase .achievement')).to_have_count(0)
+
+    def test_profile_save_failure_keeps_previous_profile_and_retries(self):
+        self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-edit"]').click()
+        self.page.locator('[name="displayName"]').fill('Retry profile')
+        self.page.evaluate("() => {window.fixtureOriginalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='gymapp.v1')throw new DOMException('Quota full','QuotaExceededError');return fixtureOriginalSet.call(this,k,v);};}")
+        self.page.locator('button[form="profile-edit-form"]').click()
+        expect(self.page.locator('.profile-edit-error')).to_be_visible()
+        self.assertEqual('',self.data()['settings']['publicProfile']['displayName'])
+        self.page.evaluate('() => {Storage.prototype.setItem=fixtureOriginalSet;}')
+        self.page.locator('button[form="profile-edit-form"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.assertEqual('Retry profile',self.data()['settings']['publicProfile']['displayName'])
+
+    def test_profile_cleaning_and_cloud_merge_preserve_private_profile_fields(self):
+        result=self.page.evaluate("""() => {const dirty={username:'invalid name',displayName:'<img src=x>',bio:'b'.repeat(300),avatar:'data:image/svg+xml;base64,AAAA',theme:'evil',showcase:['first','first','fake','bench']};const clean=Store.clean({settings:{publicProfile:dirty}}).settings.publicProfile;const merged=Cloud.merge({settings:{publicProfile:{displayName:'Older'}},mt:{settings:1}},{settings:{publicProfile:{displayName:'Newer'}},mt:{settings:2}});return {clean,merged:merged.settings.publicProfile};} """)
+        self.assertEqual('',result['clean']['username']);self.assertEqual('',result['clean']['avatar'])
+        self.assertEqual('mint',result['clean']['theme']);self.assertEqual(160,len(result['clean']['bio']))
+        self.assertEqual(['first','bench'],result['clean']['showcase']);self.assertEqual('Newer',result['merged']['displayName'])
+
+    def test_profile_and_navigation_fit_mobile_in_both_languages_and_themes(self):
+        for width in [320,390,768,1280]:
+            self.page.set_viewport_size({'width':width,'height':844})
+            for lang in ['en','hu']:
+                for theme in ['deep','light']:
+                    self.page.evaluate('(args)=>{Store.d.settings.lang=args[0];__gym.A["set-bg"]({dataset:{v:args[1]}})}',[lang,theme])
+                    self.page.locator('[data-tab="profile"]').click()
+                    self.assertFalse(self.page.evaluate('()=>document.documentElement.scrollWidth>innerWidth+1'),(width,lang,theme))
+                    for button in self.page.locator('#tabbar button').all():
+                        box=button.bounding_box();self.assertGreaterEqual(box['width'],44);self.assertGreaterEqual(box['height'],44)
+                    self.page.locator('[data-a="profile-edit"]').click()
+                    self.assertFalse(self.page.locator('#sheet').evaluate('(el)=>el.scrollWidth>el.clientWidth+1'))
+                    self.page.locator('[data-a="sheet-close"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+
+    def start_social_fixture(self,handler):
+        uid='00000000-0000-4000-8000-000000000001'
+        self.context.route('**/js/config.js',lambda route:route.fulfill(content_type='text/javascript',body='window.CLOUD='+json.dumps({'url':self.url,'key':'fixture-publishable-key-no-secrets'})+';'))
+        self.page.evaluate('(session)=>localStorage.setItem("gymapp.v1.session",JSON.stringify(session))',{'access_token':'fixture-user-token','refresh_token':'fixture-refresh','expires_at':int(__import__('time').time())+3600,'user':{'id':uid,'email':'fixture@example.test'}})
+        def api(route):
+            self.assertEqual('Bearer fixture-user-token',route.request.headers.get('authorization'))
+            path=urlsplit(route.request.url).path
+            if '/rpc/' in path:
+                name=path.rsplit('/',1)[-1]
+                body=route.request.post_data_json
+                result,status=handler(name,body)
+            else:result,status=([{'updated_at':'2026-10-08T00:00:00Z'}] if route.request.method=='POST' else []),200
+            route.fulfill(status=status,content_type='application/json',body=json.dumps(result))
+        self.context.route('**/rest/v1/**',api)
+        self.page.reload(wait_until='networkidle')
+        self.page.locator('[data-tab="profile"]').click()
+
+    def test_social_profile_publish_requests_acceptance_and_friend_view(self):
+        me='00000000-0000-4000-8000-000000000001';other='00000000-0000-4000-8000-000000000002'
+        incoming=[{'request_id':other,'user_id':other,'username':'friend'}];outgoing=[];friends=[];published=[]
+        def handler(name,body):
+            if name=='social_dashboard':
+                rows=[{'user_id':me,'username':'fixture','display_name':'Fixture','avatar':'','theme':'mint','score':105,'days':1}]
+                if friends:rows.append({'user_id':other,'username':'friend','display_name':'Friend','avatar':'','theme':'violet','score':110,'days':1})
+                return {'profile':{'username':'fixture'},'incoming':incoming,'outgoing':outgoing,'friends':friends,'leaderboard':rows},200
+            if name=='social_save_profile':published.append(body);return {'username':body['p_username']},200
+            if name=='social_request_friend':outgoing.append({'request_id':other,'user_id':other,'username':body['p_username']});return {'id':other},200
+            if name=='social_respond_friend':
+                self.assertTrue(body['p_accept']);incoming.clear();friends.append({'user_id':other,'username':'friend'});return {'ok':True},200
+            if name=='social_view_profile':return {'username':'friend','display_name':'Friend','bio':'Keep going','avatar':'','theme':'violet','badges':['first'],'stats':{'badges':['first'],'score':110,'days':1,'highest':0}},200
+            if name=='social_remove_friend':friends.clear();return {'ok':True},200
+            raise AssertionError(name)
+        self.start_social_fixture(handler)
+        expect(self.page.locator('.leaderboard li')).to_have_count(1)
+        self.page.locator('[data-a="profile-edit"]').click()
+        self.page.locator('#sheet [name="username"]').fill('fixture');self.page.locator('[name="displayName"]').fill('Fixture')
+        self.page.locator('button[form="profile-edit-form"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.assertEqual('fixture',published[-1]['p_username']);self.assertEqual([],published[-1]['p_badges'])
+        self.page.locator('[data-a="friend-respond"][data-accept="true"]').click()
+        expect(self.page.locator('.leaderboard li')).to_have_count(2)
+        expect(self.page.locator('.leaderboard li').first).to_contain_text('Friend')
+        self.page.locator('.leaderboard [data-a="friend-profile"][data-id="'+other+'"]').click()
+        expect(self.page.locator('#sheet')).to_contain_text('Keep going')
+        expect(self.page.locator('#sheet .profile-showcase')).to_contain_text('First rep')
+        self.page.locator('[data-a="sheet-close"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+        self.page.locator('#friend-username').fill('new_friend');self.page.locator('.friend-search button').click()
+        expect(self.page.locator('.friend-list').first).to_contain_text('Sent requests')
+        self.page.locator('.friend-list').last.locator('summary').click()
+        self.page.on('dialog',lambda dialog:dialog.accept());self.page.locator('[data-a="friend-remove"]').last.click()
+        expect(self.page.locator('.leaderboard li')).to_have_count(1)
+
+    def test_social_missing_migration_and_username_conflict_keep_local_edits(self):
+        mode=['missing']
+        def handler(name,body):
+            if mode[0]=='missing':return {'code':'PGRST202','message':'Could not find public.social_dashboard'},404
+            if name=='social_save_profile':return {'code':'23505','message':'duplicate username'},409
+            return {'profile':None,'incoming':[],'outgoing':[],'friends':[],'leaderboard':[]},200
+        self.start_social_fixture(handler)
+        expect(self.page.locator('.social-status')).to_contain_text('Friends are not available yet')
+        self.page.locator('[data-a="profile-edit"]').click();self.page.locator('#sheet [name="username"]').fill('taken_name')
+        self.page.locator('[name="bio"]').fill('Saved here even if offline.')
+        mode[0]='conflict';self.page.locator('button[form="profile-edit-form"]').click()
+        expect(self.page.locator('.profile-edit-error')).to_contain_text('username is taken')
+        self.assertEqual('Saved here even if offline.',self.data()['settings']['publicProfile']['bio'])
+        self.page.locator('[data-a="sheet-close"]').click();expect(self.page.locator('#sheet')).not_to_be_visible()
+        expect(self.page.locator('.profile-bio')).to_have_text('Saved here even if offline.')
+        self.assertEqual('',self.page.evaluate('()=>document.body.style.position'))
+
     def test_layout_and_navigation_in_both_themes(self):
         self.upload(self.hu_file)
         for width in [320,390,768,1280]:
@@ -727,7 +905,7 @@ class AppBrowserTests(unittest.TestCase):
             self.page.set_viewport_size({'width':width,'height':844})
             for theme in ['aurora','deep','plain','light']:
                 self.page.evaluate('(theme) => {__gym.A["set-bg"]({dataset:{v:theme}});}',theme)
-                for tab in ['home','habits','lib','prog','food']:
+                for tab in ['home','food','goals','profile']:
                     self.page.locator('[data-tab="'+tab+'"]').click()
                     self.assertFalse(self.page.evaluate('() => document.documentElement.scrollWidth>innerWidth+1'))
 

@@ -1,3 +1,17 @@
+# Update — 2.6.0, 2026-10-08
+
+New bottom navigation puts Workout on the left, Food beside it, Settings in the center, Goals left of Profile and Profile on the right. Exercise library/search is inside Workout. Goals retains habits and progress. Profile supports safe local/synced customization, photo/bio/colors, real calorie clock, ranks, seven derived milestones and individual badge showcases. Workout completion announces new badge unlocks.
+
+Social RPC client and additive migration implement unique usernames, recipient-approved friendships, removals, friends-only aggregate profile views and server-derived weekly consistency points. See SOCIAL.md. Existing private userdata is never opened to friends. New modules/CSS are in the verified offline release manifest, and the bootstrap handles older HTML shells.
+
+**Remaining live activation:** run `migrations/20261008_social.sql` in the existing Supabase SQL Editor. The configured project is blocked by this environment's proxy (403), and no admin database binding exists. Local PostgreSQL checks validate the migration/permissions; browser social tests use synthetic HTTP fixtures, not real users. Profile edits remain local when publication is unavailable. Physical iPhone/Safari remains untested.
+
+Validation: 52 Chromium browser tests and 12 real disposable PostgreSQL tests passed, plus syntax/manifest/whitespace checks and dark/light mobile screenshot review. Social browser fixtures exercise authenticated HTTP calls; database checks test all rank boundaries against the JavaScript module, raw-table/helper/anonymous denial, recipient-only acceptance, caps, removals and private data isolation. Final targeted checks cover the unavailable-service copy and accurate kg/tonne totals.
+
+Backup: `/workspace/GymApp-backups/GymApp-before-profile-social-20261008.bundle` (complete history verified).
+
+---
+
 # Update — 2.5.1, 2026-10-08
 
 General exercise/detail/image sheets now use `js/modal-lock.js`, shared with the importer. The lock fixes the body at its original scroll position and makes background app containers inert. Capture guards block background actions and backdrop scrolling; internal dialog scrolling remains available. Multiple dialog owners retain the lock until the last closes, so import/save over Settings cannot unlock early. Existing page styles, inert states and position are restored on final close. The active workout's internal scroller is preserved. Closing animation still shields input.

@@ -6,6 +6,16 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.6.0 — 2026-10-08, build 20261008.2
+
+- Bottom navigation: Workout, Food, Settings, Goals and Profile. Exercise search/library is inside Workout; Goals contains existing habits and progress without moving or deleting their logs.
+- Custom profiles support display name, unique account username, photo, bio, four cover colors, lift ranks, gym totals and a 60-line calorie dial reflecting today's actual diary target and activity budget. Private profiles remain included in existing sync/backups.
+- Seven derived workout achievements; select up to four earned badges individually and see new unlocks after finishing. Deleted qualifying history removes earned status from display.
+- Authenticated username publication, friend requests/acceptance/decline/cancellation/removal, friend profile views and a Monday–Sunday UTC leaderboard. Points reward training days and capped working sets; see SOCIAL.md for rules.
+- Additive migration `migrations/20261008_social.sql` keeps private userdata policies unchanged, restricts profile/connection operations to checked RPCs, derives scores/earned badges from saved logs, and caps connection counts. **Live activation requires running this migration in Supabase SQL Editor.** The project cannot be reached here (proxy 403); no database admin credentials are available. No live deployment claim.
+- Validation: all 52 Chromium tests and 12 disposable PostgreSQL tests passed. Includes profile photos/save/reload/storage retry, calorie clock, badge selection/unlocks, responsive navigation, authenticated social HTTP flows and server permissions, request/friend caps, every lift-rank boundary and derived score/badge parity. Syntax/manifest/whitespace and dark/light mobile screenshot checks passed. Physical iPhone/Safari and live Supabase deployment remain unverified.
+- Verified backup: `/workspace/GymApp-backups/GymApp-before-profile-social-20261008.bundle`, preserving v2.5.1 and complete Git history.
+
 ## 2.5.1 — 2026-10-08, build 20261008.1
 
 - Exercise details, enlarged images and other sheets now lock document scrolling and background controls, including active workout inputs. The dialog content remains scrollable.

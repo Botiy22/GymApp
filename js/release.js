@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.5.1';
-  const build = '20261008.1';
+  const version = '2.6.0';
+  const build = '20261008.2';
   const history = [
     {version,build,date:'2026-10-08',
+      en:['New bottom navigation: Workout, Food, Settings, Goals and Profile. Exercises now live inside Workout.','Customize your profile with a photo, bio, colors and individually selected earned badges.','Daily calories appear in a clock-style dial; lift ranks and milestones are together in Profile.','Usernames, friend requests and weekly competition connect to the new social database migration.'],
+      hu:['Új alsó menü: Edzés, Étkezés, Beállítások, Célok és Profil. A gyakorlatok az Edzésen belül találhatók.','Profilfotó, bemutatkozás, színek és egyenként kiválasztható, megszerzett jelvények.','Óraszerű kalóriamérő, emelési rangok és mérföldkövek a Profilban.','Felhasználónevek, baráti kérések és heti verseny az új közösségi adatbázis-bővítéssel.']},
+    {version:'2.5.1',build:'20261008.1',date:'2026-10-08',
       hu:['A nagyított gyakorlatképek és más párbeszédablakok mögött a háttér nem görgethető és nem érinthető.','Bezáráskor az oldal az előző helyére tér vissza, egymásra nyitott ablakok után is.'],
       en:['Exercise image zoom and other dialogs now block background scrolling and interaction.','Closing the last dialog restores the page position, including nested views and plan uploads.']},
     {version:'2.5.0',build:'20261007.13',date:'2026-10-07',

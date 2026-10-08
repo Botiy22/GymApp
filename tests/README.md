@@ -13,8 +13,11 @@ The tests start a temporary HTTP server and run the real app in fresh Chromium c
 
 Coverage:
 
+- Navigation order, nested exercise search, Goals habits/progress, bottom Settings and customizable Profile.
+- Profile photo, safe text/bio/color save/reload, calorie dial from today's real budget, badges earned/selected individually, four-slot limit and recalculation after deletion. Mobile layouts in both languages/themes; profile storage-failure retry.
+- Authenticated social HTTP fixtures cover publication, requests, acceptance, profile viewing, removal, missing migration and unique-username errors. Actual PostgreSQL permission/scoring validation is separately documented in [SOCIAL.md](../SOCIAL.md).
 - Compact header upload across all pages; collapsible weekly days and daily plan with retained diary logging.
-- Four Workout sections at mobile/desktop widths in English/Hungarian and dark/light themes; active exercise selector.
+- Train/Plans/Exercises/History sections at mobile/desktop widths in English/Hungarian and dark/light themes; active exercise selector.
 - Actual workout finish, volume expansion excluding warm-ups, Titan unlock at a logged 100 kg bench, persistence after reload and recalculation after deletion. Exact rank boundaries, catalogue IDs and exclusions for ticked/warm-up/unfinished/other-variant sets.
 
 - XLSX recognition, explicit column mapping, worksheet-based workout/day names, merged day/meal groups, decimal commas, units, per-100-g scaling and zero-second rest.
