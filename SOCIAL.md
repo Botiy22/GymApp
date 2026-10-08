@@ -1,6 +1,6 @@
 # Profiles and friends
 
-The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Lift ranks, earned badges and friend competition are in Profile.
+The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Profile has **Overview · Friends** pages at the top. Lift ranks and earned badges stay in Overview; search, requests, connected profiles and optional weekly competition are in Friends.
 
 ## Activate friends in Supabase
 
@@ -11,13 +11,23 @@ You do not need to upgrade Supabase itself. Install these two additive SQL migra
 3. Create another new query. Copy and run the entire [20261008_social_contacts.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261008_social_contacts.sql) file. Run this one after the first.
 4. Keep the existing public project URL/key in `js/config.js`; the existing `supabase.sql` private account table must already be installed. These migrations can be rerun and preserve private account data.
 5. In the app, use **Settings → App → Check for update**, then **Profile → Edit profile**. Save a unique username (3–24 letters, numbers or underscores). Both people need to be signed in and to save a username.
-6. Under **Profile → Friends & competition**, choose Username and enter the friend's exact username. The other person accepts the incoming request in that same section. Refresh the section to load changes; accepted friends can open each other's profiles and appear in the weekly leaderboard.
+6. Under **Profile → Friends**, choose Username and enter the friend's exact username. The other person accepts the incoming request in that same section. Refresh the section to load changes; accepted friends appear directly in the list. Tap a friend to open their profile, or expand Weekly competition for the leaderboard.
 7. To use email search, each person must have a confirmed account email and enable **How friends can find you → Let friends find me by email**, then save. Exact email lookup works only for opted-in accounts.
 8. Phone lookup is optional: configure an SMS provider in **Supabase Authentication → Providers → Phone**, verify the number in the app, and enable phone discovery. SMS providers may charge for messages; username and email requests do not require SMS.
 
 The app shows connected friends, rather than a publicly browsable directory of all accounts. Only chosen public profile details and gym aggregates are shared after acceptance. No service-role/admin secret belongs in the app. If a query fails, keep the error message and resolve that step before running the next file; do not reset tables or your project.
 
 The cloud coding environment cannot reach the configured Supabase project (proxy 403) and has no database admin connection. The migration has been tested on disposable PostgreSQL, but **has not been applied to the live project**. The UI reports an unavailable backend/missing migration without fabricating friends, points or claimed usernames. Profile edits remain on the device after a network or username error; saving again retries publication.
+
+## Existing accounts after installing the SQL
+
+An Auth login does not itself create a searchable `social_profiles` record. The migrations intentionally do not publish every existing account or enable email/phone discovery automatically.
+
+Both people should install the current app update, open **Profile**, then **Friends**. A previously chosen, valid username in the private saved profile is automatically published if that account has no social profile yet. An existing published profile is not overwritten by this repair. If there is no saved username, choose **Edit profile**, enter a unique username and save. If the chosen username is already taken, select another; the app never invents one.
+
+Use the **Your username** value shown on the Friends page, rather than an account email or display name, with Username selected. A leading `@` and uppercase letters are accepted. The recipient still needs to accept the request. Email/phone searches still require that person's verified contact and explicit discovery opt-in.
+
+No further SQL migration is needed for this repair if the two existing queries completed successfully in the same project used by `js/config.js`. Missing-function/setup errors remain separate from a username/contact not being found. The coding environment has not verified live lookup for the user's accounts.
 
 ## Email and phone discovery (2.9.0)
 

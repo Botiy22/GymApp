@@ -24,7 +24,21 @@ window.Social = (() => {
     if(pending)return pending;
     const owner=state.userId;state.busy=true;state.error='';
     pending=(async()=>{
-      try {await cloud.sync();const data=await cloud.rpc('social_dashboard',{});if(cloud.user&&cloud.user.id===owner){state.data=data;try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
+      try {
+        await cloud.sync();
+        if(!cloud.user||cloud.user.id!==owner)return;
+        let data=await cloud.rpc('social_dashboard',{});
+        if(!cloud.user||cloud.user.id!==owner)return;
+        state.data=data; // Keep the username setup action available if publication fails.
+        // Accounts created before the social migration may have only a private saved username.
+        // Publish that explicitly chosen profile when missing, without replacing an existing claim.
+        const saved=Profile.clean(window.Store?.d?.settings?.publicProfile);
+        if(!data.profile&&saved.username&&cloud.user&&cloud.user.id===owner){
+          await publish(saved);
+          if(!cloud.user||cloud.user.id!==owner)return;
+          data=await cloud.rpc('social_dashboard',{});
+        }
+        if(cloud.user&&cloud.user.id===owner){state.data=data;try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
       catch(error){if(cloud.user&&cloud.user.id===owner)state.error=message(error);}
       finally{state.busy=false;pending=null;}
     })();return pending;

@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.12.0 — 2026-10-08, build 20261008.12
+
+- Profile now has Overview and Friends pages with top navigation; nutrition, achievements and lift ranks stay in Overview.
+- Friends puts a usable search field first, displays connected profiles directly and folds weekly competition into an optional section. Request feedback stays beside search, and queries survive refresh/error redraws. The Add button no longer squeezes the input or overflows its card.
+- After private sync, a previously chosen username publishes automatically when the current account has no social profile. Existing server claims are preserved and username conflicts remain explicit. Username lookup accepts a leading @ and uppercase; missing username/contact messages explain publication and discovery requirements.
+- No SQL migration added. Contact opt-in, verification and private-data permissions are unchanged.
+- No tests added/run. Source/syntax/whitespace review and manual local Chromium screenshots at 320px EN dark /390px HU light used synthetic account responses. Reviewed Overview/Friends, absent-profile publication, search failures, sent requests and connected/expanded competition, with no recorded page errors or horizontal overflow. Real accounts, live SQL/deployment, offline installation and physical iOS remain unverified.
+
 ## 2.11.0 — 2026-10-08, build 20261008.11
 
 - All 19 recipe ideas show original generated serving references in the list and recipe detail. Captions identify illustrative images; ingredients, portions and nutrition remain unchanged. Both local source images are included in the verified offline shell.

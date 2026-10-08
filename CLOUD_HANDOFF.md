@@ -1,3 +1,15 @@
+# Update — Setora 2.12.0, 2026-10-08
+
+User rejected the crowded Friends section and reported lookup failures after running both SQL files with existing accounts; then requested a separate Friends page under Profile's top navigation. Profile now has Overview/Friends tabs; rank navigation from Workout explicitly selects Overview. Friends has full-size search, own published username, request feedback beside the field, direct accepted-profile rows and collapsed competition/discovery. Add button uses auto width in a constrained grid, fixing the inherited full-width button squeezing the search input. Draft search text survives rerenders and errors; changing lookup type clears it. Search accepts @username and case normalization.
+
+Social.refresh syncs private data, reads social_dashboard and publishes a valid previously chosen private saved username ONLY when the current authenticated user has no social profile. It then reloads the dashboard. No usernames are invented; existing published records are not overwritten, conflicts require choosing another username, owner checks guard account changes, and contact discovery stays explicitly opted-in/verified. Existing Auth users without saved usernames still need Profile → Edit profile once. Both users must open the updated app for automatic missing-profile repair. No new SQL is required after the previous two migrations succeeded. Live account lookup/SQL remains unverified; no admin connection exists. SOCIAL.md contains activation and existing-account guidance.
+
+No tests added/run. Syntax/whitespace and manual local Chromium screenshots at 320px EN dark /390px HU light used synthetic account responses only, reviewing Overview/Friends, missing-profile publication, search error/success/pending and connected competition. The demo recorded dashboard→publish→dashboard, usable search widths around 173/183px, no page errors or horizontal overflow. No private/live accounts, offline installation, served deployment or physical Safari were verified.
+
+Verified pre-change remote backup backup/main-20261008-195049-before-friends-rework preserves 7deb064c2c7c0aeafed13a5f23dc8cc3f5ff832f. Restore via a normal reviewed commit, never force-push; code backup is not private diary data. Existing routine/diary/storage/private sync formats and detailed exercise images remain unchanged.
+
+---
+
 # Update — Setora 2.11.0, 2026-10-08
 
 Added illustrative reference photos for all 19 existing recipe ideas, including the four imported recipes. img/recipes/reference-atlas.png is the original generated 3×6 contact sheet, clipped into individual servings with CSS using measured centers; img/recipes/ham-flatbread.png is the separate original flourless quark/egg flatbread reference. No photo pixels were edited. Both are included in sw.js CORE and release-manifest hashes; approximately 6.5 MB additional offline assets. Nutrition/source/ingredients are unchanged and captions clarify the pictures are illustrative. See img/recipes/README.md for provenance.

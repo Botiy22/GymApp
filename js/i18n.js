@@ -393,3 +393,24 @@ Object.assign(window.I18N.hu,{manualEnergyHint:'A teljes napi aktív kalóriát 
 
 Object.assign(window.I18N.en,{recipeReferenceLabel:'Illustrative serving reference: {0}',recipeReferenceCaption:'Illustrative serving reference · appearance and portions may vary'});
 Object.assign(window.I18N.hu,{recipeReferenceLabel:'Illusztratív tálalási kép: {0}',recipeReferenceCaption:'Illusztratív tálalási kép · az elkészítés és az adag eltérhet'});
+
+Object.assign(I18N.en,{
+  profileOverview:'Overview',yourUsername:'Your username',findFriend:'Add a friend',weeklyCompetition:'Weekly competition',
+  friendUsernameHint:'Ask for their @username. They need to open Profile in the updated app first.',
+  friendContactHint:'Your friend must verify this contact and enable discovery below.',
+  friendsStart:'Your friends will appear here after accepting your request.',
+  friendUsernameMissing:'No match. Ask your friend to open Profile in the updated app and save a username if prompted. Existing accounts need this once.',
+  friendContactMissing:'No discoverable match. Your friend needs a saved username, a verified contact and discovery enabled. Try their @username instead.',
+  socialSetup:'Friends need the social SQL migrations in this app’s Supabase project. If you ran them, check that both queries completed successfully.',
+  socialNeedProfile:'Your account is ready. Save a username to make your profile searchable by friends.'
+});
+Object.assign(I18N.hu,{
+  profileOverview:'Áttekintés',yourUsername:'Felhasználóneved',findFriend:'Barát hozzáadása',weeklyCompetition:'Heti verseny',
+  friendUsernameHint:'Kérd el a @felhasználónevét. Előbb nyissa meg a Profilt a frissített appban.',
+  friendContactHint:'A barátodnak igazolnia kell ezt az elérhetőséget, és lent engedélyeznie a keresést.',
+  friendsStart:'Elfogadás után itt jelennek meg a barátaid.',
+  friendUsernameMissing:'Nincs ilyen felhasználónév. A barátod frissítse az appot, nyissa meg a Profilt, és ha kéri, mentsen felhasználónevet. A meglévő bejelentkezés önmagában még nem kereshető profil.',
+  friendContactMissing:'Nincs kereshető találat. A barátodnak mentett felhasználónév, igazolt elérhetőség és engedélyezett keresés szükséges. Próbáld a @felhasználónevét.',
+  socialSetup:'A barátokhoz az app Supabase-projektjében le kell futtatni a közösségi SQL-bővítéseket. Ha már megtetted, ellenőrizd, hogy mindkettő sikeres volt-e.',
+  socialNeedProfile:'A fiókod megvan. Ments egy felhasználónevet, hogy a barátaid megtaláljanak.'
+});
