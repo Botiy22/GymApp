@@ -1,6 +1,6 @@
 window.I18N = {
   hu: {
-    appName: 'Tungsten', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
+    appName: 'Otisport', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
     settings: 'Beállítások', back: 'Vissza', close: 'Bezárás', save: 'Mentés', saved: 'Elmentve', added: 'Hozzáadva', done: 'Kész', edit: 'Szerkesztés', delete: 'Törlés', remove: 'Eltávolítás', more: 'Továbbiak', details: 'Részletek', name: 'Név', all: 'Mind',
     min: 'perc', h: 'ó', exercises: 'gyakorlat', setsWord: 'sorozat', set: 'sorozat', reps: 'ism.', rest: 'pihenő', prev: 'előző', today: 'Ma',
     installTitle: 'Telepítés iPhone-ra', installShort: 'Safari: Megosztás gomb → „Főképernyőhöz adás”. Koppints a részletekért.',
@@ -114,7 +114,7 @@ window.I18N = {
     eq: { barbell: 'kétkezes rúd', dumbbell: 'kézisúlyzó', other: 'egyéb', 'body only': 'saját testsúly', cable: 'kábel', machine: 'gép', kettlebells: 'kettlebell', bands: 'gumiszalag', 'medicine ball': 'medicinlabda', 'exercise ball': 'fitlabda', 'foam roll': 'SMR-henger', 'e-z curl bar': 'EZ-rúd' }
   },
   en: {
-    appName: 'Tungsten', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
+    appName: 'Otisport', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
     settings: 'Settings', back: 'Back', close: 'Close', save: 'Save', saved: 'Saved', added: 'Added', done: 'Done', edit: 'Edit', delete: 'Delete', remove: 'Remove', more: 'More', details: 'Details', name: 'Name', all: 'All',
     min: 'min', h: 'h', exercises: 'exercises', setsWord: 'sets', set: 'set', reps: 'reps', rest: 'rest', prev: 'prev', today: 'Today',
     installTitle: 'Install on iPhone', installShort: 'Safari: Share button → “Add to Home Screen”. Tap for details.',

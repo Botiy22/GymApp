@@ -6,6 +6,13 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.6.1 — 2026-10-08, build 20261008.3
+
+- Renamed the app to Otisport, following the user's suggested name direction. HTML, Apple home-screen metadata, manifest names, Hungarian/English labels, sign-in and export filenames use the new brand. App URL/scope, storage keys, account configuration and data schema stay compatible.
+- New generated mint O app icon replaces the previous branding, with Apple, browser, PWA and padded Android maskable sizes. Versioned asset names and verified offline precaching include every deployed icon. Full-resolution master retained; see BRANDING.md.
+- Validation: four existing release/update/browser tests passed, including verified upgrade, offline import and retained data/open previews. Actual browser checks confirmed manifest dimensions, both-language sign-in and loaded icon artwork. Syntax, manifest hashes, whitespace, backup verification and sign-in screenshot review passed. Physical iOS shortcut metadata refresh remains unverified.
+- Backup: `/workspace/GymApp-backups/GymApp-before-otisport-branding-20261008.bundle` preserves v2.6.0 and complete Git history.
+
 ## 2.6.0 — 2026-10-08, build 20261008.2
 
 - Bottom navigation: Workout, Food, Settings, Goals and Profile. Exercise search/library is inside Workout; Goals contains existing habits and progress without moving or deleting their logs.

@@ -492,7 +492,7 @@
       ui.fa = { food: f, g: String(each ? each[0] : 100) }; openSheet(shFoodAmount()); }
   const profileLocal = () => Profile.clean(D().settings.publicProfile);
   function avatar(p, small) {
-    const initial=(p.displayName||p.username||'T').slice(0,1).toUpperCase();
+    const initial=(p.displayName||p.username||'O').slice(0,1).toUpperCase();
     return `<span class="profile-avatar${small?' small':''}">${p.avatar?`<img src="${esc(p.avatar)}" alt="${esc(p.displayName||p.username||t('tabProfile'))}">`:esc(initial)}</span>`;
   }
   function badgeChip(b, detailed) {
@@ -1155,9 +1155,9 @@
     const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
     D().workouts.forEach(w => w.entries.forEach(e => e.sets.forEach((x, j) => rows.push([ymd(w.start), w.name, itemName(e), j + 1, x.kg, x.reps, x.w ? 1 : 0]))));
     const cell = v => { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };     // a name can never be read as a formula by a spreadsheet
-    saveFile('tungsten-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
+    saveFile('otisport-workouts-' + today() + '.csv', new Blob(['\ufeff' + rows.map(r => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv' }));
   }
-  function exportData() { saveFile('tungsten-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
+  function exportData() { saveFile('otisport-backup-' + today() + '.json', new Blob([Store.exportJSON()], { type: 'application/json' })); }
 
   /* ================= CALENDAR, DAY, ACTIVITY ================= */
   function shCal() {
@@ -1304,7 +1304,7 @@
     document.body.classList.toggle('gated', need); g.hidden = !need; if (!need) { g.innerHTML = ''; return; }
     document.documentElement.lang = L();
     const s = ui.gate, m = s.mode;
-    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo">${IC.home}</div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
+    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/otisport-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
       ${s.err ? `<div class="note warn" role="alert"><b>${esc(s.err)}</b></div>` : ''}${s.info ? `<div class="note" role="status"><b>${esc(s.info)}</b></div>` : ''}
       ${m !== 'newpw' ? `<label class="fld"><span>${esc(t('email'))}</span><input type="email" name="email" value="${esc(s.email)}" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" required></label>` : ''}

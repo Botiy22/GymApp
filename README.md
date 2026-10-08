@@ -1,12 +1,14 @@
-# Tungsten
+# Otisport
 
-(Formerly "GymApp", "Súlypont" and "Rep Riot". The folder and the web address keep the old name on purpose: the address is what the
+(Formerly "Tungsten", "GymApp", "Súlypont" and "Rep Riot". The folder and the web address keep the old name on purpose: the address is what the
 installed app and its saved data are tied to.)
 
 A workout tracker and calorie diary that installs on a phone from the browser, with no App Store and no
 developer account. It is a web app (PWA): plain HTML, CSS and JavaScript, no build step. Your data stays
 on the device; if you set up accounts (optional, see below) it is also kept in your own database, so
 you can reach it from any device after signing in.
+
+Branding assets and installed-icon refresh guidance: [BRANDING.md](BRANDING.md).
 
 ## Navigation and profiles
 

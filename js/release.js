@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.6.0';
-  const build = '20261008.2';
+  const version = '2.6.1';
+  const build = '20261008.3';
   const history = [
     {version,build,date:'2026-10-08',
+      en:['A new name: Otisport, with a fresh mint O app icon.','New home-screen, browser and sign-in branding. Your existing workouts, meals and account stay in place.'],
+      hu:['Új név: Otisport, új mentaszínű O alkalmazásikonnal.','Új kezdőképernyős, böngészős és bejelentkezési arculat. Az edzések, étkezések és a fiókod megmaradnak.']},
+    {version:'2.6.0',build:'20261008.2',date:'2026-10-08',
       en:['New bottom navigation: Workout, Food, Settings, Goals and Profile. Exercises now live inside Workout.','Customize your profile with a photo, bio, colors and individually selected earned badges.','Daily calories appear in a clock-style dial; lift ranks and milestones are together in Profile.','Usernames, friend requests and weekly competition connect to the new social database migration.'],
       hu:['Új alsó menü: Edzés, Étkezés, Beállítások, Célok és Profil. A gyakorlatok az Edzésen belül találhatók.','Profilfotó, bemutatkozás, színek és egyenként kiválasztható, megszerzett jelvények.','Óraszerű kalóriamérő, emelési rangok és mérföldkövek a Profilban.','Felhasználónevek, baráti kérések és heti verseny az új közösségi adatbázis-bővítéssel.']},
     {version:'2.5.1',build:'20261008.1',date:'2026-10-08',

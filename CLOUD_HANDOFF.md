@@ -1,3 +1,13 @@
+# Update — Otisport 2.6.1, 2026-10-08
+
+Renamed Tungsten to Otisport and installed a new generated O icon. The manifest, document/Apple title, both language labels, sign-in logo, placeholder profile initial and export filenames use the new identity. New icon paths are referenced and included in verified offline precaching; the Android maskable asset has safe-circle padding. BRANDING.md records the assets and iOS shortcut refresh guidance. URL/scope/storage keys/account configuration stay unchanged.
+
+Validation: four release/update tests passed, including actual verified update with offline import and data preservation; browser checks verified installed metadata, each icon's decoded dimensions and both-language sign-in. Syntax/manifest/whitespace and screenshot checks passed. Physical iPhone home-screen metadata refresh remains unverified.
+
+Backup: `/workspace/GymApp-backups/GymApp-before-otisport-branding-20261008.bundle` (verified complete history). Previous social migration still requires activation in the live Supabase project; this branding release makes no database changes.
+
+---
+
 # Update — 2.6.0, 2026-10-08
 
 New bottom navigation puts Workout on the left, Food beside it, Settings in the center, Goals left of Profile and Profile on the right. Exercise library/search is inside Workout. Goals retains habits and progress. Profile supports safe local/synced customization, photo/bio/colors, real calorie clock, ranks, seven derived milestones and individual badge showcases. Workout completion announces new badge unlocks.

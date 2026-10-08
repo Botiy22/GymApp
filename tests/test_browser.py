@@ -313,8 +313,8 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_release_history_is_visible_and_version_matches(self):
         self.page.locator('[data-a="settings"]').first.click();self.page.locator('[data-a="release-notes"]').click()
-        expect(self.page.locator('#sheet')).to_contain_text('2.6.0')
-        expect(self.page.locator('#sheet')).to_contain_text('20261008.2')
+        expect(self.page.locator('#sheet')).to_contain_text('2.6.1')
+        expect(self.page.locator('#sheet')).to_contain_text('20261008.3')
         expect(self.page.locator('#sheet')).to_contain_text('Excel columns')
 
     def test_file_reader_fallback_for_xlsx_and_json_backup(self):
@@ -395,7 +395,7 @@ class AppBrowserTests(unittest.TestCase):
         self.server.legacy_payloads=None
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.1',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines']);self.assertEqual(before['plan'],self.data()['plan'])
         cached=self.page.evaluate("async () => {const c=await caches.open(GYM_RELEASE.cacheId.replace(/^/,'gym-shell-'));const keys=await c.keys();return keys.map(r=>new URL(r.url).pathname);}")
         for path in ['/css/design.css','/js/plan-sheet.js','/js/strength-ranks.js','/js/profile.js','/js/social.js','/css/profile.css','/vendor/jszip/jszip.min.js','/vendor/pdfjs/pdf.worker.min.mjs']:self.assertIn(path,cached)
@@ -426,7 +426,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-a="settings"]').first.click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-now"]').click()
-        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.1',self.page.evaluate('() => GYM_RELEASE.version'))
         self.assertEqual(before['routines'],self.data()['routines'])
         self.assertEqual(before['plan'],self.data()['plan'])
         self.assertEqual('updateSuccess',self.page.evaluate('() => __gym.ui.updateStatus'))
@@ -448,7 +448,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.locator('[data-pdf="close"]').click()
         with self.page.expect_navigation(wait_until='networkidle',timeout=45000):
             self.page.locator('[data-a="update-restart"]').click()
-        self.assertEqual('2.6.0',self.page.evaluate('() => GYM_RELEASE.version'))
+        self.assertEqual('2.6.1',self.page.evaluate('() => GYM_RELEASE.version'))
         expect(self.page.locator('#ready-update')).to_have_count(0)
 
     def test_release_manifest_matches_every_published_file(self):
