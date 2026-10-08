@@ -22,7 +22,7 @@ window.Store = (function () {
     return {
       v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
@@ -51,6 +51,7 @@ window.Store = (function () {
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
       accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, addWorkoutCalories: s.addWorkoutCalories === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
       hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's mint accent
+      accentTone:s.accentTone==='vivid'?'vivid':'soft',
       photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',
       stretch: s.stretch !== false, hold: [20, 30, 45].indexOf(+s.hold) >= 0 ? +s.hold : 30,                      // warm-up and stretching suggestions; seconds per stretch
       apiKey: keepKey != null ? keepKey : str(s.apiKey, 300).replace(/[^\x21-\x7e]/g, ''),
@@ -75,7 +76,7 @@ window.Store = (function () {
       if (x.circuit === true) o.circuit = true;
       return o;
     });
-    if (!out.routines.length) out.routines = f.routines;
+    if (!out.routines.length && !Array.isArray(r.routines)) out.routines = f.routines;
     out.contentVersion = 1;
     if (!(r.contentVersion >= 1)) (window.EXTRA_ROUTINES || []).forEach(x => {
       if (!out.routines.some(y => y.id === x.id) && !obj(r.del)[x.id]) out.routines.push(JSON.parse(JSON.stringify(x)));

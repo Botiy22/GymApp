@@ -414,3 +414,31 @@ Object.assign(I18N.hu,{
   socialSetup:'A barátokhoz az app Supabase-projektjében le kell futtatni a közösségi SQL-bővítéseket. Ha már megtetted, ellenőrizd, hogy mindkettő sikeres volt-e.',
   socialNeedProfile:'A fiókod megvan. Ments egy felhasználónevet, hogy a barátaid megtaláljanak.'
 });
+
+Object.assign(I18N.en,{
+  paletteRed:'Crimson red',paletteRoyal:'Royal blue',
+  browseSplits:'Find a workout split',browseSplitsHint:'Popular structures, ready to customize',
+  splitLibraryHint:'Choose a split that fits your week. Preview the sessions before adding.',
+  splitSession:'Session {0}',addSplit:'Add {0} sessions',splitAdded:'Split added. Each session is ready to edit.',
+  splitCustomHint:'Suggested days only. Edit each session in Plans to change exercises, sets, reps and rest. Choose manageable weights; warm-up sets are separate.',
+  noRoutinesYet:'Your plans are empty. Add a starter split or create your own session.',
+  routineLimit:'You can save up to 100 routines. Remove a few before adding this split.',
+  routineRemoved:'Routine removed. Your workout history is kept.',
+  deleteRoutineConfirm:'Remove this routine? Your logged workouts and current workout will stay.'
+});
+Object.assign(I18N.hu,{
+  paletteRed:'Karmazsinpiros',paletteRoyal:'Királykék',
+  browseSplits:'Válassz edzésfelosztást',browseSplitsHint:'Népszerű felosztások, szabadon alakíthatók',
+  splitLibraryHint:'Válassz a hetedhez illő felosztást. Hozzáadás előtt nézd át az edzésnapokat.',
+  splitSession:'{0}. edzés',addSplit:'{0} edzés hozzáadása',splitAdded:'Felosztás hozzáadva. Minden edzés szerkeszthető.',
+  splitCustomHint:'A napok csak javaslatok. A Tervekben minden edzés gyakorlatai, sorozatai, ismétlései és pihenői módosíthatók. Kezelhető súlyt válassz; a bemelegítő sorozatok külön értendők.',
+  noRoutinesYet:'Még nincs terved. Válassz kezdő felosztást, vagy készíts saját edzést.',
+  routineLimit:'Legfeljebb 100 edzésterv tárolható. Előbb távolíts el néhányat.',
+  routineRemoved:'Edzésterv eltávolítva. Az edzésnaplód megmaradt.',
+  deleteRoutineConfirm:'Eltávolítod ezt az edzéstervet? A naplózott és folyamatban lévő edzés megmarad.'
+});
+Object.assign(I18N.en,{splitSessionCount:'{0} sessions'});
+Object.assign(I18N.hu,{splitSessionCount:'{0} edzés'});
+
+Object.assign(I18N.en,{otherRoutines:'Other routines'});
+Object.assign(I18N.hu,{otherRoutines:'További edzések'});

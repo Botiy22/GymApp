@@ -1,5 +1,7 @@
 # Personal lift ranks
 
+Open **Profile → Your lift ranks** in the top navigation. The rank preview on Workout and the highest-rank card in Overview open that same page.
+
 Ranks are derived from saved workout entries. No rank field is added to account data: existing logs, imports, exports and sync remain the source of truth. Deleting a qualifying workout recalculates its rank from the remaining history.
 
 The six original milestones are Spark, Ember, Steel, Sentinel, Titan and Apex. They are personal app milestones based on the heaviest actual working-set weight, rather than estimated one-rep maximum or population strength standards. The highest earned rank is highlighted on the Workout page, while every lift has its own rank and next target.

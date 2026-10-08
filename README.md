@@ -341,3 +341,5 @@ Release history is visible in Settings → **What's new** and recorded in `RELEA
 Browser regression checks and their actual results are documented in [tests/README.md](tests/README.md). The user's original XLSX and earlier private PDFs were not supplied. Chromium checks use generated XLSX/DOCX/PDF fixtures and isolated browser data; they do not access a live user account. Safari/WebKit installation was blocked by the environment's network allowlist, so no physical iPhone/Safari behavior or live Supabase/AI requests are claimed as tested.
 
 Workout/cardio energy estimates and optional daily calorie budgets are documented in [WORKOUT_ENERGY.md](WORKOUT_ENERGY.md).
+
+Editable starter workout splits, previews, grouping and removal are documented in [ROUTINE_TEMPLATES.md](ROUTINE_TEMPLATES.md). They are optional additions under Workout → Plans.

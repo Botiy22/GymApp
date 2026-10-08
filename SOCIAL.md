@@ -1,6 +1,6 @@
 # Profiles and friends
 
-The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Profile has **Overview · Friends** pages at the top. Lift ranks and earned badges stay in Overview; search, requests, connected profiles and optional weekly competition are in Friends.
+The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Profile has **Overview · Your lift ranks · Friends** pages at the top. Earned badges stay in Overview; lift rankings have their own page; search, requests, connected profiles and optional weekly competition are in Friends.
 
 ## Activate friends in Supabase
 

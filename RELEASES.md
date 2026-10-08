@@ -6,6 +6,17 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.13.0 — 2026-10-08, build 20261008.13
+
+- Main and inner tabs use the same navigation transition; asynchronous Profile redraws preserve an active entry animation. Button press feedback covers new controls and respects reduced motion/calm preferences.
+- Native on/off preferences render as accessible switches. Multi-select and approval checkboxes retain their selection semantics.
+- Crimson red and Royal blue palettes use vivid fills and contrasting text. Existing custom hues remain soft by default; optional validated accentTone persists through existing settings sync/backup. Every routine icon follows the accent in dark/light themes.
+- Profile has Overview, Your lift ranks and Friends pages. Overview/Workout rank shortcuts open the rank page. New target-and-arrow Goals icon and original gym-themed routine symbols.
+- Five optional, editable split templates: 3-day full body, 4-day upper/lower, 5-day upper/lower + PPL, 6-day PPL and 6-day Arnold-inspired. Preview sessions before appending, customize through the existing editor and fold added groups in Plans. No existing routine is replaced automatically.
+- All routines, including built-in days, can be removed after confirmation without deleting history or active workouts. Empty routine lists stay empty after reload; failed saves retain the prior list. See ROUTINE_TEMPLATES.md.
+- Corrected the recipe-image update's historic What's new entry to its fixed 2.11.0/build 20261008.11 identity.
+- No tests added/run. Source/syntax/whitespace review and manual local Chromium screenshots at 320px EN dark /390px HU light covered all main entry animations, rank navigation, switches/palettes, accent-colored original routines, split preview/add/edit/remove and empty-list reload. Demo counts changed 7→12→11, a removed built-in Lower stayed absent, empty stayed 0, and Royal blue persisted. No recorded page errors/horizontal overflow. All template IDs exist in the current exercise library. External routine sites were blocked by proxy 403; templates use common structures, not verified copies of published programs. Live sync/offline/deployment and physical Safari remain unverified.
+
 ## 2.12.0 — 2026-10-08, build 20261008.12
 
 - Profile now has Overview and Friends pages with top navigation; nutrition, achievements and lift ranks stay in Overview.

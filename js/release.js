@@ -1,12 +1,15 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.12.0';
-  const build = '20261008.12';
+  const version = '2.13.0';
+  const build = '20261008.13';
   const history = [
+    {version:'2.13.0',build:'20261008.13',date:'2026-10-08',
+      en:['Consistent tab transitions and button feedback, plus switches for on/off preferences.','New Crimson red and Royal blue palettes; all routine symbols follow the selected accent.','Profile now has Overview, Your lift ranks and Friends pages. New Goals and routine icons.','Five optional editable starter splits in Plans, with previews and grouped sessions.','Remove any routine, including built-in sessions, without deleting workout history. Empty plans stay empty after reload.'],
+      hu:['Egységes fülváltások és gombvisszajelzés, kapcsolók a be/ki beállításokhoz.','Új karmazsinpiros és királykék paletta; minden edzésszimbólum követi a választott színt.','A Profilban Áttekintés, Emelési rangjaid és Barátok oldal. Új Célok- és edzésikonok.','Öt választható, szerkeszthető kezdő felosztás a Tervekben, előnézettel és csoportosított napokkal.','Bármely edzésterv eltávolítható, a beépített napok is. A napló megmarad, az üres lista újratöltéskor is üres marad.']},
     {version:'2.12.0',build:'20261008.12',date:'2026-10-08',
       en:['Profile has separate Overview and Friends pages.','Simpler friend search, visible connections and optional weekly competition.','Existing saved usernames publish automatically when their social profile is missing. Username search accepts @; clearer guidance for contacts and missing profiles.'],
       hu:['A Profil külön Áttekintés és Barátok oldalt kapott.','Egyszerűbb barátkeresés, látható kapcsolatok és lenyitható heti verseny.','A meglévő mentett felhasználónév automatikusan közzétehető, ha hiányzik a közösségi profil. A keresés elfogadja a @ jelet; egyértelműbb segítség a hiányzó profilhoz és elérhetőséghez.']},
-    {version,build,date:'2026-10-08',
+    {version:'2.11.0',build:'20261008.11',date:'2026-10-08',
       en:['Illustrative serving images for all 19 recipe ideas, with larger references in recipe details and offline support.','Accent colors now update card outlines and the bottom navigation tint.','Custom color stays expanded when changing accent, background or resetting the hue.'],
       hu:['Illusztratív tálalási képek mind a 19 receptötlethez, nagyobb képpel a részleteknél és offline támogatással.','A kiemelő szín a kártyák körvonalát és az alsó navigáció árnyalatát is frissíti.','Az egyéni szín nyitva marad a kiemelő szín, háttér vagy színalaphelyzet módosításakor.']},
     {version:'2.10.1',build:'20261008.10',date:'2026-10-08',en:['Food now uses the same lined calorie clock as Profile, including the optional exercise-adjusted daily budget.'],hu:['Az Étkezés ugyanazt a vonalas kalóriaórát használja, mint a Profil, az opcionálisan edzéssel növelt napi kerettel.']},
