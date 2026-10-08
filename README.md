@@ -65,7 +65,7 @@ Usernames, friend requests, friend profiles and weekly competition use the addit
 - **Food**: calorie and macro targets (Mifflin–St Jeor; see "Calorie calculator" below) and a daily diary with three ways to add a meal:
   **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams,
   the values are calculated), **AI** estimate from a photo or a description, or **your own values**
-  from a label. **Ideas**: 15 recipes with calculated macros, one tap adds a serving to the diary.
+  from a label. **Ideas**: 19 meal ideas with individual serving images. Missing nutrition is completed before logging a serving.
 - **Steps and calories burned**: per day, typed in or pasted (see "Fitness data" below); the burned
   calories can be added to the day's calorie budget.
 - **AI coach**: a chat bubble; ask about food or training and it answers from your targets, today's
@@ -133,8 +133,9 @@ and fat per 100 g, plus household portions. No number in it was typed by hand. T
 creator-reported and not independently verified. Missing values remain null and must be entered
 before logging. Batch quantities and logged servings are separate; pancakes are logged per piece.
 Original videos are not bundled. Uncertain quantities and app adaptations are labelled in the recipes.
+Every idea has a separately generated serving image, a lightweight thumbnail and a sharp offline detail view; [image notes](img/recipes/README.md).
 
-The optional Centr routine guides ten rounds in exercise order. Zero rest disables the automatic
+The video combinations are under Workout → Exercises → Exercise complexes. Centr guides ten rounds in exercise order. Zero rest disables the automatic
 timer. The three-grip pulldown routine records one demonstrated sequence, without assuming total
 sets or rest from the source. Existing plans and diaries are retained.
 

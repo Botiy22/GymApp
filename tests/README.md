@@ -41,3 +41,9 @@ The user's exact XLSX was not supplied. These results cover the fixture layouts 
 Additional validation for 2.4.2 used the supplied nine-page diet PDF in an isolated browser. All 7 days, 28 meals and 104 ingredients matched independently extracted amounts, calories and macros before and after save/reload; training/rest days and 9 rules were retained. The personal PDF is kept outside the repository and is not a committed fixture.
 
 Additional 2.4.3 verification reproduced the supplied screenshot with the actual v2.4.1 app/parser/service worker, upgraded that installation, then imported and saved all 28 meals from the supplied PDF. The website URL/build is pending; requests to the assumed GitHub Pages host were blocked by the environment proxy.
+
+## Responsive polish and independent recipe media (2.15.0)
+
+Run `python3 -m unittest discover -s tests -p test_responsive_polish.py -v` for the four focused tests. They cover 16 phone/landscape/language/text-size combinations, all main/inner tabs, active workouts and a populated food diary, bounded controls/navigation labels, food-action dialogs, all 19 individual images, avatar enlargement/background blocking/nested draft/reload, and all recipe images after verified service-worker installation and offline reload. These fixtures use no live account or user image. Physical phone engines and live deployment remain outside this validation.
+
+Starter sessions have separate pure checks: `node --test tests/test_routine_templates.js` (six tests).

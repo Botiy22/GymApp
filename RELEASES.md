@@ -6,6 +6,16 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.15.0 — 2026-10-08, build 20261008.17
+
+Food actions use equal-width icon/label tiles, with an adaptive two-column layout for tight content widths and larger text. Describe stays on one line. Page gutters account for safe areas; navigation and exercise filters size from content and wrap; macros, action rows and sheet footers adapt to the space available. Narrow phones use a compact Hungarian Settings caption with the full accessible name. Calorie readouts scale within the dial. Recipe ingredient notes wrap instead of running out of their card.
+
+All 19 recipe photographs were generated separately. Each has a native 1448 × 1086 WebP detail and a lightweight 384 × 288 thumbnail derived from its own whole image. The old atlas, tile positioning and old PNG assets are removed; all 38 new image assets are in the verified offline release. Ingredients, quantities and nutrition remain unchanged; a concise caption identifies generated serving ideas.
+
+Own and viewed-friend profile photos open in the shared larger image dialog, keeping the background locked. Opening an image from the profile editor preserves the unsaved draft when returning. Empty profile filler and a redundant zero-calorie equation are removed; activity and calorie-toggle labels are shorter.
+
+Validation: four focused Chromium regression tests passed, covering 16 English/Hungarian phone/landscape/text-size combinations (320/360/375/390/430 widths, 844 × 390 landscape, 16/20px root text), all tabs/subtabs, active workouts, populated diary, action dialogs, contained navigation labels, all 19 sharp images, photo enlargement/background blocking/draft/reload, and every image after a real verified service-worker install and offline reload. Six starter-template tests also passed. All 19 dish previews and representative mobile screenshots were visually reviewed. Physical iOS/Android, live account operations and hosting deployment were not verified.
+
 ## 2.14.0 — 2026-10-08, build 20261008.16
 
 All 24 optional starter sessions now contain seven exercises and estimate approximately 60–70 minutes. The five-day starter copies the original Upper/Lower/Push/Pull/Legs movements and prescriptions. Estimates include 12 minutes preparation, two minutes per equipment change, 45 seconds per working set and programmed rest only between sets, respecting zero rest. These are estimates, not enforced minimum elapsed times.

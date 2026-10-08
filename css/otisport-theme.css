@@ -388,7 +388,7 @@ dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { background: rgba(9,9,15,.74)
 /* The shared accent also colors surface outlines and the navigation background. */
 :root,:root[data-bg=light]{--line:rgba(var(--acc-rgb),.30);--edge:rgba(var(--acc-rgb),.24);--bar:linear-gradient(135deg,rgba(var(--acc-rgb),.16),rgba(var(--acc-rgb),.07)),var(--card)}
 @supports(color:color-mix(in srgb,red,blue)){:root,:root[data-bg=light]{--line:color-mix(in srgb,var(--acc-tx) 30%,var(--card));--edge:color-mix(in srgb,var(--acc-tx) 24%,var(--card))}}
-.recipe-photo{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--raised);border-radius:12px}.recipe-photo>img{position:absolute;width:330%;height:auto;max-width:none;display:block}.recipe-photo.recipe-single>img{position:static;width:100%;height:100%;object-fit:cover}.recipe-thumb{width:80px;flex:none}.recipe-card{padding:12px;gap:12px;align-items:center}.recipe-card .rc-t{min-width:0}.recipe-card .rc-t b{overflow-wrap:anywhere;line-height:1.4}.recipe-card .rc-t i{line-height:1.6}.recipe-reference{margin:0 0 20px}.recipe-hero{width:100%;border-radius:18px}.recipe-reference figcaption{font-size:.7rem;line-height:1.5;color:var(--mut);margin-top:8px}.recipe-card>svg{width:16px}@media(max-width:350px){.recipe-thumb{width:64px}.recipe-card{gap:9px;padding:10px}.recipe-card .rc-t b{font-size:.82rem}}
+.recipe-photo{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--raised);border-radius:12px}.recipe-photo>img{display:block;width:100%;height:100%;object-fit:cover}.recipe-thumb{width:clamp(64px,18vw,96px);flex:none}.recipe-card{padding:12px;gap:12px;align-items:center}.recipe-card .rc-t{min-width:0}.recipe-card .rc-t b{white-space:normal;overflow-wrap:normal;line-height:1.4}.recipe-card .rc-t i{white-space:normal;line-height:1.6;font-size:.72rem}.recipe-reference{margin:0 0 20px}.recipe-hero{width:100%;border-radius:18px}.recipe-reference figcaption{font-size:.68rem;line-height:1.5;color:var(--mut);margin-top:8px}.recipe-card>svg{width:16px;flex:none}
 /* Friends: one clear search action, visible connections, optional competition. */
 .social-card .h2row{margin-bottom:18px}.social-card .h2row>.icon-btn{width:38px;height:38px;background:transparent;border-color:transparent}.friend-handle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--edge);font-size:.75rem;color:var(--mut)}.friend-handle b{color:var(--ink);font-size:.8rem;overflow-wrap:anywhere;min-width:0}.social-card .friend-search{display:block;margin:20px 0 0;min-width:0}.friend-search-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.friend-search-heading label{font-size:.8rem;font-weight:650}.friend-search-heading select{width:auto;max-width:55%;min-height:36px;padding:6px 28px 6px 9px;font-size:.7rem;background-color:transparent;border:1px solid var(--edge);background-position:calc(100% - 15px) 16px,calc(100% - 10px) 16px}.social-card .friend-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-width:0}.social-card .friend-search-row input{display:block;width:100%;min-width:0;min-height:48px;padding:10px 12px;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;appearance:none}.social-card .friend-search-row .btn{display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;min-height:48px;padding:10px 13px;font-size:.78rem}.friend-search-row .btn svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}.social-card .friend-search .cap{font-size:.7rem;line-height:1.6;margin:10px 0 0}.friend-feedback{font-size:.75rem;line-height:1.6;color:var(--acc-tx);margin:12px 0 0;overflow-wrap:anywhere}.friend-feedback.error{color:var(--ink);padding-left:10px;border-left:2px solid var(--acc-tx)}.friend-section-title{font-size:.85rem;margin:22px 0 5px}.friend-section-title small{color:var(--mut);font-weight:400}.friend-connections{margin:20px 0}.friends-empty{font-size:.8rem;line-height:1.7;color:var(--mut);margin:0;padding:16px;background:var(--raised);border-radius:14px}.friend-connection{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--edge);min-width:0}.friend-connection .board-person{min-height:44px}.friend-connection .board-person>span:last-of-type{flex:1}.friend-connection .board-person>svg{width:15px;height:15px;flex:none;stroke:var(--mut);fill:none;stroke-width:1.8}.friend-connection>.icon-btn{width:32px;height:32px;flex:none;background:transparent;border-color:transparent;color:var(--mut)}.friend-competition{border-top:1px solid var(--edge);padding-top:4px}.friend-competition>summary,.social-card .friend-list>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;font-size:.8rem;cursor:pointer;list-style:none}.friend-competition>summary::-webkit-details-marker,.social-card .friend-list>summary::-webkit-details-marker{display:none}.friend-competition>summary svg,.social-card .friend-list>summary svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;flex:none}.friend-competition[open]>summary svg,.social-card .friend-list[open]>summary svg{transform:rotate(180deg)}.friend-competition>.cap{font-size:.7rem;margin:0 0 12px}.social-card .contact-discovery{margin-top:0}.social-card .friend-request>.link{min-width:0;overflow-wrap:anywhere}.social-card .friend-request .btn{width:auto}
 .profile-tabs{margin:18px 0;position:sticky;top:8px;z-index:5;background:var(--card);box-shadow:0 4px 18px rgba(0,0,0,.08)}.social-card .friend-search-row input:focus-visible{border-color:var(--acc-tx);outline:2px solid var(--acc-tx);outline-offset:2px}
@@ -417,3 +417,43 @@ dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { background: rgba(9,9,15,.74)
 @media(max-width:480px){.cardio-shortcut{grid-template-columns:minmax(0,1fr);gap:14px}.cardio-shortcut>.btn{width:100%;justify-self:stretch}}
 
 .exercise-complexes{margin:22px 0 28px}.exercise-complexes h3{margin-bottom:8px}.exercise-complexes>.cap{margin-bottom:16px}.exercise-complexes .rc-t{min-width:0}.exercise-complexes .rc-t b{overflow-wrap:anywhere}
+
+/* Content adapts to its available width, including larger system text. */
+:root{--page-gutter:clamp(14px,4vw,24px)}
+#view{padding-left:max(var(--page-gutter),env(safe-area-inset-left,0px));padding-right:max(var(--page-gutter),env(safe-area-inset-right,0px));container-type:inline-size}
+.top>div:first-child{min-width:0;flex:1}.top h1{overflow-wrap:normal}.top-actions{flex:none}
+.btn{overflow-wrap:normal;word-break:normal;padding-block:10px}.btn>svg{flex:none}.btn>span{min-width:0}
+.seg{grid-auto-columns:minmax(0,1fr)}.seg button{min-width:0;line-height:1.4;white-space:normal;overflow-wrap:normal;padding:10px 6px}
+.food-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 16px}
+.food-actions>.btn{flex-direction:column;gap:7px;min-height:78px;padding:12px 6px;font-size:.86rem}
+.food-actions>.btn>span{white-space:nowrap}.food-actions svg{width:22px;height:22px}
+.macros,.profile-macros{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,16px)}
+.macros>div,.profile-macros>div{min-width:0}.macros b{font-size:clamp(.75rem,3.4vw,.9rem);white-space:normal;overflow-wrap:normal;font-variant-numeric:tabular-nums}
+.sw>span{min-width:0;line-height:1.5}.energy-equation{display:flex;flex-wrap:wrap;gap:0 .25em;line-height:1.7}.energy-base{flex-wrap:wrap}
+.actrow .rc-t b,.actrow .rc-t i{white-space:normal;overflow-wrap:normal}.actrow .rc-t i{font-size:.74rem}
+.profile-photo-view{margin:0;display:grid;place-items:center;min-width:0}.profile-photo-view img{width:auto;max-width:100%;max-height:65vh;max-height:65dvh;object-fit:contain;border-radius:18px}
+button.profile-avatar{padding:0;cursor:zoom-in}.profile-identity>button.profile-avatar{width:72px;height:72px}
+.sheet-foot{flex-wrap:wrap}.sheet-foot>.btn{flex:1 1 8rem}.sheet-foot>.routine-remove{flex:0 0 44px}
+@container(max-width:22rem){
+ .food-actions{gap:8px}.food-actions>.btn{font-size:.82rem}
+ .row2,.training-actions{grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr))}
+ .recipe-card{gap:10px;padding:10px}.recipe-card .rc-t b{font-size:.85rem}
+ .profile-cover{padding:16px}.profile-identity{gap:10px}.profile-identity h2{font-size:1.15rem}.profile-identity>button.profile-avatar{width:58px;height:58px;border-radius:18px}
+ .profile-stats{padding:16px 5px}.profile-stats b{font-size:1rem}.profile-stats small{line-height:1.5}
+}
+@container(max-width:18rem){
+ .food-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.food-actions>.btn:first-child{grid-column:1/-1;flex-direction:row;min-height:48px}
+ .macros,.profile-macros{grid-template-columns:1fr}.macros>div,.profile-macros>div{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.macros>div>span,.profile-macros>div>small{flex:1}.macros .meter,.profile-macros>div>i{flex-basis:100%;width:100%}
+ .workout-tabs{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr))}.profile-tabs{grid-template-columns:1fr;position:static}
+ .profile-identity{flex-wrap:wrap}.profile-identity>.icon-btn{margin-left:auto}.achievement-grid{grid-template-columns:1fr}
+}
+@media(max-width:380px){#tabbar span{font-size:.58rem;line-height:1.3}#tabbar button{min-width:0;padding-inline:2px}}
+@media(orientation:landscape) and (max-height:500px){#view{padding-bottom:calc(var(--sb) + 116px)}.profile-photo-view img{max-height:55dvh}}
+
+.workout-tabs,.seg.grp{display:flex;flex-wrap:wrap;gap:3px}.workout-tabs button,.seg.grp button{flex:1 1 auto;min-width:0;padding:10px 9px}
+#tabbar .nav-caption-short{display:none}
+@media(max-width:360px){#tabbar .nav-caption-full{display:none}#tabbar .nav-caption-short{display:block}}
+.dial-wrap{container-type:inline-size}.dial-readout>b{font-size:clamp(1.65rem,18cqi,3rem)}.dial-readout p{max-width:72%;text-align:center}
+
+.ing li{flex-wrap:wrap;line-height:1.6}.ing li>span{min-width:0;flex:1 1 8rem}.ing li>b{min-width:0;max-width:100%;white-space:normal;overflow-wrap:normal;text-align:right}
+.ing li.long-quantity{display:block}.ing li.long-quantity>b{display:block;text-align:left;color:var(--mut);font-weight:500;margin-top:4px}

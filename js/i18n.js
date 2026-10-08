@@ -453,3 +453,17 @@ Object.assign(I18N.hu,{
   complexRounds:'10 kör',complexGrips:'3 fogás',startComplex:'Komplex indítása',
   durationHint:'A becsült idő 12 perc bemelegítést/előkészületet, eszközváltást és pihenőt is tartalmaz. A tempód eltérhet.'
 });
+
+Object.assign(I18N.en,{
+  viewProfilePhoto:'View profile photo',includeWorkoutEnergy:'Include workout calories',
+  actAdd:'Add activity',actAddSub:'Steps and active calories',
+  recipeReferenceCaption:'Serving idea · AI-generated image'
+});
+Object.assign(I18N.hu,{
+  viewProfilePhoto:'Profilkép megnyitása',includeWorkoutEnergy:'Edzéskalóriák beszámítása',
+  actAdd:'Aktivitás hozzáadása',actAddSub:'Lépések és aktív kalóriák',
+  recipeReferenceCaption:'Tálalási ötlet · AI-generált kép'
+});
+
+Object.assign(I18N.en,{settingsNavShort:'Settings'});
+Object.assign(I18N.hu,{settingsNavShort:'Beáll.'});

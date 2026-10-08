@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.14.0';
-  const build = '20261008.16';
+  const version = '2.15.0';
+  const build = '20261008.17';
   const history = [
+    {version:'2.15.0',build:'20261008.17',date:'2026-10-08',
+      en:['Food actions adapt to small screens without breaking labels. Navigation, cards and larger text fit their available space.','Every recipe has a separately generated sharp image, with lightweight thumbnails and full-size details available offline.','Tap a profile photo to enlarge it. Cleaner activity and calorie labels, with less empty-profile filler.'],
+      hu:['Az ételműveletek feliratai kis képernyőn sem törnek szét. A navigáció, kártyák és nagyobb szöveg az elérhető helyhez igazodnak.','Minden recept külön generált, éles képet kapott, kis előnézettel és nagy részletképpel, offline is.','A profilkép koppintással nagyítható. Rövidebb aktivitás- és kalóriafeliratok, kevesebb üres profilkitöltő szöveg.']},
     {version:'2.14.0',build:'20261008.16',date:'2026-10-08',
       en:['Starter splits now have seven exercises per session and approximately 60–70 minutes including preparation and rest. The five-day split follows the original plan.','Untouched older starter sessions expand automatically; customized sessions and workout history are preserved.','The two video combinations are in Workout → Exercises → Exercise complexes, keeping their original rounds, grips and tempo.'],
       hu:['A kezdő felosztások minden napja hét gyakorlatot és az előkészülettel, pihenőkkel együtt körülbelül 60–70 percet tartalmaz. Az ötnapos felosztás az eredeti tervet követi.','A korábbi, érintetlen kezdő edzések automatikusan bővülnek; az egyéni módosítások és az edzésnapló megmaradnak.','A két videós kombináció az Edzés → Gyakorlatok → Gyakorlatkomplexek részen található, az eredeti körökkel, fogásokkal és tempóval.']},
