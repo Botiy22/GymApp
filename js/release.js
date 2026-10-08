@@ -1,9 +1,12 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.10.1';
-  const build = '20261008.10';
+  const version = '2.11.0';
+  const build = '20261008.11';
   const history = [
-    {version,build,date:'2026-10-08',en:['Food now uses the same lined calorie clock as Profile, including the optional exercise-adjusted daily budget.'],hu:['Az Étkezés ugyanazt a vonalas kalóriaórát használja, mint a Profil, az opcionálisan edzéssel növelt napi kerettel.']},
+    {version,build,date:'2026-10-08',
+      en:['Illustrative serving images for all 19 recipe ideas, with larger references in recipe details and offline support.','Accent colors now update card outlines and the bottom navigation tint.','Custom color stays expanded when changing accent, background or resetting the hue.'],
+      hu:['Illusztratív tálalási képek mind a 19 receptötlethez, nagyobb képpel a részleteknél és offline támogatással.','A kiemelő szín a kártyák körvonalát és az alsó navigáció árnyalatát is frissíti.','Az egyéni szín nyitva marad a kiemelő szín, háttér vagy színalaphelyzet módosításakor.']},
+    {version:'2.10.1',build:'20261008.10',date:'2026-10-08',en:['Food now uses the same lined calorie clock as Profile, including the optional exercise-adjusted daily budget.'],hu:['Az Étkezés ugyanazt a vonalas kalóriaórát használja, mint a Profil, az opcionálisan edzéssel növelt napi kerettel.']},
     {version:'2.10.0',build:'20261008.9',date:'2026-10-08',
       en:['Estimated active calories for lifting from confirmed duration, body weight and intensity.','Log walking, incline walking, running, stairs, cycling and elliptical cardio, separately or inside a workout.','Food and Profile separate lifting/cardio calories from your base target; adding them to the daily budget is optional.','Entered daily active calories replace workout estimates in the budget to avoid counting them twice.'],
       hu:['Súlyzós aktív kalóriák becslése ellenőrzött időtartam, testsúly és intenzitás alapján.','Séta, emelkedős séta, futás, lépcsőzés, kerékpározás és elliptikus kardió rögzítése önállóan vagy edzésen belül.','Az Étkezés és Profil külön mutatja a súlyzós és kardió kalóriát, az alapcélt megtartva. A napi keretbe való beszámítás választható.','A megadott napi összes aktív kalória az edzésbecslést helyettesíti, így nem számoljuk kétszer.']},

@@ -4,12 +4,18 @@ The bottom bar is **Workout · Food · Goals · Settings · Profile**. Workout c
 
 ## Activate friends in Supabase
 
-1. In your existing Supabase project, open **SQL Editor → New query**.
-2. Run [migrations/20261008_social.sql](migrations/20261008_social.sql). The existing `supabase.sql` account table must already be installed. The migration is additive and can be rerun; it does not replace private user data.
-3. Keep the existing public project URL/key in `js/config.js`. No service-role key belongs in the app.
-4. Update the app, then open **Profile → Edit profile**, choose a username and save. Usernames are globally unique, case-insensitive, and use 3–24 letters, numbers or underscores.
-5. Run [migrations/20261008_social_contacts.sql](migrations/20261008_social_contacts.sql) after the first migration for email/phone discovery.
-6. Add a friend's exact username, email, or international phone number. The other person accepts under **Profile → Friends & competition**. Both can refresh scores, inspect each other's profiles or remove the connection. Sent requests can be cancelled; received requests can be declined.
+You do not need to upgrade Supabase itself. Install these two additive SQL migrations in the same project the app already uses:
+
+1. Open [Supabase Dashboard](https://supabase.com/dashboard), select your existing app project, and choose **SQL Editor → New query**.
+2. Open [20261008_social.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261008_social.sql), copy the **entire file**, paste it into the query and click **Run**. Wait for success.
+3. Create another new query. Copy and run the entire [20261008_social_contacts.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261008_social_contacts.sql) file. Run this one after the first.
+4. Keep the existing public project URL/key in `js/config.js`; the existing `supabase.sql` private account table must already be installed. These migrations can be rerun and preserve private account data.
+5. In the app, use **Settings → App → Check for update**, then **Profile → Edit profile**. Save a unique username (3–24 letters, numbers or underscores). Both people need to be signed in and to save a username.
+6. Under **Profile → Friends & competition**, choose Username and enter the friend's exact username. The other person accepts the incoming request in that same section. Refresh the section to load changes; accepted friends can open each other's profiles and appear in the weekly leaderboard.
+7. To use email search, each person must have a confirmed account email and enable **How friends can find you → Let friends find me by email**, then save. Exact email lookup works only for opted-in accounts.
+8. Phone lookup is optional: configure an SMS provider in **Supabase Authentication → Providers → Phone**, verify the number in the app, and enable phone discovery. SMS providers may charge for messages; username and email requests do not require SMS.
+
+The app shows connected friends, rather than a publicly browsable directory of all accounts. Only chosen public profile details and gym aggregates are shared after acceptance. No service-role/admin secret belongs in the app. If a query fails, keep the error message and resolve that step before running the next file; do not reset tables or your project.
 
 The cloud coding environment cannot reach the configured Supabase project (proxy 403) and has no database admin connection. The migration has been tested on disposable PostgreSQL, but **has not been applied to the live project**. The UI reports an unavailable backend/missing migration without fabricating friends, points or claimed usernames. Profile edits remain on the device after a network or username error; saving again retries publication.
 

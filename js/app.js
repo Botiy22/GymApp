@@ -451,10 +451,19 @@
   }
   /* ---------- meal ideas ---------- */
   const RCP = window.RECIPES || { items: [], videos: [] };
+  const RECIPE_REFERENCE_IDS=['clip-chicken-gnocchi','clip-chicken-chickpeas','clip-blueberry-pancakes','oats-banana-pb','protein-oats','eggs-ham-toast','yogurt-berries','overnight-oats','chicken-rice-broccoli','lean-bolognese','salmon-sweet-potato','tuna-wrap','chili-beans-rice','pork-potato','egg-fried-rice','cottage-pineapple','banana-shake','pb-banana-toast'];
+  function recipeReference(r,hero=false) {
+    const index=RECIPE_REFERENCE_IDS.indexOf(r.id),flatbread=r.id==='clip-ham-flatbread';if(index<0&&!flatbread)return '';
+    // Crop each serving from the original 3-column atlas; generated row spacing is uneven.
+    const centers=[123.5,367,608,850,1092.5,1375];
+    const left=index<0?0:-(index%3*110+5),top=index<0?0:-(centers[Math.floor(index/3)]-1024/3.3/(4/3)/2)*3.3/1024*(4/3)*100;
+    const picture=`<span class="recipe-photo ${hero?'recipe-hero':'recipe-thumb'} ${flatbread?'recipe-single':''}" ${hero?`role="img" aria-label="${esc(t('recipeReferenceLabel',r[L()]||r.en))}"`:'aria-hidden="true"'}><img src="img/recipes/${flatbread?'ham-flatbread.png':'reference-atlas.png'}" alt="" loading="lazy" decoding="async" ${flatbread?'':`style="left:${left}%;top:${top}%"`}></span>`;
+    return hero?`<figure class="recipe-reference">${picture}<figcaption>${esc(t('recipeReferenceCaption'))}</figcaption></figure>`:picture;
+  }
   function vIdeas() {
     const cats = [['', t('all')], ['breakfast', t('cat_breakfast')], ['main', t('cat_main')], ['snack', t('cat_snack')]];
     let h = `<div class="seg">${cats.map(([c, n]) => `<button class="${ui.idea === c ? 'on' : ''}" data-a="idea-cat" data-c="${c}" aria-pressed="${ui.idea === c}">${esc(n)}</button>`).join('')}</div><div class="rlist">` +
-      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard" data-a="idea-open" data-id="${esc(r.id)}"><span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.source ? esc(t('recipeNew')) + ' · ' : ''}${r.kcal == null ? '—' : r.kcal} kcal · ${r.p == null ? '—' : r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
+      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard recipe-card" data-a="idea-open" data-id="${esc(r.id)}">${recipeReference(r)}<span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.source ? esc(t('recipeNew')) + ' · ' : ''}${r.kcal == null ? '—' : r.kcal} kcal · ${r.p == null ? '—' : r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
     const vids = RCP.videos.filter(v => /^https:\/\/www\.tiktok\.com\//.test(v.url));
     if (vids.length) h += `<h2>${esc(t('videosTitle'))}</h2><div class="rlist">${vids.map(v => `<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p>`;
     return h;
@@ -463,7 +472,7 @@
     return () => {
       const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
       const k = L() === 'hu' ? 0 : 1, q = ui.recipeQty || 1, macro = key => r[key] == null ? '—' : r1(r[key] * q);
-      return { title: r[L()] || r.en, html: `<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
+      return { title: r[L()] || r.en, html: `${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
         <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
         <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li><span>${esc(i[k])}</span><b>${typeof i[2] === 'number' ? i[2] + ' g' : esc(i[2])}</b></li>`).join('')}</ul></section>
         <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
@@ -643,6 +652,7 @@
 
   let animT = 0;
   function render() {
+    const customAccent=$('.custom-accent');if(customAccent)ui.customAccentOpen=customAccent.open;
     ownSync();
     document.documentElement.lang = L();
     refreshBrandMetadata();
@@ -686,7 +696,7 @@
       try { d.showModal(); } catch (error) { unlockSheet(); unlockSheet = null; ui.sheets = []; throw error; }
     }
   }
-  function refreshSheet() { if (!ui.sheets.length && ui.tab === "settings") { rerender(); return; } ui.sheetKeep = true; drawSheet(); }
+  function refreshSheet() { const customAccent=$('.custom-accent');if(customAccent)ui.customAccentOpen=customAccent.open; if (!ui.sheets.length && ui.tab === "settings") { rerender(); return; } ui.sheetKeep = true; drawSheet(); }
   function closeSheet(all) {
     if (all) ui.sheets = []; else ui.sheets.pop();
     if (!ui.sheets.length && ui.stale) { ui.stale = false; setTimeout(rerender, 0); }      // data arrived from the account while a panel was open
@@ -1191,7 +1201,7 @@
     else {
       const c = hueRGB(hue, light ? 0.74 : 0.82);                                    // on the bright background the fill is a little deeper, and accent-coloured text much darker, so both stay readable
       e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', '#0c0e12');
-      if (light) e.style.setProperty('--acc-tx', 'rgb(' + hueRGB(hue, 0.45).join(',') + ')'); else e.style.removeProperty('--acc-tx');
+      if (light) e.style.setProperty('--acc-tx', 'rgb(' + hueRGB(hue, 0.45).join(',') + ')'); else e.style.setProperty('--acc-tx', 'rgb(' + c.join(',') + ')');
     }
     e.dataset.bg = s.bg;
     const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f8f5f0' : '#14151b');
@@ -1210,7 +1220,7 @@
       const accOff = cs || CL ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="cap">${esc(t('accOff'))}</p><button class="btn" data-a="acc-help">${esc(t('accHelp'))}</button></section>`;
       return { title: t('settings'), html: `${account}${accOff}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
           <p class="lbl">${esc(t('accent'))}</p><div class="accent-palettes">${[[null,'paletteApricot'],[155,'paletteSage'],[250,'paletteSky'],[300,'paletteLavender']].map(([h,key])=>`<button class="palette ${s.hue===h?'on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${s.hue===h}" style="--swatch:${h==null?'#efad82':'rgb('+hueRGB(h).join(',')+')'}"><span class="palette-preview" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t(key))}</b><span class="palette-check">${s.hue===h?IC.check:''}</span></button>`).join('')}</div>
-          <details class="custom-accent"><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0,60,120,180,240,300,359].map(h=>'rgb('+hueRGB(h).join(',')+')').join(',')})"></div><button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></details>
+          <details class="custom-accent" ${ui.customAccentOpen?'open':''}><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="hue"><input type="range" min="0" max="359" step="1" value="${s.hue == null ? DEF_HUE : s.hue}" data-in="set-hue" aria-label="${esc(t('accent'))}" style="background:linear-gradient(90deg,${[0,60,120,180,240,300,359].map(h=>'rgb('+hueRGB(h).join(',')+')').join(',')})"></div><button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></details>
           <p class="lbl">${esc(t('background'))}</p><div class="surface-choices">${(Store.BGS||['aurora']).map(b=>`<button class="surface-choice ${s.bg===b?'on':''}" data-a="set-bg" data-v="${b}" aria-pressed="${s.bg===b}"><span class="surface-preview surface-${b}" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t('bg_'+b))}</b>${s.bg===b?IC.check:''}</button>`).join('')}</div>
           ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
@@ -1622,7 +1632,7 @@
     'install-help'() { openSheet(shInstall()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; render(); refreshSheet(); },
-    'set-bg'(el) { if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
+    'set-bg'(el) { clearTimeout(hueT);if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
     'export-csv'() { exportCSV(); },
     async wipe() {
       const acc = CL && CL.user; if (!confirm(t(acc ? 'wipeConfirmCloud' : 'wipeConfirm')) || !confirm(t('wipeConfirm2'))) return;
@@ -1638,8 +1648,8 @@
     'coach-open'(el) { const ch = D().chats.find(x => x.id === el.dataset.id); if (!ch || ui.coach.busy) return; ui.coach = Object.assign(newCoach(), { id: ch.id, msgs: ch.msgs.map(m => ({ role: m.role, content: m.content })) }); closeSheet(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight; },
     'coach-del'(el) { if (!confirm(t('coachDelConfirm'))) return; const d = D(); d.chats = d.chats.filter(x => x.id !== el.dataset.id); if (ui.coach.id === el.dataset.id && !ui.coach.busy) ui.coach = newCoach(); Store.save(); refreshSheet(); },
     'settings-jump'(el) { const section=$$('#view .settings-content section,#view .settings-group').find(s=>(s.querySelector('h3')||s.querySelector('summary'))?.textContent===t(el.dataset.v)); if(section?.tagName==='DETAILS')section.open=true;if(section)section.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'}); },
-    'set-palette'(el) { const hue=el.dataset.v==='default'?null:+el.dataset.v;if(hue!==null&&![155,250,300].includes(hue))return;D().settings.hue=hue;Store.save();applyLook();refreshSheet(); },
-    'hue-reset'() { D().settings.hue = null; Store.save(); applyLook(); refreshSheet(); },
+    'set-palette'(el) { clearTimeout(hueT);const hue=el.dataset.v==='default'?null:+el.dataset.v;if(hue!==null&&![155,250,300].includes(hue))return;D().settings.hue=hue;Store.save();applyLook();refreshSheet(); },
+    'hue-reset'() { clearTimeout(hueT);D().settings.hue = null; Store.save(); applyLook(); refreshSheet(); },
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
     'ai-answer'(el) { const s = ui.ai, q = s.res && s.res.question; if (!q || s.loading) return; s.qa = (s.qa || []).concat([q.text + ' ' + String(el.dataset.o || '').slice(0, 40)]); s.res = null; refreshSheet(); aiGo(); },
@@ -2036,7 +2046,7 @@
     if (ui.tab === "settings") { if(ui.settingsNavigate){ui.settingsNavigate=false;render();}else rerender(); }
   });
   dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
-  document.addEventListener('toggle', e => { if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
+  document.addEventListener('toggle', e => { if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.custom-accent'))ui.customAccentOpen=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);

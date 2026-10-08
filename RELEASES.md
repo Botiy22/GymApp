@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.11.0 — 2026-10-08, build 20261008.11
+
+- All 19 recipe ideas show original generated serving references in the list and recipe detail. Captions identify illustrative images; ingredients, portions and nutrition remain unchanged. Both local source images are included in the verified offline shell.
+- Card/field outlines and the bottom navigation follow the accent in light and dark themes. Custom accent text now follows the chosen hue in dark mode as well.
+- The expanded custom-color section survives palette/background changes; pending slider redraws are cancelled when making a new selection.
+- SOCIAL.md explains activating both Supabase migrations, usernames, accepted requests and opt-in verified contact lookup. Live migrations have not been applied by this release.
+- No tests added/run. JavaScript syntax/whitespace review and manual Chromium screenshots at 320px EN / 390px HU covered recipe images and Settings changes, with no recorded page errors or horizontal overflow. Live serving, offline installation, accounts and physical Safari remain unverified.
+
 ## 2.10.1 — 2026-10-08, build 20261008.10
 
 Food replaces its calorie headline/bar with the same shared lined calorie clock as Profile. It uses the selected diary day and applicable budget, retaining separate base/exercise calories, macros and remaining/over-target amounts. No tests added/run; syntax/whitespace and manual mobile layout review only.

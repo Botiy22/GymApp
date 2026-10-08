@@ -1,3 +1,17 @@
+# Update — Setora 2.11.0, 2026-10-08
+
+Added illustrative reference photos for all 19 existing recipe ideas, including the four imported recipes. img/recipes/reference-atlas.png is the original generated 3×6 contact sheet, clipped into individual servings with CSS using measured centers; img/recipes/ham-flatbread.png is the separate original flourless quark/egg flatbread reference. No photo pixels were edited. Both are included in sw.js CORE and release-manifest hashes; approximately 6.5 MB additional offline assets. Nutrition/source/ingredients are unchanged and captions clarify the pictures are illustrative. See img/recipes/README.md for provenance.
+
+Theme borders and navigation use accent-derived variables in dark/light appearances; applyLook explicitly sets --acc-tx for custom dark hues instead of falling back to fixed apricot. Custom-color disclosure state survives render/refreshSheet, and palette/background/reset actions cancel pending hue redraws. Existing appearance/accessibility choices remain.
+
+SOCIAL.md now gives complete dashboard SQL installation and account steps. Neither live social migration has been executed here; no database admin connection is available. Username search needs both signed-in users to publish usernames and the recipient to accept. Email/phone require verified, opted-in contacts; phone additionally needs an Auth SMS provider.
+
+No tests added/run. JavaScript syntax and whitespace review plus manual local Chromium screenshots at 320px EN /390px HU showed all 19 images, custom-color disclosure remaining open after palette/background choices, blue borders/navigation with blue accent, no page errors and no horizontal overflow. Screenshot helper and synthetic browser state remained outside the repository. Live deployment, real account sync, offline installation and physical Safari remain unverified.
+
+Verified pre-change remote backup backup/main-20261008-192822-before-recipe-theme-update preserves 15a8efde24ff0e417d49bfb3816df024190ba0f5. Restore using a normal reviewed commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.10.1, 2026-10-08
 
 Food's calorie headline/bar is replaced by the same lined dial as Profile. A shared calorieClock helper keeps eaten/budget/remaining/over/no-target output consistent; Food uses its selected diary date and optional exercise-adjusted budget. Base target, separate lifting/cardio panel, macros and food actions remain. No tests added/run; syntax/whitespace and manual 320px EN /390px HU Chromium layout review used synthetic meal/workout data. Live serving/physical Safari remain unverified.

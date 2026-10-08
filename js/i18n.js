@@ -390,3 +390,6 @@ Object.assign(window.I18N.hu, {
 
 Object.assign(window.I18N.en,{manualEnergyHint:'Enter a full daily active-calorie total, including workouts. If included in your budget, it replaces workout estimates.'});
 Object.assign(window.I18N.hu,{manualEnergyHint:'A teljes napi aktív kalóriát add meg, az edzésekkel együtt. Beszámításkor ez az összeg az edzésbecslés helyére kerül.'});
+
+Object.assign(window.I18N.en,{recipeReferenceLabel:'Illustrative serving reference: {0}',recipeReferenceCaption:'Illustrative serving reference · appearance and portions may vary'});
+Object.assign(window.I18N.hu,{recipeReferenceLabel:'Illusztratív tálalási kép: {0}',recipeReferenceCaption:'Illusztratív tálalási kép · az elkészítés és az adag eltérhet'});
