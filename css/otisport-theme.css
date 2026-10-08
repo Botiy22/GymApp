@@ -409,3 +409,9 @@ dialog#sheet::backdrop,.pdf-plan-dialog::backdrop { background: rgba(9,9,15,.74)
 .routine-group{margin:22px 0;border-top:1px solid var(--edge)}.routine-group>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:72px;cursor:pointer;list-style:none}.routine-group>summary::-webkit-details-marker{display:none}.routine-group>summary b{font-size:.95rem;display:block;line-height:1.5}.routine-group>summary small{font-size:.7rem;color:var(--mut);display:block;margin-top:3px}.routine-group>summary svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8}.routine-group[open]>summary svg{transform:rotate(180deg)}
 
 .individual-routines-title{margin:24px 0 14px;font-size:.9rem;color:var(--mut)}
+/* Actions must fit their container; full-width buttons need their own row. */
+.btn{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+.cardio-shortcut{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}.cardio-shortcut>div{min-width:0}.cardio-shortcut h3,.cardio-shortcut .cap{overflow-wrap:normal;word-break:normal}.cardio-shortcut>.btn{width:auto;max-width:100%;justify-self:start;padding:12px 16px}
+.row2{grid-template-columns:repeat(2,minmax(0,1fr))}.row3{grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr))}.row2>.btn,.row3>.btn{padding-top:10px;padding-bottom:10px}.inline{grid-template-columns:minmax(0,1fr) auto}.inline>:first-child{min-width:0;max-width:100%}
+.h2row{flex-wrap:wrap}.h2row>h2,.h2row>h3,.h2row>div{min-width:0;overflow-wrap:anywhere}.h2row>.btn{width:auto}
+@media(max-width:480px){.cardio-shortcut{grid-template-columns:minmax(0,1fr);gap:14px}.cardio-shortcut>.btn{width:100%;justify-self:stretch}}

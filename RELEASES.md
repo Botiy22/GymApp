@@ -6,6 +6,12 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.13.1 — 2026-10-08, build 20261008.14
+
+- Cardio shortcut uses a constrained layout: phones up to 480px place the full-width Add button below the description; wider views use a content-sized button alongside flexible text. This removes the inherited 100%-width, non-shrinking flex button that squeezed the description and escaped its card.
+- Shared buttons have bounded widths and wrappable text; two/three-action and inline grids use zero-minimum tracks. Heading rows can wrap actions onto another line. Intentional full-width actions remain full-width.
+- No tests added/run. Source/syntax/whitespace review and manual local Chromium screenshots covered all five tabs at 320px EN, 390px HU, 430px EN, and 320px HU with 20px root text. Geometry observations found no visible controls outside their viewport/card/grid, no page errors, and the cardio action opened its form in each layout. These observations cover the local states reviewed; live deployment and physical Safari remain unverified.
+
 ## 2.13.0 — 2026-10-08, build 20261008.13
 
 - Main and inner tabs use the same navigation transition; asynchronous Profile redraws preserve an active entry animation. Button press feedback covers new controls and respects reduced motion/calm preferences.

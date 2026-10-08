@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.13.0';
-  const build = '20261008.13';
+  const version = '2.13.1';
+  const build = '20261008.14';
   const history = [
+    {version:'2.13.1',build:'20261008.14',date:'2026-10-08',
+      en:['Cardio actions stay inside their card; phones show the Add button below the description.','Shared button, action-grid and heading-row sizing lets long labels wrap without squeezing adjacent content.'],
+      hu:['A kardió műveletei a kártyán belül maradnak; telefonon a Hozzáadás gomb a leírás alá kerül.','A közös gombok, műveleti sorok és címsorok hosszabb feliratai is törhetők, a szomszédos tartalom összenyomása nélkül.']},
     {version:'2.13.0',build:'20261008.13',date:'2026-10-08',
       en:['Consistent tab transitions and button feedback, plus switches for on/off preferences.','New Crimson red and Royal blue palettes; all routine symbols follow the selected accent.','Profile now has Overview, Your lift ranks and Friends pages. New Goals and routine icons.','Five optional editable starter splits in Plans, with previews and grouped sessions.','Remove any routine, including built-in sessions, without deleting workout history. Empty plans stay empty after reload.'],
       hu:['Egységes fülváltások és gombvisszajelzés, kapcsolók a be/ki beállításokhoz.','Új karmazsinpiros és királykék paletta; minden edzésszimbólum követi a választott színt.','A Profilban Áttekintés, Emelési rangjaid és Barátok oldal. Új Célok- és edzésikonok.','Öt választható, szerkeszthető kezdő felosztás a Tervekben, előnézettel és csoportosított napokkal.','Bármely edzésterv eltávolítható, a beépített napok is. A napló megmarad, az üres lista újratöltéskor is üres marad.']},

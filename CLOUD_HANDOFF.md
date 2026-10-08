@@ -1,3 +1,13 @@
+# Update — Setora 2.13.1, 2026-10-08
+
+User screenshot showed the Workout cardio Add button extending beyond its card while the text collapsed into a narrow strip. Root cause: shared .btn width:100% combined with cardio-shortcut flex:none. The shortcut now uses minmax(0,1fr)/auto grid at wider widths and a single-column layout at <=480px, with the Add button below full-width copy. Shared .btn bounds/wrapping, zero-minimum row2/row3/inline grid tracks, and wrapping h2row headings prevent related intrinsic-width action overflow. Existing button actions, diaries, routine/sync/storage formats, themes and modal locks are unchanged.
+
+No tests added/run. Syntax/whitespace/source review and manual local Chromium screenshot/geometry review used isolated local storage at 320px EN,390px HU,430px EN and320px HU with20px root text. Reviewed Workout/Food/Goals/Settings/Profile, expanded Settings groups and cardio form opening; no visible controls exceeded their viewport/card/grid in those states and no page errors were recorded. Browser scripts/screenshots stayed outside the repository. Live serving, populated account-specific states and physical Safari remain unverified. No SQL changes required.
+
+Verified pre-edit remote backup backup/main-20261008-203114-before-action-layout-fix preserves fb131048c94a828451c8a39c47b0d903bf29c966. Restore by normal reviewed commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.13.0, 2026-10-08
 
 User requested consistent tab/button animations, switches where appropriate, more customization with red/royal blue, separate Profile rank tab, new Goals/routine icons, editable popular splits and removal, and accent fixes for lower/pull/legs/Centr/back routines.
