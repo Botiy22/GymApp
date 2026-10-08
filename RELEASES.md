@@ -6,6 +6,10 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.9.1 — 2026-10-08, build 20261008.8
+
+Profile macro totals are rounded for display to one decimal, avoiding floating-point strings such as `208.60000000000002`. Flexible value/unit rows and constrained columns prevent overlap while retaining complete values; bars align beneath each total. Stored nutrition values are unchanged. No tests added/run; syntax/whitespace and manual screenshot review only.
+
 ## 2.9.0 — 2026-10-08, build 20261008.7
 
 - Setora working name in app, signup, manifest and browser metadata; existing account/data/PWA identity retained.

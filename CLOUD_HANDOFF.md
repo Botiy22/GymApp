@@ -1,3 +1,13 @@
+# Update — Setora 2.9.1, 2026-10-08
+
+User screenshot showed Profile Carbs displaying a floating-point sum (`208.60000000000002`) across the Fat column. Profile now formats macro totals through the existing one-decimal rounding helper before language-specific decimal formatting. Value/unit flex rows constrain and wrap within the three grid columns; bars remain aligned. Nutrition storage, calculations and other displays are unchanged.
+
+No tests added/run. Syntax/whitespace reviewed. Manual Chromium screenshots used the screenshot's synthetic meal totals in 320px English and 390px Hungarian, plus unusually large totals at 320px; displayed values round correctly and documents have no horizontal overflow or runtime errors. Physical Safari remains unverified.
+
+Backup backup/main-20261008-185133-before-macro-layout-fix was created and verified before edits at 0bdb59130539d8706518057731d2e2878545dbee. Restore via a normal reviewed restoration commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.9.0, 2026-10-08
 
 Latest user request: persistent menu navigation, lined dials, username/email/phone friends, rank-arrow correction, simpler tabs, premium appearance chooser, new name. Setora is a working name (availability unchecked). Settings is now a regular page with functional bottom navigation; editors/images keep their modal background lock. Quick section jumps and remembered collapsed advanced sections; curated OKLCH palettes/background previews preserve numeric custom hue and calm/solid/light modes. Workout/Goals subtabs are sticky, Food search primary, Goals tick dial and optional templates, ranks moved above friends with native-toggle state and open-arrow rotation. Detailed drawings remain restored.
