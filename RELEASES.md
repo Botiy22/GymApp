@@ -6,6 +6,10 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.10.1 — 2026-10-08, build 20261008.10
+
+Food replaces its calorie headline/bar with the same shared lined calorie clock as Profile. It uses the selected diary day and applicable budget, retaining separate base/exercise calories, macros and remaining/over-target amounts. No tests added/run; syntax/whitespace and manual mobile layout review only.
+
 ## 2.10.0 — 2026-10-08, build 20261008.9
 
 - Lifting calories are estimated from confirmed duration/body weight/intensity after logging sets; older logs can be completed without invented estimates.

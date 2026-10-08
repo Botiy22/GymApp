@@ -1,6 +1,6 @@
 {
-  "version": "2.10.0",
-  "build": "20261008.9",
+  "version": "2.10.1",
+  "build": "20261008.10",
   "assets": {
     "js/workout-energy.js": "443922fd356f766e994d14efa06fe15b1c613f1722512ad2255f7b55fb28c9ed",
     "js/personal-setup.js": "bf9977d9b50665c0915dbd0001dffd9372754500a3f268b5144363b34fdaabf5",
@@ -10,7 +10,7 @@
     "css/profile.css": "da51a0f175aa3fcd522dca7ec05aad31d7b89c557ad8777d965c9655940e0f23",
     "js/modal-lock.js": "a475e98805cd338e67ab05f8d91bc3d5aa5c76126b191b2bec9e765383cf2eac",
     "./": "a12332b3b0e2d90b57a5376cb5cf1d047fc3280663e992104699940611f7b74e",
-    "js/release.js": "5809725902c55cfe5db65858f49a8b13124fed4a7ce5c3a9eebc2f77ca38ae86",
+    "js/release.js": "49548c4751799bd874021c57fe11f49b14dc836973f38f1f64405e3ad03a0971",
     "index.html": "a12332b3b0e2d90b57a5376cb5cf1d047fc3280663e992104699940611f7b74e",
     "css/app.css": "4a869fec704c7b4d5d7bccfb23991a3dc3c60e0b3e7701709d355521ecb4d1e6",
     "manifest.webmanifest": "e29b7546727749908f1b975e611c85a261ef5ad1413f83cec79d3f35f5c2b536",
@@ -31,7 +31,7 @@
     "js/charts.js": "5d65e0571f9a9714bd1bdeed19de095089de1b9c663d0f0b9450bad1d4644dce",
     "js/ai.js": "eda6015b6e06511cf64477381413b0ea498427db4453905719f3a8b88e4efbd2",
     "js/cloud.js": "3c2e1f55d7d7c11d538284579cb0f7d5f0f0e122e572da06ce63e9108edb053a",
-    "js/app.js": "40035ad8b1fd7ef14c781ef34c78fd6ca72ac1ccfd9b3fa70fda234036ccef52",
+    "js/app.js": "b3d7a1cfaed004812356d91df7db31429f52709e90975508ae00de5f6ce5100f",
     "js/strength-ranks.js": "1187756329b87f4a9771f3f7fc4c0e1af47f86cc16514fb081dbbfd0d337b9b0",
     "js/pdf-local.js": "06f42c9698d310a77dc5e7faff5b09e69965347c15946ace0bd1364e31e7223d",
     "js/office-local.js": "939945b69a2b7c38458c4412eed1570e4422977caa066138f22770a4466aac30",

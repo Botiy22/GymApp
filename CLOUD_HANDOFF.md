@@ -1,3 +1,11 @@
+# Update — Setora 2.10.1, 2026-10-08
+
+Food's calorie headline/bar is replaced by the same lined dial as Profile. A shared calorieClock helper keeps eaten/budget/remaining/over/no-target output consistent; Food uses its selected diary date and optional exercise-adjusted budget. Base target, separate lifting/cardio panel, macros and food actions remain. No tests added/run; syntax/whitespace and manual 320px EN /390px HU Chromium layout review used synthetic meal/workout data. Live serving/physical Safari remain unverified.
+
+Verified pre-change backup backup/main-20261008-191845-before-food-clock preserves 65fa083e6a542e07f76dd84b258bb66a4abe4876. Restore by normal reviewed commit, never force-push. Code backup is not private diary data.
+
+---
+
 # Update — Setora 2.10.0, 2026-10-08
 
 User requested calories from lifting data, cardio logging and optional inclusion in daily intake. Implemented net active estimates from logged lifting + confirmed minutes/body weight/intensity; kg×reps does not become calories per exercise. Finish can skip estimates; old logs require missing inputs. Cardio supports walk/incline/run/stairs/cycle/elliptical, standalone/active/saved workouts. Food/Profile keep the base target and show lifting/cardio separately, using optional base+active−eaten. Existing manual daily activity inclusion replaces estimates, never stacks. Default workout inclusion is off; activity multipliers can already include workouts. See WORKOUT_ENERGY.md.
