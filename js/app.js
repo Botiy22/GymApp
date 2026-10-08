@@ -170,12 +170,12 @@
     return m;
   }
   function nextRoutine() {
-    const all = D().routines; if (!all.length) return null;
+    const all = D().routines.filter(r=>!RoutineTemplates.isComplex(r)); if (!all.length) return null;
     const must = all.filter(r => !r.opt), rs = must.length ? must : all;                  // optional days are never offered as "next"
     const ws = D().workouts; for (let i = ws.length - 1; i >= 0; i--) { const k = rs.findIndex(r => r.id === ws[i].rid); if (k >= 0) return rs[(k + 1) % rs.length]; }
     return rs[0];
   }
-  const estMin = r => Math.round(r.items.reduce((a, i) => a + i.sets * ((i.rest || 90) + 45), 0) / 60 / 5) * 5;
+  const estMin = RoutineTemplates.estimateMinutes;
   const repTop = reps => { const m = String(reps).match(/(\d+)\s*$/); return m ? +m[1] : 0; };
 
   /* ---------- toast ---------- */
@@ -304,7 +304,7 @@
   }
 
   function routineGrid() {
-    const routines=D().routines;
+    const routines=D().routines.filter(r=>!RoutineTemplates.isComplex(r));
     const groups=RoutineTemplates.templates.map(p=>({p,days:routines.filter(r=>r.sub?.en===p.name.en&&r.sub?.hu===p.name.hu)})).filter(g=>g.days.length);
     const grouped=new Set(groups.flatMap(g=>g.days.map(r=>r.id)));
     const individual=routines.filter(r=>!grouped.has(r.id));
@@ -340,7 +340,7 @@
     h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
     if(ui.workout==='plans')return h+routineGrid();
     if(ui.workout==='history')return h+`<div class="h2row"><h2>${esc(t('history'))}</h2><span class="cap">${d.workouts.length} ${esc(t('totalWorkouts'))}</span></div>`+workoutHistory(d.workouts.slice().reverse().slice(0,ui.homeHistLimit||40))+(d.workouts.length>(ui.homeHistLimit||40)?`<button class="btn" data-a="workout-history-more">${esc(t('showMore'))}</button>`:'');
-    if(ui.workout==='exercises')return h+libControls()+`<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`;
+    if(ui.workout==='exercises')return h+complexCards()+libControls()+`<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`;
     const goal=d.settings.weekGoal;
     h+=`<div class="training-week"><span>${esc(t('thisWeek'))}</span><b>${wk.length}${goal>0?' / '+goal:''} ${esc(t('workoutsWord'))}</b></div>`;
     if(d.active)h+=`<button class="hero resume" data-a="w-open"><small>${esc(t('inProgress'))}</small><strong>${esc(d.active.name)}</strong><span>${esc(t('tapResume'))}</span></button>`;
@@ -383,7 +383,11 @@
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
-  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
+  function complexCards(){
+    const rows=D().routines.filter(RoutineTemplates.isComplex);
+    return rows.length?`<section class="exercise-complexes"><h3>${esc(t('exerciseComplexes'))}</h3><p class="cap">${esc(t('complexHint'))}</p><div class="rlist rgrid">${rows.map(r=>`<button class="rcard rtile ic-${rIcon(r)}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[rIcon(r)]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))} · ${esc(t(r.circuit?'complexRounds':'complexGrips'))}</i></span>${IC.chev}</button>`).join('')}</div></section>`:'';
+  }
+  function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + complexCards() + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
   function vProg() {
     const d = D();
@@ -774,7 +778,7 @@
     };
   }
   function shPickRoutine(exId) {
-    return () => ({ title: t('addToRoutine'), html: D().routines.map(r => `<button class="rcard" data-a="ex-routine-add" data-id="${esc(r.id)}" data-ex="${esc(exId)}"><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))}</i></span>${IC.plus}</button>`).join('') });
+    return () => ({ title: t('addToRoutine'), html: D().routines.filter(r=>!RoutineTemplates.isComplex(r)).map(r => `<button class="rcard" data-a="ex-routine-add" data-id="${esc(r.id)}" data-ex="${esc(exId)}"><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(t('exercises'))}</i></span>${IC.plus}</button>`).join('') });
   }
 
   /* ---------- routines ---------- */
@@ -785,7 +789,7 @@
   function shRoutineTemplate(id) {
     return ()=>{
       const p=RoutineTemplates.templates.find(x=>x.id===id);if(!p)return {title:'',html:''};
-      return {title:p.name[L()],html:`<p class="lead">${esc(p.hint[L()])}</p><p class="split-schedule">${IC.cal}${esc(p.schedule[L()])}</p><div class="split-preview">${p.days.map((d,i)=>`<details><summary><span class="r-ic">${RICON[d.icon]}</span><span><small>${esc(t('splitSession',i+1))}</small><b>${esc(d.name[L()])}</b></span>${IC.down}</summary><div>${d.items.map(it=>`<div class="split-exercise"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(it.reps)} · ${clock(it.rest)}</small></div>`).join('')}</div></details>`).join('')}</div><p class="cap">${esc(t('splitCustomHint'))}</p>`,foot:`<button class="btn primary" data-a="routine-template-add" data-id="${p.id}">${IC.plus}${esc(t('addSplit',p.days.length))}</button>`};
+      return {title:p.name[L()],html:`<p class="lead">${esc(p.hint[L()])}</p><p class="split-schedule">${IC.cal}${esc(p.schedule[L()])}</p><div class="split-preview">${p.days.map((d,i)=>`<details><summary><span class="r-ic">${RICON[d.icon]}</span><span><small>${esc(t('splitSession',i+1))}</small><b>${esc(d.name[L()])}</b><small>7 ${esc(t('exercises'))} · ~${estMin(d)} ${esc(t('min'))}</small></span>${IC.down}</summary><div>${d.items.map(it=>`<div class="split-exercise"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(it.reps)} · ${clock(it.rest)}</small></div>`).join('')}</div></details>`).join('')}</div><p class="cap">${esc(t('durationHint'))}</p><p class="cap">${esc(t('splitCustomHint'))}</p>`,foot:`<button class="btn primary" data-a="routine-template-add" data-id="${p.id}">${IC.plus}${esc(t('addSplit',p.days.length))}</button>`};
     };
   }
   function addRoutineTemplate(id) {
@@ -806,10 +810,11 @@
   function shRoutine(id) {
     return () => {
       const r = getR(id); if (!r) return { title: '', html: '' };
-      const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + (r.info ? `<p class="cap rinfo">${esc(typeof r.info === 'object' ? r.info[L()] || r.info.en || '' : r.info)}</p>` : '') + `<p class="cap">${r.items.length} ${esc(t('exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(t('setsWord'))} · ~${estMin(r)} ${esc(t('min'))}</p>${prepRow('warm', { entries: r.items }, ` data-r="${esc(r.id)}"`)}${prepRow('cool', { entries: r.items }, ` data-r="${esc(r.id)}"`)}<div class="exlist prep-gap">` +
+      const complex=RoutineTemplates.isComplex(r);
+      const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + (r.info ? `<p class="cap rinfo">${esc(typeof r.info === 'object' ? r.info[L()] || r.info.en || '' : r.info)}</p>` : '') + `<p class="cap">${r.items.length} ${esc(t('exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(t('setsWord'))}${complex?'':' · ~'+estMin(r)+' '+esc(t('min'))}</p>${!complex?`<p class="cap">${esc(t('durationHint'))}</p>`:''}${prepRow('warm', { entries: r.items }, ` data-r="${esc(r.id)}"`)}${prepRow('cool', { entries: r.items }, ` data-r="${esc(r.id)}"`)}<div class="exlist prep-gap">` +
         r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(it.reps)}${it.rir ? ' · RIR ' + esc(it.rir) : ''} · ${esc(t('rest'))} ${clock(it.rest)}</i>${it.note ? `<i class="nt">${esc(it.note)}</i>` : ''}</span>${IC.chev}</button>`).join('') + `</div>` +
-        `<button class="btn tickbtn" data-a="w-tick" data-id="${esc(r.id)}">${IC.check}${esc(t('tickWorkout'))}</button>` + (D().plan && D().plan.train.length ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
-      return { title: rName(r), html: h, foot: `<button class="btn primary" data-a="w-start" data-id="${esc(r.id)}">${esc(t('startWorkout'))}</button><button class="btn" data-a="r-edit" data-id="${esc(r.id)}">${esc(t('edit'))}</button><button class="btn routine-remove" data-a="routine-remove" data-id="${esc(r.id)}" aria-label="${esc(t('deleteRoutine'))}">${IC.close}</button>` };
+        (complex?'':`<button class="btn tickbtn" data-a="w-tick" data-id="${esc(r.id)}">${IC.check}${esc(t('tickWorkout'))}</button>`) + (D().plan && D().plan.train.length ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
+      return { title: rName(r), html: h, foot: `<button class="btn primary" data-a="w-start" data-id="${esc(r.id)}">${esc(t(complex?'startComplex':'startWorkout'))}</button><button class="btn" data-a="r-edit" data-id="${esc(r.id)}">${esc(t('edit'))}</button><button class="btn routine-remove" data-a="routine-remove" data-id="${esc(r.id)}" aria-label="${esc(t('deleteRoutine'))}">${IC.close}</button>` };
     };
   }
   function shRoutineEdit() {
@@ -1532,12 +1537,20 @@
     if (d.owner !== u.id) Store.stamp(u.id, d.workouts.length > 0 || Object.keys(d.food).length > 0 || d.body.length > 0 || !!d.settings.targets);
     applyLook(); await doSync(true); adoptRegistrationProfile(); renderGate(); render();
   }
+  function upgradeStarterSessions(){
+    const before=D().routines,after=RoutineTemplates.upgradeRoutines(before);
+    if(after===before)return false;
+    D().routines=after;
+    if(!Store.save()){D().routines=before;return false;}
+    return true;
+  }
   let syncT = 0;
   async function doSync(loud) {
     if (!CL || !CL.user) return;
     try {
       const r = await CL.sync();
-      if (r === 'changed') { hRef = null; applyLook(); if (!ui.sheets.length && !ui.wOpen) rerender(); else ui.stale = true; }
+      const upgraded=(r==='changed'||r==='ok')&&upgradeStarterSessions();
+      if (r === 'changed'||upgraded) { hRef = null; applyLook(); if (!ui.sheets.length && !ui.wOpen) rerender(); else ui.stale = true; }
     } catch (e) {
       if (e.code === 'auth') { ui.gate = { mode: 'in', email: (e.user && e.user.email) || ui.gate.email, busy: false, err: '', info: t('sessionOver') }; closeSheet(true); renderGate(); return; }   // signed out elsewhere or the session ran out: the data stays, sign in again
     }
@@ -2120,6 +2133,7 @@
   $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" data-tab="${k}">${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
+  if(!CL)upgradeStarterSessions();
   render(); $('#rb-skip').textContent = t('skip');
   renderGate();
   try {

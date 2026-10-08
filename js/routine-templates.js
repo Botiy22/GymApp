@@ -17,12 +17,43 @@ window.RoutineTemplates=(()=>{
   const chestBack=()=>day('Mell és hát','Chest & back','upper',[item(bench,3,'6–10',150),item(lat,3,'8–12',120),item('Incline_Dumbbell_Press',3,'8–12',120),item(row,3,'8–12',120),item('Dumbbell_Flyes',2,'10–15')]);
   const shouldersArms=()=>day('Váll és kar','Shoulders & arms','arms',[item(press,3,'8–12',120),item(raise,3,'12–20',60),item('Face_Pull',2,'12–20',60),item(curl,3,'10–15'),item(tri,3,'10–15')]);
   const repeat=(days)=>days.concat(days.map(d=>({...d,name:{hu:d.name.hu+' B',en:d.name.en+' B'},items:d.items.map(x=>({...x}))})));
-  const templates=[
+  const legacyTemplates=[
     {id:'full3',name:{hu:'3 nap · Teljes test',en:'3-day · Full body'},icon:'full',days:full,schedule:{hu:'Hétfő · Szerda · Péntek',en:'Mon · Wed · Fri'},hint:{hu:'Kiegyensúlyozott kezdőpont heti három edzéshez.',en:'A balanced starting point for three weekly sessions.'}},
     {id:'ul4',name:{hu:'4 nap · Felső / Alsó',en:'4-day · Upper / Lower'},icon:'upper',days:[upper(),lower(),{...upper(),name:{hu:'Felsőtest B',en:'Upper B'}},{...lower(),name:{hu:'Alsótest B',en:'Lower B'}}],schedule:{hu:'Hétfő · Kedd · Csütörtök · Péntek',en:'Mon · Tue · Thu · Fri'},hint:{hu:'Két felső- és két alsótestnap, köztes pihenővel.',en:'Two upper and two lower sessions, with a midweek break.'}},
     {id:'ulppl5',name:{hu:'5 nap · Felső / Alsó + PPL',en:'5-day · Upper / Lower + PPL'},icon:'full',days:[upper(),lower(),push(),pull(),legs()],schedule:{hu:'Hétfő · Kedd · Csütörtök · Péntek · Szombat',en:'Mon · Tue · Thu · Fri · Sat'},hint:{hu:'Felső/alsó napok, majd Push, Pull és Láb.',en:'Upper/lower sessions followed by push, pull and legs.'}},
     {id:'ppl6',name:{hu:'6 nap · Push / Pull / Láb',en:'6-day · Push / Pull / Legs'},icon:'push',days:repeat([push(),pull(),legs()]),schedule:{hu:'Hétfőtől szombatig · Vasárnap pihenő',en:'Mon–Sat · Rest Sunday'},hint:{hu:'Magasabb gyakoriság; akkor válaszd, ha jól regenerálódsz.',en:'Higher frequency for lifters who recover well between sessions.'}},
     {id:'arnold6',name:{hu:'6 nap · Arnold ihlette',en:'6-day · Arnold-inspired'},icon:'arms',days:repeat([chestBack(),shouldersArms(),legs()]),schedule:{hu:'Hétfőtől szombatig · Vasárnap pihenő',en:'Mon–Sat · Rest Sunday'},hint:{hu:'Mell/hát, váll/kar, láb — kétszer. Saját, mérsékelt volumenű változat.',en:'Chest/back, shoulders/arms, legs — twice. Our own moderate-volume adaptation.'}}
   ];
-  return {templates};
+  // Keep the previous starters for a conservative upgrade of untouched saved copies.
+  const additions={upper:[raise],lower:['Hanging_Leg_Raise'],push:['Dumbbell_Flyes','Cable_Rope_Overhead_Triceps_Extension'],pull:['Incline_Dumbbell_Curl','Crunches'],legs:['Leg_Press','Hanging_Leg_Raise'],arms:['Incline_Dumbbell_Curl','Cable_Rope_Overhead_Triceps_Extension']};
+  const fullExtras=['Triceps_Pushdown','Crunches','Side_Lateral_Raise'];
+  const templates=legacyTemplates.map(p=>({...p,days:p.days.map((d,n)=>{
+    // The five-day starter follows the user's original seven-movement plan.
+    if(p.id==='ulppl5')return {...d,items:window.PLAN.items.filter(i=>i.day===window.PLAN.days[n].id).map(i=>item(i.ex,i.sets,i.reps,i.rest))};
+    const extras=d.icon==='full'?[fullExtras[n]]:d.name.en.startsWith('Chest & back')?['Face_Pull','Straight-Arm_Pulldown']:additions[d.icon];
+    return {...d,items:d.items.concat(extras.map(ex=>item(ex))).map(i=>({...i,sets:3,rest:Math.max(i.rest,120)}))};
+  })}));
+  const isComplex=r=>r.id==='clip_centr10'||r.id==='clip_lat_grips';
+  // Approximate session time: 12 min preparation, 2 min per equipment change,
+  // 45 sec per working set, programmed rest only BETWEEN sets (including zero).
+  const durationMinutes=r=>(720+Math.max(0,r.items.length-1)*120+r.items.reduce((s,i)=>s+i.sets*45+Math.max(0,i.sets-1)*(i.rest??90),0))/60;
+  const estimateMinutes=r=>Math.round(durationMinutes(r)/5)*5;
+  function upgradeRoutines(routines){
+    let changed=false;
+    const result=routines.map(r=>{
+      if(!/^t[a-z0-9]+_\d+$/.test(r.id)||r.opt||r.circuit)return r;
+      for(let k=0;k<legacyTemplates.length;k++){
+        const p=legacyTemplates[k];
+        if(r.sub?.hu!==p.name.hu||r.sub?.en!==p.name.en)continue;
+        const n=p.days.findIndex(d=>r.icon===d.icon&&r.name?.hu===p.name.hu+' · '+d.name.hu&&r.name?.en===p.name.en+' · '+d.name.en);
+        if(n<0)continue;
+        const old=p.days[n].items;
+        if(r.items.length!==old.length||!r.items.every((i,j)=>!i.label&&!i.rir&&!i.note&&Object.keys(i).every(k=>['ex','label','sets','reps','rest'].includes(k))&&['ex','sets','reps','rest'].every(k=>i[k]===old[j][k])))return r;
+        changed=true;return {...r,items:templates[k].days[n].items.map(i=>({...i}))};
+      }
+      return r;
+    });
+    return changed?result:routines;
+  }
+  return {templates,isComplex,durationMinutes,estimateMinutes,upgradeRoutines};
 })();

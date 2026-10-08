@@ -6,6 +6,14 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.14.0 — 2026-10-08, build 20261008.16
+
+All 24 optional starter sessions now contain seven exercises and estimate approximately 60–70 minutes. The five-day starter copies the original Upper/Lower/Push/Pull/Legs movements and prescriptions. Estimates include 12 minutes preparation, two minutes per equipment change, 45 seconds per working set and programmed rest only between sets, respecting zero rest. These are estimates, not enforced minimum elapsed times.
+
+Untouched previously added starter sessions upgrade conservatively after a successful account sync, or immediately in local/demo mode. Customized routines, deleted sessions, original built-ins, active workouts and history are preserved. The two video combinations appear in Workout → Exercises → Exercise complexes instead of Plans/next-workout suggestions. Starting them retains the Centr circuit's ten rounds and the pulldown combination's three grips, AMRAP and tempo notes.
+
+Validation: six focused Node tests passed (exercise validity/counts/durations, original prescriptions, rest semantics, migration/idempotence/customization preservation, complex identities). Local Chromium checks at 320px EN/390px HU verified adding the five-day split, both complex starts, source circuit/tempo preservation, no complex recommendations, no page errors and no horizontal overflow in the reviewed screen. Live account sync, deployment and physical iOS were not verified.
+
 ## 2.13.2 — 2026-10-08, build 20261008.15
 
 Settings adds an accessible compact update icon immediately before Upload in its header. Other headers are unchanged. The header action forwards to the existing updater, retaining busy/disabled state and update-status feedback; the existing App-section update button remains. Syntax/whitespace and focused local Chromium review at 320px EN/390px HU confirmed Settings-only placement, contained header actions, release-check invocation and recovery from an intentionally unavailable local release response. No tests added/run for this small UI change; successful live installation and physical Safari were not verified.

@@ -442,3 +442,14 @@ Object.assign(I18N.hu,{splitSessionCount:'{0} edzés'});
 
 Object.assign(I18N.en,{otherRoutines:'Other routines'});
 Object.assign(I18N.hu,{otherRoutines:'További edzések'});
+
+Object.assign(I18N.en,{
+  exerciseComplexes:'Exercise complexes',complexHint:'Video combinations to run on their own. Original rounds and tempo are kept.',
+  complexRounds:'10 rounds',complexGrips:'3 grips',startComplex:'Start complex',
+  durationHint:'Approximate time includes 12 min warm-up/preparation, equipment changes and rest. Your pace may vary.'
+});
+Object.assign(I18N.hu,{
+  exerciseComplexes:'Gyakorlatkomplexek',complexHint:'Videós kombinációk önálló elvégzésre. Az eredeti körök és tempó megmaradnak.',
+  complexRounds:'10 kör',complexGrips:'3 fogás',startComplex:'Komplex indítása',
+  durationHint:'A becsült idő 12 perc bemelegítést/előkészületet, eszközváltást és pihenőt is tartalmaz. A tempód eltérhet.'
+});

@@ -1,3 +1,13 @@
+# Update — Setora 2.14.0, 2026-10-08
+
+Expanded all optional starter sessions to seven valid exercises and approximately 60–70 minutes. The five-day starter follows PLAN exactly; existing original built-ins remain unchanged. Pure duration estimates count warm-up/preparation, equipment changes and only between-set rests, respecting zero. Conservative pristine-copy migration runs after successful cloud sync (or immediately when cloud is disabled), preserves edits/IDs and never recreates deleted sessions. Original video records now appear as independently startable Exercise complexes under Workout → Exercises, excluded from Plans/recommendations. Circuit rounds and pulldown grips/AMRAP/tempo are preserved. Storage keys/schemas, sync protocol, exercise imagery, active/history snapshots and calorie calculations are unchanged.
+
+Six focused Node tests passed, plus isolated local Chromium assertions/screenshots at 320px EN and 390px HU: 35-movement five-day preview/add, both complex starts, ten-round zero-rest circuit, pulldown AMRAP/tempo, no next routine when only complexes remain, no page errors/overflow in reviewed states. Browser review script/images in /tmp/setora-full-sessions-review*. Live account sync, deployment and physical Safari unverified. User permits helpful tests per latest instruction.
+
+Verified remote pre-edit backup backup/main-20261008-205949-before-full-sessions-complexes at f005884df8d1e320c9d455d44a8bd8f60fab3b7e. Restore via normal reviewed commit; never force-push. Code backup does not include private diary data.
+
+---
+
 # Update — Setora 2.13.2, 2026-10-08
 
 User requested an update action beside Upload, only in Settings. head() accepts an explicit update flag enabled only by vSettings; an accessible update-app icon appears immediately before Upload and uses settings-update to forward to the existing update-now handler. This preserves the existing App-section control/selector, busy/disabled state and update-status announcement. Other headers remain unchanged.

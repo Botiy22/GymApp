@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.13.2';
-  const build = '20261008.15';
+  const version = '2.14.0';
+  const build = '20261008.16';
   const history = [
+    {version:'2.14.0',build:'20261008.16',date:'2026-10-08',
+      en:['Starter splits now have seven exercises per session and approximately 60–70 minutes including preparation and rest. The five-day split follows the original plan.','Untouched older starter sessions expand automatically; customized sessions and workout history are preserved.','The two video combinations are in Workout → Exercises → Exercise complexes, keeping their original rounds, grips and tempo.'],
+      hu:['A kezdő felosztások minden napja hét gyakorlatot és az előkészülettel, pihenőkkel együtt körülbelül 60–70 percet tartalmaz. Az ötnapos felosztás az eredeti tervet követi.','A korábbi, érintetlen kezdő edzések automatikusan bővülnek; az egyéni módosítások és az edzésnapló megmaradnak.','A két videós kombináció az Edzés → Gyakorlatok → Gyakorlatkomplexek részen található, az eredeti körökkel, fogásokkal és tempóval.']},
     {version:'2.13.2',build:'20261008.15',date:'2026-10-08',en:['Settings has a compact update button beside Upload in the header.'],hu:['A Beállítások fejlécében a Feltöltés mellett kompakt frissítésgomb található.']},
     {version:'2.13.1',build:'20261008.14',date:'2026-10-08',
       en:['Cardio actions stay inside their card; phones show the Add button below the description.','Shared button, action-grid and heading-row sizing lets long labels wrap without squeezing adjacent content.'],
