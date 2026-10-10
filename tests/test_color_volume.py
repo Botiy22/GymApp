@@ -1,0 +1,141 @@
+"""Fixture-only phone regressions for the hue wheel and volume-based nutrition."""
+import unittest
+import test_responsive_polish as responsive
+
+class ColorVolume(unittest.TestCase):
+    setUpClass=classmethod(responsive.ResponsivePolish.setUpClass.__func__)
+    tearDownClass=classmethod(responsive.ResponsivePolish.tearDownClass.__func__)
+    page=responsive.ResponsivePolish.page
+    bounds=responsive.ResponsivePolish.bounds
+
+    def test_touch_drag_persists_without_scrolling(self):
+        context=self.browser.new_context(viewport={'width':390,'height':844},has_touch=True,service_workers='block',reduced_motion='reduce')
+        self.addCleanup(context.close)
+        context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
+        page=context.new_page();page.goto(f'http://127.0.0.1:{self.server.server_port}/')
+        page.wait_for_function('()=>!!window.__gym')
+        page.locator('#tabbar [data-tab=settings]').click()
+        wheel=page.locator('.hue-wheel');wheel.scroll_into_view_if_needed();box=wheel.bounding_box()
+        x=box['x']+box['width']/2;y=box['y']+box['height']/2;r=box['width']*.4
+        scroll=page.evaluate('scrollY');cdp=context.new_cdp_session(page)
+        cdp.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[{'x':x,'y':y-r}]})
+        cdp.send('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'x':x+r,'y':y}]})
+        cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]})
+        self.assertAlmostEqual(page.evaluate('Store.d.settings.hue'),90,delta=1)
+        self.assertEqual(page.evaluate('scrollY'),scroll)
+        page.screenshot(path='/tmp/reppsy-color-wheel-phone.png')
+        page.reload();page.wait_for_function('()=>!!window.__gym')
+        self.assertAlmostEqual(page.evaluate('Store.d.settings.hue'),90,delta=1)
+
+    def test_visible_wheel_drag_keyboard_and_theme_changes(self):
+        for width,lang,text in [(320,'hu',20),(390,'en',16)]:
+            page,errors=self.page(width,844,lang,text)
+            page.locator('#tabbar [data-tab=settings]').click()
+            wheel=page.locator('.hue-wheel');self.assertTrue(wheel.is_visible())
+            self.assertGreaterEqual(wheel.bounding_box()['width'],180)
+            wheel.scroll_into_view_if_needed();box=wheel.bounding_box()
+            x=box['x']+box['width']/2;y=box['y']+box['height']/2
+            scroll=page.evaluate('scrollY')
+            page.mouse.move(x,y-box['height']*.4);page.mouse.down()
+            page.mouse.move(x+box['width']*.4,y,steps=10);page.mouse.up()
+            self.assertAlmostEqual(page.evaluate('Store.d.settings.hue'),90,delta=1)
+            self.assertEqual(page.evaluate('scrollY'),scroll)
+            wheel.press('End');wheel.press('ArrowRight')
+            self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
+            page.reload();page.wait_for_function('()=>!!window.__gym')
+            self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
+            page.locator('#tabbar [data-tab=settings]').click()
+            page.locator('[data-a=set-palette]').first.click()
+            self.assertTrue(wheel.is_visible())
+            page.locator('[data-a=set-bg]').first.click()
+            self.assertTrue(wheel.is_visible());self.bounds(page,'settings wheel')
+            self.assertEqual(errors,[])
+
+    def test_milk_volume_grams_diary_and_backup(self):
+        page,errors=self.page(320,844,'hu',20)
+        page.locator('#tabbar [data-tab=food]').click()
+        page.locator('[data-a=food-manual]').click()
+        page.locator('[data-in=fs-q]').fill('Tej 2%')
+        page.locator('[data-a=fs-pick]').first.click()
+        self.assertEqual(page.evaluate('__gym.ui.fa.unit'),'dl')
+        expected=page.evaluate('Math.round(__gym.ui.fa.food.kcal*2.58)')
+        self.assertEqual(page.locator('#fa-out b').first.inner_text(),str(expected))
+        page.locator('[data-a=fa-unit][data-v=g]').click()
+        self.assertEqual(page.locator('[data-in=fa-g]').input_value(),'258')
+        page.locator('[data-a=fa-unit][data-v=dl]').click()
+        page.locator('[data-in=fa-g]').fill('2,5');self.bounds(page,'milk amount')
+        page.locator('[data-a=fa-add]').click()
+        item=page.evaluate('Store.d.food[__gym.ui.foodDate][0]')
+        self.assertEqual((item['g'],item['vml'],item['kcal']),(258,250,expected))
+        self.assertIn('2,5 dl',page.locator('.flist').inner_text())
+        page.evaluate('()=>Store.replace(JSON.parse(Store.exportJSON()).data)')
+        page.reload();page.wait_for_function('()=>!!window.__gym')
+        self.assertEqual(page.evaluate('Object.values(Store.d.food).flat()[0].vml'),250)
+        self.assertEqual(errors,[])
+
+    def test_label_drink_and_recent_portion(self):
+        page,errors=self.page()
+        page.locator('#tabbar [data-tab=food]').click()
+        page.locator('[data-a=food-manual]').click();page.locator('[data-a=mf-new]').click()
+        page.locator('#fmf [name=name]').fill('Fixture drink')
+        page.locator('[name=basis]').select_option('ml')
+        for key,value in {'kcal':'42','p':'1','c':'8','f':'0.2','port':'250'}.items():
+            page.locator(f'#fmf [name={key}]').fill(value)
+        page.locator('button[form=fmf]').click()
+        self.assertEqual(page.evaluate('Store.d.myFoods[0].basis'),'ml')
+        page.locator('[data-in=fs-q]').fill('Fixture drink')
+        page.locator('[data-a=fs-my]').click()
+        self.assertEqual(page.locator('[data-in=fa-g]').input_value(),'2.5')
+        page.locator('[data-a=fa-add]').click()
+        item=page.evaluate('Store.d.food[__gym.ui.foodDate][0]')
+        self.assertEqual((item['g'],item['vml'],item['kcal']),(0,250,105))
+        self.assertEqual(item['c'],20)
+        page.locator('[data-a=food-manual]').click()
+        page.locator('[data-a=food-recent]').first.click()
+        self.assertEqual(page.locator('#fm [name=unit]').input_value(),'dl')
+        self.assertEqual(page.locator('#fm [name=g]').input_value(),'2.5')
+        page.locator('button[form=fm]').click()
+        page.evaluate('()=>Store.replace(JSON.parse(Store.exportJSON()).data)')
+        self.assertEqual(page.evaluate('Store.d.myFoods[0].basis'),'ml')
+        self.assertEqual(page.evaluate('Object.values(Store.d.food).flat().map(f=>f.vml)'),[250,250])
+        self.assertEqual(errors,[])
+
+    def test_manual_volume_keeps_label_values_and_solid_grams(self):
+        page,errors=self.page()
+        page.locator('#tabbar [data-tab=food]').click()
+        page.locator('[data-a=food-manual]').click();page.locator('[data-a=fs-own]').click()
+        page.locator('#fm [name=name]').fill('Manual drink')
+        page.locator('#fm [name=unit]').select_option('dl')
+        for key,value in {'g':'3','kcal':'150','p':'6','c':'21','f':'3'}.items():
+            page.locator(f'#fm [name={key}]').fill(value)
+        page.locator('#fm [name=keep]').check();page.locator('button[form=fm]').click()
+        food=page.evaluate('Store.d.myFoods[0]')
+        self.assertEqual((food['basis'],food['kcal'],food['port']),('ml',50,300))
+        page.locator('[data-a=food-manual]').click()
+        page.locator('[data-in=fs-q]').fill('Banana')
+        page.locator('[data-a=fs-pick]').first.click()
+        self.assertEqual(page.evaluate('__gym.ui.fa.unit'),'g')
+        page.locator('[data-in=fa-g]').fill('100');page.locator('[data-a=fa-add]').click()
+        items=page.evaluate('Store.d.food[__gym.ui.foodDate]')
+        self.assertEqual(items[0]['vml'],300);self.assertEqual(items[1]['g'],100)
+        self.assertNotIn('vml',items[1]);self.assertEqual(errors,[])
+
+    def test_unknown_volume_offers_label_and_zero_calorie_drinks_survive(self):
+        page,errors=self.page()
+        page.locator('#tabbar [data-tab=food]').click()
+        page.locator('[data-a=food-manual]').click()
+        page.evaluate('''()=>{const i=FOODS.list.findIndex(r=>{const v=FoodVolume.describe(r);return v.liquid&&!v.gramsPerDl});__gym.ui.fs.hits=[{i}];__gym.A['fs-pick']({dataset:{n:'0'}})}''')
+        self.assertEqual(page.evaluate('__gym.ui.fa.unit'),'g')
+        page.locator('[data-a=fa-label]').click()
+        self.assertEqual(page.locator('[name=basis]').input_value(),'ml')
+        page.locator('#fmf [name=name]').fill('Zero calorie drink')
+        for key in ['kcal','p','c','f']:
+            page.locator(f'#fmf [name={key}]').fill('0')
+        page.locator('button[form=fmf]').click()
+        page.evaluate('()=>Store.replace(JSON.parse(Store.exportJSON()).data)')
+        self.assertEqual(page.evaluate('Store.d.myFoods[0].kcal'),0)
+        self.assertEqual(page.evaluate('Store.d.myFoods[0].basis'),'ml')
+        self.assertEqual(errors,[])
+
+if __name__=='__main__':
+    unittest.main()

@@ -41,7 +41,7 @@ Usernames, friend requests, friend profiles and weekly competition use the addit
   tick it"** (counts for the week, the calendar and the muscle chart with its planned sets). The plan
   file itself is personal and is **not** part of this repository.
 - **Your own database**: add **own exercises** (name, muscles, equipment, steps, a photo, a video
-  link) — they join the library, the search, routines and workouts — and **own foods** (per 100 g from
+  link) — they join the library, the search, routines and workouts — and **own foods** (per 100 g or 100 ml from
   the label, with a portion). Any built-in exercise can get your own picture and video link, with a
   way back to the original. Own pictures are shrunk to about 480 px (at most 30 of them); videos are
   links that open in the browser, nothing is downloaded. All of it syncs with the account and is in
@@ -63,7 +63,7 @@ Usernames, friend requests, friend profiles and weekly competition use the addit
 - **Habits**: a daily checklist for your own habits, with weekday schedules, streaks, and past check-ins.
   Completed habits also appear in the calendar and day view; habit data is included in backups and account sync.
 - **Food**: calorie and macro targets (Mifflin–St Jeor; see "Calorie calculator" below) and a daily diary with three ways to add a meal:
-  **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams,
+  **search** the built-in food database (8,257 foods, fast food included; type the name, enter grams or dl for supported liquids,
   the values are calculated), **AI** estimate from a photo or a description, or **your own values**
   from a label. **Ideas**: 19 meal ideas with individual serving images. Missing nutrition is completed before logging a serving.
 - **Steps and calories burned**: per day, typed in or pasted (see "Fitness data" below); the burned

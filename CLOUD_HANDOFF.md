@@ -1,3 +1,15 @@
+# Update — Reppsy 2.17.0, 2026-10-10
+
+Always-visible Custom color section inside Appearance, circular hue control with 46px thumb, pointer capture and keyboard support. Live OKLCH palette matches existing soft hue colors. Final gesture saves immediately; preset indicators update during drag; changing background/preset keeps the picker visible. Whole Appearance group can still be intentionally collapsed.
+
+New FoodVolume helper uses each food's real gram/volume pair (explicit HU metric first, then documented USDA US cup/tbsp/tsp/fl oz). No water-density fallback. Supported liquids default dl with portions and optional grams switch. Missing volume offers own-label entry. Own-food basis per100ml and manual/recent dl logging work; optional vml/basis survive cleaner/export/restore. Nutrition remains per100g for database/old own foods and per100ml only for explicitly selected label foods. No migration of existing diary/plan grams, no guessed mass for label drinks, no SQL changes. Older clients strip these optional fields, so update other devices before editing new volume entries.
+
+Eight Node tests plus six focused local Chromium checks cover conversions, missing data, solids, invalid bounds, hue geometry; wheel drag/keyboard/theme/reload; milk and label/manual dl, recent entries and backup roundtrip. Existing four responsive/recipes/photo/offline tests also passed. Touch emulation reviewed separately. Fixtures disable cloud accounts. Physical phones, deployment and live sync not verified.
+
+Verified pre-edit backup backup/main-20261010-before-color-wheel-liquid-portions preserves 3471136339f3ee0e8722c5d6d31b7edc66126811. Restore by normal reviewed commit, never force/reset. Code backup is not private diary data. Current work branch codex/color-wheel-liquid-portions-20261010.
+
+---
+
 # Update — Reppsy 2.16.0, 2026-10-09
 
 User explicitly selected Reppsy as the current name and requested a cool logo that is not an R. Created a custom AI-generated apricot/coral interlocking motion-link mark on graphite, retained unmodified master at icons/reppsy-source.png and exported Apple180/browser192/install512/maskable512. Old icons remain. Updated HU/EN appName, header wordmark/symbol, login/onboarding, HTML/title/Apple metadata, manifest names, runtime cached-shell metadata refresh and export filename prefixes. Four deployed icons included in verified offline CORE. Storage keys, manifest id/start_url/scope, account configuration, diary/history/plans and custom theme settings unchanged. Name availability is unverified.

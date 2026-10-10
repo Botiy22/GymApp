@@ -6,6 +6,16 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.17.0 — 2026-10-10, build 20261010.1
+
+Custom color is always visible inside Appearance. A large circular hue control with a 46px thumb supports direct taps, pointer/touch dragging and keyboard arrows/Home/End; selection previews immediately and saves on release. Preset/background changes retain the wheel. Only the wheel captures scrolling gestures.
+
+Supported liquids default to dl with quick portions and a g/dl switch. Each database conversion uses that food's documented gram/volume serving, preferring explicit metric portions over USDA US household units. No water-density assumption. Unknown-volume entries offer label entry; own-food labels support 100 ml (1 dl), manual logging supports dl, and the diary/recent entries display volumes. Existing gram entries and imported plan quantities are preserved.
+
+Optional diary/recent `vml` and own-food `basis:'ml'` survive storage cleaning, exports and restore. Label-based drinks retain volume without inventing mass. All devices should update before editing these new entries: older clients can drop optional fields and interpret own-food label values as per 100 g. No SQL migration is needed.
+
+Validation: eight Node calculation/geometry checks; six focused Chromium phone tests for drag/touch/keyboard/theme persistence, milk g/dl conversion, label/manual drinks, recent entries and export/restore; existing responsive/recipe/photo/offline checks. Touch emulation and narrow HU/enlarged text reviewed. Physical Safari and live account sync are unverified.
+
 ## 2.16.0 — 2026-10-09, build 20261009.1
 
 Reppsy replaces the current visible Setora name. A new custom apricot/coral motion-link logo appears in headers, login/onboarding, browser and install icons. It is an abstract mark, not a letter R. New asset URLs and runtime metadata refresh update older cached HTML; all four deployment icons are in the verified offline shell. Backup/CSV filenames use `reppsy-`.

@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.16.0';
-  const build = '20261009.1';
+  const version = '2.17.0';
+  const build = '20261010.1';
   const history = [
+    {version:'2.17.0',build:'20261010.1',date:'2026-10-10',
+      en:['Custom color is always visible in Appearance, with a large touch-friendly hue wheel.','Liquid portions use dl when food-specific volume data is available. Save drink labels per 100 ml, and log manual drinks in dl.'],
+      hu:['Az egyéni szín mindig látható a Megjelenésben, nagy, érintéssel kezelhető színkörrel.','A folyadékadagok dl-ben adhatók meg, ha az ételhez térfogatadat tartozik. Italcímkék mentése 100 ml-re, kézi italnaplózás dl-ben.']},
     {version:'2.16.0',build:'20261009.1',date:'2026-10-09',
       en:['Reppsy is the new app name, with a custom apricot-and-coral motion-loop logo.','New sign-in, header and install icons; backup and workout exports use the Reppsy name.'],
       hu:['Az app új neve Reppsy, saját barack-korall mozgáshurok-logóval.','Új belépési, fejléc- és telepítési ikonok; a mentések és edzésexportok a Reppsy nevet használják.']},
