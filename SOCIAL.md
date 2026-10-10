@@ -115,3 +115,11 @@ The profile color wheel shares the chosen hue with accepted friends. From 2.20, 
 Five strong requires five workouts with working sets. On the move requires one valid recorded cardio session. Keep showing up requires workouts on three distinct UTC days, including check-ins and cardio. Food rhythm requires nonzero meal entries on seven distinct diary dates. These are lifetime milestones derived from retained logs, automatically recalculate after deletion, and can be selected in the existing four-slot showcase. Friends receive badge IDs and aggregate points, never the underlying meals. Four foundations retains its original Spark thresholds.
 
 Until the new SQL is installed, existing friends still work. The app previews your new points locally with a setup hint and hides the outdated leaderboard. It does not relabel old server scores as the new scoring system.
+
+## Photo likes and reviews (2.21)
+
+Open a friend's avatar, then double-tap (or double-click) to like the current photo. Repeated double-taps keep it liked; use the visible heart button to unlike it. It does not like your own photo, an outdated photo, or a photo you cannot access. Background scrolling remains locked and normal zoom is retained.
+
+Reviews show a compact rating summary and author cards. Use the pencil-plus icon to open the review editor; select one to five stars and write up to 280 characters. Sending closes the editor and clears its draft only after success. Explicit Edit reloads your saved review. Errors retain your writing; one editable review per author/target is still enforced by the server.
+
+Manage sharing shows Private, Changes ready to share or Up to date. Update replaces the same published routine snapshot and refetches it from the server; a confirmation appears when complete. Logged weights are private and are not shared template changes. The existing profile-sharing SQL already supports these operations; 2.21 adds no SQL file.

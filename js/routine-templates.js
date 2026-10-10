@@ -28,8 +28,6 @@ window.RoutineTemplates=(()=>{
   const additions={upper:[raise],lower:['Hanging_Leg_Raise'],push:['Dumbbell_Flyes','Cable_Rope_Overhead_Triceps_Extension'],pull:['Incline_Dumbbell_Curl','Crunches'],legs:['Leg_Press','Hanging_Leg_Raise'],arms:['Incline_Dumbbell_Curl','Cable_Rope_Overhead_Triceps_Extension']};
   const fullExtras=['Triceps_Pushdown','Crunches','Side_Lateral_Raise'];
   const templates=legacyTemplates.map(p=>({...p,days:p.days.map((d,n)=>{
-    // The five-day starter follows the user's original seven-movement plan.
-    if(p.id==='ulppl5')return {...d,items:window.PLAN.items.filter(i=>i.day===window.PLAN.days[n].id).map(i=>item(i.ex,i.sets,i.reps,i.rest))};
     const extras=d.icon==='full'?[fullExtras[n]]:d.name.en.startsWith('Chest & back')?['Face_Pull','Straight-Arm_Pulldown']:additions[d.icon];
     return {...d,items:d.items.concat(extras.map(ex=>item(ex))).map(i=>({...i,sets:3,rest:Math.max(i.rest,120)}))};
   })}));
@@ -55,5 +53,5 @@ window.RoutineTemplates=(()=>{
     });
     return changed?result:routines;
   }
-  return {templates,isComplex,durationMinutes,estimateMinutes,upgradeRoutines};
+  return {genericFiveDay:true,templates,isComplex,durationMinutes,estimateMinutes,upgradeRoutines};
 })();

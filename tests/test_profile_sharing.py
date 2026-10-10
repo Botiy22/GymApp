@@ -93,7 +93,7 @@ class ProfileSharing(unittest.TestCase):
         page.locator('[data-a=photo-like]').click();page.wait_for_function('()=>__gym.ui.friendActivity?.liked')
         page.locator('[data-a=routine-copy]').click();page.wait_for_function('()=>Store.d.routines.some(r=>r.name==="Shared bench")')
         self.assertTrue(any(c[0]=='social_routine_get' for c in calls))
-        page.locator('textarea[name=body]').fill('<Helpful friend>');page.locator('form[data-f=profile-review] button').click();page.wait_for_function('()=>__gym.ui.friendActivity?.reviews.length===1')
+        page.locator('[data-a=review-open]').first.click();page.locator('textarea[name=body]').fill('<Helpful friend>');page.locator('button[form=review-editor]').click();page.wait_for_function('()=>__gym.ui.friendActivity?.reviews.length===1')
         self.assertEqual(page.locator('.profile-review p').inner_text(),'<Helpful friend>');self.assertEqual(page.locator('.profile-review p *').count(),0)
         self.bounds(page,'friend activity');self.assertEqual(errors,[])
 

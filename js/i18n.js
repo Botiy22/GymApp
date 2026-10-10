@@ -489,3 +489,6 @@ Object.assign(I18N.hu,{settingsIntro:'Szabd magadra.'});
 
 Object.assign(I18N.en,{weeklyChallenges:'This week’s challenges',challengeTraining:'Train on 3 days',challengeSets:'Log 10 working sets',challengeMeals:'Log meals on 5 days'});
 Object.assign(I18N.hu,{weeklyChallenges:'Heti kihívások',challengeTraining:'Eddz 3 különböző napon',challengeSets:'Naplózz 10 munkasorozatot',challengeMeals:'Naplózz étkezést 5 napon'});
+
+Object.assign(I18N.en,{addReview:'Add a review',editReview:'Edit your review',removeReview:'Remove review',reviewPlaceholder:'What is it like training together?',reviewPosted:'Review posted.',sharedUpdated:'Shared copy updated.',unsharedNotice:'Routine is private now.',shareChanges:'Changes ready to share',sharedCurrent:'Up to date',routinePrivate:'Private'});
+Object.assign(I18N.hu,{addReview:'Értékelés írása',editReview:'Értékelés szerkesztése',removeReview:'Értékelés törlése',reviewPlaceholder:'Milyen együtt edzeni?',reviewPosted:'Értékelés elküldve.',sharedUpdated:'Megosztott példány frissítve.',unsharedNotice:'Az edzésterv most privát.',shareChanges:'Megosztható módosítások',sharedCurrent:'Naprakész',routinePrivate:'Privát'});

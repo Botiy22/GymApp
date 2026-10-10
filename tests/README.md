@@ -60,3 +60,7 @@ For disposable PostgreSQL role/RPC testing, install PGlite outside the checkout 
 Focused fixture-only browser suites: `test_covers_friends.py`, `test_profile_sharing.py`, `test_profile_theme_updates.py` and `test_responsive_polish.py`. They cover photo upload/save/cancel/restore/removal; Friends search/contacts/long names/ties; real workout and meal check-in handlers with undo; challenge progress and lower lift ranks; old-backend fallback; all tabs with larger text, updates and offline install.
 
 `node tests/test_competition.mjs /path/to/pglite/dist/index.js` checks actual disposable PostgreSQL against JavaScript for points, badges and all lift thresholds. `node tests/test_social_sharing.mjs /path/to/pglite/dist/index.js` checks repeatable migrations, cover privacy and existing likes/reviews/routine permissions. Install `@electric-sql/pglite` outside the app repository if needed. Neither test connects to Supabase.
+
+## Personal routine and review polish (2.21)
+
+`python3 -m unittest discover -s tests -p test_routine_review_polish.py -v` tests the actual downloadable JSON through Import/reload; conservative default retirement with edited copies/history/active workout and stale cloud merge; remembered achievements; double-click and touch photo likes; review failure/retry/stars/edit/cleared draft; shared update with a deliberately stale mutation response. Synthetic accounts only. The snapshot and disposable PostgreSQL tests also verify republishing replaces one share under the same ID.

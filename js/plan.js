@@ -1,4 +1,4 @@
-/* The built-in ULPPL routine: 5 days, 35 exercises.
+/* Archived personal ULPPL reference (not seeded): 5 days, 35 exercises.
    ex   = id in the exercise library (photos + instructions come from there)
    hu/en = display name override, tip = coaching note in both languages
    mm   = precise muscle map override: [front, back], 1 = primary, 2 = secondary */

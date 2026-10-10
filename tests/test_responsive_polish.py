@@ -47,6 +47,7 @@ class ResponsivePolish(unittest.TestCase):
             for lang in ['en','hu']:
                 with self.subTest(width=width,height=height,text=text,lang=lang):
                     page,errors=self.page(width,height,lang,text,light=lang=='hu')
+                    page.evaluate('()=>__gym.A["routine-template-add"]({dataset:{id:"full3"}})') # Optional library plan; the personal split is no longer seeded.
                     for tab in ['home','food','goals','profile','settings']:
                         page.locator('.profile-shortcut' if tab=='profile' else f'#tabbar [data-tab={tab}]').click()
                         self.bounds(page,f'{width}/{text}/{lang}/{tab}')

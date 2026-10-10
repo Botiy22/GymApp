@@ -24,7 +24,7 @@ Usernames, friend requests, friend profiles and weekly competition use the addit
 
 ## What is in it
 
-- **Workout**: the five ULPPL routines (35 exercises), live logging of kg and reps per set, previous
+- **Workout**: optional editable starter splits, live logging of kg and reps per set, previous
   session shown next to each set, automatic rest timer, warm-up sets, add/remove/reorder exercises.
   **Free workout**: tick the exercises you want and start; at the end it can be saved as a routine.
   **Your own routines**: tick the exercises in one go, then name the routine and set sets/reps/rest.
@@ -347,3 +347,7 @@ Editable starter workout splits, previews, grouping and removal are documented i
 
 
 Reppsy 2.19 adds profile color wheels, Glass/Normal/Matte surfaces, plan export and top-right photo navigation. Username registration and friend photo likes, reviews and explicitly shared routine copies need the new Supabase migration; see [SOCIAL.md](SOCIAL.md). The coding environment has not applied that migration to the live database.
+
+## Original personal routine file
+
+[Download the original five-day split](exports/reppsy-original-five-day.json). Import it in **Settings → Data → Import JSON** to add Upper, Lower, Push, Pull and Legs with the original 35 exercises, sets, reps and rests. It appends editable copies and does not replace your diary. This personal split is no longer automatically added for everyone; only unchanged automatic copies are retired when clients update. Edited copies and history stay.

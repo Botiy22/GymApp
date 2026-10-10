@@ -12,9 +12,9 @@ test('all 24 starter sessions have seven distinct real exercises and estimate at
   assert.ok(R.durationMinutes(d)>=60,`${p.id}: ${d.name.en}`);
  }
 });
-test('five-day starter preserves original movements, sets, reps and rest',()=>{
+test('generic five-day library no longer republishes the personal split',()=>{
  const p=R.templates.find(p=>p.id==='ulppl5');
- p.days.forEach((d,n)=>assert.deepEqual(clone(d.items),clone(context.window.PLAN.items.filter(i=>i.day===context.window.PLAN.days[n].id).map(i=>({ex:i.ex,label:null,sets:i.sets,reps:i.reps,rest:i.rest})))));
+ p.days.forEach((d,n)=>assert.notDeepEqual(clone(d.items),clone(context.window.PLAN.items.filter(i=>i.day===context.window.PLAN.days[n].id).map(i=>({ex:i.ex,label:null,sets:i.sets,reps:i.reps,rest:i.rest})))));
 });
 test('duration counts actual zero rest and only rests between working sets',()=>{
  assert.equal(R.durationMinutes({items:[{sets:3,rest:0}]}),14.25);

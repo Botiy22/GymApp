@@ -1,0 +1,432 @@
+{
+  "app": "gymapp",
+  "kind": "plan",
+  "appendRoutines": true,
+  "routines": [
+    {
+      "id": "personal_upper",
+      "name": {
+        "hu": "Felsőtest",
+        "en": "Upper"
+      },
+      "sub": {
+        "hu": "Mell, hát, váll, kar",
+        "en": "Chest, back, shoulders, arms"
+      },
+      "icon": "upper",
+      "builtin": false,
+      "items": [
+        {
+          "ex": "Barbell_Bench_Press_-_Medium_Grip",
+          "label": {
+            "hu": "Sík fekvenyomás rúddal",
+            "en": "Barbell bench press"
+          },
+          "sets": 3,
+          "reps": "5–8",
+          "rest": 210
+        },
+        {
+          "ex": "Pullups",
+          "label": {
+            "hu": "Húzódzkodás",
+            "en": "Pull-up"
+          },
+          "sets": 3,
+          "reps": "6–10",
+          "rest": 150
+        },
+        {
+          "ex": "Incline_Dumbbell_Press",
+          "label": {
+            "hu": "Ferde padon nyomás kézisúlyzóval",
+            "en": "Incline dumbbell press"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 150
+        },
+        {
+          "ex": "Leverage_Iso_Row",
+          "label": {
+            "hu": "Mellel megtámasztott gépi evezés",
+            "en": "Chest-supported machine row"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 120
+        },
+        {
+          "ex": "Side_Lateral_Raise",
+          "label": {
+            "hu": "Oldalra karemelés kézisúlyzóval",
+            "en": "Dumbbell lateral raise"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 90
+        },
+        {
+          "ex": "Cable_Rope_Overhead_Triceps_Extension",
+          "label": {
+            "hu": "Kábeles fej fölötti tricepsz nyújtás",
+            "en": "Cable overhead triceps extension"
+          },
+          "sets": 3,
+          "reps": "10–12",
+          "rest": 90
+        },
+        {
+          "ex": "Incline_Dumbbell_Curl",
+          "label": {
+            "hu": "Ferdepados bicepszhajlítás",
+            "en": "Incline dumbbell curl"
+          },
+          "sets": 3,
+          "reps": "10–12",
+          "rest": 90
+        }
+      ]
+    },
+    {
+      "id": "personal_lower",
+      "name": {
+        "hu": "Alsótest",
+        "en": "Lower"
+      },
+      "sub": {
+        "hu": "Comb, fenék, vádli, has",
+        "en": "Quads, hamstrings, glutes, calves, abs"
+      },
+      "icon": "lower",
+      "builtin": false,
+      "items": [
+        {
+          "ex": "Barbell_Full_Squat",
+          "label": {
+            "hu": "Hátsó guggolás",
+            "en": "Back squat"
+          },
+          "sets": 3,
+          "reps": "5–8",
+          "rest": 210
+        },
+        {
+          "ex": "Romanian_Deadlift",
+          "label": {
+            "hu": "Román felhúzás",
+            "en": "Romanian deadlift"
+          },
+          "sets": 3,
+          "reps": "6–10",
+          "rest": 150
+        },
+        {
+          "ex": "Leg_Press",
+          "label": {
+            "hu": "Lábtoló gép",
+            "en": "Leg press"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 150
+        },
+        {
+          "ex": "Lying_Leg_Curls",
+          "label": {
+            "hu": "Fekvő combhajlító gép",
+            "en": "Lying leg curl"
+          },
+          "sets": 3,
+          "reps": "10–12",
+          "rest": 90
+        },
+        {
+          "ex": "Seated_Calf_Raise",
+          "label": {
+            "hu": "Ülő vádliemelés",
+            "en": "Seated calf raise"
+          },
+          "sets": 4,
+          "reps": "10–15",
+          "rest": 60
+        },
+        {
+          "ex": "Ab_Crunch_Machine",
+          "label": {
+            "hu": "Gépi hasprés",
+            "en": "Machine ab crunch"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 60
+        },
+        {
+          "ex": "Thigh_Adductor",
+          "label": {
+            "hu": "Combközelítő gép",
+            "en": "Adductor machine"
+          },
+          "sets": 2,
+          "reps": "12–15",
+          "rest": 60
+        }
+      ]
+    },
+    {
+      "id": "personal_push",
+      "name": {
+        "hu": "Push",
+        "en": "Push"
+      },
+      "sub": {
+        "hu": "Váll, mell, tricepsz",
+        "en": "Shoulders, chest, triceps"
+      },
+      "icon": "push",
+      "builtin": false,
+      "items": [
+        {
+          "ex": "Standing_Military_Press",
+          "label": {
+            "hu": "Álló vállból nyomás rúddal",
+            "en": "Standing overhead press"
+          },
+          "sets": 3,
+          "reps": "5–8",
+          "rest": 180
+        },
+        {
+          "ex": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+          "label": {
+            "hu": "Ferde fekvenyomás rúddal",
+            "en": "Incline barbell bench press"
+          },
+          "sets": 3,
+          "reps": "6–10",
+          "rest": 150
+        },
+        {
+          "ex": "Dips_-_Chest_Version",
+          "label": {
+            "hu": "Tolódzkodás",
+            "en": "Dip"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 150
+        },
+        {
+          "ex": "Single-Arm_Cable_Crossover",
+          "label": {
+            "hu": "Egykezes kábeles tárogatás",
+            "en": "One-arm cable fly"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 90
+        },
+        {
+          "ex": "Seated_Side_Lateral_Raise",
+          "label": {
+            "hu": "Gépi oldalra karemelés",
+            "en": "Machine lateral raise"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 60
+        },
+        {
+          "ex": "Incline_Barbell_Triceps_Extension",
+          "label": {
+            "hu": "Koponyatörő ferde padon",
+            "en": "Incline skull crusher"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 90
+        },
+        {
+          "ex": "Cable_One_Arm_Tricep_Extension",
+          "label": {
+            "hu": "Egykezes kábeles tricepsz nyújtás",
+            "en": "Single-arm cable triceps extension"
+          },
+          "sets": 2,
+          "reps": "12–15",
+          "rest": 60
+        }
+      ]
+    },
+    {
+      "id": "personal_pull",
+      "name": {
+        "hu": "Pull",
+        "en": "Pull"
+      },
+      "sub": {
+        "hu": "Hát, hátsó váll, bicepsz, alkar",
+        "en": "Back, rear delts, biceps, forearms"
+      },
+      "icon": "pull",
+      "builtin": false,
+      "items": [
+        {
+          "ex": "Bent_Over_Barbell_Row",
+          "label": {
+            "hu": "Rúdemelés (hajolt evezés)",
+            "en": "Barbell row"
+          },
+          "sets": 3,
+          "reps": "6–10",
+          "rest": 150
+        },
+        {
+          "ex": "Wide-Grip_Lat_Pulldown",
+          "label": {
+            "hu": "Lat-húzógép, széles fogás",
+            "en": "Wide-grip lat pulldown"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 120
+        },
+        {
+          "ex": "Seated_Cable_Rows",
+          "label": {
+            "hu": "Ülő kábelhúzás",
+            "en": "Seated cable row"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 120
+        },
+        {
+          "ex": "Cable_Rear_Delt_Fly",
+          "label": {
+            "hu": "Kábeles hátsó vállemelés",
+            "en": "Cable rear delt fly"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 60
+        },
+        {
+          "ex": "Barbell_Curl",
+          "label": {
+            "hu": "21-es bicepszhajlítás rúddal",
+            "en": "21s barbell curl"
+          },
+          "sets": 3,
+          "reps": "21",
+          "rest": 120
+        },
+        {
+          "ex": "Hammer_Curls",
+          "label": {
+            "hu": "Kalapácsfogású hajlítás",
+            "en": "Hammer curl"
+          },
+          "sets": 3,
+          "reps": "10–12",
+          "rest": 60
+        },
+        {
+          "ex": "Seated_Dumbbell_Palms-Up_Wrist_Curl",
+          "label": {
+            "hu": "Csuklóhajlítás",
+            "en": "Wrist curl"
+          },
+          "sets": 2,
+          "reps": "15–20",
+          "rest": 60
+        }
+      ]
+    },
+    {
+      "id": "personal_legs",
+      "name": {
+        "hu": "Láb",
+        "en": "Legs"
+      },
+      "sub": {
+        "hu": "Második lábnap, más szögekből",
+        "en": "Second leg day, different angles"
+      },
+      "icon": "legs",
+      "builtin": false,
+      "items": [
+        {
+          "ex": "Front_Barbell_Squat",
+          "label": {
+            "hu": "Első guggolás",
+            "en": "Front squat"
+          },
+          "sets": 3,
+          "reps": "6–10",
+          "rest": 180
+        },
+        {
+          "ex": "Seated_Leg_Curl",
+          "label": {
+            "hu": "Ülő combhajlító gép",
+            "en": "Seated leg curl"
+          },
+          "sets": 3,
+          "reps": "10–12",
+          "rest": 90
+        },
+        {
+          "ex": "Barbell_Hip_Thrust",
+          "label": {
+            "hu": "Csípőtolás",
+            "en": "Hip thrust"
+          },
+          "sets": 3,
+          "reps": "8–12",
+          "rest": 120
+        },
+        {
+          "ex": "Split_Squat_with_Dumbbells",
+          "label": {
+            "hu": "Bolgár kitörés",
+            "en": "Bulgarian split squat"
+          },
+          "sets": 3,
+          "reps": "8–10",
+          "rest": 120
+        },
+        {
+          "ex": "Leg_Extensions",
+          "label": {
+            "hu": "Ülő lábnyújtó gép",
+            "en": "Leg extension"
+          },
+          "sets": 3,
+          "reps": "10–15",
+          "rest": 90
+        },
+        {
+          "ex": "Standing_Calf_Raises",
+          "label": {
+            "hu": "Álló vádliemelés",
+            "en": "Standing calf raise"
+          },
+          "sets": 4,
+          "reps": "8–12",
+          "rest": 60
+        },
+        {
+          "ex": "Cable_Crunch",
+          "label": {
+            "hu": "Kábeles has (térdelő hasprés)",
+            "en": "Cable crunch"
+          },
+          "sets": 3,
+          "reps": "12–15",
+          "rest": 60
+        }
+      ]
+    }
+  ]
+}

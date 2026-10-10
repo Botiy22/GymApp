@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.21.0 — 2026-10-10 (build 20261010.5)
+
+The personal Upper/Lower/Push/Pull/Legs split is no longer automatically seeded or duplicated by the general five-day library. `exports/reppsy-original-five-day.json` restores it through Settings → Data → Import JSON: five editable routines, all 35 original movements/sets/reps/rest, appended without diaries or account data. Updating removes only unchanged automatic copies, writes deletion markers for sync, and preserves edited routines, explicit copies, history and active workouts. People still need to update their clients; no live account rows were edited.
+
+Enlarged accepted-friend photos accept desktop double-click and mobile double-tap likes, with an accessible button and idempotent liking rather than toggling on repeated taps. Scroll/pinch gestures do not count as likes. Existing modal background locking and image zoom are retained. Achievements are open by default and can be collapsed; the choice survives redraw/navigation.
+
+Reviews use compact author/star cards, an aggregate rating and a small write/edit icon. A separate editor has large star buttons and a character counter. Successful submission closes it and clears the draft; explicit Edit loads the saved review. Errors retain the text and allow retry. Shared-routine publication now refetches server activity, displays current/changed status and confirms the updated copy, including when the mutation response was stale. Existing accepted-friend permissions and opt-in sharing remain unchanged; no additional SQL migration is required for this release.
+
+Validation: original JSON import/reload, conservative retirement/sync/history/active-workout checks; desktop/touch likes; review error/retry/edit/clear; stale-response sharing updates; phone and larger-text layouts; verified update/offline checks; disposable PostgreSQL republishing the same routine without duplicates; template/snapshot tests. No physical iOS or live-account/deployment verification.
+
 ## 2.20.0 — 2026-10-10 (build 20261010.4)
 
 Removed profile color presets above the touch wheel. Added Grid, Orbit and Horizon covers, plus individually uploaded high-resolution photo covers with a live preview, save/cancel and removal. Friends has separate weekly progress and people cards; search, contact settings and optional phone setup open only when needed. Narrow-screen controls and long names fit without squeezing the search input.

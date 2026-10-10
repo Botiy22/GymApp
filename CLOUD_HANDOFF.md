@@ -1,3 +1,15 @@
+# Update — Reppsy 2.21.0, 2026-10-10
+
+User now authorizes removing their original personal default split from everyone's pages and asks for an importable copy, photo double-tap likes, sharing-update fixes, collapsible achievements and simpler optional reviews. `exports/reppsy-original-five-day.json` preserves five routines/35 movements with stable personal_* IDs, builtin=false and appendRoutines=true. Import through Settings Data JSON; includes no private diary/account data. Default seeding now only retains the two video complexes; the optional general ULPPL library uses separate generic movements. Archived PLAN remains for exercise-name/tip/muscle references.
+
+Store.clean retires only exact original builtin copies (IDs, name/sub, labels, item order, sets/reps/rest). Edited/explicit copies, active workouts and history remain. Deletion markers and routine timestamps prevent old synced copies returning. Initial load persists new retirement markers. Cached-shell bootstrap refreshes Store, RoutineTemplates and RoutineShare via capability markers. Other devices must update; no live userdata rows have been mutated.
+
+Shared updates refetch server activity, show changed/current state and a success message. Existing SQL republish is tested to replace one snapshot under the same ID. No new migration required beyond already installed social files. Reviews open via icon in a nested sheet with star buttons; failures retain the draft, success clears/closes it, explicit edit reloads saved text. Desktop/touch photo likes are idempotent and owner/target/current-photo guarded; touch drags and canceled pointers excluded; modal lock retained. Achievements use remembered open-by-default miniSection.
+
+Backup `backup/main-20261010-before-routine-review-polish` verified at fb6ff0b4cc505c8979739dd8c9a15691719f02bc (actual main). Work branch `codex/routine-review-polish-20261010`. Normal fast-forward publication authorized; never force/reset. This backup is code, not private account data. Release 2.21/build 20261010.5. Focused browser and disposable PostgreSQL tests only, no live accounts/physical iOS/hosted deployment checks.
+
+---
+
 # Update — Reppsy 2.20.0, 2026-10-10
 
 Current work: `codex/cover-competition-polish-20261010`, based on main a962be524cdaae60750853bd22c69702c340c006. Verified remote backup `backup/main-20261010-before-cover-competition` preserves that exact commit. Restore by a normal restoration commit; never force/reset. Existing handoff authorizes tested work to be committed/pushed to main. Code backup is not private diary data.

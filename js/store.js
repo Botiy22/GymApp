@@ -11,12 +11,7 @@ window.Store = (function () {
   let data = null, mem = false, failed = false, onFail = null, onSave = null, snap = null;
 
   function seedRoutines() {
-    return window.PLAN.days.map(d => ({
-      id: d.id, name: { hu: d.hu, en: d.en }, sub: d.sub, builtin: true,
-      items: window.PLAN.items.filter(i => i.day === d.id).map(i => ({
-        ex: i.ex, label: { hu: i.hu, en: i.en }, sets: i.sets, reps: i.reps, rest: i.rest
-      }))
-    })).concat(JSON.parse(JSON.stringify(window.EXTRA_ROUTINES || [])));
+    return JSON.parse(JSON.stringify(window.EXTRA_ROUTINES || []));
   }
   function fresh() {
     return {
@@ -161,7 +156,20 @@ window.Store = (function () {
       return {id,name,kcal,p:g(z.p),c:g(z.c),f:g(z.f),port:int(z.port,0,5000,0),t:num(z.t,0,4e12,0),...(z.basis==='ml'?{basis:'ml'}:{})};
     }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
     out.recentFoods = arr(r.recentFoods).slice(0, 12).map(food).filter(Boolean).map(z => ({ name: z.name, g: z.g, kcal: z.kcal, p: z.p, c: z.c, f: z.f,...(z.vml?{vml:z.vml}:{}) }));
+    // Retire only the exact automatically seeded personal split, never edited/imported routines.
+    const retired=out.routines.filter(isOriginalDefault);
+    if(retired.length){const now=Date.now();out.routines=out.routines.filter(x=>!retired.includes(x));retired.forEach(x=>out.del[x.id]=now);out.mt.routines=now;}
     return out;
+  }
+  function isOriginalDefault(r){
+    const d=window.PLAN.days.find(d=>d.id===r.id);
+    if(!d||!r.builtin||r.opt||r.circuit||r.info||r.icon&&r.icon!==d.id)return false;
+    const same=(a,b)=>a?.hu===b.hu&&a?.en===b.en;
+    if(!same(r.name,{hu:d.hu,en:d.en})||!same(r.sub,d.sub))return false;
+    const expected=window.PLAN.items.filter(i=>i.day===d.id);
+    return r.items.length===expected.length&&r.items.every((i,n)=>{
+      const e=expected[n];return i.ex===e.ex&&i.sets===e.sets&&i.reps===e.reps&&i.rest===e.rest&&!i.rir&&!i.note&&same(i.label,{hu:e.hu,en:e.en});
+    });
   }
 
   const MUSCLES = ['abdominals', 'abductors', 'adductors', 'biceps', 'calves', 'chest', 'forearms', 'glutes', 'hamstrings', 'lats', 'lower back', 'middle back', 'neck', 'quadriceps', 'shoulders', 'traps', 'triceps'];
@@ -214,6 +222,7 @@ window.Store = (function () {
     if (act !== undefined) { doc = doc && typeof doc === 'object' ? doc : {}; doc.active = act; }
     try { data = doc ? clean(doc) : fresh(); } catch (e) { data = fresh(); }
     snap = shot(data);
+    if(doc&&Object.keys(data.del).some(id=>data.del[id]!==doc.del?.[id])&&!mem)write();
     return data;
   }
   function saveActive() {
@@ -233,7 +242,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsMaterial:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    retiredPersonalSplit:true,supportsMaterial:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { [KEY, AKEY, KEY + '.corrupt'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

@@ -7,6 +7,10 @@ window.RoutineShare=(()=>{
   const ids=new Set(items.map(i=>i.ex));
   return {version:1,routine:{name:text(pair(r.name,lang),80),icon:r.icon,circuit:!!r.circuit,items},myEx:data.myEx.filter(e=>ids.has(e.id)).map(e=>({id:e.id,n:e.n,p:e.p,s:e.s,eq:e.eq,steps:e.steps}))};
  }
+ function matches(a,b,lang){
+  const normalized=s=>({name:pair(s?.routine?.name,lang),icon:s?.routine?.icon||'',circuit:!!s?.routine?.circuit,items:(s?.routine?.items||[]).map(i=>({ex:i.ex,label:pair(i.label,lang),sets:+i.sets,reps:i.reps,rest:+i.rest,rir:i.rir||''})),myEx:(s?.myEx||[]).map(e=>({id:e.id,n:e.n,p:e.p||[],s:e.s||[],eq:e.eq||'other',steps:e.steps||[]})).sort((x,y)=>x.id.localeCompare(y.id))});
+  return JSON.stringify(normalized(a))===JSON.stringify(normalized(b));
+ }
  function copy(snapshot,data,known,newId){
   if(snapshot?.version!==1||!Array.isArray(snapshot.routine?.items)||!snapshot.routine.items.length)throw new Error('routine_unavailable');
   const defs=snapshot.myEx||[],map=new Map();
@@ -15,5 +19,5 @@ window.RoutineShare=(()=>{
   const items=snapshot.routine.items.map(i=>{const ex=map.get(i.ex)||i.ex;if(!map.has(i.ex)&&!known[i.ex])throw new Error('exercise_unavailable');return {ex,label:i.label||null,sets:i.sets,reps:i.reps,rest:i.rest,rir:i.rir};});
   return {routine:{...snapshot.routine,id:newId(),builtin:false,items},custom};
  }
- return {pack,copy};
+ return {sharingUpdates:true,pack,matches,copy};
 })();
