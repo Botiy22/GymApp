@@ -473,3 +473,9 @@ Object.assign(I18N.hu,{decilitres:'Mennyiség (dl)',nutritionBasis:'Címkén sze
 
 Object.assign(I18N.en,{amountUnit:'Amount unit'});
 Object.assign(I18N.hu,{amountUnit:'Mennyiség egysége'});
+
+Object.assign(I18N.en,{palettePink:'Pink',profileLook:'Profile appearance',profileCover:'Cover style',profileFrame:'Photo shape',profileUseAccent:'Use my app accent',profileStylePrivate:'Cover and frame styling is personal to your app.',cover_glow:'Glow',cover_mesh:'Aurora',cover_stripe:'Motion',cover_clean:'Minimal',frame_soft:'Soft square',frame_round:'Circle',frame_ring:'Halo',updateNow:'Update app',updateSuccess:'Reppsy has been updated.',updateAvailable:'Update available'});
+Object.assign(I18N.hu,{palettePink:'Rózsaszín',profileLook:'Profil megjelenése',profileCover:'Borító stílusa',profileFrame:'Kép formája',profileUseAccent:'Az app kiemelő színét használom',profileStylePrivate:'A borító és a keret stílusa a saját appodban jelenik meg.',cover_glow:'Ragyogás',cover_mesh:'Auróra',cover_stripe:'Lendület',cover_clean:'Minimál',frame_soft:'Lágy négyzet',frame_round:'Kör',frame_ring:'Glória',updateNow:'App frissítése',updateSuccess:'A Reppsy frissítve.',updateAvailable:'Frissítés érhető el'});
+
+Object.assign(I18N.en,{updateCurrent:'Reppsy is up to date.'});
+Object.assign(I18N.hu,{updateCurrent:'A Reppsy naprakész.'});

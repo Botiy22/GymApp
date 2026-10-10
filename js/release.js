@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.17.0';
-  const build = '20261010.1';
+  const version = '2.18.0';
+  const build = '20261010.2';
   const history = [
+    {version:'2.18.0',build:'20261010.2',date:'2026-10-10',
+      en:['Stronger accent palettes, pink and a brighter royal blue; a Reppsy preview inside the color wheel.','Settings sections open by default and can be collapsed. A profile-photo shortcut sits at the top right.','Profile preview with personal cover styles and photo shapes.','The Settings header update button appears only for a newer release, with a smooth restart and confirmed update feedback.'],
+      hu:['Kontrasztosabb kiemelő színek, rózsaszín és élénkebb királykék; Reppsy-előnézet a színkör közepén.','A Beállítások részei alapból nyitva vannak, és összecsukhatók. Profilképes gyorsgomb a jobb felső sarokban.','Profil-előnézet személyes borítóstílusokkal és képformákkal.','A Beállítások fejlécében csak újabb verzió esetén jelenik meg a frissítésgomb, finom újraindítással és igazolt visszajelzéssel.']},
     {version:'2.17.0',build:'20261010.1',date:'2026-10-10',
       en:['Custom color is always visible in Appearance, with a large touch-friendly hue wheel.','Liquid portions use dl when food-specific volume data is available. Save drink labels per 100 ml, and log manual drinks in dl.'],
       hu:['Az egyéni szín mindig látható a Megjelenésben, nagy, érintéssel kezelhető színkörrel.','A folyadékadagok dl-ben adhatók meg, ha az ételhez térfogatadat tartozik. Italcímkék mentése 100 ml-re, kézi italnaplózás dl-ben.']},

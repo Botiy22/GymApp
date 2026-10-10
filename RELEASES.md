@@ -6,6 +6,18 @@ For each published change, increment the public version and choose a new build (
 
 An unfinished development branch uses a `-dev` suffix. Before publishing finished work, remove that suffix and select a version newer than main. Never merge the unfinished exercise migration just to update its version.
 
+## 2.18.0 — 2026-10-10, build 20261010.2
+
+Seven stronger accent presets include pink and an updated royal blue. New selections/custom hues use vivid colors with readable fill labels and light/dark accent text; previously stored soft custom colors are preserved. The large hue wheel previews Reppsy rather than Aa, with a clearer outlined thumb and selected swatches.
+
+All Settings cards and the accent/custom/background sections are collapsible and open by default. User closures remain during navigation/theme changes; a fresh app load starts open. A circular profile-photo shortcut is at the top right; the bottom Profile icon also uses the saved photo. Header controls wrap when needed on narrow screens.
+
+The profile editor has a live preview, four personal cover designs, three photo/frame shapes and an app-accent option. `settings.profileStyle` is sanitized, included in private sync/backup and restored after reload. Public profile themes, photo, bio and badges retain the existing Supabase format: the new cover/frame layout is personal to the user's app. Update other devices before editing this optional setting to avoid older clients dropping it. No SQL migration is required.
+
+Removed the App/update settings card and automatic Restart banner. Version/release notes/shortcut help remain in a compact footer. A background, throttled manifest check reveals only the Settings-header update button for a newer version/build. Installation retains complete service-worker hash verification, shows a modal reload animation, saves data before restart, and announces success only when the reloaded build matches the expected release. Network failure releases the modal lock and allows retry; reduced-motion settings are honored. Cached older HTML loads new helper scripts before store initialization; release-tagged URLs avoid reusing an older script, and retries are bounded.
+
+Validation: 11 Node checks; five focused Chromium tests for colors, disclosure state, live profile editing/export/restore, photo navigation, available-only update visibility, failure recovery, older-shell helper loading and a real verified two-release install/reload; six dl/food/color regressions; three existing photo/responsive/offline tests, including 16 viewport/language/text scenarios across all main/inner tabs. No live accounts were used. Physical Safari and hosted deployment are unverified.
+
 ## 2.17.0 — 2026-10-10, build 20261010.1
 
 Custom color is always visible inside Appearance. A large circular hue control with a 46px thumb supports direct taps, pointer/touch dragging and keyboard arrows/Home/End; selection previews immediately and saves on release. Preset/background changes retain the wheel. Only the wheel captures scrolling gestures.

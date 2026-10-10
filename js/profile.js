@@ -29,6 +29,10 @@ window.Profile = (() => {
     const username=text('username',24).toLowerCase();
     return {username:/^[a-z0-9_]{3,24}$/.test(username)?username:'',displayName:text('displayName',40),bio:text('bio',160),avatar:typeof v.avatar==='string'&&v.avatar.length<=90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(v.avatar)?v.avatar:'',theme:['mint','violet','amber','slate'].includes(v.theme)?v.theme:'mint',showcase:Array.isArray(v.showcase)?Array.from(new Set(v.showcase.filter(id=>badges.some(b=>b.id===id)))).slice(0,4):[]};
   }
+  function cleanStyle(value){
+    const v=value&&typeof value==='object'?value:{};
+    return {cover:['glow','mesh','stripe','clean'].includes(v.cover)?v.cover:'glow',frame:['soft','round','ring'].includes(v.frame)?v.frame:'soft',useAccent:v.useAccent===true};
+  }
   function symbol(kind) {
     const paths={spark:'M13 3 5 13h6l-1 8 9-12h-6z',shield:'M12 3 20 7v6c0 5-8 9-8 9s-8-4-8-9V7z M8 12l3 3 5-6',crown:'M4 7l4 4 4-7 4 7 4-4-2 12H6z M8 22h8',sun:'M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2',weight:'M5 8h14l2 13H3z M9 8V5a3 3 0 0 1 6 0v3 M9 14h6',diamond:'M12 3 21 12 12 21 3 12z M12 7v10 M8 12h8',compass:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M16 8l-3 5-5 3 3-5z'};
     return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+(paths[kind]||paths.spark)+'"/>'+ (kind==='sun'?'<circle cx="12" cy="12" r="4"/>':'')+'</svg>';
@@ -37,5 +41,5 @@ window.Profile = (() => {
     const ratio=goal>0?Math.min(1,Math.max(0,consumed/goal)):0;
     return '<svg class="calorie-dial" viewBox="0 0 280 280" role="img" aria-label="'+label.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+'"><circle class="dial-disc" cx="140" cy="140" r="101"/>'+Array.from({length:60},(_,i)=>{const a=i*6*Math.PI/180-Math.PI/2,r=i%5===0?112:119;return '<line class="dial-tick'+(i<ratio*60?' filled':'')+'" x1="'+(140+Math.cos(a)*r)+'" y1="'+(140+Math.sin(a)*r)+'" x2="'+(140+Math.cos(a)*130)+'" y2="'+(140+Math.sin(a)*130)+'"/>';}).join('')+'</svg>';
   }
-  return {badges,summary,clean,symbol,dial};
+  return {badges,summary,clean,cleanStyle,symbol,dial};
 })();

@@ -1,3 +1,17 @@
+# Update — Reppsy 2.18.0, 2026-10-10
+
+User requested vivid accents/pink/better royal blue, optional open-by-default collapsibles, a top-right profile photo, improved private profile customization, Reppsy inside the wheel and available-only header updates with smooth restart/feedback. Seven vivid presets retain existing hue IDs and add 350=pink; royal RGB53/88/244. New custom selections use vivid OKLCH; existing soft saved hues stay soft until edited. AccentTheme chooses readable fill/text contrast. Circular profile shortcut and photo-based bottom Profile icon retain the five-tab navigation.
+
+Settings cards and nested accent/custom/background sections are native details, initially open, retaining deliberate closures in UI memory while navigating or changing themes. They reset open on a fresh app load. Profile editor previews names/bio/photo and cover/color/frame immediately. New optional settings.profileStyle={cover:glow|mesh|stripe|clean,frame:soft|round|ring,useAccent:boolean} is private, cleaned/exported/restored/synced with account settings. Public profile layout format and Supabase RPCs/themes are unchanged. Friends still receive the existing shared photo/bio/theme/badges. Update other devices before editing profileStyle to avoid old cleaners dropping it; no SQL required.
+
+App/update settings card and old ready-update banner removed; version/notes/shortcut help are a small footer. AppUpdates validates and compares stable version/build, rejects downgrade, uses an 8-second timeout and throttled startup/foreground/online/60-second checks. Only Settings header shows the update button when newer; no unconditional reload. Update acquires ModalLock, verifies the complete release through existing worker, saves before reload and compares expected build on restart before saying updated. Errors release lock and allow retry. Reduced motion is respected. Boot fallback loads new helpers and a cleanStyle-capable Profile before storage initialization, including older cached HTML. Dependency retries use release-tagged URLs and stop with a reload prompt if an incompatible script persists.
+
+11 Node tests, five new local Chromium tests, six existing color/dl regressions and three existing responsive/photo/offline tests passed. Reviewed 320px HU with enlarged text/390px EN light screenshots. Real service-worker fixture installed a synthetic next release, showed modal progress, reloaded to its confirmed build, retained volume diary/profileStyle and hid update again. No live account operations; physical Safari and hosted deployment unverified. Screenshots /tmp/reppsy-settings-* and /tmp/reppsy-profile-preview-320.png.
+
+Verified backup backup/main-20261010-before-profile-colors-updates preserves a5bff33fc4a1fe8b935036498f01872be02ec8cd. Normal restoration commit only, never force/reset. Code snapshot is not private diary data. Branch codex/profile-colors-updates-20261010.
+
+---
+
 # Update — Reppsy 2.17.0, 2026-10-10
 
 Always-visible Custom color section inside Appearance, circular hue control with 46px thumb, pointer capture and keyboard support. Live OKLCH palette matches existing soft hue colors. Final gesture saves immediately; preset indicators update during drag; changing background/preset keeps the picker visible. Whole Appearance group can still be intentionally collapsed.

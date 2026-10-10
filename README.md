@@ -18,7 +18,7 @@ Register starts with your goal, sex, age, height, weight and activity, then prev
 
 ## Navigation and profiles
 
-The bottom bar is **Workout · Food · Goals · Settings · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. Customize its photo, short bio and cover color, then select up to four earned badges individually. New badges are announced when you finish a qualifying workout.
+The bottom bar is **Workout · Food · Goals · Settings · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. A circular photo shortcut at the top right opens your profile. Customize its photo, short bio and public cover color, then select up to four earned badges individually. A live editor preview adds personal cover designs, photo shapes and an option to follow your app accent; these layout preferences sync as private settings. New badges are announced when you finish a qualifying workout.
 
 Usernames, friend requests, friend profiles and weekly competition use the additive [social migration](migrations/20261008_social.sql). **Run it in your existing Supabase SQL Editor to activate friends.** The migration is prepared and tested, but is not installed on the live project from this environment. [SOCIAL.md](SOCIAL.md) explains activation, points, milestones and sharing rules. Local customization works without a social connection.
 
@@ -110,7 +110,7 @@ Plan upload is available through the compact file button beside Settings on ever
 
 Change the files, update `js/release.js`, then run `python3 tools/build_release.py` before publishing the complete checkout. The generated `release-manifest.json` lists the SHA-256 hash of every app-shell file. The service worker rejects incomplete or stale deployments and activates one verified release. Never upload only the new version metadata. Add new offline app files to `CORE` in `sw.js` before generating the manifest.
 
-On the phone, Settings → **Check for update / Frissítés keresése** downloads the verified release and restarts the app while preserving saved data. When an automatic update is ready, a Restart button appears; an open preview or editor is not discarded automatically. Confirm the installed version/build in Settings after restarting.
+On the phone, the **Update app / App frissítése** button appears in the Settings header only when a newer release is detected. It downloads the verified release, shows a restart animation and preserves saved data. After restarting, a brief success message appears only when the loaded build matches the requested update. An open preview or editor is not discarded automatically. The installed version/build stays in the Settings footer.
 
 Exercise drawings remain the first choice. Missing or broken drawings use the exact existing start/end photo pair; previously viewed images and built-in workout photos are cached for offline use. See [MEDIA_WORKFLOW.md](MEDIA_WORKFLOW.md) for the prioritized batch-production process and `python3 tools/audit_media.py` for current coverage.
 

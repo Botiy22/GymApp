@@ -5,10 +5,11 @@
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile || !window.Social || !window.ModalLock) {
-    const src = !window.RoutineTemplates ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
+  if (!window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile?.cleanStyle || !window.Social || !window.ModalLock) {
+    const src = !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile?.cleanStyle ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
-    script.src = src;
+    // A distinct URL avoids re-executing the document's cached older script.
+    script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
     script.onload = startGymApp;
     script.onerror = () => {
       const hu = (navigator.language || '').toLowerCase().startsWith('hu');
@@ -25,7 +26,9 @@
       box.append(message, retry);
       view.replaceChildren(box);
     };
-    document.head.append(script);
+    const attempted=startGymApp.attempted||(startGymApp.attempted=new Set());
+    if(attempted.has(src)){script.onerror();return;}
+    attempted.add(src);document.head.append(script);
     return;
   }
   /* ---------- helpers ---------- */
@@ -189,7 +192,26 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?`<button class="icon-btn update-app" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateNow'))}" aria-describedby="update-status" ${ui.updateBusy?'disabled':''}>${IC.refresh}</button>`:''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button></div></header>`;
+  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`;
+  function updateButton(){return ui.updateAvailable||ui.updateBusy?`<button class="icon-btn update-app${ui.updateBusy?' busy':''}" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateAvailable'))}" ${ui.updateBusy?'disabled':''}>${IC.refresh}<span class="update-dot" aria-hidden="true"></span></button>`:'';}
+  function syncUpdateButton(){
+    const actions=$('#view > .top .top-actions');if(!actions||ui.tab!=='settings')return;
+    const existing=$('.update-app',actions),html=updateButton();
+    if(existing){if(html)existing.outerHTML=html;else existing.remove();}else if(html)actions.insertAdjacentHTML('afterbegin',html);
+  }
+  let updateCheckAt=0,updateChecking=null;
+  async function checkForUpdate(force=false){
+    if(updateChecking)return updateChecking;
+    if(!force&&Date.now()-updateCheckAt<60000)return;updateCheckAt=Date.now();
+    updateChecking=(async()=>{try{const next=await AppUpdates.latest();ui.updateAvailable=AppUpdates.newer(GYM_RELEASE,next)?next:null;syncUpdateButton();}catch(error){/* Offline or failed check does not invent an available update. */}finally{updateChecking=null;}})();
+    return updateChecking;
+  }
+  function updateOverlay(){
+    const dialog=document.createElement('dialog');dialog.className='app-update-overlay';dialog.id='app-update-progress';dialog.setAttribute('aria-label',t('updating'));
+    dialog.innerHTML=`<div class="app-update-card" role="status" aria-live="polite"><div class="reload-mark"><img src="icons/reppsy-192.png" width="64" height="64" alt=""></div><b>Reppsy</b><p>${esc(t('updating'))}</p><div class="reload-track" aria-hidden="true"><i></i></div></div>`;
+    dialog.addEventListener('cancel',e=>e.preventDefault());document.body.append(dialog);const unlock=ModalLock.acquire(dialog);dialog.showModal();
+    return {message:key=>{$('p',dialog).textContent=t(key);dialog.classList.add('ready');},close:()=>{dialog.close();dialog.remove();unlock();}};
+  }
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
   const habitDue = Momentum.due;
@@ -569,6 +591,12 @@
   function pickFood(x) { const f = foodOf(x.i, x.h); const each = f.ports.find(pt => f.own || /item|sandwich|slice|\bsub\b|\bbar\b|large|medium|small|link|patty|biscuit|taco|burrito|pieces|container|\bcan\b|packet/i.test(pt[2] || ''));   // start from a natural unit (1 sandwich, 1 slice…), otherwise from 100 g
       ui.fa = {food:f,unit:f.volume.gramsPerDl?'dl':'g',g:f.volume.gramsPerDl?'2.5':String(each?each[0]:100)};openSheet(shFoodAmount()); }
   const profileLocal = () => Profile.clean(D().settings.publicProfile);
+  function profileShortcut(){const p=profileLocal();return `<button class="profile-shortcut" data-a="profile-home" aria-label="${esc(t('tabProfile'))}" title="${esc(t('tabProfile'))}">${p.avatar?`<img src="${esc(p.avatar)}" alt="">`:IC.profile}</button>`;}
+  const profileStyle=()=>Profile.cleanStyle(D().settings.profileStyle);
+  const styleClasses=s=>`cover-${s.cover} frame-${s.frame}${s.useAccent?' profile-use-accent':''}`;
+  const sectionOpen=key=>ui.sections?.[key]!==false;
+  function miniSection(key,title,body){return `<details class="mini-section" data-section="${key}" ${sectionOpen(key)?'open':''}><summary>${esc(title)}${IC.down}</summary><div class="section-body">${body}</div></details>`;}
+  function profilePreview(p,style){return `<div class="profile-cover profile-preview theme-${p.theme} ${styleClasses(style)}"><div class="profile-identity">${avatar(p,false)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2>${p.username?`<p>@${esc(p.username)}</p>`:''}</div></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}</div>`;}
   function avatar(p, small, view=false) {
     const initial=(p.displayName||p.username||t('appName')).slice(0,1).toUpperCase();
     const tag=view&&p.avatar?'button':'span';
@@ -616,15 +644,15 @@
     const base=dayTargets(td),goal=base?energyBudget(td,sum.kcal,base.kcal).total:0;
     const display=stats.badges.filter(b=>b.earned&&p.showcase.includes(b.id)).sort((a,b)=>p.showcase.indexOf(a.id)-p.showcase.indexOf(b.id));
     const claimed=Social.state.data&&Social.state.data.profile&&Social.state.data.profile.username===p.username;
-    let h=navigation+`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
+    let h=navigation+`<section class="profile-cover theme-${p.theme} ${styleClasses(profileStyle())}"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
     h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div>${calorieClock(sum.kcal,goal)}${energyBudgetPanel(td,sum.kcal,base&&base.kcal)}<div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b><span class="macro-value">${dec(r1(sum[k]))}</span><span class="macro-unit">g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
     h+=`<div class="profile-stats"><div><b>${stats.workouts}</b><small>${esc(t('loggedSessions'))}</small></div><div><b>${stats.days}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${stats.volume>=1000?dec(r1(stats.volume/1000)):compact(stats.volume)} <span>${stats.volume>=1000?'t':'kg'}</span></b><small>${esc(t('lifetimeVolume'))}</small></div></div><section class="card"><div class="h2row"><h2>${esc(t('achievements'))}</h2><button class="link" data-a="profile-badges">${esc(t('chooseBadges'))}</button></div><div class="achievement-grid">${stats.badges.map(b=>badgeChip(b,true)).join('')}</div></section>`;
     return h;
   }
   function shProfileEdit() {
     const fn=()=>{
-      const p=ui.profileDraft;
-      return {title:t('editProfile'),html:`<form id="profile-edit-form" data-f="profile-edit"><div class="avatar-edit">${avatar(p,false,true)}<label class="btn sm">${esc(t('changePhoto'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="profile-photo"></label>${p.avatar?`<button type="button" class="link" data-a="profile-photo-remove">${esc(t('removePhoto'))}</button>`:''}</div><label class="fld"><span>${esc(t('displayName'))}</span><input name="displayName" maxlength="40" data-in="profile-draft" value="${esc(p.displayName)}" autocomplete="nickname"></label><label class="fld"><span>${esc(t('username'))}</span><input name="username" value="${esc(p.username)}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocapitalize="none" spellcheck="false" data-in="profile-draft" ${CL?'required':''}><small>${esc(t('usernameRule'))}</small></label><label class="fld"><span>${esc(t('profileBio'))}</span><textarea name="bio" maxlength="160" rows="3" data-in="profile-draft">${esc(p.bio)}</textarea></label><p class="lbl">${esc(t('profileColor'))}</p><div class="profile-colors">${['mint','violet','amber','slate'].map(v=>`<button type="button" class="theme-${v} ${p.theme===v?'on':''}" data-a="profile-color" data-v="${v}" aria-label="${esc(t('profile_'+v))}" aria-pressed="${p.theme===v}"><span></span>${p.theme===v?IC.check:''}</button>`).join('')}</div><p class="cap">${esc(t('profileShared'))}</p><p class="profile-edit-error note warn" role="status" ${ui.profileError?'':'hidden'}>${esc(t(ui.profileError||''))}</p></form>`,foot:`<button class="btn primary" form="profile-edit-form" ${ui.profileBusy?'disabled':''}>${esc(t(ui.profileBusy?'savingProfile':'saveProfile'))}</button>`};
+      const p=ui.profileDraft,style=ui.profileStyleDraft||profileStyle();
+      return {title:t('editProfile'),html:`${profilePreview(p,style)}<form id="profile-edit-form" data-f="profile-edit"><div class="avatar-edit">${avatar(p,false,true)}<label class="btn sm">${esc(t('changePhoto'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="profile-photo"></label>${p.avatar?`<button type="button" class="link" data-a="profile-photo-remove">${esc(t('removePhoto'))}</button>`:''}</div><label class="fld"><span>${esc(t('displayName'))}</span><input name="displayName" maxlength="40" data-in="profile-draft" value="${esc(p.displayName)}" autocomplete="nickname"></label><label class="fld"><span>${esc(t('username'))}</span><input name="username" value="${esc(p.username)}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocapitalize="none" spellcheck="false" data-in="profile-draft" ${CL?'required':''}><small>${esc(t('usernameRule'))}</small></label><label class="fld"><span>${esc(t('profileBio'))}</span><textarea name="bio" maxlength="160" rows="3" data-in="profile-draft">${esc(p.bio)}</textarea></label>${miniSection('profile-look',t('profileLook'),`<p class="lbl">${esc(t('profileColor'))}</p><div class="profile-colors">${['mint','violet','amber','slate'].map(v=>`<button type="button" class="theme-${v} ${p.theme===v?'on':''}" data-a="profile-color" data-v="${v}" aria-label="${esc(t('profile_'+v))}" aria-pressed="${p.theme===v}"><span></span>${p.theme===v?IC.check:''}</button>`).join('')}</div><label class="sw"><input type="checkbox" role="switch" data-in="profile-style" data-k="useAccent" ${style.useAccent?'checked':''}><span>${esc(t('profileUseAccent'))}</span></label><p class="lbl">${esc(t('profileCover'))}</p><div class="cover-choices">${['glow','mesh','stripe','clean'].map(v=>`<button type="button" class="cover-choice theme-${p.theme} cover-${v}${style.useAccent?' profile-use-accent':''} ${style.cover===v?'on':''}" data-a="profile-style-choice" data-k="cover" data-v="${v}" aria-pressed="${style.cover===v}"><span aria-hidden="true"></span><b>${esc(t('cover_'+v))}</b>${style.cover===v?IC.check:''}</button>`).join('')}</div><p class="lbl">${esc(t('profileFrame'))}</p><div class="seg">${['soft','round','ring'].map(v=>`<button type="button" data-a="profile-style-choice" data-k="frame" data-v="${v}" aria-pressed="${style.frame===v}" class="${style.frame===v?'on':''}">${esc(t('frame_'+v))}</button>`).join('')}</div><p class="cap">${esc(t('profileStylePrivate'))}</p>`)}<p class="cap">${esc(t('profileShared'))}</p><p class="profile-edit-error note warn" role="status" ${ui.profileError?'':'hidden'}>${esc(t(ui.profileError||''))}</p></form>`,foot:`<button class="btn primary" form="profile-edit-form" ${ui.profileBusy?'disabled':''}>${esc(t(ui.profileBusy?'savingProfile':'saveProfile'))}</button>`};
     };fn.kind='profile-edit';return fn;
   }
   function shBadges() {
@@ -667,8 +695,8 @@
     const draft=Profile.clean({...ui.profileDraft,...values});
     if((values.username||'').trim()&&!draft.username){ui.profileError='usernameRule';refreshSheet();return;}
     ui.profileBusy=true;ui.profileError='';ui.profileDraft=draft;
-    const before=D().settings.publicProfile;D().settings.publicProfile=draft;
-    if(!Store.save()){D().settings.publicProfile=before;ui.profileBusy=false;ui.profileError='saveFailed';refreshSheet();return;}
+    const before=D().settings.publicProfile,beforeStyle=D().settings.profileStyle;D().settings.publicProfile=draft;D().settings.profileStyle=Profile.cleanStyle(ui.profileStyleDraft);
+    if(!Store.save()){D().settings.publicProfile=before;D().settings.profileStyle=beforeStyle;ui.profileBusy=false;ui.profileError='saveFailed';refreshSheet();return;}
     refreshSheet();
     try {
       if(CL&&CL.user){await Social.publish(draft);await Social.refresh();}
@@ -688,7 +716,7 @@
     // Async profile/sync redraws must not cancel a tab's entry animation immediately.
     if(entering){v.dataset.anim=entering;clearTimeout(animT);animT=setTimeout(()=>{delete v.dataset.anim;},600);}
     v.innerHTML = VIEWS[ui.tab]();
-    $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
+    $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false');if(b.dataset.tab==='profile'){b.querySelector('.nav-avatar')?.remove();const p=profileLocal(),icon=b.querySelector(':scope > svg');if(icon)icon.style.display=p.avatar?'none':'';if(p.avatar){const img=document.createElement('img');img.className='nav-avatar';img.src=p.avatar;img.alt='';b.prepend(img);}} });
     const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
     window.scrollTo(0, y);
     const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); }
@@ -1226,14 +1254,15 @@
   }
   function vSettings() {
     let content = shSettingsBody()().html;
-    const folded=['workout','aiTitle','myDb','data'];
-    for(const key of folded){
-      const heading='<h3>'+esc(t(key))+'</h3>';
-      const start=content.indexOf('<section class="card">'+heading);
-      if(start<0)continue;
-      const end=content.indexOf('</section>',start),body=content.slice(start+22+heading.length,end);
-      content=content.slice(0,start)+`<details class="card settings-group" data-group="${key}" ${ui.settingsGroups?.[key]?'open':''}><summary>${esc(t(key))}${IC.down}</summary>${body}</details>`+content.slice(end+10);
+    const template=document.createElement('template');template.innerHTML=content;
+    for(const card of [...template.content.children].filter(c=>c.matches('section.card'))){
+      const heading=card.querySelector(':scope > h3');if(!heading)continue;
+      const key=['account','appearance','workout','aiTitle','nutrition','planCard','myDb','data'].find(k=>t(k)===heading.textContent);if(!key)continue;
+      const details=document.createElement('details');details.className='card settings-group';details.dataset.section='settings-'+key;details.open=sectionOpen(details.dataset.section);
+      const summary=document.createElement('summary');summary.innerHTML=esc(heading.textContent)+IC.down;heading.remove();
+      const body=document.createElement('div');body.className='section-body';body.append(...card.childNodes);details.append(summary,body);card.replaceWith(details);
     }
+    content=template.innerHTML;
     return head(t('settings'),t('settingsIntro'),false,true) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
   }
 
@@ -1248,22 +1277,22 @@
     let C = 0.2, lin = conv(C); while (C > 0.02 && lin.some(v => v < -0.0005 || v > 1.0005)) { C -= 0.01; lin = conv(C); }
     return lin.map(v => { v = Math.min(1, Math.max(0, v)); return Math.round((v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255); });
   }
-  const PALETTES=[[null,'paletteApricot'],[155,'paletteSage'],[250,'paletteSky'],[300,'paletteLavender'],[25,'paletteRed'],[270,'paletteRoyal']];
-  const vividFill=h=>h===25?[217,56,73]:h===270?[65,105,225]:null;
+  const PALETTES=[[null,'paletteApricot'],[155,'paletteSage'],[250,'paletteSky'],[300,'paletteLavender'],[25,'paletteRed'],[270,'paletteRoyal'],[350,'palettePink']];
+  const vividFill=h=>AccentTheme.fill(h);
   const DEF_HUE = 55;                                                                 // default apricot hue; explicitly saved hues remain unchanged
   function colorWheel(h){
-    const a=h*Math.PI/180,gradient=Array.from({length:13},(_,i)=>'rgb('+hueRGB(i*30).join(',')+') '+i*30+'deg').join(',');
-    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true">Aa</span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="set-hue"></div>`;
+    const a=h*Math.PI/180,gradient=Array.from({length:73},(_,i)=>'rgb('+(vividFill(i*5%360)||hueRGB(i*5,.68)).join(',')+') '+i*5+'deg').join(',');
+    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true"><img src="icons/reppsy-192.png" width="28" height="28" alt=""><b>Reppsy</b></span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="set-hue"></div>`;
   }
   function applyLook() {
     const s = D().settings, e = document.documentElement;
     const light = s.bg === 'light', hue = s.hue == null ? DEF_HUE : s.hue;
-    if (s.hue == null) ['--acc', '--acc-rgb', '--acc-ink', '--acc-tx'].forEach(k => e.style.removeProperty(k));
+    if (s.hue == null&&s.accentTone!=='vivid') ['--acc', '--acc-rgb', '--acc-ink', '--acc-tx'].forEach(k => e.style.removeProperty(k));
     else {
-      const vivid=s.accentTone==='vivid'&&vividFill(hue);
-      const c = vivid || hueRGB(hue, light ? 0.74 : 0.82);                                    // on the bright background the fill is a little deeper, and accent-coloured text much darker, so both stay readable
-      e.style.setProperty('--acc', 'rgb(' + c.join(',') + ')'); e.style.setProperty('--acc-rgb', c.join(',')); e.style.setProperty('--acc-ink', vivid?'#ffffff':'#0c0e12');
-      const text=vivid?(light?c: hue===25?[255,137,147]:[141,170,255]):light?hueRGB(hue,0.45):c;
+      const vivid=s.accentTone==='vivid';
+      const c=vivid?(vividFill(s.hue)||hueRGB(hue,.68)):hueRGB(hue,light?.74:.82);
+      e.style.setProperty('--acc','rgb('+c.join(',')+')');e.style.setProperty('--acc-rgb',c.join(','));e.style.setProperty('--acc-ink',AccentTheme.ink(c));
+      const text=vivid?AccentTheme.text(c,light):light?hueRGB(hue,.45):c;
       e.style.setProperty('--acc-tx','rgb('+text.join(',')+')');
     }
     e.dataset.bg = s.bg;
@@ -1282,9 +1311,9 @@
           ${sw('syncKey', t('setSyncKey'))}<div class="row2"><button class="btn" data-a="sync-now">${esc(t('syncNow'))}</button><button class="btn" data-a="sign-out">${esc(t('signOut'))}</button></div><p class="cap">${esc(t('accountCap'))}</p></section>`;
       const accOff = cs || CL ? '' : `<section class="card"><h3>${esc(t('account'))}</h3><p class="cap">${esc(t('accOff'))}</p><button class="btn" data-a="acc-help">${esc(t('accHelp'))}</button></section>`;
       return { title: t('settings'), html: `${account}${accOff}<section class="card"><h3>${esc(t('appearance'))}</h3><p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
-          <p class="lbl">${esc(t('accent'))}</p><div class="accent-palettes">${PALETTES.map(([h,key])=>`<button class="palette ${s.hue===h&&(!vividFill(h)||s.accentTone==='vivid')?'on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${s.hue===h&&(!vividFill(h)||s.accentTone==='vivid')}" style="--swatch:${h==null?'#efad82':'rgb('+(vividFill(h)||hueRGB(h)).join(',')+')'}"><span class="palette-preview" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t(key))}</b><span class="palette-check">${s.hue===h&&(!vividFill(h)||s.accentTone==='vivid')?IC.check:''}</span></button>`).join('')}</div>
-          <section class="custom-accent"><h3>${esc(t('customAccent'))}</h3>${colorWheel(s.hue==null?DEF_HUE:s.hue)}<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></section>
-          <p class="lbl">${esc(t('background'))}</p><div class="surface-choices">${(Store.BGS||['aurora']).map(b=>`<button class="surface-choice ${s.bg===b?'on':''}" data-a="set-bg" data-v="${b}" aria-pressed="${s.bg===b}"><span class="surface-preview surface-${b}" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t('bg_'+b))}</b>${s.bg===b?IC.check:''}</button>`).join('')}</div>
+          ${miniSection('accent-presets',t('accent'),`<div class="accent-palettes">${PALETTES.map(([h,key])=>`<button class="palette ${s.hue===h&&s.accentTone==='vivid'?'on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${s.hue===h&&s.accentTone==='vivid'}" style="--swatch:${'rgb('+vividFill(h).join(',')+')'}"><span class="palette-preview" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t(key))}</b><span class="palette-check">${s.hue===h&&s.accentTone==='vivid'?IC.check:''}</span></button>`).join('')}</div>`)}
+          <details class="custom-accent mini-section" data-section="custom-accent" ${sectionOpen('custom-accent')?'open':''}><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="section-body">${colorWheel(s.hue==null?DEF_HUE:s.hue)}<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></div></details>
+          ${miniSection('background-choices',t('background'),`<div class="surface-choices">${(Store.BGS||['aurora']).map(b=>`<button class="surface-choice ${s.bg===b?'on':''}" data-a="set-bg" data-v="${b}" aria-pressed="${s.bg===b}"><span class="surface-preview surface-${b}" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t('bg_'+b))}</b>${s.bg===b?IC.check:''}</button>`).join('')}</div>`)}
           ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
           ${sw('stretch', t('setStretch'))}${s.stretch ? sel('hold', t('holdLbl'), [20, 30, 45].map(v => [v, v + ' ' + t('secShort')])) : ''}
@@ -1296,8 +1325,7 @@
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button>
           <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
-        <section class="card"><h3>${esc(t('appCard'))}</h3><p class="cap">${esc(t('appName'))} ${esc(releaseText())} · ${window.EXERCISES.length} ${esc(t('exercises'))} · ${FOODS.list.length} ${esc(t('foodsWord'))}</p><button class="btn" data-a="release-notes">${esc(t('whatsNew'))} · ${esc(VERSION)}</button><button class="btn" data-a="update-now" ${ui.updateBusy ? 'disabled' : ''} aria-describedby="update-status">${esc(t(ui.updateBusy ? 'updating' : 'updateNow'))}</button><button class="link" data-a="shortcut-help">${esc(t('shortcutTitle'))}</button><p id="update-status" class="cap update-status" role="status" aria-live="polite">${ui.updateStatus ? esc(updateStatusText()) : ''}</p>
-          <details class="more"><summary>${esc(t('about'))}</summary><p class="cap">${esc(t('aboutText'))}</p></details></section>` };
+        <footer class="app-info"><p>${esc(t('appName'))} ${esc(releaseText())}</p><button class="link" data-a="release-notes">${esc(t('whatsNew'))}</button><button class="link" data-a="shortcut-help">${esc(t('shortcutTitle'))}</button></footer>` };
     };
   }
   /* shown only from the note an iPhone user sees in Safari before the app is on the Home Screen */
@@ -1609,8 +1637,10 @@
     'goals-view'(el) {if(!['habits','progress'].includes(el.dataset.v))return;go('tab',()=>{ui.goals=el.dataset.v;render();});},
     'profile-view'(el) {if(!['overview','ranks','friends'].includes(el.dataset.v))return;go('tab',()=>{ui.profilePage=el.dataset.v;render();if(ui.profilePage==='friends')loadSocial();});},
     'open-profile'() {closeSheet(true);ui.tab='profile';render();loadSocial();},
-    'profile-edit'() {ui.profileDraft=profileLocal();ui.profileError='';ui.profileBusy=false;openSheet(shProfileEdit());},
-    'profile-color'(el) {ui.profileDraft.theme=el.dataset.v;refreshSheet();},
+    'profile-home'(){go('tab',()=>{ui.tab='profile';ui.profilePage='overview';render();});if(CL&&CL.user)loadSocial();},
+    'profile-edit'() {ui.profileStyleDraft=profileStyle();ui.profileDraft=profileLocal();ui.profileError='';ui.profileBusy=false;openSheet(shProfileEdit());},
+    'profile-color'(el) {ui.profileDraft.theme=el.dataset.v;ui.profileStyleDraft.useAccent=false;refreshSheet();},
+    'profile-style-choice'(el){ui.profileStyleDraft[el.dataset.k]=el.dataset.v;refreshSheet();},
     'profile-photo-view'(el) {
       const img=el.querySelector('img');if(!img)return;
       const src=img.getAttribute('src'),label=img.getAttribute('alt')||t('tabProfile');
@@ -1639,14 +1669,14 @@
       try {const r=await Social.mutate('social_view_profile',{p_user:el.dataset.id});if(!r)return;
         const p=Profile.clean({username:r.username,displayName:r.display_name,bio:r.bio,avatar:r.avatar,theme:r.theme,showcase:r.badges});
         const stats=r.stats||{},earned=Profile.badges.filter(b=>(stats.badges||[]).includes(b.id)).map(b=>({...b,earned:true}));
-        openSheet(()=>({title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme}"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.filter(b=>p.showcase.includes(b.id)).map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest][L()]:t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>`}));
+        openSheet(()=>({title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme} cover-glow"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.filter(b=>p.showcase.includes(b.id)).map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest][L()]:t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>`}));
       }catch(error){Social.state.error=Social.message(error);rerender();}
     },
     'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
     'open-ranks'() {closeSheet(true);go('tab',()=>{ui.tab='profile';ui.profilePage='ranks';render();});loadSocial();},
     'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises'].includes(el.dataset.v))return;go('tab',()=>{ui.tab='home';ui.workout=el.dataset.v;render();}); },
     'wk-volume'() { const panel=$('#sheet [data-volume]');if(panel)panel.open=!panel.open; },
-    'update-restart'() { location.reload(); },
+    'update-restart'() { return A['update-now'](); },
     'release-notes'() {
       openSheet(() => ({title:t('whatsNew'),html:(GYM_RELEASE.history||[]).map(r=>`<section class="card"><span class="release-badge">${esc(r.version)}${r.version===VERSION?' · '+esc(t('installedVersion')):''}</span><p class="release-date">${esc(r.date)} · ${esc(r.build)}</p><ul class="release-notes">${(r[L()]||r.en).map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></section>`).join('')}));
     },
@@ -1726,7 +1756,7 @@
     'coach-open'(el) { const ch = D().chats.find(x => x.id === el.dataset.id); if (!ch || ui.coach.busy) return; ui.coach = Object.assign(newCoach(), { id: ch.id, msgs: ch.msgs.map(m => ({ role: m.role, content: m.content })) }); closeSheet(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight; },
     'coach-del'(el) { if (!confirm(t('coachDelConfirm'))) return; const d = D(); d.chats = d.chats.filter(x => x.id !== el.dataset.id); if (ui.coach.id === el.dataset.id && !ui.coach.busy) ui.coach = newCoach(); Store.save(); refreshSheet(); },
     'settings-jump'(el) { const section=$$('#view .settings-content section,#view .settings-group').find(s=>(s.querySelector('h3')||s.querySelector('summary'))?.textContent===t(el.dataset.v)); if(section?.tagName==='DETAILS')section.open=true;if(section)section.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'}); },
-    'set-palette'(el) { clearTimeout(hueT);const hue=el.dataset.v==='default'?null:+el.dataset.v;if(hue!==null&&!PALETTES.some(p=>p[0]===hue))return;D().settings.hue=hue;D().settings.accentTone=vividFill(hue)?'vivid':'soft';Store.save();applyLook();refreshSheet(); },
+    'set-palette'(el) { clearTimeout(hueT);const hue=el.dataset.v==='default'?null:+el.dataset.v;if(hue!==null&&!PALETTES.some(p=>p[0]===hue))return;D().settings.hue=hue;D().settings.accentTone='vivid';Store.save();applyLook();refreshSheet(); },
     'hue-reset'() { clearTimeout(hueT);D().settings.hue = null;D().settings.accentTone='soft'; Store.save(); applyLook(); refreshSheet(); },
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
@@ -1814,13 +1844,11 @@
     'settings-update'(el) {return A['update-now'](el);},
     async 'update-now'(el) {
       if (ui.updateBusy) return;
-      ui.updateBusy = true; ui.updateStatus = 'updating'; refreshSheet(); toast(t('updating'));
+      ui.updateBusy=true;ui.updateStatus='updating';syncUpdateButton();const overlay=updateOverlay();
       try {
         let result = null;
-        const latestResponse=await fetch('release-manifest.json?check='+Date.now(),{cache:'no-store'});
-        if(!latestResponse.ok)throw new Error('release unavailable');
-        const latest=await latestResponse.json();
-        if(!latest.version||!latest.build)throw new Error('invalid release');
+        const latest=await AppUpdates.latest();
+        if(!AppUpdates.newer(GYM_RELEASE,latest)){ui.updateBusy=false;ui.updateAvailable=null;syncUpdateButton();overlay.close();toast(t('updateCurrent'));return;}
         if ('serviceWorker' in navigator && window.caches && location.protocol !== 'file:') {
           const probe = await fetch('sw.js', { method: 'HEAD', cache: 'no-store' });
           if (!probe.ok) throw new Error('offline');
@@ -1841,12 +1869,13 @@
             worker.postMessage({ type: 'refresh', versioned: true }, [channel.port2]);
           });
         }
-        if(result&&(!result.verified||result.version!=='v'+latest.version+'-'+latest.build))throw new Error('worker did not install the latest release');
-        // This marker only reports success when the reloaded app matches the refreshed worker.
-        try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version: result && result.version || '', at: Date.now() })); } catch (e) {}
-        ui.updateStatus = result ? 'updateRestarting' : 'updateReloading'; refreshSheet(); toast(updateStatusText());
+        if(result&&(!result.verified||result.version!==AppUpdates.cacheId(latest)))throw new Error('worker did not install the latest release');
+        if(!Store.save())throw new Error('data could not be saved');
+        // Success is shown only when the new page's build matches the expected release.
+        try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version:AppUpdates.cacheId(latest), at: Date.now() })); } catch (e) {}
+        ui.updateStatus=result?'updateRestarting':'updateReloading';overlay.message(ui.updateStatus);
         setTimeout(() => location.reload(), 700);
-      } catch (e) { ui.updateBusy = false; ui.updateStatus = 'updateFail'; refreshSheet(); toast(t('updateFail')); }
+      } catch(e){ui.updateBusy=false;ui.updateStatus='updateFail';overlay.close();syncUpdateButton();toast(t('updateFail'));}
     },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
@@ -1990,7 +2019,8 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
-    'profile-draft'(el) {if(ui.profileDraft)ui.profileDraft[el.name]=el.value;},
+    'profile-draft'(el) {if(ui.profileDraft){ui.profileDraft[el.name]=el.value;const preview=$('.profile-preview');if(preview)preview.outerHTML=profilePreview(ui.profileDraft,ui.profileStyleDraft||profileStyle());}},
+    'profile-style'(el){ui.profileStyleDraft.useAccent=el.checked;refreshSheet();},
     'habit-name'(el) { if (ui.habitEdit) ui.habitEdit.name = el.value; },
     'habit-source'(el) { if (!ui.habitEdit || !Momentum.sources.includes(el.value)) return; ui.habitEdit.source = el.value; ui.habitEdit.goal = ({ check: 1, workout: 1, count: 8, steps: 8000, protein: 150 })[el.value]; refreshSheet(); },
     'habit-goal'(el) { if (ui.habitEdit) ui.habitEdit.goal = el.value; },
@@ -2022,7 +2052,7 @@
     'friend-kind'(el) { if(!['username','email','phone'].includes(el.value))return;ui.friendKind=el.value;ui.friendValue='';ui.friendError='';ui.friendNotice='';rerender();$('#friend-identifier')?.focus(); },
     'cardio-field'(el) {ui.cardioDraft[el.dataset.k]=el.value;},
     'cardio-type'(el) {const type=el.value;if(!WorkoutEnergy.types.includes(type))return;ui.cardioDraft.type=type;ui.cardioDraft.speed=type==='run'?8.5:5;ui.cardioDraft.incline=type==='incline'?5:0;refreshSheet();},
-    'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v;D().settings.accentTone='soft'; applyLook();$$('.hue-wheel').forEach(w=>HueWheel.update(w,v)); clearTimeout(hueT); hueT = setTimeout(() => Store.save(), 500); $$('.palette').forEach(b=>{const on=String(v)===b.dataset.v&&!vividFill(v);b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));const check=$('.palette-check',b);if(check)check.innerHTML=on?IC.check:'';}); },   // colour follows the finger; saved when it rests
+    'set-hue'(el) { const v = Math.round(+el.value); if (!(v >= 0 && v <= 359)) return; D().settings.hue = v;D().settings.accentTone='vivid'; applyLook();$$('.hue-wheel').forEach(w=>HueWheel.update(w,v)); clearTimeout(hueT); hueT = setTimeout(() => Store.save(), 500); $$('.palette').forEach(b=>{const on=String(v)===b.dataset.v;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));const check=$('.palette-check',b);if(check)check.innerHTML=on?IC.check:'';}); },   // colour follows the finger; saved when it rests
     'set-photo-model'(el) { D().settings.photoModel = Store.MODELS.indexOf(el.value) >= 0 ? el.value : ''; Store.save(); },
     'lib-eq'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.eq = EQS.indexOf(el.value) >= 0 ? el.value : ''; st.limit = 40; const l = $(pk ? '#pick-list' : '#lib-list'); if (l) l.innerHTML = libRows(pk); },
     'act-f'(el) { if (el.dataset.k === 'steps' || el.dataset.k === 'kcal') ui.act[el.dataset.k] = el.value; },
@@ -2146,7 +2176,8 @@
     if (ui.tab === "settings") { if(ui.settingsNavigate){ui.settingsNavigate=false;render();}else rerender(); }
   });
   dlg().addEventListener('cancel', e => { e.preventDefault(); closeSheet(true); });      // Esc key: close with the same slide
-  document.addEventListener('toggle', e => { if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
+  document.addEventListener('click',e=>{const summary=e.target.closest?.('summary'),details=summary?.parentElement;if(details?.dataset.section){ui.sections=ui.sections||{};ui.sections[details.dataset.section]=!details.open;}});
+  document.addEventListener('toggle', e => { if(e.target.isConnected&&e.target.dataset?.section){ui.sections=ui.sections||{};ui.sections[e.target.dataset.section]=e.target.open;} if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);HueWheel.bind(document);
@@ -2171,21 +2202,13 @@
   setInterval(tick, 500);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
-  function showReadyUpdate(){
-    const worker=navigator.serviceWorker.controller;if(!worker)return;
-    const channel=new MessageChannel(),timer=setTimeout(()=>channel.port1.close(),3000);
-    channel.port1.onmessage=event=>{
-      clearTimeout(timer);channel.port1.close();
-      if(!event.data||event.data.version===APP_BUILD||document.getElementById('ready-update'))return;
-      const banner=document.createElement('div');banner.id='ready-update';banner.className='update-banner';banner.setAttribute('role','status');
-      banner.innerHTML='<span>'+esc(L()==='hu'?'Új frissítés készen áll':'An update is ready')+'</span><button class="btn primary sm" data-a="update-restart">'+esc(L()==='hu'?'Újraindítás':'Restart')+'</button>';
-      document.body.append(banner);
-    };
-    worker.postMessage({type:'release-info'},[channel.port2]);
-  }
-  if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',showReadyUpdate);
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(() => navigator.serviceWorker.ready).then(reg => {if(reg.active)reg.active.postMessage('warm-images');showReadyUpdate();}).catch(() => {});
-  window.__gym = { ui, render, A, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
+  if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',()=>checkForUpdate(true));
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(() => navigator.serviceWorker.ready).then(reg => {if(reg.active)reg.active.postMessage('warm-images');checkForUpdate(true);}).catch(() => {});
+  checkForUpdate();
+  window.addEventListener('online',()=>checkForUpdate(true));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkForUpdate();});
+  setInterval(()=>{if(!document.hidden)checkForUpdate();},60000);
+  window.__gym = { ui, render, A, checkForUpdate, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
 
 

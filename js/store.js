@@ -23,7 +23,7 @@ window.Store = (function () {
       v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
         accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
-        onboardingVersion: 0, publicProfile: Profile.clean(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
+        onboardingVersion: 0, publicProfile: Profile.clean(null), profileStyle:Profile.cleanStyle(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
@@ -45,7 +45,7 @@ window.Store = (function () {
     const f = fresh(), r = obj(raw), s = obj(r.settings), p = obj(s.profile), out = fresh(), tg = obj(s.targets);
     out.settings = {
       onboardingVersion: s.onboardingVersion === 1 ? 1 : 0,
-      publicProfile: Profile.clean(s.publicProfile),
+      publicProfile: Profile.clean(s.publicProfile),profileStyle:Profile.cleanStyle(s.profileStyle),
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
