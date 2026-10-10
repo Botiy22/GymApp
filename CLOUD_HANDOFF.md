@@ -1,3 +1,11 @@
+# Update — Reppsy 2.21.1, 2026-10-10
+
+User requests nicely rotating update logo, centered Daily goals count, and clocks that charge smoothly. Added gentle 2.8-second mark rotation (pause on ready), explicit counter/percentage alignment, and 650ms cubic eased tick progression for Goals/Food/Profile clocks. Rendering snapshots actual visible ratio before replacing DOM; rapid edits/undo continue from that ratio. Per-date keys isolate diary/goal days, over-target ratios cap at 1, numeric labels/account data stay exact and immediate. Detached clocks stop RAF; calm/reduced motion jumps to final ratio and disables CSS motion.
+
+Backup `backup/main-20261010-before-clock-motion` verified at 5f12d74fb54f8e952e113c869af1d8609649f118 (actual main). Branch `codex/clock-motion-20261010`, release 2.21.1/build 20261010.6. No SQL changes. Functional browser interpolation/undo/rapid changes/centering/reduced motion tests, real update and responsive/offline checks; physical iOS/live deployment unverified. Publication to main remains authorized; no force/reset.
+
+---
+
 # Update — Reppsy 2.21.0, 2026-10-10
 
 User now authorizes removing their original personal default split from everyone's pages and asks for an importable copy, photo double-tap likes, sharing-update fixes, collapsible achievements and simpler optional reviews. `exports/reppsy-original-five-day.json` preserves five routines/35 movements with stable personal_* IDs, builtin=false and appendRoutines=true. Import through Settings Data JSON; includes no private diary/account data. Default seeding now only retains the two video complexes; the optional general ULPPL library uses separate generic movements. Archived PLAN remains for exercise-name/tip/muscle references.

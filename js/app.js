@@ -254,7 +254,7 @@
     let h = head(t('tabHabits'), t('momentumSub'));
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
-    h += `<section class="card momentum-hero"><div class="momentum-dial">${Profile.dial(percent,100,percent+"%")}<b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
+    h += `<section class="card momentum-hero"><div class="momentum-dial" data-clock-key="goals-${esc(k)}" data-clock-ratio="${percent/100}">${Profile.dial(percent,100,percent+"%")}<b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
     const start = ymd(weekStart(k + 'T12:00'));
     h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
@@ -274,7 +274,7 @@
   function energyDay(day) {return WorkoutEnergy.daily(D().workouts,day,ymd);}
   function energyBudget(day,eaten,base) {return WorkoutEnergy.budget(base, eaten,energyDay(day).total,actOf(day).kcal,D().settings);}
   function calorieClock(eaten,goal,offerTarget=true) {
-    return `<div class="dial-wrap">${Profile.dial(eaten,goal,t('calorieDialLabel',compact(eaten),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(eaten)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(eaten>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-eaten)))):offerTarget?`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`:''}</p>`;
+    return `<div class="dial-wrap" data-clock-key="calories-${esc(ui.tab==='food'?ui.foodDate:today())}" data-clock-ratio="${goal>0?Math.min(1,Math.max(0,eaten/goal)):0}">${Profile.dial(eaten,goal,t('calorieDialLabel',compact(eaten),goal?compact(goal):t('noCalorieTarget')))}<div class="dial-readout"><small>${esc(t('eaten'))}</small><b data-calorie-total>${compact(eaten)}</b><span>kcal</span><p data-calorie-goal>${goal?esc(t('calorieOf',compact(goal))):esc(t('noCalorieTarget'))}</p></div></div><p class="calorie-remaining">${goal?esc(t(eaten>goal?'calorieOver':'calorieLeft',compact(Math.abs(goal-eaten)))):offerTarget?`<button class="link" data-a="targets">${esc(t('setTargets'))}</button>`:''}</p>`;
   }
   function energyBudgetPanel(day,eaten,base) {
     const e=energyDay(day),b=energyBudget(day,eaten,base),manual=actOf(day).kcal;
@@ -736,16 +736,29 @@
 
   const VIEWS = { settings: vSettings, home: vHome, food: vFood, goals: vGoals, profile: vProfile, lib: vLib, prog: vProg, habits: vHabits };
 
+  // Preserve the visible fill through redraws, including rapid taps and undo.
+  function animateClocks(previous){
+    $$('[data-clock-key]', $('#view')).forEach(clock=>{
+      const svg=$('.calorie-dial',clock),ticks=$$('.dial-tick',svg),target=+clock.dataset.clockRatio,from=previous.get(clock.dataset.clockKey)??0;
+      if(!svg||!ticks.length)return;
+      const paint=ratio=>{clock.dataset.clockDisplay=String(ratio);ticks.forEach((tick,i)=>tick.classList.toggle('filled',i<ratio*ticks.length));};
+      if(calm()||Math.abs(target-from)<.0001){paint(target);return;}
+      paint(from);svg.classList.add('clock-charging');svg.getBoundingClientRect();const started=performance.now(),duration=650;
+      const frame=now=>{if(!clock.isConnected)return;const progress=calm()?1:Math.min(1,(now-started)/duration),eased=1-Math.pow(1-progress,3);paint(from+(target-from)*eased);if(progress<1)requestAnimationFrame(frame);else paint(target);};
+      requestAnimationFrame(frame);
+    });
+  }
   let animT = 0;
   function render() {
     ownSync();
     document.documentElement.lang = L();
     refreshBrandMetadata();
     const y = ui.keepScroll ? window.scrollY : 0; ui.keepScroll = false;
-    const v = $('#view'), entering=ui.anim; ui.anim='';
+    const v = $('#view'),previousClocks=new Map($$('[data-clock-key]',v).map(c=>[c.dataset.clockKey,+(c.dataset.clockDisplay??c.dataset.clockRatio)])), entering=ui.anim; ui.anim='';
     // Async profile/sync redraws must not cancel a tab's entry animation immediately.
     if(entering){v.dataset.anim=entering;clearTimeout(animT);animT=setTimeout(()=>{delete v.dataset.anim;},600);}
     v.innerHTML = VIEWS[ui.tab]();
+    animateClocks(previousClocks);
     $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
     window.scrollTo(0, y);

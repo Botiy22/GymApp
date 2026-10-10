@@ -1,8 +1,9 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.21.0';
-  const build = '20261010.5';
+  const version = '2.21.1';
+  const build = '20261010.6';
   const history = [
+    {version:'2.21.1',build:'20261010.6',date:'2026-10-10',en:['Smooth logo rotation during updates. Centered daily goal counters.','Goals and calorie clocks charge smoothly as entries change, including undo and rapid taps. Reduced-motion settings are respected.'],hu:['Finoman forgó logó frissítéskor. Középre igazított napi célszámlálók.','A cél- és kalóriaórák finoman töltődnek változáskor, visszavonásnál és gyors koppintásoknál is. A csökkentett mozgás beállítása megmarad.']},
     {version:'2.21.0',build:'20261010.5',date:'2026-10-10',
       en:['The original personal five-day split is now an importable JSON, no longer seeded for everyone. Edited routines and workout history stay.','Double-tap an enlarged friend photo to like it. Achievements can be collapsed.','Reviews use compact cards and an optional star-rating editor. Posted text clears; shared routine updates refetch the published copy and show confirmation.'],
       hu:['Az eredeti személyes ötnapos terv külön importálható JSON, már nem kerül mindenkihez automatikusan. A módosított tervek és edzésnaplók megmaradnak.','Dupla koppintás a nagyított baráti profilképen a kedveléshez. Az eredmények összecsukhatók.','Letisztult értékeléskártyák, külön megnyitható csillagos szerkesztő. Küldés után törlődik a beírt szöveg; a megosztott terv frissítése újra betölti a közzétett példányt, és visszajelzést ad.']},

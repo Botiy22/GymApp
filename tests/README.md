@@ -64,3 +64,5 @@ Focused fixture-only browser suites: `test_covers_friends.py`, `test_profile_sha
 ## Personal routine and review polish (2.21)
 
 `python3 -m unittest discover -s tests -p test_routine_review_polish.py -v` tests the actual downloadable JSON through Import/reload; conservative default retirement with edited copies/history/active workout and stale cloud merge; remembered achievements; double-click and touch photo likes; review failure/retry/stars/edit/cleared draft; shared update with a deliberately stale mutation response. Synthetic accounts only. The snapshot and disposable PostgreSQL tests also verify republishing replaces one share under the same ID.
+
+`test_clock_motion.py` exercises real goal count handlers, intermediate/final dial fill, rapid updates and undo, centered number bounds, Food/Profile continuity, and reduced-motion/date separation. The verified-update browser test checks the actual logo animation and reduced-motion disablement inside the modal.

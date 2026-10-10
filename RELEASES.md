@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.21.1 — 2026-10-10 (build 20261010.6)
+
+The Reppsy mark rotates gently during update installation and pauses on completion. Daily-goal counter buttons and the percentage readout are explicitly centered. Goals, Food and Profile clocks interpolate their visible fill over 650 ms; rapid edits continue from the current fill, undo drains it smoothly, and date-specific keys prevent borrowing another day's progress. Labels and calorie calculations update immediately; animation changes only the presentation. Calm/reduced-motion settings show the final fill immediately and disable logo rotation/transitions.
+
+Validation: real DOM interpolation/rapid-tap/undo tests, counter text centering at 320px with larger text, Food/Profile fill continuity, reduced-motion/date boundaries, verified update/reload and all-tab mobile/landscape/offline regression. No physical iOS or hosted deployment verification.
+
 ## 2.21.0 — 2026-10-10 (build 20261010.5)
 
 The personal Upper/Lower/Push/Pull/Legs split is no longer automatically seeded or duplicated by the general five-day library. `exports/reppsy-original-five-day.json` restores it through Settings → Data → Import JSON: five editable routines, all 35 original movements/sets/reps/rest, appended without diaries or account data. Updating removes only unchanged automatic copies, writes deletion markers for sync, and preserves edited routines, explicit copies, history and active workouts. People still need to update their clients; no live account rows were edited.
