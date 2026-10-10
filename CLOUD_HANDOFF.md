@@ -1,3 +1,15 @@
+# Update — Reppsy 2.20.0, 2026-10-10
+
+Current work: `codex/cover-competition-polish-20261010`, based on main a962be524cdaae60750853bd22c69702c340c006. Verified remote backup `backup/main-20261010-before-cover-competition` preserves that exact commit. Restore by a normal restoration commit; never force/reset. Existing handoff authorizes tested work to be committed/pushed to main. Code backup is not private diary data.
+
+Release 2.20/build 20261010.4 adds photo/design covers, simplified Friends search/discovery, check-in and meal consistency points, weekly ranks and Goals challenges. User steering adds three introductory lift ranks from 1 kg and four earned badges. Existing lift thresholds, calorie budgets, private sync/import data and storage keys retained. Settings accent presets stay; profile presets above its wheel removed.
+
+Run the entire additive `migrations/20261010_consistency_covers.sql` after the three previous social migrations. Prepared/tested locally, NOT applied live. Existing friends fallback safely if dashboard_v2 is missing. Accepted friends get only active cover and aggregate totals/badges; pending profiles hide them. No private diary entries or weights become readable. The helper RPC regex now permits digits for `_v2`; cached-shell bootstrap refreshes changed helpers.
+
+Disposable PostgreSQL tests exercise repeated migration, permission boundaries, JS/SQL point/badge parity, all nine thresholds for all four lifts and check-in undo. Chromium fixtures cover photo persistence/removal/backup, friend search/types, ties/long names, narrow/landscape layouts and update/offline install. No real user account operations or physical iOS verification. Apple/W3C/NNGroup internet research requests returned proxy 403; do not claim freshly researched guidance or hosted deployment checks.
+
+---
+
 # Update — Reppsy 2.18.0, 2026-10-10
 
 User requested vivid accents/pink/better royal blue, optional open-by-default collapsibles, a top-right profile photo, improved private profile customization, Reppsy inside the wheel and available-only header updates with smooth restart/feedback. Seven vivid presets retain existing hue IDs and add 350=pink; royal RGB53/88/244. New custom selections use vivid OKLCH; existing soft saved hues stay soft until edited. AccentTheme chooses readable fill/text contrast. Circular profile shortcut and photo-based bottom Profile icon retain the five-tab navigation.

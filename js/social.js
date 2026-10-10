@@ -1,6 +1,6 @@
 /* Authenticated RPCs expose only profiles shared through accepted friendships. */
 window.Social = (() => {
-  const state={data:null,error:'',busy:false,userId:null,contacts:null,contactError:'',activity:null,activityError:''};
+  const state={data:null,error:'',busy:false,userId:null,contacts:null,contactError:'',activity:null,activityError:'',competitionReady:false};
   let pending=null;
   function message(error) {
     if(error.backendCode==='PGRST202'||error.backendCode==='42P01')return 'socialSetup';
@@ -19,7 +19,7 @@ window.Social = (() => {
     if(error.code==='network')return 'socialOffline';
     return 'socialError';
   }
-  function reset() {state.data=null;state.error='';state.userId=null;state.contacts=null;state.contactError='';state.activity=null;state.activityError='';}
+  function reset() {state.data=null;state.error='';state.userId=null;state.contacts=null;state.contactError='';state.activity=null;state.activityError='';state.competitionReady=false;}
   async function refresh() {
     const cloud=window.Cloud;
     if(!cloud||!cloud.on||!cloud.user){reset();state.error='socialSignIn';return;}
@@ -30,7 +30,8 @@ window.Social = (() => {
       try {
         await cloud.sync();
         if(!cloud.user||cloud.user.id!==owner)return;
-        let data=await cloud.rpc('social_dashboard',{});
+        const dashboard=async()=>{try{const d=await cloud.rpc('social_dashboard_v2',{});if(cloud.user?.id===owner)state.competitionReady=d.competition_version===2;return d;}catch(e){if(e.backendCode!=='PGRST202')throw e;if(cloud.user?.id===owner)state.competitionReady=false;return cloud.rpc('social_dashboard',{});}};
+        let data=await dashboard();
         if(!cloud.user||cloud.user.id!==owner)return;
         state.data=data; // Keep the username setup action available if publication fails.
         // Accounts created before the social migration may have only a private saved username.
@@ -39,7 +40,7 @@ window.Social = (() => {
         if(!data.profile&&saved.username&&cloud.user&&cloud.user.id===owner){
           await publish(saved);
           if(!cloud.user||cloud.user.id!==owner)return;
-          data=await cloud.rpc('social_dashboard',{});
+          data=await dashboard();
         }
         if(cloud.user&&cloud.user.id===owner){state.data=data;try{const activity=data.profile?await cloud.rpc('social_profile_activity',{p_user:owner}):null;if(cloud.user?.id===owner){state.activity=activity;state.activityError='';}}catch(error){if(cloud.user?.id===owner){state.activity=null;state.activityError=message(error);}}try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
       catch(error){if(cloud.user&&cloud.user.id===owner)state.error=message(error);}
@@ -59,9 +60,13 @@ window.Social = (() => {
       if(!owner||!Cloud.user||Cloud.user.id!==owner)throw Object.assign(new Error('sign in'),{code:'auth'});
       await Cloud.sync();
       if(!Cloud.user||Cloud.user.id!==owner)throw Object.assign(new Error('sign in'),{code:'auth'});
-      return mutate('social_save_profile',{p_username:p.username,p_display_name:p.displayName,p_bio:p.bio,p_avatar:p.avatar,p_theme:p.theme,p_badges:p.showcase});
+      const result=await mutate('social_save_profile',{p_username:p.username,p_display_name:p.displayName,p_bio:p.bio,p_avatar:p.avatar,p_theme:p.theme,p_badges:p.showcase});
+      if(Cloud.user?.id!==owner)throw Object.assign(new Error('sign in'),{code:'auth'});
+      const style=Profile.cleanStyle(Store.d.settings.profileStyle);
+      try{await mutate('social_save_cover',{p_photo:p.coverPhoto,p_style:style.cover});}catch(e){if(e.backendCode!=='PGRST202'||p.coverPhoto||!['glow','mesh','stripe','clean'].includes(style.cover))throw e;}
+      return result;
     });
     publishing=job;return job;
   }
-  return {profileActivity:true,state,refresh,reset,message,publish,mutate};
+  return {consistency:true,profileActivity:true,state,refresh,reset,message,publish,mutate};
 })();

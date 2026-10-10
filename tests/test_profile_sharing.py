@@ -49,7 +49,7 @@ class ProfileSharing(unittest.TestCase):
         snapshot={'version':1,'routine':{'name':'Shared bench','icon':'push','items':[{'ex':'Barbell_Bench_Press_-_Medium_Grip','sets':4,'reps':'8','rest':120}]},'myEx':[]}
         def api(route):
             req=route.request;name=req.url.split('/')[-1];body=req.post_data_json if req.post_data else {};calls.append((name,body))
-            if name=='social_dashboard':result={'profile':{'username':'owner'},'incoming':[],'outgoing':[],'friends':[],'leaderboard':[]}
+            if name in ['social_dashboard','social_dashboard_v2']:result={'competition_version':2,'profile':{'username':'owner','stats':{'score':0,'workout_points':0,'meal_points':0}},'incoming':[],'outgoing':[],'friends':[],'leaderboard':[]}
             elif name=='social_view_profile':result={'user_id':'friend-fixture','username':'friend','avatar':'data:image/png;base64,YQ==','stats':{},'theme':'mint'}
             elif name=='social_profile_activity':result={**activity,'routines':[{'id':'shared-fixture','source_id':'source','snapshot':snapshot}]} if body['p_user']=='friend-fixture' else activity
             elif name=='social_photo_like':activity['liked']=body['p_like'];activity['likes']=1 if body['p_like'] else 0;result={**activity,'routines':[{'id':'shared-fixture','source_id':'source','snapshot':snapshot}]}

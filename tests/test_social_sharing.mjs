@@ -7,7 +7,7 @@ const {PGlite}=await import(process.argv[2]||'/tmp/reppsy-pg/node_modules/@elect
 const db=new PGlite();
 const ids=['00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000003','00000000-0000-4000-8000-000000000004'];
 await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,raw_user_meta_data jsonb);create function auth.uid() returns uuid language sql as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create table public.userdata(user_id uuid primary key,data jsonb);`);
-for(const f of ['20261008_social.sql','20261010_profile_sharing.sql','20261010_profile_sharing.sql'])await db.exec(fs.readFileSync(new URL('../migrations/'+f,import.meta.url),'utf8'));
+for(const f of ['20261008_social.sql','20261010_profile_sharing.sql','20261010_profile_sharing.sql','20261010_consistency_covers.sql','20261010_consistency_covers.sql'])await db.exec(fs.readFileSync(new URL('../migrations/'+f,import.meta.url),'utf8'));
 for(let n=0;n<4;n++)await db.query('insert into auth.users values($1,$2)',[ids[n],{reppsy_username:'fixture_'+n}]);
 await assert.rejects(db.query('insert into auth.users values($1,$2)',['00000000-0000-4000-8000-000000000005',{reppsy_username:'fixture_0'}]),/unique/);
 await db.query("update public.social_profiles set avatar='data:image/png;base64,YQ==' where user_id=$1",[ids[0]]);
@@ -28,4 +28,5 @@ await as(1);assert.equal((await rpc('social_routine_get',[shared])).routine.name
 await as(2);await assert.rejects(rpc('social_routine_get',[shared]),/routine_unavailable/);
 await as(0);await rpc('social_routine_unshare',[shared]);await as(1);await assert.rejects(rpc('social_routine_get',[shared]),/routine_unavailable/);
 await db.exec('reset role');await db.query("update public.social_profiles set avatar='data:image/png;base64,Yg==',theme='hue_225' where user_id=$1",[ids[0]]);await as(0);assert.equal((await rpc('social_profile_activity',[ids[0]])).likes,0);
+await as(0);await rpc('social_save_cover',['data:image/png;base64,Yw==','photo']);await as(1);assert.equal((await rpc('social_view_profile',[ids[0]])).cover_photo,'data:image/png;base64,Yw==');await as(2);assert.equal((await rpc('social_view_profile',[ids[0]])).cover_photo,'');await as(0);await rpc('social_save_cover',['data:image/png;base64,Yw==','clean']);await as(1);assert.equal((await rpc('social_view_profile',[ids[0]])).cover_photo,'');await assert.rejects(rpc('social_save_cover',['https://example.test/picture','photo']),/check constraint/);assert.equal((await rpc('social_dashboard_v2',[])).competition_version,2);
 await db.close();console.log('PASS: migration rerun, atomic username claims, anon/table isolation, accepted-friend permissions, photo likes, reviews, snapshot privacy, unsharing and custom profile hues.');

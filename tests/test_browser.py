@@ -493,9 +493,9 @@ class AppBrowserTests(unittest.TestCase):
           ])[0];
           return {boundaries,ignored:ignored.tier,tiers:StrengthRanks.tiers.map(t=>t.en),ids:StrengthRanks.tracks.map(t=>t.ex),catalogue:EXERCISES.map(e=>e.id)};
         }""")
-        self.assertEqual([-1,-1,0,0,1,2,3,4,4,5],values['boundaries'])
+        self.assertEqual([-1,2,3,3,4,5,6,7,7,8],values['boundaries'])
         self.assertEqual(-1,values['ignored'])
-        self.assertEqual(['Spark','Ember','Steel','Sentinel','Titan','Apex'],values['tiers'])
+        self.assertEqual(['First lift','Builder','Climber','Spark','Ember','Steel','Sentinel','Titan','Apex'],values['tiers'])
         self.assertTrue(set(values['ids']).issubset(values['catalogue']))
 
     def test_finish_workout_expands_volume_and_unlocks_persistent_rank(self):

@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.20.0 — 2026-10-10 (build 20261010.4)
+
+Removed profile color presets above the touch wheel. Added Grid, Orbit and Horizon covers, plus individually uploaded high-resolution photo covers with a live preview, save/cancel and removal. Friends has separate weekly progress and people cards; search, contact settings and optional phone setup open only when needed. Narrow-screen controls and long names fit without squeezing the search input.
+
+Completed workout check-ins/cardio earn training-day points; meal entries and meal check-ins earn capped consistency points. Working sets add a bonus. Weekly ranks and three Goals challenges reward consistency without changing calorie math or inventing lift weights. Four extra badges cover five logged workouts, first cardio, three training dates and seven meal dates. First lift, Builder and Climber add lower lift milestones from 1 kg while retaining all existing thresholds and the Four foundations badge requirement.
+
+Requires additive `migrations/20261010_consistency_covers.sql` after the earlier three social files for shared covers, ranks/badges and competition. Not applied to the live database. Existing friends remain usable before installation; outdated competition scores are not shown as new scores.
+
+Validation: focused Chromium mobile, persistence, check-in/undo, update and verified offline release checks; JavaScript/PostgreSQL scoring, badge and rank-boundary parity and social permissions on disposable databases. Physical iOS and live deployment remain unverified. External usability pages were blocked by the environment proxy (403); design uses established touch-target and progressive-disclosure principles.
+
 ## 2.19.0 — 2026-10-10 (build 20261010.3)
 
 Profile now opens only from the top-right photo. Profile editing includes a centered Reppsy touch color wheel, independently saved from the app accent. Plain, Deep and Colourful backgrounds are visibly distinct; Glass, Normal and Matte surfaces add appearance choices. Settings Data offers plan-only JSON export and spaced actions.

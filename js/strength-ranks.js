@@ -2,14 +2,15 @@
 globalThis.StrengthRanks = (() => {
   'use strict';
   const tiers = [
+    {en:'First lift',hu:'Első emelés'}, {en:'Builder',hu:'Alapozó'}, {en:'Climber',hu:'Feltörekvő'},
     {en:'Spark',hu:'Szikra'}, {en:'Ember',hu:'Parázs'}, {en:'Steel',hu:'Acél'},
     {en:'Sentinel',hu:'Őrszem'}, {en:'Titan',hu:'Titán'}, {en:'Apex',hu:'Csúcs'}
   ];
   const tracks = [
-    {id:'bench',ex:'Barbell_Bench_Press_-_Medium_Grip',en:'Bench press',hu:'Fekvenyomás',weights:[20,40,60,80,100,140]},
-    {id:'squat',ex:'Barbell_Full_Squat',en:'Back squat',hu:'Hátsó guggolás',weights:[20,40,80,100,140,200]},
-    {id:'deadlift',ex:'Barbell_Deadlift',en:'Deadlift',hu:'Felhúzás',weights:[40,60,100,140,180,240]},
-    {id:'press',ex:'Standing_Military_Press',en:'Overhead press',hu:'Vállból nyomás',weights:[10,20,30,40,60,80]}
+    {id:'bench',ex:'Barbell_Bench_Press_-_Medium_Grip',en:'Bench press',hu:'Fekvenyomás',weights:[1,5,10,20,40,60,80,100,140]},
+    {id:'squat',ex:'Barbell_Full_Squat',en:'Back squat',hu:'Hátsó guggolás',weights:[1,5,10,20,40,80,100,140,200]},
+    {id:'deadlift',ex:'Barbell_Deadlift',en:'Deadlift',hu:'Felhúzás',weights:[1,10,20,40,60,100,140,180,240]},
+    {id:'press',ex:'Standing_Military_Press',en:'Overhead press',hu:'Vállból nyomás',weights:[1,2.5,5,10,20,30,40,60,80]}
   ];
   function summary(workouts) {
     return tracks.map(track => {
@@ -32,5 +33,5 @@ globalThis.StrengthRanks = (() => {
   function unlocked(before,after) {
     return summary(after).filter((rank,index)=>rank.tier>summary(before)[index].tier);
   }
-  return {tiers,tracks,summary,unlocked};
+  return {lowWeights:true,tiers,tracks,summary,unlocked};
 })();

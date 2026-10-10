@@ -65,7 +65,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.locator('[data-a=profile-edit]').click()
         page.locator('[name=displayName]').fill('Live preview')
         self.assertIn('Live preview',page.locator('.profile-preview h2').inner_text())
-        page.locator('[data-a=profile-color][data-v=violet]').click()
+        page.locator('.profile-color-wheel .hue-wheel').focus();page.locator('.profile-color-wheel .hue-wheel').press('End')
         page.locator('[data-a=profile-style-choice][data-v=mesh]').click()
         page.locator('[data-a=profile-style-choice][data-v=ring]').click()
         page.locator('[data-in=profile-style]').check()
@@ -87,7 +87,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.locator('#tabbar [data-tab=settings]').click()
         page.wait_for_function('()=>!__gym.ui.updateAvailable')
         self.assertEqual(page.locator('.update-app').count(),0)
-        page.route('**/release-manifest.json?check=*',lambda r:r.fulfill(json={'version':'2.19.1','build':'20261010.4'}))
+        page.route('**/release-manifest.json?check=*',lambda r:r.fulfill(json={'version':'2.20.1','build':'20261010.5'}))
         page.evaluate('()=>__gym.checkForUpdate(true)')
         self.assertEqual(page.locator('.update-app').count(),1);self.bounds(page,'available update header')
         for tab in ['home','food','goals','profile']:
@@ -109,7 +109,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         html=(responsive.ROOT/'index.html').read_text()
-        for script in ['routine-share','app-updates','accent-theme','hue-wheel','food-volume']:
+        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
         profile=(responsive.ROOT/'js/profile.js').read_text()
         old_profile=profile.replace('clean,cleanStyle,symbol','clean,symbol')
@@ -136,9 +136,10 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.evaluate('async()=>{await navigator.serviceWorker.ready}')
         page.wait_for_function('()=>!!navigator.serviceWorker.controller')
         page.evaluate('()=>{Store.d.settings.lang="en";Store.d.settings.profileStyle={cover:"stripe",frame:"round",useAccent:true};Store.d.food[__gym.ui.foodDate]=[{id:"safe-fixture",name:"Milk",g:258,vml:250,kcal:129,p:9,c:12,f:5}];Store.save()}')
+        page.evaluate('()=>__gym.checkForUpdate(true)') # Finish the startup check before publishing the fixture release.
         old=(responsive.ROOT/'js/release.js').read_bytes()
-        new=old.replace(b"const version = '2.19.0'",b"const version = '2.19.1'").replace(b"const build = '20261010.3'",b"const build = '20261010.4'")
-        manifest=json.loads((responsive.ROOT/'release-manifest.json').read_text());manifest.update(version='2.19.1',build='20261010.4')
+        new=old.replace(b"const version = '2.20.0'",b"const version = '2.20.1'").replace(b"const build = '20261010.4'",b"const build = '20261010.5'")
+        manifest=json.loads((responsive.ROOT/'release-manifest.json').read_text());manifest.update(version='2.20.1',build='20261010.5')
         manifest['assets']['js/release.js']=hashlib.sha256(new).hexdigest()
         self.server.overrides={'js/release.js':new,'release-manifest.json':json.dumps(manifest).encode()}
         self.addCleanup(lambda:setattr(self.server,'overrides',{}))
@@ -148,7 +149,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.assertTrue(page.locator('#view').evaluate('(e)=>e.inert'))
         with page.expect_navigation(wait_until='domcontentloaded',timeout=45000):
             page.wait_for_function('()=>document.querySelector("#app-update-progress")?.classList.contains("ready")',timeout=40000)
-        page.wait_for_function('()=>window.__gym&&GYM_RELEASE.version==="2.19.1"')
+        page.wait_for_function('()=>window.__gym&&GYM_RELEASE.version==="2.20.1"')
         self.assertEqual(page.evaluate('__gym.ui.updateStatus'),'updateSuccess')
         self.assertEqual(page.locator('#toast').inner_text(),'Reppsy has been updated.')
         self.assertEqual(page.evaluate('Object.values(Store.d.food).flat()[0].vml'),250)

@@ -120,9 +120,9 @@ window.Cloud = (function () {
   }
 
   return {
-    usernameSignup:true,on, merge, sync, state,
+    consistencyRpc:true,usernameSignup:true,on, merge, sync, state,
     async rpc(name, body) {
-      if (!on || !/^[a-z_]+$/.test(name)) throw fail('api');
+      if (!on || !/^[a-z][a-z0-9_]{0,62}$/.test(name)) throw fail('api');
       const run = tk => call('/rest/v1/rpc/' + name, {method:'POST', auth:tk, body:body || {}});
       try { return await run(await token()); }
       catch(error) { if(error.code !== 'auth' || !ses) throw error; return run(await refresh()); }

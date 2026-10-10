@@ -11,10 +11,11 @@ You do not need to upgrade Supabase itself. Install these additive SQL migration
 3. Create another new query. Copy and run the entire [20261008_social_contacts.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261008_social_contacts.sql) file. Run this one after the first.
 4. Keep the existing public project URL/key in `js/config.js`; the existing `supabase.sql` private account table must already be installed. These migrations can be rerun and preserve private account data.
 5. Run [20261010_profile_sharing.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261010_profile_sharing.sql) in a third new query. This adds username registration, profile colors, likes, reviews and shared routines. Existing accounts and private data are preserved.
-6. Reload the app or use the Settings header update button when an update is available, then open your top-right photo → **Edit profile**. Save a unique username (3–24 letters, numbers or underscores). Both people need to be signed in and to save a username.
-7. Under **Profile → Friends**, choose Username and enter the friend's exact username. The other person accepts the incoming request in that same section. Refresh the section to load changes; accepted friends appear directly in the list. Tap a friend to open their profile, or expand Weekly competition for the leaderboard.
-8. To use email search, each person must have a confirmed account email and enable **How friends can find you → Let friends find me by email**, then save. Exact email lookup works only for opted-in accounts.
-9. Phone lookup is optional: configure an SMS provider in **Supabase Authentication → Providers → Phone**, verify the number in the app, and enable phone discovery. SMS providers may charge for messages; username and email requests do not require SMS.
+6. Run [20261010_consistency_covers.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261010_consistency_covers.sql) in a fourth query for 2.20 cover photos, expanded lift ranks, badges and check-in competition. If the earlier three files are already installed, run only this new file.
+7. Reload the app or use the Settings header update button when an update is available, then open your top-right photo → **Edit profile**. Save a unique username (3–24 letters, numbers or underscores). Both people need to be signed in and to save a username.
+8. Under **Profile → Friends**, tap **Add**, choose Username and enter the friend's exact username. The other person accepts the incoming request in that same section. Refresh the section to load changes; accepted friends appear directly in the list. Tap a friend to open their profile, or expand Weekly competition for the leaderboard.
+9. To use email search, each person must have a confirmed account email and enable **How friends can find you → Let friends find me by email**, then save. Exact email lookup works only for opted-in accounts.
+10. Phone lookup is optional: configure an SMS provider in **Supabase Authentication → Providers → Phone**, verify the number in the app, and enable phone discovery. SMS providers may charge for messages; username and email requests do not require SMS.
 
 The app shows connected friends, rather than a publicly browsable directory of all accounts. Only chosen public profile details and gym aggregates are shared after acceptance. No service-role/admin secret belongs in the app. If a query fails, keep the error message and resolve that step before running the next file; do not reset tables or your project.
 
@@ -42,7 +43,7 @@ To enable SMS verification, configure your own supported SMS provider in Supabas
 
 ## Profile customization
 
-Choose a display name, a 160-character bio, a photo and Mint/Violet/Amber/Slate cover color or a custom hue using the profile color wheel. Photos are resized and saved as JPEG, under 90 kB; arbitrary external image URLs and SVG uploads are not stored. Changes follow the existing private account sync and JSON backup.
+Choose a display name, a 160-character bio, a photo and a cover color using the profile color wheel. Avatars are resized and saved as JPEG, under 90 kB; cover photos use up to 1280 px and stay under 240 kB. Choose Glow, Mesh, Stripe, Clean, Grid, Orbit, Horizon or an uploaded cover. Saving shares the active cover with accepted friends; changing from Photo hides the retained image from friends. Photo/frame styling and app accent remain independent; arbitrary external image URLs and SVG uploads are not stored. Changes follow the existing private account sync and JSON backup.
 
 Choose up to four earned badges individually, in selection order. Finishing a qualifying workout announces new badges. Existing history qualifies automatically. Deleting qualifying logs recalculates milestones and removes unearned badges from display.
 
@@ -62,11 +63,13 @@ Ranks retain the rules in [RANKS.md](RANKS.md). The calorie clock has 60 line in
 
 All friends use **Monday 00:00 through Sunday 23:59 UTC**, independent of each device's language, timezone or configured diary week start. Points reset by querying the current week; no destructive reset job is needed.
 
-- 100 points per distinct training date.
-- 5 points per completed working set, capped at 20 sets per date.
-- Maximum 200 points per day / 1,400 per week.
-- Bodyweight sets qualify. Warm-ups, unfinished/future workouts and workouts marked done without logged sets do not.
-- Multiple workouts on one date share the same cap. Ties share a position.
+- 100 points per distinct completed workout date, including valid workout check-ins and logged cardio.
+- 5 points per logged working set, capped at 20 per date. Check-ins do not invent sets or lifted weight.
+- 20 points per logged meal or meal-plan check-in, capped at three distinct entries per date. Duplicates and zero-calorie entries do not count; eating more calories gives no extra credit.
+- Maximum 260 points per day / 1,820 per week. Multiple workouts share a daily cap; ties share a position.
+- Undoing/deleting the relevant entries removes their credit. Unfinished/future workouts and future diary days do not count.
+- Weekly consistency ranks: Starting (0), In motion (100), Finding rhythm (300), Consistent (600), Driven (900), Momentum (1,200). These are separate from lift ranks.
+- Goals → Habits has three weekly challenges: train on three dates, log ten working sets, and log meals on five dates. Completing a challenge does not award duplicate points.
 
 Consistency and working sets determine points; absolute weight and calories do not. Scores are derived from the account's private saved logs by PostgreSQL, rather than accepted from a client score field. Logs remain self-reported and editable; this is a friendly comparison, not a verified athletic leaderboard. Refresh syncs the current user's logs before reading scores; friends' scores reflect their latest synced logs.
 
@@ -105,4 +108,10 @@ Accepted friends can like the current profile photo and write one editable 1–5
 
 On Profile Overview, open **Your profile activity → Shared routines → Manage sharing**. Each routine starts private. **Share** publishes a snapshot of its name, exercises, target sets/reps/rest/RIR and referenced custom exercise names/instructions. **Update** explicitly replaces that snapshot; editing your private routine alone does not publish changes. **Stop sharing** removes it. Up to 20 routines can be published. Private workout weights, diaries, account settings, exercise photos and video links are excluded. Friends view published routines on your profile and select **Copy to my routines**; the app rechecks that it is still shared, creates a new editable local routine, and remaps custom exercise IDs. Unsharing stops new copies; copies someone already saved remain theirs.
 
-The profile color wheel shares the chosen hue with accepted friends; personal cover/photo-frame styling and app accent remain independent. Settings → Data → **Export plans** downloads a JSON plan with routines, custom definitions and the meal plan. It excludes account settings, calorie diary and workout logs. Import it with the existing plan upload; a full backup remains a separate action.
+The profile color wheel shares the chosen hue with accepted friends. From 2.20, the active cover design/photo is shared too; photo-frame styling and app accent remain private. Settings → Data → **Export plans** downloads a JSON plan with routines, custom definitions and the meal plan. It excludes account settings, calorie diary and workout logs. Import it with the existing plan upload; a full backup remains a separate action.
+
+## Additional badges (2.20)
+
+Five strong requires five workouts with working sets. On the move requires one valid recorded cardio session. Keep showing up requires workouts on three distinct UTC days, including check-ins and cardio. Food rhythm requires nonzero meal entries on seven distinct diary dates. These are lifetime milestones derived from retained logs, automatically recalculate after deletion, and can be selected in the existing four-slot showcase. Friends receive badge IDs and aggregate points, never the underlying meals. Four foundations retains its original Spark thresholds.
+
+Until the new SQL is installed, existing friends still work. The app previews your new points locally with a setup hint and hides the outdated leaderboard. It does not relabel old server scores as the new scoring system.

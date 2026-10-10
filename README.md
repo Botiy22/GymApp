@@ -18,9 +18,9 @@ Register starts with your goal, sex, age, height, weight and activity, then prev
 
 ## Navigation and profiles
 
-The bottom bar is **Workout · Food · Goals · Settings · Profile**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. A circular photo shortcut at the top right opens your profile. Customize its photo, short bio and public cover color, then select up to four earned badges individually. A live editor preview adds personal cover designs, photo shapes and an option to follow your app accent; these layout preferences sync as private settings. New badges are announced when you finish a qualifying workout.
+The bottom bar is **Workout · Food · Goals · Settings**. Exercises are inside Workout; Habits and Progress are inside Goals. Profile shows your lift rank, a clock-style daily calorie meter, workout totals and earned achievements. A circular photo shortcut at the top right opens your profile. Customize its photo, short bio and public cover color, then select up to four earned badges individually. A live editor preview adds personal cover designs, photo shapes and an option to follow your app accent; the active cover design/photo can be shared with accepted friends after the latest migration. New badges are announced when you finish a qualifying workout.
 
-Usernames, friend requests, friend profiles and weekly competition use the additive [social migration](migrations/20261008_social.sql). **Run it in your existing Supabase SQL Editor to activate friends.** The migration is prepared and tested, but is not installed on the live project from this environment. [SOCIAL.md](SOCIAL.md) explains activation, points, milestones and sharing rules. Local customization works without a social connection.
+Usernames, friend requests, friend profiles and weekly competition use the additive migrations in [SOCIAL.md](SOCIAL.md). **Run them in order in your existing Supabase SQL Editor to activate friends.** The migration is prepared and tested, but is not installed on the live project from this environment. [SOCIAL.md](SOCIAL.md) explains activation, points, milestones and sharing rules. Local customization works without a social connection.
 
 ## What is in it
 

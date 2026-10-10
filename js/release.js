@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.19.0';
-  const build = '20261010.3';
+  const version = '2.20.0';
+  const build = '20261010.4';
   const history = [
+    {version:'2.20.0',build:'20261010.4',date:'2026-10-10',
+      en:['Three new lift ranks start at 1 kg. Weekly Goals challenges and four new badges reward logged workouts, cardio, check-ins and meal days.','Simpler profile colors, three new cover designs and a photo banner. Selected covers can be shared with accepted friends.','Friends has a clear weekly score, leaderboard, friend list and focused Add panel. Discovery and scoring details stay out of the way.','Workout check-ins and cardio earn attendance points; logged sets add a bonus. Meal logs and check-ins earn capped weekly consistency points. Lift ranks still need logged weights. New cover sharing and scoring require the latest Supabase migration.'],
+      hu:['Három új erőrang már 1 kg-tól. Heti kihívások a Célokban, négy új jelvény az edzésért, kardióért, pipákért és étkezési napokért.','Egyszerűbb profilszín-választás, három új borítóstílus és fotós borító. A kiválasztott borítót az elfogadott barátok is láthatják.','Letisztult heti pontszám, ranglista, barátlista és külön hozzáadási panel. A kereshetőség és pontozás részletei külön nyithatók.','A kipipált edzés és kardió is ad részvételi pontot; a naplózott sorozatok bónuszt érnek. Az étkezési napló és pipák korlátos heti kitartáspontot adnak. Az erőranghoz továbbra is naplózott súly kell. A borítómegosztás és pontozás az új Supabase SQL-frissítést igényli.']},
     {version:'2.19.0',build:'20261010.3',date:'2026-10-10',
       en:['Profile access moves to the top-right photo; a touch color wheel customizes your profile.','Distinct backgrounds and Glass, Balanced or Matte surfaces. Plan export and clearer Data actions.','Username registration, friend photo likes and editable reviews. Publish selected routines on your profile so friends can copy them. Social features require the new Supabase migration.'],
       hu:['Profil a jobb felső képgombon; érintéssel kezelhető profilszínkör.','Eltérő hátterek és Üveg, Kiegyensúlyozott vagy Matt felületek. Tervexport és szellősebb adatkezelés.','Felhasználónév regisztrációkor, baráti képkedvelések és szerkeszthető értékelések. Kijelölt edzéstervek megosztása a profilodon, barátoknak másolással. A közösségi funkciókhoz az új Supabase SQL-frissítés szükséges.']},
