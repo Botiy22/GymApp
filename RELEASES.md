@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.21.2 — 2026-10-10 (build 20261010.7)
+
+Canceling the native profile-photo or cover picker now keeps the editor, draft and modal scroll lock intact. Only the dialog’s own cancel event dismisses the sheet; explicit close and Save still work. Confirmed photo likes animate the updated count and enlarged-photo heart. Failed requests leave counts unchanged; reduced motion and Calm disable these animations. No SQL changes.
+
+Validation: picker-cancel/draft/save/Escape regression, confirmed button and double-tap likes, request failure and reduced-motion checks, existing social flows and verified update/reload. Browser fixtures, no physical iOS or live-account checks.
+
 ## 2.21.1 — 2026-10-10 (build 20261010.6)
 
 The Reppsy mark rotates gently during update installation and pauses on completion. Daily-goal counter buttons and the percentage readout are explicitly centered. Goals, Food and Profile clocks interpolate their visible fill over 650 ms; rapid edits continue from the current fill, undo drains it smoothly, and date-specific keys prevent borrowing another day's progress. Labels and calorie calculations update immediately; animation changes only the presentation. Calm/reduced-motion settings show the final fill immediately and disable logo rotation/transitions.

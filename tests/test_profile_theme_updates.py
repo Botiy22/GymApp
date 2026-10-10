@@ -87,7 +87,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.locator('#tabbar [data-tab=settings]').click()
         page.wait_for_function('()=>!__gym.ui.updateAvailable')
         self.assertEqual(page.locator('.update-app').count(),0)
-        page.route('**/release-manifest.json?check=*',lambda r:r.fulfill(json={'version':'2.21.2','build':'20261010.7'}))
+        page.route('**/release-manifest.json?check=*',lambda r:r.fulfill(json={'version':'2.21.3','build':'20261010.8'}))
         page.evaluate('()=>__gym.checkForUpdate(true)')
         self.assertEqual(page.locator('.update-app').count(),1);self.bounds(page,'available update header')
         for tab in ['home','food','goals','profile']:
@@ -138,8 +138,8 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.evaluate('()=>{Store.d.settings.lang="en";Store.d.settings.profileStyle={cover:"stripe",frame:"round",useAccent:true};Store.d.food[__gym.ui.foodDate]=[{id:"safe-fixture",name:"Milk",g:258,vml:250,kcal:129,p:9,c:12,f:5}];Store.save()}')
         page.evaluate('()=>__gym.checkForUpdate(true)') # Finish the startup check before publishing the fixture release.
         old=(responsive.ROOT/'js/release.js').read_bytes()
-        new=old.replace(b"const version = '2.21.1'",b"const version = '2.21.2'").replace(b"const build = '20261010.6'",b"const build = '20261010.7'")
-        manifest=json.loads((responsive.ROOT/'release-manifest.json').read_text());manifest.update(version='2.21.2',build='20261010.7')
+        new=old.replace(b"const version = '2.21.2'",b"const version = '2.21.3'").replace(b"const build = '20261010.7'",b"const build = '20261010.8'")
+        manifest=json.loads((responsive.ROOT/'release-manifest.json').read_text());manifest.update(version='2.21.3',build='20261010.8')
         manifest['assets']['js/release.js']=hashlib.sha256(new).hexdigest()
         self.server.overrides={'js/release.js':new,'release-manifest.json':json.dumps(manifest).encode()}
         self.addCleanup(lambda:setattr(self.server,'overrides',{}))
@@ -152,7 +152,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.assertTrue(page.locator('#view').evaluate('(e)=>e.inert'))
         with page.expect_navigation(wait_until='domcontentloaded',timeout=45000):
             page.wait_for_function('()=>document.querySelector("#app-update-progress")?.classList.contains("ready")',timeout=40000)
-        page.wait_for_function('()=>window.__gym&&GYM_RELEASE.version==="2.21.2"')
+        page.wait_for_function('()=>window.__gym&&GYM_RELEASE.version==="2.21.3"')
         self.assertEqual(page.evaluate('__gym.ui.updateStatus'),'updateSuccess')
         self.assertEqual(page.locator('#toast').inner_text(),'Reppsy has been updated.')
         self.assertEqual(page.evaluate('Object.values(Store.d.food).flat()[0].vml'),250)

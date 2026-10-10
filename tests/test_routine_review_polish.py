@@ -19,6 +19,46 @@ class RoutineReviewPolish(unittest.TestCase):
         page.route('**/rest/v1/rpc/social_view_profile',lambda r:r.fulfill(json={'user_id':'friend-fixture','username':'friend_fixture','avatar':avatar,'stats':{},'theme':'mint'}))
         page.evaluate('()=>__gym.A["friend-profile"]({dataset:{id:"friend-fixture"}})');page.locator('.profile-cover .profile-avatar img').wait_for()
 
+    def test_picker_cancel_keeps_editor_draft_and_save_returns_to_profile(self):
+        page,errors=self.page(320,844,'en',20)
+        page.locator('.profile-shortcut').click();page.locator('[data-a=profile-edit]').click()
+        page.locator('[name=displayName]').fill('Draft stays here')
+        page.locator('[data-a=profile-style-choice][data-v=orbit]').click()
+        for kind in ['profile-cover-photo','profile-photo']:
+            # Same bubbling event fired by native file inputs on picker cancellation.
+            page.locator('[data-in='+kind+']').evaluate("e=>e.dispatchEvent(new Event('cancel',{bubbles:true}))")
+            self.assertTrue(page.locator('#sheet').evaluate('(e)=>e.open'))
+            self.assertEqual(page.locator('[name=displayName]').input_value(),'Draft stays here')
+            self.assertEqual(page.evaluate('__gym.ui.profileStyleDraft.cover'),'orbit')
+            self.assertTrue(page.locator('#view').evaluate('(e)=>e.inert'))
+        self.bounds(page,'cancelled cover picker')
+        page.locator('[name=username]').fill('draft_fixture')
+        page.locator('button[form=profile-edit-form]').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
+        self.assertEqual(page.evaluate('Store.d.settings.publicProfile.displayName'),'Draft stays here')
+        self.assertEqual(page.evaluate('Store.d.settings.profileStyle.cover'),'orbit')
+        page.locator('[data-a=profile-edit]').click();page.keyboard.press('Escape')
+        page.wait_for_function('()=>!document.querySelector("#sheet").open');self.assertEqual(errors,[])
+
+    def test_confirmed_photo_like_count_animation_and_failure(self):
+        page,calls,errors=self.auth_page();self.friend(page)
+        page.emulate_media(reduced_motion='no-preference')
+        page.evaluate('()=>{Store.d.settings.calm=false;document.documentElement.removeAttribute("data-calm")}')
+        page.locator('[data-a=photo-like]').click();page.wait_for_function('()=>__gym.ui.friendActivity?.liked&&!__gym.ui.communityBusy')
+        count=page.locator('.photo-like-count')
+        self.assertEqual(count.inner_text(),'1');self.assertEqual(count.evaluate('(e)=>getComputedStyle(e).animationName'),'photoLikeCount')
+        page.locator('[data-a=photo-like]').click();page.wait_for_function('()=>!__gym.ui.friendActivity?.liked&&!__gym.ui.communityBusy')
+        page.locator('.profile-avatar[data-a=profile-photo-view]').click()
+        page.locator('.photo-view-like').click();page.wait_for_function('()=>__gym.ui.friendActivity?.liked&&!__gym.ui.communityBusy')
+        self.assertEqual(page.locator('.photo-like-count').inner_text(),'1')
+        self.assertTrue(page.locator('.profile-photo-view').evaluate('(e)=>e.classList.contains("like-pop")'))
+        page.locator('.photo-view-like').click();page.wait_for_function('()=>!__gym.ui.friendActivity?.liked&&!__gym.ui.communityBusy')
+        page.route('**/rest/v1/rpc/social_photo_like',lambda r:r.fulfill(status=500,json={'message':'fixture failure'}))
+        page.locator('.photo-view-like').click();page.wait_for_function('()=>!__gym.ui.communityBusy')
+        self.assertEqual(page.locator('.photo-like-count').inner_text(),'0');self.assertEqual(page.locator('.like-count-pop').count(),0)
+        page.unroute('**/rest/v1/rpc/social_photo_like');page.emulate_media(reduced_motion='reduce')
+        page.locator('.photo-view-like').click();page.wait_for_function('()=>__gym.ui.friendActivity?.liked&&!__gym.ui.communityBusy')
+        self.assertEqual(page.locator('.photo-like-count').evaluate('(e)=>getComputedStyle(e).animationName'),'none');self.assertEqual(errors,[])
+
     def test_default_retirement_preserves_edits_history_and_active_workout(self):
         page,errors=self.page()
         self.assertFalse(page.evaluate('Store.d.routines.some(r=>PLAN.days.some(d=>d.id===r.id))'))

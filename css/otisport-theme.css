@@ -601,3 +601,10 @@ button.profile-avatar{padding:0;cursor:zoom-in}.profile-identity>button.profile-
 
 /* A gentle logo turn and clocks that fill through changes. */
 .reload-mark img{animation:reppsy-logo-turn 2.8s cubic-bezier(.45,0,.2,1) infinite;transform-origin:center;will-change:transform}@keyframes reppsy-logo-turn{0%,8%{transform:rotate(0)}88%,100%{transform:rotate(360deg)}}.app-update-overlay.ready .reload-mark img{animation-play-state:paused}.clock-charging .dial-tick{transition:stroke .16s ease,stroke-width .16s ease}.habit-counter .pill{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 8px;line-height:1;text-align:center;font-variant-numeric:tabular-nums}.momentum-dial>b{display:flex;align-items:center;justify-content:center;line-height:1;margin:0;padding:0;text-align:center}@media(prefers-reduced-motion:reduce){.reload-mark img{animation:none;will-change:auto}.clock-charging .dial-tick{transition:none}}:root[data-calm] .reload-mark img{animation:none;will-change:auto}:root[data-calm] .clock-charging .dial-tick{transition:none}
+
+/* A confirmed photo like gently lifts the new count without shifting its label. */
+.photo-like-count{display:inline-block;font-variant-numeric:tabular-nums;min-width:1ch}
+.like-count-pop{animation:photoLikeCount .48s cubic-bezier(.22,1,.36,1) both}
+@keyframes photoLikeCount{0%{opacity:.35;transform:translateY(5px) scale(.85)}45%{opacity:1;transform:translateY(-2px) scale(1.16)}100%{opacity:1;transform:translateY(0) scale(1)}}
+:root[data-calm] .like-count-pop,:root[data-calm] .like-pop .photo-like-burst{animation:none}
+@media(prefers-reduced-motion:reduce){.like-count-pop{animation:none}}

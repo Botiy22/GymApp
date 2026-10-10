@@ -1,3 +1,11 @@
+# Update — Reppsy 2.21.2, 2026-10-10
+
+Work branch `codex/profile-picker-likes-20261010`; remote backup `backup/main-20261010-before-profile-picker` preserves main 1ef257fae38afb8622701380d20434283deefa97. Backup is code, not private diary data. Normal fast-forward publication remains authorized.
+
+Native file-input cancel bubbles to the dialog; the dialog cancel listener now ignores descendant events instead of dismissing the editor. Draft/scroll lock remain intact, actual Escape still closes. Confirmed photo likes animate the count and enlarged-photo heart after refreshed server activity; errors never increment or animate. Calm and OS reduced motion disable both. Release 2.21.2/build 20261010.7, no SQL required. Focused regression and verified-update fixture tests; no physical iOS/live deployment verification.
+
+---
+
 # Update — Reppsy 2.21.1, 2026-10-10
 
 User requests nicely rotating update logo, centered Daily goals count, and clocks that charge smoothly. Added gentle 2.8-second mark rotation (pause on ready), explicit counter/percentage alignment, and 650ms cubic eased tick progression for Goals/Food/Profile clocks. Rendering snapshots actual visible ratio before replacing DOM; rapid edits/undo continue from that ratio. Per-date keys isolate diary/goal days, over-target ratios cap at 1, numeric labels/account data stay exact and immediate. Detached clocks stop RAF; calm/reduced motion jumps to final ratio and disables CSS motion.
