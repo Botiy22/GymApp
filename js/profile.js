@@ -27,7 +27,7 @@ window.Profile = (() => {
     const v=value&&typeof value==='object'?value:{};
     const text=(key,max)=>typeof v[key]==='string'?v[key].trim().slice(0,max):'';
     const username=text('username',24).toLowerCase();
-    return {username:/^[a-z0-9_]{3,24}$/.test(username)?username:'',displayName:text('displayName',40),bio:text('bio',160),avatar:typeof v.avatar==='string'&&v.avatar.length<=90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(v.avatar)?v.avatar:'',theme:['mint','violet','amber','slate'].includes(v.theme)?v.theme:'mint',showcase:Array.isArray(v.showcase)?Array.from(new Set(v.showcase.filter(id=>badges.some(b=>b.id===id)))).slice(0,4):[]};
+    return {username:/^[a-z0-9_]{3,24}$/.test(username)?username:'',displayName:text('displayName',40),bio:text('bio',160),avatar:typeof v.avatar==='string'&&v.avatar.length<=90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(v.avatar)?v.avatar:'',theme:(['mint','violet','amber','slate'].includes(v.theme)||/^hue_(?:[0-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9])$/.test(v.theme))?v.theme:'mint',showcase:Array.isArray(v.showcase)?Array.from(new Set(v.showcase.filter(id=>badges.some(b=>b.id===id)))).slice(0,4):[]};
   }
   function cleanStyle(value){
     const v=value&&typeof value==='object'?value:{};
@@ -41,5 +41,5 @@ window.Profile = (() => {
     const ratio=goal>0?Math.min(1,Math.max(0,consumed/goal)):0;
     return '<svg class="calorie-dial" viewBox="0 0 280 280" role="img" aria-label="'+label.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+'"><circle class="dial-disc" cx="140" cy="140" r="101"/>'+Array.from({length:60},(_,i)=>{const a=i*6*Math.PI/180-Math.PI/2,r=i%5===0?112:119;return '<line class="dial-tick'+(i<ratio*60?' filled':'')+'" x1="'+(140+Math.cos(a)*r)+'" y1="'+(140+Math.sin(a)*r)+'" x2="'+(140+Math.cos(a)*130)+'" y2="'+(140+Math.sin(a)*130)+'"/>';}).join('')+'</svg>';
   }
-  return {badges,summary,clean,cleanStyle,symbol,dial};
+  return {supportsHue:true,badges,summary,clean,cleanStyle,symbol,dial};
 })();

@@ -47,3 +47,10 @@ Additional 2.4.3 verification reproduced the supplied screenshot with the actual
 Run `python3 -m unittest discover -s tests -p test_responsive_polish.py -v` for the four focused tests. They cover 16 phone/landscape/language/text-size combinations, all main/inner tabs, active workouts and a populated food diary, bounded controls/navigation labels, food-action dialogs, all 19 individual images, avatar enlargement/background blocking/nested draft/reload, and all recipe images after verified service-worker installation and offline reload. These fixtures use no live account or user image. Physical phone engines and live deployment remain outside this validation.
 
 Starter sessions have separate pure checks: `node --test tests/test_routine_templates.js` (six tests).
+
+
+## Profile sharing and surfaces (2.19.0)
+
+Run `python3 -m unittest discover -s tests -p test_profile_sharing.py -v` for real Chromium checks of independent profile hue persistence/centering, four-button navigation, background/material differences, Data spacing and plan export round-trip, registration username metadata/duplicate preflight, likes, escaped reviews and fresh shared-routine copying. Auth routes use fixtures and never contact live accounts. `node --test tests/test_routine_share.js` checks privacy, custom exercise remapping, missing exercises and limits.
+
+For disposable PostgreSQL role/RPC testing, install PGlite outside the checkout with `npm install --prefix /tmp/reppsy-pg --cache /tmp/reppsy-npm-cache @electric-sql/pglite --no-audit --no-fund`, then `node tests/test_social_sharing.mjs`. This covers migration reruns, atomic username uniqueness, anonymous/table isolation, pending/stranger/friend permissions, idempotent current-photo likes, editable/owner-removable reviews, sanitized templates, and stopping publication. No live database or physical Safari test.

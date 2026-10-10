@@ -1,10 +1,13 @@
 /* Authenticated RPCs expose only profiles shared through accepted friendships. */
 window.Social = (() => {
-  const state={data:null,error:'',busy:false,userId:null,contacts:null,contactError:''};
+  const state={data:null,error:'',busy:false,userId:null,contacts:null,contactError:'',activity:null,activityError:''};
   let pending=null;
   function message(error) {
     if(error.backendCode==='PGRST202'||error.backendCode==='42P01')return 'socialSetup';
     if(error.backendCode==='23505')return 'usernameTaken';
+    if(/routine_unavailable|exercise_unavailable/.test(error.message))return 'routineUnavailable';
+    if(/copy_limit|sharing_limit/.test(error.message))return 'sharingLimit';
+    if(/profile_private/.test(error.message))return 'profilePrivate';
     if(/profile_required/.test(error.message))return 'socialNeedProfile';
     if(/contact_lookup_limit/.test(error.message))return 'contactLookupLimit';
     if(/invalid_phone/.test(error.message))return 'phoneFormat';
@@ -16,7 +19,7 @@ window.Social = (() => {
     if(error.code==='network')return 'socialOffline';
     return 'socialError';
   }
-  function reset() {state.data=null;state.error='';state.userId=null;state.contacts=null;state.contactError='';}
+  function reset() {state.data=null;state.error='';state.userId=null;state.contacts=null;state.contactError='';state.activity=null;state.activityError='';}
   async function refresh() {
     const cloud=window.Cloud;
     if(!cloud||!cloud.on||!cloud.user){reset();state.error='socialSignIn';return;}
@@ -38,7 +41,7 @@ window.Social = (() => {
           if(!cloud.user||cloud.user.id!==owner)return;
           data=await cloud.rpc('social_dashboard',{});
         }
-        if(cloud.user&&cloud.user.id===owner){state.data=data;try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
+        if(cloud.user&&cloud.user.id===owner){state.data=data;try{const activity=data.profile?await cloud.rpc('social_profile_activity',{p_user:owner}):null;if(cloud.user?.id===owner){state.activity=activity;state.activityError='';}}catch(error){if(cloud.user?.id===owner){state.activity=null;state.activityError=message(error);}}try{const contacts=await cloud.rpc('social_contact_settings',{});if(cloud.user&&cloud.user.id===owner){state.contacts=contacts;state.contactError='';}}catch(error){if(cloud.user&&cloud.user.id===owner){state.contacts=null;state.contactError=message(error);}}}}
       catch(error){if(cloud.user&&cloud.user.id===owner)state.error=message(error);}
       finally{state.busy=false;pending=null;}
     })();return pending;
@@ -60,5 +63,5 @@ window.Social = (() => {
     });
     publishing=job;return job;
   }
-  return {state,refresh,reset,message,publish,mutate};
+  return {profileActivity:true,state,refresh,reset,message,publish,mutate};
 })();

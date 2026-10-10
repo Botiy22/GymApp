@@ -48,7 +48,7 @@ class ResponsivePolish(unittest.TestCase):
                 with self.subTest(width=width,height=height,text=text,lang=lang):
                     page,errors=self.page(width,height,lang,text,light=lang=='hu')
                     for tab in ['home','food','goals','profile','settings']:
-                        page.locator(f'#tabbar [data-tab={tab}]').click()
+                        page.locator('.profile-shortcut' if tab=='profile' else f'#tabbar [data-tab={tab}]').click()
                         self.bounds(page,f'{width}/{text}/{lang}/{tab}')
                         if tab=='food':
                             page.evaluate('()=>{const day=__gym.ui.foodDate;Store.d.food[day]=[{id:"fixture-food",name:"Chicken and broccoli with creamy rice and roasted vegetables",g:450,kcal:525,p:47,c:208.60000000000002,f:11.9}];__gym.render()}')

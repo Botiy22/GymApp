@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.18.0';
-  const build = '20261010.2';
+  const version = '2.19.0';
+  const build = '20261010.3';
   const history = [
+    {version:'2.19.0',build:'20261010.3',date:'2026-10-10',
+      en:['Profile access moves to the top-right photo; a touch color wheel customizes your profile.','Distinct backgrounds and Glass, Balanced or Matte surfaces. Plan export and clearer Data actions.','Username registration, friend photo likes and editable reviews. Publish selected routines on your profile so friends can copy them. Social features require the new Supabase migration.'],
+      hu:['Profil a jobb felső képgombon; érintéssel kezelhető profilszínkör.','Eltérő hátterek és Üveg, Kiegyensúlyozott vagy Matt felületek. Tervexport és szellősebb adatkezelés.','Felhasználónév regisztrációkor, baráti képkedvelések és szerkeszthető értékelések. Kijelölt edzéstervek megosztása a profilodon, barátoknak másolással. A közösségi funkciókhoz az új Supabase SQL-frissítés szükséges.']},
     {version:'2.18.0',build:'20261010.2',date:'2026-10-10',
       en:['Stronger accent palettes, pink and a brighter royal blue; a Reppsy preview inside the color wheel.','Settings sections open by default and can be collapsed. A profile-photo shortcut sits at the top right.','Profile preview with personal cover styles and photo shapes.','The Settings header update button appears only for a newer release, with a smooth restart and confirmed update feedback.'],
       hu:['Kontrasztosabb kiemelő színek, rózsaszín és élénkebb királykék; Reppsy-előnézet a színkör közepén.','A Beállítások részei alapból nyitva vannak, és összecsukhatók. Profilképes gyorsgomb a jobb felső sarokban.','Profil-előnézet személyes borítóstílusokkal és képformákkal.','A Beállítások fejlécében csak újabb verzió esetén jelenik meg a frissítésgomb, finom újraindítással és igazolt visszajelzéssel.']},

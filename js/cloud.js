@@ -12,8 +12,9 @@ window.Cloud = (function () {
   const keepState = () => put(YK, { seen: state.seen, hash: state.hash, at: state.at });
   function keep(s) {
     const previous = ses;
-    ses = s && s.access_token && s.user && s.user.id ? { access_token: String(s.access_token), refresh_token: String(s.refresh_token || ''), expires_at: +s.expires_at || Math.floor(Date.now() / 1000) + (+s.expires_in || 3600), user: { id: String(s.user.id), email: String(s.user.email || ''), setup: window.PersonalSetup ? PersonalSetup.normalize((s.user.user_metadata && s.user.user_metadata.otisport_onboarding && s.user.user_metadata.otisport_onboarding.profile) || s.user.setup) : null } } : null;
+    ses = s && s.access_token && s.user && s.user.id ? { access_token: String(s.access_token), refresh_token: String(s.refresh_token || ''), expires_at: +s.expires_at || Math.floor(Date.now() / 1000) + (+s.expires_in || 3600), user: { id: String(s.user.id), email: String(s.user.email || ''), username:String(s.user.user_metadata?.reppsy_username||s.user.username||''), setup: window.PersonalSetup ? PersonalSetup.normalize((s.user.user_metadata && s.user.user_metadata.otisport_onboarding && s.user.user_metadata.otisport_onboarding.profile) || s.user.setup) : null } } : null;
     if (ses && !ses.user.setup && previous && previous.user.id === ses.user.id && window.PersonalSetup) ses.user.setup = PersonalSetup.normalize(previous.user.setup);
+    if(ses&&!ses.user.username&&previous?.user.id===ses.user.id)ses.user.username=previous.user.username||'';
     put(SK, ses); if (!ses) { state.seen = 0; state.hash = 0; state.at = 0; put(YK, null); }
   }
   const fail = (code, msg) => { const e = new Error(msg || code); e.code = code; return e; };
@@ -22,7 +23,7 @@ window.Cloud = (function () {
   async function call(path, o) {
     o = o || {}; let res;
     const headers = { apikey: KEY, 'Content-Type': 'application/json' };
-    if (o.auth) headers.Authorization = 'Bearer ' + o.auth; if (o.prefer) headers.Prefer = o.prefer;
+    if (o.auth) headers.Authorization = 'Bearer ' + o.auth; else if(path.startsWith('/rest/v1/'))headers.Authorization='Bearer '+KEY; if (o.prefer) headers.Prefer = o.prefer;
     try { res = await fetch(BASE + path, { method: o.method || 'GET', headers, body: o.body ? JSON.stringify(o.body) : undefined }); } catch (e) { throw fail('network'); }
     let body = null; try { body = await res.json(); } catch (e) {}
     if (res.ok) return body;
@@ -119,7 +120,7 @@ window.Cloud = (function () {
   }
 
   return {
-    on, merge, sync, state,
+    usernameSignup:true,on, merge, sync, state,
     async rpc(name, body) {
       if (!on || !/^[a-z_]+$/.test(name)) throw fail('api');
       const run = tk => call('/rest/v1/rpc/' + name, {method:'POST', auth:tk, body:body || {}});
@@ -127,12 +128,17 @@ window.Cloud = (function () {
       catch(error) { if(error.code !== 'auth' || !ses) throw error; return run(await refresh()); }
     },
     get user() { return ses ? ses.user : null; },
-    async signUp(email, password, profile) {
+    async signUp(email, password, profile, username) {
       const setup = window.PersonalSetup && PersonalSetup.normalize(profile);
       if (profile && !setup) throw fail('api');
+      const handle=String(username||'').trim().toLowerCase();
+      if(!/^[a-z0-9_]{3,24}$/.test(handle))throw fail('usernameTaken');
+      let available;try{available=await call('/rest/v1/rpc/social_username_available',{method:'POST',body:{p_username:handle}});}catch(e){if(e.backendCode==='PGRST202'||e.backendCode==='42P01')throw fail('socialSetup');throw e;}
+      if(available!==true)throw fail('usernameTaken');
       const body = { email, password };
       if (setup) body.data = { otisport_onboarding: { version: 1, profile: setup } };
-      const r = await call('/auth/v1/signup', { method: 'POST', body });
+      body.data={...body.data,reppsy_username:handle};
+      let r;try{r=await call('/auth/v1/signup',{method:'POST',body});}catch(e){if(e.code==='api'){try{if(await call('/rest/v1/rpc/social_username_available',{method:'POST',body:{p_username:handle}})===false)throw fail('usernameTaken');}catch(check){if(check.code==='usernameTaken')throw check;}}throw e;}
       if (r && r.access_token) { keep(r); return 'in'; }
       const u = r && (r.user || r); if (u && Array.isArray(u.identities) && !u.identities.length) throw fail('exists');     // an address that already has an account
       return 'confirm';                                                                                                  // the project asks for the e-mail to be confirmed first

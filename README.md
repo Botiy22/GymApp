@@ -344,3 +344,6 @@ Browser regression checks and their actual results are documented in [tests/READ
 Workout/cardio energy estimates and optional daily calorie budgets are documented in [WORKOUT_ENERGY.md](WORKOUT_ENERGY.md).
 
 Editable starter workout splits, previews, grouping and removal are documented in [ROUTINE_TEMPLATES.md](ROUTINE_TEMPLATES.md). They are optional additions under Workout → Plans.
+
+
+Reppsy 2.19 adds profile color wheels, Glass/Normal/Matte surfaces, plan export and top-right photo navigation. Username registration and friend photo likes, reviews and explicitly shared routine copies need the new Supabase migration; see [SOCIAL.md](SOCIAL.md). The coding environment has not applied that migration to the live database.

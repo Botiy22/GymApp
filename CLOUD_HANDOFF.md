@@ -340,3 +340,18 @@ The original five videos are local iCloud recordings and will not be available i
 - Lat pulldown audio: wide grip 4-second negative, medium grip AMRAP, underhand grip AMRAP. No reliably visible total number of sets/rest. Optional routine records one demonstrated sequence, with clear note. Medium and underhand drawings must match their actual grips.
 
 Honesty and accuracy instructions from the user: flag uncertainty, never invent references/numbers/quotes, don't present uncertain details as facts.
+
+
+## 2026-10-10: Reppsy 2.19 profile sharing and glass design
+
+Started from verified actual main `997b0a7217dc195f076dcb8610f3bf8b1274c532`. Remote backup `backup/main-20261010-before-profile-social-glass` preserves that commit. Work branch `codex/profile-social-glass-20261010`; release 2.19.0 / 20261010.3. Normal fast-forward main publication remains authorized; never force/reset.
+
+Profile removed from bottom navigation; top-right photo retained. App and profile color wheels are separate, centered and touch/keyboard operable. Custom profile hues are shared; private cover/frame settings persist. Added Glass/Normal/Matte setting, more distinct backgrounds, and plan JSON export with Data-action spacing. Keys/diaries/history/IDs/calorie semantics preserved.
+
+New `RoutineShare` module is part of the verified offline release and stale-shell bootstrap. Snapshot publication excludes logged weights, private exercise media and unrelated custom definitions; copying checks current publication and remaps custom IDs. Likes apply to current photo; reviews are author-editable, owner-removable, accepted-friend-only. No public account directory. New username Auth trigger reserves atomically; old accounts unchanged. SQL setup is required before new username signup.
+
+Run the entire additive `migrations/20261010_profile_sharing.sql` in the existing live project's SQL Editor after the original two social migrations. No live SQL or live-account test was performed. Setup details in SOCIAL.md. No admin credentials belong in browser config.
+
+Optional local security testing uses PGlite installed outside the checkout: `npm install --prefix /tmp/reppsy-pg --cache /tmp/reppsy-npm-cache @electric-sql/pglite --no-audit --no-fund`; then `node tests/test_social_sharing.mjs`. This is disposable PostgreSQL, with mock auth roles/users, never a connection to the live database. Browser tests intercept account requests with fixtures. Physical Safari/iPhone not tested.
+
+Validation: focused Chromium checks passed for profile wheel isolation/centering/save/reload, four-tab navigation, materials/backgrounds, Data spacing and plan export round-trip, username preflight/metadata, likes/reviews, explicit share/unshare and fresh copies. Responsive tab/action checks covered 16 language/phone/landscape/text-size combinations. Color/dl regression checks, custom routine privacy/remapping/limits, disposable PostgreSQL permissions/idempotency and cached-shell/verified-update/offline checks passed. JavaScript syntax and complete release hashes verified. Screenshots of 320px Settings/profile editing were visually reviewed. The first concurrent responsive suite's offline install was interrupted by working-tree edits; that isolated offline check passed on the frozen release. Live Pages API verification is blocked by the environment proxy (Forbidden); do not claim served deployment or live account verification.

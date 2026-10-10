@@ -5,8 +5,8 @@
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || !window.Profile?.cleanStyle || !window.Social || !window.ModalLock) {
-    const src = !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : !window.Profile?.cleanStyle ? 'js/profile.js' : !window.Social ? 'js/social.js' : 'js/modal-lock.js';
+  if (!window.RoutineShare || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks || (!window.Profile?.cleanStyle || !window.Profile?.supportsHue) || !window.Social?.profileActivity || !window.Cloud?.usernameSignup || !window.Store?.supportsMaterial || !window.ModalLock) {
+    const src = !window.RoutineShare ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.supportsHue) ? 'js/profile.js' : !window.Social?.profileActivity ? 'js/social.js' : !window.Cloud?.usernameSignup ? 'js/cloud.js' : !window.Store?.supportsMaterial ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -592,11 +592,15 @@
       ui.fa = {food:f,unit:f.volume.gramsPerDl?'dl':'g',g:f.volume.gramsPerDl?'2.5':String(each?each[0]:100)};openSheet(shFoodAmount()); }
   const profileLocal = () => Profile.clean(D().settings.publicProfile);
   function profileShortcut(){const p=profileLocal();return `<button class="profile-shortcut" data-a="profile-home" aria-label="${esc(t('tabProfile'))}" title="${esc(t('tabProfile'))}">${p.avatar?`<img src="${esc(p.avatar)}" alt="">`:IC.profile}</button>`;}
+  function profileColor(p){const match=/^hue_(\d+)$/.exec(p.theme);return match?(AccentTheme.fill(+match[1])||hueRGB(+match[1],.68)):null;}
+  function profileWheelStyle(p){const c=profileColor(p)||({mint:[42,206,157],violet:[153,109,241],amber:[248,174,67],slate:[105,160,217]}[p.theme]);return ` style="--acc:rgb(${c.join(',')});--acc-ink:${AccentTheme.ink(c)}"`; }
+  const colorStyle=(p,style)=>{if(style?.useAccent)return '';const c=profileColor(p);return c?` style="--profile-rgb:${c.join(',')}"`:'';};
+  const profileHue=p=>/^hue_(\d+)$/.test(p.theme)?+p.theme.slice(4):({mint:155,violet:262,amber:40,slate:211}[p.theme]||155);
   const profileStyle=()=>Profile.cleanStyle(D().settings.profileStyle);
   const styleClasses=s=>`cover-${s.cover} frame-${s.frame}${s.useAccent?' profile-use-accent':''}`;
   const sectionOpen=key=>ui.sections?.[key]!==false;
   function miniSection(key,title,body){return `<details class="mini-section" data-section="${key}" ${sectionOpen(key)?'open':''}><summary>${esc(title)}${IC.down}</summary><div class="section-body">${body}</div></details>`;}
-  function profilePreview(p,style){return `<div class="profile-cover profile-preview theme-${p.theme} ${styleClasses(style)}"><div class="profile-identity">${avatar(p,false)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2>${p.username?`<p>@${esc(p.username)}</p>`:''}</div></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}</div>`;}
+  function profilePreview(p,style){return `<div class="profile-cover profile-preview theme-${p.theme} ${styleClasses(style)}"${colorStyle(p,style)}><div class="profile-identity">${avatar(p,false)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2>${p.username?`<p>@${esc(p.username)}</p>`:''}</div></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}</div>`;}
   function avatar(p, small, view=false) {
     const initial=(p.displayName||p.username||t('appName')).slice(0,1).toUpperCase();
     const tag=view&&p.avatar?'button':'span';
@@ -644,15 +648,30 @@
     const base=dayTargets(td),goal=base?energyBudget(td,sum.kcal,base.kcal).total:0;
     const display=stats.badges.filter(b=>b.earned&&p.showcase.includes(b.id)).sort((a,b)=>p.showcase.indexOf(a.id)-p.showcase.indexOf(b.id));
     const claimed=Social.state.data&&Social.state.data.profile&&Social.state.data.profile.username===p.username;
-    let h=navigation+`<section class="profile-cover theme-${p.theme} ${styleClasses(profileStyle())}"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
+    let h=navigation+`<section class="profile-cover theme-${p.theme} ${styleClasses(profileStyle())}"${colorStyle(p,profileStyle())}><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2><p>${p.username?'@'+esc(p.username):esc(t('profileUsernameHint'))}</p>${p.username&&CL&&!claimed?`<small class="username-status">${esc(t('usernameUnclaimed'))}</small>`:''}</div><button class="icon-btn" data-a="profile-edit" aria-label="${esc(t('editProfile'))}">${IC.pen}</button></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}<button class="profile-rank" data-a="profile-ranks">${rankBadge(stats.highest)}<span><small>${esc(t('highestRank'))}</small><b>${esc(rank)}</b></span>${IC.chev}</button><div class="profile-showcase">${display.length?display.map(b=>badgeChip(b,false)).join(''):`<button class="link" data-a="profile-badges">${IC.plus}${esc(t('chooseBadges'))}</button>`}</div></section>`;
     h+=`<section class="card profile-nutrition"><div class="h2row"><div><small class="eyebrow">${esc(t('today'))}</small><h2>${esc(t('dailyFuel'))}</h2></div><button class="link" data-a="profile-food">${esc(t('diary'))}${IC.chev}</button></div>${calorieClock(sum.kcal,goal)}${energyBudgetPanel(td,sum.kcal,base&&base.kcal)}<div class="profile-macros">${['p','c','f'].map((k,i)=>`<div><small>${esc(t(['protein','carbs','fat'][i]))}</small><b><span class="macro-value">${dec(r1(sum[k]))}</span><span class="macro-unit">g</span></b><i><span style="width:${base&&base[k]>0?Math.min(100,sum[k]/base[k]*100):0}%"></span></i></div>`).join('')}</div></section>`;
     h+=`<div class="profile-stats"><div><b>${stats.workouts}</b><small>${esc(t('loggedSessions'))}</small></div><div><b>${stats.days}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${stats.volume>=1000?dec(r1(stats.volume/1000)):compact(stats.volume)} <span>${stats.volume>=1000?'t':'kg'}</span></b><small>${esc(t('lifetimeVolume'))}</small></div></div><section class="card"><div class="h2row"><h2>${esc(t('achievements'))}</h2><button class="link" data-a="profile-badges">${esc(t('chooseBadges'))}</button></div><div class="achievement-grid">${stats.badges.map(b=>badgeChip(b,true)).join('')}</div></section>`;
+    if(CL?.user)h+=`<section class="card profile-community"><h2>${esc(t('community'))}</h2>${activityView(Social.state.activity,CL?.user?.id,true)}</section>`;
     return h;
   }
+  function activityView(a,target,own=false){
+    if(!a)return `<p class="cap">${esc(t(own?(Social.state.busy?'socialLoading':Social.state.activityError||'socialNeedProfile'):'profilePrivate'))}</p>`;
+    const reviews=a.reviews||[],saved=reviews.find(r=>r.author===CL?.user?.id),mine=ui.reviewDraft?.target===target?ui.reviewDraft:saved;
+    return `<div class="profile-social-actions">${own?`<span>♡ ${compact(a.likes||0)} ${esc(t('photoLikes'))}</span>`:`<button class="btn sm ${a.liked?'primary':''}" data-a="photo-like" data-id="${esc(target)}" aria-pressed="${!!a.liked}" ${ui.communityBusy||!ui.friendProfile?.avatar?'disabled':''}>${a.liked?'♥':'♡'} ${compact(a.likes||0)} · ${esc(t(a.liked?'unlikePhoto':'likePhoto'))}</button>`}</div><details class="mini-section" open><summary>${esc(t('profileReviews'))} (${reviews.length})${IC.down}</summary><div class="section-body">${reviews.map(r=>`<article class="profile-review"><div><b>@${esc(r.username)}</b><span aria-label="${r.rating}/5">${'★'.repeat(Math.max(1,Math.min(5,+r.rating||1)))}</span></div><p>${esc(r.body)}</p>${own||r.author===CL?.user?.id?`<button class="link" data-a="review-remove" data-id="${esc(r.id)}">${esc(t('remove'))}</button>`:''}</article>`).join('')||`<p class="cap">${esc(t('noReviews'))}</p>`}${!own?`<form data-f="profile-review" class="review-form"><label class="fld"><span>${esc(t('rating'))}</span><select name="rating">${[5,4,3,2,1].map(n=>`<option value="${n}" ${mine?.rating===n?'selected':''}>${n} / 5</option>`).join('')}</select></label><label class="fld"><span>${esc(t('writeReview'))}</span><textarea name="body" rows="2" maxlength="280" required>${esc(mine?.body||'')}</textarea></label><button class="btn" ${ui.communityBusy?'disabled':''}>${esc(t(saved?'save':'postReview'))}</button></form>`:''}</div></details><details class="mini-section" open><summary>${esc(t('sharedRoutines'))} (${(a.routines||[]).length})${IC.down}</summary><div class="section-body">${(a.routines||[]).map(r=>`<article class="shared-routine"><h3>${esc(r.snapshot.routine.name)}</h3><small>${r.snapshot.routine.items.length} ${esc(t('exercises'))}</small><details><summary>${esc(t('exercises'))}</summary><ol>${r.snapshot.routine.items.map(i=>`<li>${esc(r.snapshot.myEx.find(e=>e.id===i.ex)?.n||exName(i.ex))}<small>${i.sets} × ${esc(i.reps)}</small></li>`).join('')}</ol></details>${!own?`<button class="btn" data-a="routine-copy" data-id="${esc(r.id)}" ${ui.communityBusy?'disabled':''}>${esc(t('copyRoutine'))}</button>`:''}</article>`).join('')||`<p class="cap">${esc(t('noSharedRoutines'))}</p>`}${own?`<button class="btn" data-a="manage-sharing">${esc(t('manageSharing'))}</button>`:''}</div></details>`;
+  }
+  function shSharing(){const fn=()=>({title:t('manageSharing'),html:`<p class="cap">${esc(t('sharePrivacy'))}</p>${D().routines.map(r=>{const shared=Social.state.activity?.routines?.find(x=>x.source_id===r.id);return `<article class="sharing-row"><h3>${esc(rName(r))}</h3><div>${shared?`<button class="btn sm" data-a="routine-unshare" data-id="${esc(shared.id)}" ${ui.communityBusy?'disabled':''}>${esc(t('unshare'))}</button>`:''}<button class="btn sm ${shared?'':'primary'}" data-a="routine-share" data-id="${esc(r.id)}" ${ui.communityBusy||!r.items.length?'disabled':''}>${esc(t(shared?'updateShared':'shareRoutine'))}</button></div></article>`;}).join('')}`});fn.kind='sharing';return fn;}
+  function shFriend(){const fn=()=>{const r=ui.friendProfile,p=Profile.clean({username:r.username,displayName:r.display_name,bio:r.bio,avatar:r.avatar,theme:r.theme,showcase:r.badges}),stats=r.stats||{},earned=Profile.badges.filter(b=>(stats.badges||[]).includes(b.id)&&p.showcase.includes(b.id)).map(b=>({...b,earned:true}));return {title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme} cover-glow"${colorStyle(p)}><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest][L()]:t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>${ui.friendActivityError?`<p class="cap">${esc(t(ui.friendActivityError))}</p>`:activityView(ui.friendActivity,r.user_id,r.user_id===CL?.user?.id)}`};};fn.kind='friend-profile';return fn;}
+  async function communityAction(name,body,own=false){
+    if(ui.communityBusy)return;const owner=CL?.user?.id,target=own?owner:ui.friendProfile?.user_id;if(!owner)return;
+    ui.communityBusy=true;
+    try{const a=await Social.mutate(name,body);if(CL?.user?.id!==owner)return;if(name==='social_review_save')ui.reviewDraft=null;if(own){Social.state.activity=a;if(ui.friendProfile?.user_id===owner)ui.friendActivity=a;}else if(ui.friendProfile?.user_id===target)ui.friendActivity=a;}
+    catch(e){toast(t(Social.message(e)));}finally{ui.communityBusy=false;if(topIs('friend-profile')||topIs('sharing'))refreshSheet();if(ui.tab==='profile')rerender();}
+  }
+
   function shProfileEdit() {
     const fn=()=>{
       const p=ui.profileDraft,style=ui.profileStyleDraft||profileStyle();
-      return {title:t('editProfile'),html:`${profilePreview(p,style)}<form id="profile-edit-form" data-f="profile-edit"><div class="avatar-edit">${avatar(p,false,true)}<label class="btn sm">${esc(t('changePhoto'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="profile-photo"></label>${p.avatar?`<button type="button" class="link" data-a="profile-photo-remove">${esc(t('removePhoto'))}</button>`:''}</div><label class="fld"><span>${esc(t('displayName'))}</span><input name="displayName" maxlength="40" data-in="profile-draft" value="${esc(p.displayName)}" autocomplete="nickname"></label><label class="fld"><span>${esc(t('username'))}</span><input name="username" value="${esc(p.username)}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocapitalize="none" spellcheck="false" data-in="profile-draft" ${CL?'required':''}><small>${esc(t('usernameRule'))}</small></label><label class="fld"><span>${esc(t('profileBio'))}</span><textarea name="bio" maxlength="160" rows="3" data-in="profile-draft">${esc(p.bio)}</textarea></label>${miniSection('profile-look',t('profileLook'),`<p class="lbl">${esc(t('profileColor'))}</p><div class="profile-colors">${['mint','violet','amber','slate'].map(v=>`<button type="button" class="theme-${v} ${p.theme===v?'on':''}" data-a="profile-color" data-v="${v}" aria-label="${esc(t('profile_'+v))}" aria-pressed="${p.theme===v}"><span></span>${p.theme===v?IC.check:''}</button>`).join('')}</div><label class="sw"><input type="checkbox" role="switch" data-in="profile-style" data-k="useAccent" ${style.useAccent?'checked':''}><span>${esc(t('profileUseAccent'))}</span></label><p class="lbl">${esc(t('profileCover'))}</p><div class="cover-choices">${['glow','mesh','stripe','clean'].map(v=>`<button type="button" class="cover-choice theme-${p.theme} cover-${v}${style.useAccent?' profile-use-accent':''} ${style.cover===v?'on':''}" data-a="profile-style-choice" data-k="cover" data-v="${v}" aria-pressed="${style.cover===v}"><span aria-hidden="true"></span><b>${esc(t('cover_'+v))}</b>${style.cover===v?IC.check:''}</button>`).join('')}</div><p class="lbl">${esc(t('profileFrame'))}</p><div class="seg">${['soft','round','ring'].map(v=>`<button type="button" data-a="profile-style-choice" data-k="frame" data-v="${v}" aria-pressed="${style.frame===v}" class="${style.frame===v?'on':''}">${esc(t('frame_'+v))}</button>`).join('')}</div><p class="cap">${esc(t('profileStylePrivate'))}</p>`)}<p class="cap">${esc(t('profileShared'))}</p><p class="profile-edit-error note warn" role="status" ${ui.profileError?'':'hidden'}>${esc(t(ui.profileError||''))}</p></form>`,foot:`<button class="btn primary" form="profile-edit-form" ${ui.profileBusy?'disabled':''}>${esc(t(ui.profileBusy?'savingProfile':'saveProfile'))}</button>`};
+      return {title:t('editProfile'),html:`${profilePreview(p,style)}<form id="profile-edit-form" data-f="profile-edit"><div class="avatar-edit">${avatar(p,false,true)}<label class="btn sm">${esc(t('changePhoto'))}<input class="sr" type="file" accept="image/jpeg,image/png,image/webp" data-in="profile-photo"></label>${p.avatar?`<button type="button" class="link" data-a="profile-photo-remove">${esc(t('removePhoto'))}</button>`:''}</div><label class="fld"><span>${esc(t('displayName'))}</span><input name="displayName" maxlength="40" data-in="profile-draft" value="${esc(p.displayName)}" autocomplete="nickname"></label><label class="fld"><span>${esc(t('username'))}</span><input name="username" value="${esc(p.username)}" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" autocapitalize="none" spellcheck="false" data-in="profile-draft" ${CL?'required':''}><small>${esc(t('usernameRule'))}</small></label><label class="fld"><span>${esc(t('profileBio'))}</span><textarea name="bio" maxlength="160" rows="3" data-in="profile-draft">${esc(p.bio)}</textarea></label>${miniSection('profile-look',t('profileLook'),`<p class="lbl">${esc(t('profileColor'))}</p><div class="profile-colors">${['mint','violet','amber','slate'].map(v=>`<button type="button" class="theme-${v} ${p.theme===v?'on':''}" data-a="profile-color" data-v="${v}" aria-label="${esc(t('profile_'+v))}" aria-pressed="${p.theme===v}"><span></span>${p.theme===v?IC.check:''}</button>`).join('')}</div><div class="profile-color-wheel"${profileWheelStyle(p)}>${colorWheel(profileHue(p),'profile')}</div><label class="sw"><input type="checkbox" role="switch" data-in="profile-style" data-k="useAccent" ${style.useAccent?'checked':''}><span>${esc(t('profileUseAccent'))}</span></label><p class="lbl">${esc(t('profileCover'))}</p><div class="cover-choices">${['glow','mesh','stripe','clean'].map(v=>`<button type="button" class="cover-choice theme-${p.theme} cover-${v}${style.useAccent?' profile-use-accent':''} ${style.cover===v?'on':''}" data-a="profile-style-choice" data-k="cover" data-v="${v}" aria-pressed="${style.cover===v}"${colorStyle(p,style)}><span aria-hidden="true"></span><b>${esc(t('cover_'+v))}</b>${style.cover===v?IC.check:''}</button>`).join('')}</div><p class="lbl">${esc(t('profileFrame'))}</p><div class="seg">${['soft','round','ring'].map(v=>`<button type="button" data-a="profile-style-choice" data-k="frame" data-v="${v}" aria-pressed="${style.frame===v}" class="${style.frame===v?'on':''}">${esc(t('frame_'+v))}</button>`).join('')}</div><p class="cap">${esc(t('profileStylePrivate'))}</p>`)}<p class="cap">${esc(t('profileShared'))}</p><p class="profile-edit-error note warn" role="status" ${ui.profileError?'':'hidden'}>${esc(t(ui.profileError||''))}</p></form>`,foot:`<button class="btn primary" form="profile-edit-form" ${ui.profileBusy?'disabled':''}>${esc(t(ui.profileBusy?'savingProfile':'saveProfile'))}</button>`};
     };fn.kind='profile-edit';return fn;
   }
   function shBadges() {
@@ -716,7 +735,7 @@
     // Async profile/sync redraws must not cancel a tab's entry animation immediately.
     if(entering){v.dataset.anim=entering;clearTimeout(animT);animT=setTimeout(()=>{delete v.dataset.anim;},600);}
     v.innerHTML = VIEWS[ui.tab]();
-    $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false');if(b.dataset.tab==='profile'){b.querySelector('.nav-avatar')?.remove();const p=profileLocal(),icon=b.querySelector(':scope > svg');if(icon)icon.style.display=p.avatar?'none':'';if(p.avatar){const img=document.createElement('img');img.className='nav-avatar';img.src=p.avatar;img.alt='';b.prepend(img);}} });
+    $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
     window.scrollTo(0, y);
     const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); }
@@ -1280,9 +1299,9 @@
   const PALETTES=[[null,'paletteApricot'],[155,'paletteSage'],[250,'paletteSky'],[300,'paletteLavender'],[25,'paletteRed'],[270,'paletteRoyal'],[350,'palettePink']];
   const vividFill=h=>AccentTheme.fill(h);
   const DEF_HUE = 55;                                                                 // default apricot hue; explicitly saved hues remain unchanged
-  function colorWheel(h){
+  function colorWheel(h,kind='app'){
     const a=h*Math.PI/180,gradient=Array.from({length:73},(_,i)=>'rgb('+(vividFill(i*5%360)||hueRGB(i*5,.68)).join(',')+') '+i*5+'deg').join(',');
-    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true"><img src="icons/reppsy-192.png" width="28" height="28" alt=""><b>Reppsy</b></span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="set-hue"></div>`;
+    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true"><img src="icons/reppsy-192.png" width="28" height="28" alt=""><b>Reppsy</b></span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="${kind==='profile'?'profile-hue':'set-hue'}"></div>`;
   }
   function applyLook() {
     const s = D().settings, e = document.documentElement;
@@ -1295,7 +1314,7 @@
       const text=vivid?AccentTheme.text(c,light):light?hueRGB(hue,.45):c;
       e.style.setProperty('--acc-tx','rgb('+text.join(',')+')');
     }
-    e.dataset.bg = s.bg;
+    e.dataset.bg=s.bg;e.dataset.material=s.material||'glass';
     const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f8f5f0' : '#14151b');
     if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
@@ -1314,7 +1333,7 @@
           ${miniSection('accent-presets',t('accent'),`<div class="accent-palettes">${PALETTES.map(([h,key])=>`<button class="palette ${s.hue===h&&s.accentTone==='vivid'?'on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${s.hue===h&&s.accentTone==='vivid'}" style="--swatch:${'rgb('+vividFill(h).join(',')+')'}"><span class="palette-preview" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t(key))}</b><span class="palette-check">${s.hue===h&&s.accentTone==='vivid'?IC.check:''}</span></button>`).join('')}</div>`)}
           <details class="custom-accent mini-section" data-section="custom-accent" ${sectionOpen('custom-accent')?'open':''}><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="section-body">${colorWheel(s.hue==null?DEF_HUE:s.hue)}<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></div></details>
           ${miniSection('background-choices',t('background'),`<div class="surface-choices">${(Store.BGS||['aurora']).map(b=>`<button class="surface-choice ${s.bg===b?'on':''}" data-a="set-bg" data-v="${b}" aria-pressed="${s.bg===b}"><span class="surface-preview surface-${b}" aria-hidden="true"><i></i><i></i><i></i></span><b>${esc(t('bg_'+b))}</b>${s.bg===b?IC.check:''}</button>`).join('')}</div>`)}
-          ${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
+          ${miniSection('material',t('surfaceFinish'),seg('material',s.material||'glass',[['glass',t('material_glass')],['balanced',t('material_balanced')],['matte',t('material_matte')]]))}${sw('calm', t('setCalm'))}${sw('solid', t('setSolid'))}</section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
           ${sw('stretch', t('setStretch'))}${s.stretch ? sel('hold', t('holdLbl'), [20, 30, 45].map(v => [v, v + ' ' + t('secShort')])) : ''}
           ${sel('restDefault', t('restDefault'), [60, 90, 120, 150, 180].map(v => [v, clock(v)]))}${sel('weekGoal', t('weekGoal'), [[0, t('goalOff')]].concat([2, 3, 4, 5, 6, 7].map(v => [v, v + ' ' + t('times')])))}${sel('weekStart', t('weekStartLbl'), [[1, t('monday')], [0, t('sunday')]])}
@@ -1324,7 +1343,7 @@
         ${D().plan ? `<section class="card"><h3>${esc(t('planCard'))}</h3><p class="cap">${esc(D().plan.name || t('mealPlan'))}</p>${sw('', t('planUseTg'), `data-in="plan-tg"${D().plan.targets ? ' checked' : ''}`)}<button class="btn" data-a="plan-notes">${esc(t('planRules'))}</button><button class="btn danger" data-a="plan-remove">${esc(t('planRemove'))}</button></section>` : ''}
         <section class="card"><h3>${esc(t('myDb'))}</h3><p class="cap">${esc(t('myDbCap', D().myEx.length, D().myFoods.length))}</p><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div></section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataExplainCloud' : 'dataExplain'))} ${kb} kB.</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div><p class="cap">${esc(t('planHint'))}</p><button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button>
-          <button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
+          <button class="btn" data-a="export-plan">${esc(t('exportPlan'))}</button><button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></section>
         <footer class="app-info"><p>${esc(t('appName'))} ${esc(releaseText())}</p><button class="link" data-a="release-notes">${esc(t('whatsNew'))}</button><button class="link" data-a="shortcut-help">${esc(t('shortcutTitle'))}</button></footer>` };
     };
   }
@@ -1528,6 +1547,7 @@
   }
   function adoptRegistrationProfile() {
     const s = D().settings, profile = PersonalSetup.normalize(CL && CL.user && CL.user.setup);
+    const handle=CL?.user?.username;if(handle&&!s.publicProfile?.username&&D().epoch===0)Store.apply(doc=>{doc.settings.publicProfile=Profile.clean({...doc.settings.publicProfile,username:handle});});
     if (!profile || s.onboardingVersion === 1 || D().epoch > 0) return false;
     // Synced targets and existing personal settings take precedence over the initial signup draft.
     const hasProfile = !!(s.profile.age || s.profile.height || s.profile.weight || s.targets);
@@ -1554,6 +1574,7 @@
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
       ${s.err ? `<div class="note warn" role="alert"><b>${esc(s.err)}</b></div>` : ''}${s.info ? `<div class="note" role="status"><b>${esc(s.info)}</b></div>` : ''}
       ${m === 'up' ? `<div class="setup-account-summary"><span>${esc(t('setupYourTarget'))}<b>${compact(calcTargets(setupState().profile).kcal)} kcal</b></span><button type="button" class="link" data-a="setup-edit">${esc(t('edit'))}</button></div>` : ''}
+      ${m==='up'?`<label class="fld"><span>${esc(t('username'))}</span><input name="username" data-in="gate-username" value="${esc(s.username||'')}" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" autocomplete="nickname" autocapitalize="none" spellcheck="false" required><small>${esc(t('usernameRule'))}</small></label>`:''}
       ${m !== 'newpw' ? `<label class="fld"><span>${esc(t('email'))}</span><input type="email" name="email" value="${esc(s.email)}" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" required></label>` : ''}
       ${m !== 'forgot' ? `<label class="fld"><span>${esc(t(m === 'newpw' ? 'newPassword' : 'password'))}</span><input type="password" name="password" autocomplete="${m === 'in' ? 'current-password' : 'new-password'}" minlength="8" required></label>` : ''}
       ${m === 'up' || m === 'newpw' ? `<p class="cap">${esc(t('pwRule'))}</p>` : ''}
@@ -1593,6 +1614,7 @@
   async function gateSubmit(v) {
     const s = ui.gate, email = String(v.email || '').trim().toLowerCase(), pw = String(v.password || ''); if (s.busy || !CL) return;
     s.info = '';
+    if(s.mode==='up'){s.username=String(v.username||'').trim().toLowerCase();if(!/^[a-z0-9_]{3,24}$/.test(s.username)){s.err=t('usernameRule');renderGate();return;}}
     if (s.mode === 'up' && (!s.setup || s.setup.step !== 4 || !PersonalSetup.normalize(s.setup.profile))) { setupState().step = 0; renderGate(); return; }
     if (s.mode !== 'newpw') { s.email = email; if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { s.err = t('ac_email'); renderGate(); return; } }
     if (s.mode !== 'forgot' && pw.length < 8) { s.err = t('ac_weak'); renderGate(); return; }
@@ -1600,9 +1622,9 @@
     try {
       if (s.mode === 'forgot') { await CL.recover(email); s.info = t('resetSent'); s.mode = 'in'; }
       else if (s.mode === 'newpw') { await CL.setPassword(pw); s.mode = 'in'; toast(t('pwSaved')); }
-      else if (s.mode === 'up') { if (await CL.signUp(email, pw, PersonalSetup.normalize(s.setup.profile)) !== 'in') { s.info = t('confirmSent'); s.mode = 'in'; } }
+      else if (s.mode === 'up') { if (await CL.signUp(email, pw, PersonalSetup.normalize(s.setup.profile),s.username) !== 'in') { s.info = t('confirmSent'); s.mode = 'in'; } }
       else await CL.signIn(email, pw);
-    } catch (e) { s.err = t('ac_' + (AC_CODES.indexOf(e.code) >= 0 ? e.code : 'api')) + (AC_CODES.indexOf(e.code) < 0 && e.message ? ' (' + String(e.message).slice(0, 120) + ')' : ''); }
+    } catch (e) { if(e.code==='usernameTaken'||e.code==='socialSetup')s.err=t(e.code);else s.err = t('ac_' + (AC_CODES.indexOf(e.code) >= 0 ? e.code : 'api')) + (AC_CODES.indexOf(e.code) < 0 && e.message ? ' (' + String(e.message).slice(0, 120) + ')' : ''); }
     s.busy = false; if (CL.user && s.mode !== 'newpw') await signedIn(); else renderGate();
   }
 
@@ -1666,11 +1688,18 @@
     'friend-respond'(el) {socialAction('social_respond_friend',{p_request:el.dataset.id,p_accept:el.dataset.accept==='true'});},
     'friend-remove'(el) {if(confirm(t('removeFriendConfirm')))socialAction('social_remove_friend',{p_other:el.dataset.id});},
     async 'friend-profile'(el) {
-      try {const r=await Social.mutate('social_view_profile',{p_user:el.dataset.id});if(!r)return;
-        const p=Profile.clean({username:r.username,displayName:r.display_name,bio:r.bio,avatar:r.avatar,theme:r.theme,showcase:r.badges});
-        const stats=r.stats||{},earned=Profile.badges.filter(b=>(stats.badges||[]).includes(b.id)).map(b=>({...b,earned:true}));
-        openSheet(()=>({title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme} cover-glow"><div class="profile-identity">${avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.filter(b=>p.showcase.includes(b.id)).map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest][L()]:t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>`}));
-      }catch(error){Social.state.error=Social.message(error);rerender();}
+      const owner=CL?.user?.id;
+      try{const r=await Social.mutate('social_view_profile',{p_user:el.dataset.id});if(CL?.user?.id!==owner)return;ui.friendProfile=r;ui.reviewDraft=null;ui.friendActivity=null;ui.friendActivityError='';try{ui.friendActivity=await Social.mutate('social_profile_activity',{p_user:el.dataset.id});}catch(e){ui.friendActivityError=Social.message(e);}if(CL?.user?.id===owner)openSheet(shFriend());}catch(e){toast(t(Social.message(e)));}
+    },
+    'photo-like'(el){communityAction('social_photo_like',{p_user:el.dataset.id,p_like:!ui.friendActivity?.liked});},
+    'review-remove'(el){const own=!topIs('friend-profile')||ui.friendProfile?.user_id===CL?.user?.id;communityAction('social_review_remove',{p_review:el.dataset.id},own);},
+    'manage-sharing'(){if(!Social.state.activity){toast(t(Social.state.activityError||'socialSignIn'));return;}openSheet(shSharing());},
+    'routine-share'(el){const r=getR(el.dataset.id);if(r)communityAction('social_routine_publish',{p_source_id:r.id,p_snapshot:RoutineShare.pack(r,D(),L())},true);},
+    'routine-unshare'(el){communityAction('social_routine_unshare',{p_id:el.dataset.id},true);},
+    async 'routine-copy'(el){
+      if(ui.communityBusy)return;const owner=CL?.user?.id;ui.communityBusy=true;
+      try{const snap=await Social.mutate('social_routine_get',{p_id:el.dataset.id});if(CL?.user?.id!==owner)return;const c=RoutineShare.copy(snap,D(),EX,uid);if(!Store.apply(d=>{d.myEx=d.myEx.concat(c.custom);d.routines.push(c.routine);})){toast(t('saveFailed'));return;}ownRef=null;toast(t('routineCopied'));}
+      catch(e){toast(t(Social.message(e)));}finally{ui.communityBusy=false;}
     },
     'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
     'open-ranks'() {closeSheet(true);go('tab',()=>{ui.tab='profile';ui.profilePage='ranks';render();});loadSocial();},
@@ -1740,7 +1769,9 @@
     'install-help'() { openSheet(shInstall()); },
     'sheet-back'() { closeSheet(); }, 'sheet-close'() { closeSheet(true); },
     lang(el) { D().settings.lang = el.dataset.v === 'en' ? 'en' : 'hu'; Store.save(); fIdx = null; render(); refreshSheet(); },
+    material(el){if(!['glass','balanced','matte'].includes(el.dataset.v))return;D().settings.material=el.dataset.v;Store.save();applyLook();refreshSheet();},
     'set-bg'(el) { clearTimeout(hueT);if ((Store.BGS || []).indexOf(el.dataset.v) < 0) return; D().settings.bg = el.dataset.v; Store.save(); applyLook(); refreshSheet(); },
+    'export-plan'(){const d=JSON.parse(Store.exportJSON()).data;saveFile('reppsy-plan-'+today()+'.json',new Blob([JSON.stringify({app:'gymapp',kind:'plan',routines:d.routines,plan:d.plan,myEx:d.myEx,appendRoutines:true},null,2)],{type:'application/json'}));},
     'export-csv'() { exportCSV(); },
     async wipe() {
       const acc = CL && CL.user; if (!confirm(t(acc ? 'wipeConfirmCloud' : 'wipeConfirm')) || !confirm(t('wipeConfirm2'))) return;
@@ -2019,7 +2050,9 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
+    'gate-username'(el){ui.gate.username=el.value;},
     'profile-draft'(el) {if(ui.profileDraft){ui.profileDraft[el.name]=el.value;const preview=$('.profile-preview');if(preview)preview.outerHTML=profilePreview(ui.profileDraft,ui.profileStyleDraft||profileStyle());}},
+    'profile-hue'(el){const v=Math.round(+el.value);if(!(v>=0&&v<=359)||!ui.profileDraft)return;ui.profileDraft.theme='hue_'+v;ui.profileStyleDraft.useAccent=false;const wheel=el.closest('.profile-color-wheel');if(wheel){const c=profileColor(ui.profileDraft);wheel.style.setProperty('--acc',`rgb(${c.join(',')})`);wheel.style.setProperty('--acc-ink',AccentTheme.ink(c));HueWheel.update(el.closest('.hue-wheel'),v);}const preview=$('.profile-preview');if(preview)preview.outerHTML=profilePreview(ui.profileDraft,ui.profileStyleDraft);$$('.cover-choice').forEach(b=>{b.classList.remove('profile-use-accent');b.style.setProperty('--profile-rgb',profileColor(ui.profileDraft).join(','));});const toggle=$('[data-in=profile-style]');if(toggle)toggle.checked=false;$$('.profile-colors button').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-pressed','false');});},
     'profile-style'(el){ui.profileStyleDraft.useAccent=el.checked;refreshSheet();},
     'habit-name'(el) { if (ui.habitEdit) ui.habitEdit.name = el.value; },
     'habit-source'(el) { if (!ui.habitEdit || !Momentum.sources.includes(el.value)) return; ui.habitEdit.source = el.value; ui.habitEdit.goal = ({ check: 1, workout: 1, count: 8, steps: 8000, protein: 150 })[el.value]; refreshSheet(); },
@@ -2098,6 +2131,7 @@
         const nr = Array.isArray(plan.routines) ? plan.routines.length : 0, nm = plan.plan && Array.isArray(plan.plan.days) ? plan.plan.days.reduce((a, x) => a + (x && Array.isArray(x.meals) ? x.meals.length : 0), 0) : 0;
         if (!nr && !nm) toast(t('importBad'));
         else if (plan.appendRoutines === true && D().routines.filter(r => !plan.routines.some(n => n.id === r.id)).length + nr > 100) toast(L() === 'hu' ? 'Legfeljebb 100 edzésterv tárolható.' : 'At most 100 routines can be saved.');
+        else if (Array.isArray(plan.myEx)&&plan.myEx.filter(e=>!D().myEx.some(x=>x.id===e.id)).length+D().myEx.length>300) toast(t('picLimit'));
         else if (confirm(t('planConfirm', nr, nm))) { if(applyPlan(plan)){ui.foodDate = today(); closeSheet(true); render(); toast(t('planLoaded'));}else toast(t('saveFailed')); }
         el.value = ''; return;
       }
@@ -2145,6 +2179,7 @@
     if (k === 'contact-settings') socialAction('social_save_contact_settings',{p_email:v.email==='on',p_phone:v.phone==='on'});
     if (k === 'phone-verify') phoneVerification(v);
     if (k === 'gate-setup') setupSubmit(v);
+    if(k==='profile-review'){const body=String(v.body||'').trim();if(!body){toast(t('badValue'));return;}ui.reviewDraft={target:ui.friendProfile?.user_id,rating:+v.rating,body};communityAction('social_review_save',{p_user:ui.friendProfile?.user_id,p_rating:+v.rating,p_text:body});}
     if (k === 'gate') gateSubmit(v);
   });
 
@@ -2182,7 +2217,7 @@
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);HueWheel.bind(document);
   document.addEventListener('change',e=>{if(e.target.matches?.('.hue-wheel input')){clearTimeout(hueT);Store.save();}});
-  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear], ['profile', IC.profile]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" data-tab="${k}">${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
+  $('#tabbar').innerHTML = [['home', IC.home], ['food', IC.food], ['goals', IC.habit], ['settings', IC.gear]].map(([k, ic]) => `<button data-a="${k==='settings'?'settings':'tab'}" data-tab="${k}">${ic}<span>${k==='settings'?esc(t('settings')):''}</span></button>`).join('');
   $('#restbar').innerHTML = `<div class="rb-in"><span class="rb-l">${IC.check}</span><b id="rb-time">0:00</b><span class="rb-track"><i id="rb-fill"></i></span><button class="btn sm" data-a="rest-add" data-s="-15">−15</button><button class="btn sm" data-a="rest-add" data-s="15">+15</button><button class="btn sm primary" data-a="rest-skip" id="rb-skip"></button></div>`;
   { const cb = $('#coach'); if (cb) { cb.innerHTML = IC.chat; cb.dataset.a = 'coach'; } }
   if(!CL)upgradeStarterSessions();

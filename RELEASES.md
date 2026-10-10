@@ -1,5 +1,12 @@
 # Release versions
 
+## 2.19.0 — 2026-10-10 (build 20261010.3)
+
+Profile now opens only from the top-right photo. Profile editing includes a centered Reppsy touch color wheel, independently saved from the app accent. Plain, Deep and Colourful backgrounds are visibly distinct; Glass, Normal and Matte surfaces add appearance choices. Settings Data offers plan-only JSON export and spaced actions.
+
+Registration asks for a unique username. Accepted friends can like profile photos, leave/edit reviews, and copy explicitly published routine snapshots. Owners can remove reviews and stop sharing routines. These features require the additive `migrations/20261010_profile_sharing.sql` in Supabase, after the two existing social migrations. The live database has not been modified.
+
+
 `js/release.js` is the single source of the app's public version, build number and derived cache ID. Both the page and service worker load it. The app displays the installed version/build in Settings and in a verified update-success message.
 
 For each published change, increment the public version and choose a new build (`YYYYMMDD.sequence`). Use patch versions for fixes, minor versions for new compatible features, and major versions for breaking changes. Update this log in the same commit. Do not edit app.js/sw.js version constants separately.

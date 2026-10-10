@@ -538,3 +538,29 @@ button.profile-avatar{padding:0;cursor:zoom-in}.profile-identity>button.profile-
 @keyframes reload-track{from{transform:translateX(-100%)}to{transform:translateX(350%)}}
 @media(prefers-reduced-motion:reduce){.app-update-overlay,.reload-mark:after,.reload-track i{animation:none}}
 :root[data-calm] .app-update-overlay,:root[data-calm] .reload-mark:after,:root[data-calm] .reload-track i{animation:none}
+
+/* Distinct backgrounds and layered glass, with an explicit opaque alternative. */
+:root[data-bg=plain]{--bg:#222630;--ambient:none}
+:root[data-bg=deep]{--bg:#080b12;--ambient:radial-gradient(ellipse at 50% 0,rgba(54,76,116,.12),transparent 65%)}
+:root[data-bg=aurora]{--bg:#12141e;--ambient:radial-gradient(ellipse at 5% 5%,rgba(var(--acc-rgb),.32),transparent 48%),radial-gradient(ellipse at 95% 45%,rgba(var(--secondary-rgb),.3),transparent 58%),radial-gradient(ellipse at 25% 90%,rgba(var(--acc-rgb),.17),transparent 54%)}
+:root[data-material=glass]:not([data-solid]):not([data-bg=light]){--card:rgba(31,35,48,.68);--raised:rgba(49,55,71,.66);--bar:rgba(31,35,48,.62);--panel:rgba(25,29,41,.88);--frost:blur(24px) saturate(145%)}
+:root[data-material=glass]:not([data-solid])[data-bg=light]{--card:rgba(255,255,255,.74);--raised:rgba(242,243,250,.82);--bar:rgba(255,255,255,.68);--panel:rgba(252,251,250,.92);--frost:blur(24px) saturate(130%)}
+:root[data-material=glass]:not([data-solid]) .card,:root[data-material=glass]:not([data-solid]) .profile-cover{backdrop-filter:blur(18px) saturate(125%);-webkit-backdrop-filter:blur(18px) saturate(125%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 28px rgba(0,0,0,.12)}
+:root[data-material=matte]{--frost:none}
+:root[data-material=matte] #tabbar,:root[data-material=matte] dialog{backdrop-filter:none;-webkit-backdrop-filter:none}
+.surface-plain{background:#222630}.surface-deep{background:#080b12}.surface-aurora{background:radial-gradient(ellipse at 10% 10%,rgba(var(--acc-rgb),.6),transparent 80%),linear-gradient(120deg,#33324b,#151927)}
+.hue-wheel-preview{justify-content:center;align-items:center;text-align:center}
+.hue-wheel-preview b{display:block;width:100%;margin:0;padding:0;text-align:center;line-height:1.15}
+.hue-wheel-preview img{display:block;flex:none;margin:0;padding:0}
+#tabbar{grid-template-columns:repeat(4,minmax(0,1fr))}
+[data-section=settings-data]>.section-body{display:flex;flex-direction:column;gap:14px}
+[data-section=settings-data]>.section-body>.btn{margin:0;min-height:48px}
+[data-section=settings-data]>.section-body>.danger{margin-top:12px;border-color:rgba(242,114,129,.45)}
+.profile-color-wheel{max-width:280px;margin:20px auto}
+.profile-community>.mini-section{margin-top:18px}.profile-social-actions{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+.profile-review,.shared-routine,.sharing-row{min-width:0;padding:16px 0;border-bottom:1px solid var(--line)}
+.profile-review>div{display:flex;justify-content:space-between;gap:12px}.profile-review>div span{color:var(--acc);white-space:nowrap}
+.profile-review p,.shared-routine h3,.sharing-row h3{overflow-wrap:anywhere;margin:8px 0}
+.review-form{display:grid;gap:14px;margin-top:16px}.review-form .fld{margin:0}.review-form textarea{width:100%}
+.shared-routine .btn{margin-top:12px}.shared-routine ol{padding-left:22px}.shared-routine li{overflow-wrap:anywhere;padding:6px 0}.shared-routine li small{display:block;color:var(--mut)}
+.sharing-row>div{display:flex;gap:12px;flex-wrap:wrap}.sharing-row .btn{flex:1;min-width:100px}
