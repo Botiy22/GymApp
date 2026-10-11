@@ -1,0 +1,97 @@
+/* Bike rides: live recording screen, maps, route pictures and ride history. */
+.ride-hero{display:flex;flex-direction:column;gap:6px}
+.ride-hero .btn{margin-top:10px}
+.ride-ios{margin:10px 2px 0}
+.ride-totals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.ride-totals>div{display:flex;flex-direction:column;gap:2px;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);min-width:0}
+.ride-totals small{color:var(--mut);font-size:.74rem;font-weight:650;text-transform:uppercase;letter-spacing:.04em}
+.ride-totals b{font-size:1.25rem;font-variant-numeric:tabular-nums}
+.ride-totals i{font-style:normal;color:var(--mut);font-size:.78rem;overflow-wrap:anywhere}
+.ride-sensors h3,.ride-import h3{margin:0 0 6px}
+.ride-sensors .row2{align-items:end}
+.sensor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sensor-row svg{width:20px;height:20px;fill:none;stroke:var(--acc-tx);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sensor-row span{flex:1;display:flex;flex-direction:column;min-width:0}
+.sensor-row i{font-style:normal;color:var(--mut);font-size:.78rem}
+.ride-wheel{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--mut);min-width:0}
+.ride-wheel select{min-height:44px;border-radius:14px;border:1px solid var(--line);background:var(--raised);color:var(--ink);padding:0 10px;font:inherit;font-size:.95rem}
+.ride-import{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.ride-import>div{flex:1 1 200px}
+.ride-list{display:flex;flex-direction:column;gap:10px}
+.ride-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);text-align:left}
+.ride-thumb{width:52px;height:52px;flex:none;display:grid;place-items:center;border-radius:14px;background:rgba(var(--acc-rgb),.1)}
+.ride-thumb svg{width:44px;height:44px;fill:none;stroke:var(--acc-tx);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ride-thumb>svg:not(.ride-shape){width:26px;height:26px;stroke-width:2}
+.rr-t{flex:1;display:flex;flex-direction:column;min-width:0}
+.rr-t b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr-t i,.rr-n i{font-style:normal;color:var(--mut);font-size:.78rem}
+.rr-n{display:flex;flex-direction:column;align-items:flex-end;font-variant-numeric:tabular-nums;flex:none}
+
+/* maps */
+.ride-map{position:relative;height:240px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--raised);margin:4px 0 14px;isolation:isolate}
+.ride-map.no-map{display:none}
+.ride-map .leaflet-container,.ride-map.leaflet-container{background:var(--raised);font:inherit}
+:root:not([data-bg=light]) .ride-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.7)}
+.ride-map .leaflet-control-attribution{font-size:.62rem;background:rgba(0,0,0,.45);color:#fff;border-radius:8px 0 0 0}
+.ride-map .leaflet-control-attribution a{color:#fff}
+:root[data-bg=light] .ride-map .leaflet-control-attribution{background:rgba(255,255,255,.8);color:#333}
+:root[data-bg=light] .ride-map .leaflet-control-attribution a{color:#333}
+.ride-line{stroke:var(--acc-tx);stroke-opacity:.95}
+.ride-here{stroke:#fff;fill:var(--acc-tx);fill-opacity:1}
+.ride-start{stroke:#fff;fill:#2fbf71;fill-opacity:1}
+.ride-finish{stroke:#fff;fill:#e5484d;fill-opacity:1}
+.ride-center{position:absolute;right:12px;bottom:12px;z-index:500;background:var(--panel,var(--card));box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.ride-center[hidden]{display:none}
+
+/* ride details */
+.ride-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.ride-kpis>div{display:flex;flex-direction:column;gap:2px;padding:12px 10px;border-radius:16px;background:var(--raised);min-width:0}
+.ride-kpis b{font-size:1.12rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ride-kpis i{font-style:normal;color:var(--mut);font-size:.72rem}
+.ride-profile h3{margin:0 0 8px}
+.ride-profile svg{width:100%;height:92px;display:block}
+.ride-profile .fill{fill:rgba(var(--acc-rgb),.18);stroke:none}
+.ride-profile .stroke{fill:none;stroke:var(--acc-tx);stroke-width:2;vector-effect:non-scaling-stroke}
+.ride-profile .cap{display:flex;justify-content:space-between;margin-top:4px}
+
+/* live recording screen */
+#ride-live{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bg);padding-top:var(--st,0px)}
+#ride-live[hidden]{display:none}
+.ride-head{display:flex;align-items:center;gap:12px;padding:10px 16px}
+.ride-head>div{flex:1;display:flex;flex-direction:column;min-width:0}
+.ride-head i{font-style:normal;font-size:.78rem;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ride-head .btn{flex:none;width:auto;min-width:0;padding-inline:18px}
+#ride-live[data-gps=ok] .ride-head i{color:var(--acc-tx)}
+#ride-live[data-gps=weak] .ride-head i,#ride-live[data-gps=denied] .ride-head i{color:var(--warn,#f0c782)}
+.ride-map.live{flex:1 1 auto;min-height:180px;margin:0 12px;border-radius:22px}
+.ride-panel{padding:14px 16px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+.rs-main{display:flex;align-items:baseline;justify-content:center;gap:8px}
+.rs-main b{font-size:3.2rem;line-height:1;font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rs-main i{font-style:normal;color:var(--mut);font-weight:650}
+.ride-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.rs{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:16px;background:var(--card);border:1px solid var(--line);min-width:0}
+.rs[hidden]{display:none}
+.rs b{font-size:1.2rem;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:3px;white-space:nowrap}
+.rs b small{font-size:.62rem;font-weight:600;color:var(--mut)}
+.rs i{font-style:normal;color:var(--mut);font-size:.68rem;text-align:center}
+.ride-controls{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ride-controls .btn{width:100%}
+.ride-note{text-align:center;margin:0}
+@media(max-height:700px){.rs-main b{font-size:2.5rem}.ride-note{display:none}.ride-panel{gap:9px}}
+@media(max-width:360px){.rs b{flex-direction:column;align-items:center;gap:0;font-size:1.1rem}.rs b small{line-height:1.1}.ride-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* small pill while a ride records in the background of the app */
+#ride-pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--sb,0px) + 96px);z-index:9;display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--edge,var(--line));background:#20232e;color:var(--ink);box-shadow:0 10px 26px rgba(0,0,0,.28);font-variant-numeric:tabular-nums;white-space:nowrap}
+#ride-pill[hidden],body.w-on #ride-pill,body.gated #ride-pill{display:none}
+#ride-pill svg{width:18px;height:18px;fill:none;stroke:var(--acc-tx);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#ride-pill span:last-child{color:var(--mut)}
+.ride-dot{width:9px;height:9px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 0 rgba(229,72,77,.5)}
+.ride-dot.paused{background:var(--mut)}
+@media (prefers-reduced-motion:no-preference){
+  :root:not([data-calm]) .ride-dot:not(.paused){animation:ride-rec 1.6s ease-out infinite}
+  :root:not([data-calm]) #ride-live:not([hidden]){animation:sheet-in .34s cubic-bezier(.2,.85,.25,1)}
+}
+@keyframes ride-rec{0%{box-shadow:0 0 0 0 rgba(229,72,77,.5)}80%,100%{box-shadow:0 0 0 8px rgba(229,72,77,0)}}
+:root[data-bg=light] #ride-pill{background:#fff}
+@media(max-width:380px){.workout-tabs{gap:1px}.workout-tabs button{padding:10px 4px;font-size:.7rem;letter-spacing:-.01em}}
+body.ride-on #coach,body.ride-on #restbar{display:none}

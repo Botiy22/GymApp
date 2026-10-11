@@ -1,3 +1,9 @@
+# Update — Reppsy 2.22.0, 2026-10-11
+
+User asked for a Strava-like cycling section (session tracking, route, smart accessories) and reported the tab bar briefly see-through when pages load. Added `js/rides.js` (recording state machine, polyline storage, GPX/TCX parse, GPX export, BLE packet parsing/pairing), ride UI in `js/app.js` (Workout → Ride tab, live overlay `#ride-live`, pill `#ride-pill`, detail sheet, import), `css/ride.css`, vendored `vendor/leaflet` (BSD-2). Rides are workouts with `ride` (cleaned by `Rides.clean` in `Store.clean`; `Store.supportsRides` gates stale shells). CSP img-src now includes `https://tile.openstreetmap.org`. Fixed inert download links inside modal dialogs. Tests: `tests/test_rides.js`, `tests/test_rides_browser.py`. User may later want a native (Capacitor or fully native) app for background GPS and Bluetooth on iPhone.
+
+---
+
 # Update — Reppsy 2.21.3, 2026-10-11
 
 User reported the Settings → Account checkmark briefly rendering large, asked for a whole-app bug/animation pass, and for updates to show only a nicer spinning logo without the moving outline. Pop keyframes moved from persistent state classes to one-shot `.pop` classes (AI key, picker rows, favorites); chat/header replay removed; overlay now uses `icons/reppsy-mark.png` with ease-in + linear spin and `settleMark()` to an upright stop; ring/track/focus outline removed. Details sections glide via WAAPI, tab bars sticky, bilingual clip routine notes split by language. Release 2.21.3/build 20261011.1, no SQL. `tests/test_browser.py` failures pre-date this change (stale profile tab / seeded split / energy prompt assumptions).

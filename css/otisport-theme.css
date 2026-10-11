@@ -604,3 +604,6 @@ dialog:focus:not(:focus-visible){outline:none}.app-update-overlay{width:min(80vw
 @keyframes photoLikeCount{0%{opacity:.35;transform:translateY(5px) scale(.85)}45%{opacity:1;transform:translateY(-2px) scale(1.16)}100%{opacity:1;transform:translateY(0) scale(1)}}
 :root[data-calm] .like-count-pop,:root[data-calm] .like-pop .photo-like-burst{animation:none}
 @media(prefers-reduced-motion:reduce){.like-count-pop{animation:none}}
+/* The tab bar never turns see-through: iPhone does not paint its blur inside page-change snapshots, so the glass bar carries a nearly opaque fill of its own. */
+:root[data-material=glass]:not([data-solid]):not([data-bg=light]) #tabbar{background:rgba(31,35,48,.95)}
+:root[data-material=glass]:not([data-solid])[data-bg=light] #tabbar{background:rgba(255,255,255,.95)}

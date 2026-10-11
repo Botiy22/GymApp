@@ -3,10 +3,11 @@
   if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/profile.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/profile.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
+  if (!document.querySelector('link[href="css/ride.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/ride.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit) || !window.ModalLock) {
-    const src = !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides) || !window.ModalLock) {
+    const src = !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -118,6 +119,11 @@
     chev: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
     bolt: '<svg viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>',
     play: '<svg viewBox="0 0 24 24"><path d="M8 5.500v13l11-6.500z"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',
+    bike: '<svg viewBox="0 0 24 24"><circle cx="5.500" cy="16.500" r="3.500"/><circle cx="18.500" cy="16.500" r="3.500"/><path d="M5.500 16.500 9.500 9h6l3 7.500M9.500 9 12 16.500h-6.500M14 5.500h2.500l-1 3.500M8 7h3"/></svg>',
+    locate: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.500"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
+    bt: '<svg viewBox="0 0 24 24"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg>',
+    share: '<svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
     walk: '<svg viewBox="0 0 24 24"><circle cx="13" cy="4.500" r="1.800"/><path d="M9 21l2.500-6.500L9.500 12l1-5 3 1.500 1.500 3 3 1M11.500 14.500l3 2.500 1 4M10.500 7L7 9v3"/></svg>',
     star: '<svg viewBox="0 0 24 24"><path d="M12 3.600l2.600 5.300 5.800.800-4.200 4.100 1 5.800-5.200-2.700-5.200 2.700 1-5.800-4.200-4.100 5.800-.800z"/></svg>',
     cal: '<svg viewBox="0 0 24 24"><path d="M4 6.500h16v13H4zM4 10.500h16M8 4v4M16 4v4"/></svg>',
@@ -357,8 +363,245 @@
     const rows=w.entries.map(e=>({entry:e,sets:e.sets.filter(s=>!s.w)})).filter(row=>row.sets.length);
     return `<div class="volume-breakdown">${rows.map(({entry,sets})=>`<div class="volume-lift"><div><b>${esc(itemName(entry))}</b><strong>${volumeText(sets.reduce((n,s)=>n+s.kg*s.reps,0))} kg</strong></div><p>${sets.map(s=>`${dec(s.kg)} kg × ${s.reps}`).join(' · ')}</p></div>`).join('')}<p class="cap">${esc(t('volumeMethod'))}</p></div>`;
   }
+  /* ================= BIKE RIDES ================= */
+  // The running ride lives in its own storage key and is written every few seconds, so a reload or a closed app resumes it.
+  const RKEY = 'gymapp.v1.ride', WKEY = 'gymapp.v1.wheel';
+  const WHEELS = [[2.096, '700×23c'], [2.105, '700×25c'], [2.136, '700×28c'], [2.155, '700×32c'], [2.18, '27.5×2.2'], [2.326, '29×2.2']];
+  // An older cached page may not have the ride elements yet.
+  if (!document.getElementById('ride-live')) { const sec = document.createElement('section'); sec.id = 'ride-live'; sec.hidden = true; const pill = document.createElement('button'); pill.id = 'ride-pill'; pill.type = 'button'; pill.dataset.a = 'ride-open'; pill.hidden = true; document.getElementById('workout')?.after(sec, pill); }
+  let ride = null, rideWatch = null, rideLock = null, rideSaveT = 0, rideDrawF = 0, rideSensors = [], leafletP = null;
+  const rideLive = { gps: '', hr: null, cad: null, pw: null, wspd: null, at: {} }, rideRev = {}, rideMaps = new Map();
+  try { const raw = localStorage.getItem(RKEY), r = raw && JSON.parse(raw); if (r && r.v === 1 && Number.isFinite(r.start) && Array.isArray(r.pts) && Array.isArray(r.hr)) ride = r; } catch (e) {}
+  const loc = () => L() === 'hu' ? 'hu-HU' : 'en-GB';
+  const wheelCirc = () => { try { const v = +localStorage.getItem(WKEY); return WHEELS.some(w => w[0] === v) ? v : 2.105; } catch (e) { return 2.105; } };
+  const km = m => (m / 1000).toLocaleString(loc(), { minimumFractionDigits: m < 100000 ? 2 : 1, maximumFractionDigits: m < 100000 ? 2 : 1 });
+  const kmh = v => (Math.round(v * 10) / 10).toLocaleString(loc(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const hms = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return (h ? h + ':' + pad(m) : m) + ':' + pad(s % 60); };
+  const rideName = at => { const h = new Date(at).getHours(); return t(h >= 5 && h < 11 ? 'rideMorning' : h >= 11 && h < 17 ? 'rideAfternoon' : h >= 17 && h < 22 ? 'rideEvening' : 'rideNight'); };
+  const liveFresh = k => rideLive[k] != null && Date.now() - (rideLive.at[k] || 0) < 5000;
+  function rideStore(force) {
+    if (!ride) { try { localStorage.removeItem(RKEY); } catch (e) {} return; }
+    if (!force && Date.now() - rideSaveT < 4000) return;
+    rideSaveT = Date.now(); try { localStorage.setItem(RKEY, JSON.stringify(ride)); } catch (e) {}
+  }
+  function rideGeo(on) {
+    if (!on) { if (rideWatch != null) { try { navigator.geolocation.clearWatch(rideWatch); } catch (e) {} } rideWatch = null; return; }
+    if (rideWatch != null || !navigator.geolocation) return;
+    rideLive.gps = 'search';
+    rideWatch = navigator.geolocation.watchPosition(p => {
+      const c = p.coords; rideFix({ lat: c.latitude, lon: c.longitude, acc: c.accuracy, alt: c.altitude, altAcc: c.altitudeAccuracy, speed: c.speed, t: Date.now() });
+    }, e => { rideLive.gps = e.code === 1 ? 'denied' : 'search'; if (e.code === 1) rideGeo(false); rideDraw(); }, { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 });
+  }
+  function rideFix(fix) {
+    if (!ride) return;
+    const r = Rides.add(ride, fix);
+    if (!ride.paused) rideLive.gps = r === 'weak' ? 'weak' : 'ok';
+    if (r === 'ok' || r === 'first') { rideStore(); const m = rideMaps.get('live'); if (m) m.line.addLatLng([fix.lat, fix.lon]); }
+    const m = rideMaps.get('live'); if (m && r !== 'skip') { m.dot.setLatLng([fix.lat, fix.lon]); if (m.follow) m.map.panTo([fix.lat, fix.lon], { animate: !calm() }); }
+    rideDraw();
+  }
+  function rideWake() { try { if ('wakeLock' in navigator && !rideLock && !document.hidden) navigator.wakeLock.request('screen').then(l => { rideLock = l; l.addEventListener('release', () => { rideLock = null; }); }).catch(() => {}); } catch (e) {} }
+  function rideSleep() { try { if (rideLock) rideLock.release(); } catch (e) {} rideLock = null; }
+  function rideBegin() {
+    if (ride) { rideOpen(true); return; }
+    if (!navigator.geolocation) { toast(t('rideNoGps')); return; }
+    ride = Rides.start(Date.now()); rideStore(true); rideGeo(true); rideWake(); rideOpen(true);
+  }
+  // A finished or imported ride is an ordinary workout with a "ride" part, so history, goals, calories and account sync all include it.
+  function rideWorkout(data, start, end, name) {
+    const day = ymd(start), weight = weightFor(day), minutes = Math.min(480, Math.max(1, Math.round(data.moving / 60)));
+    const w = { id: uid(), rid: null, name: name || rideName(start), start, end: Math.max(start, end), entries: [], warm: false, cool: false, ride: data };
+    const c = weight ? WorkoutEnergy.cleanCardio({ type: 'cycle', weight, minutes, intensity: Rides.avgSpeed(data) >= 19.3 ? 'vigorous' : 'moderate' }) : null;
+    if (c) { c.id = uid(); w.cardio = [c]; w.cardioAt = Date.now(); }
+    return w;
+  }
+  function rideAdd(w) { return Store.apply(d => { d.workouts.push(w); d.workouts.sort((a, b) => a.start - b.start); }); }
+  function rideEnd(save) {
+    if (!ride) return;
+    const now = Date.now(), end = ride.paused ? ride.pausedAt : now;
+    let w = null;
+    if (save) {
+      w = rideWorkout(Rides.finish(ride, now, 'gps'), ride.start, end, '');
+      if (!w.ride.dist && !w.ride.moving) save = false;
+      else if (!rideAdd(w)) { toast(t('saveFailed')); return; }
+    }
+    ride = null; rideStore(true); rideGeo(false); rideSleep(); rideLive.gps = '';
+    if (save) { ui.tab = 'home'; ui.workout = 'ride'; }
+    rideOpen(false); rerender();
+    if (save) openSheet(shRide(w.id, true)); else toast(t('rideDiscarded'));
+  }
+  function rideOpen(on) {
+    ui.rideOpen = !!on && !!ride;
+    const el = $('#ride-live'); if (!el) return;
+    document.body.classList.toggle('ride-on', ui.rideOpen);
+    if (!ui.rideOpen) { rideMapDrop('live'); el.hidden = true; el.innerHTML = ''; rideDraw(); return; }
+    const box = (k, label, unit) => `<div class="rs" data-box="${k}"><b><span data-r="${k}">–</span>${unit ? '<small>' + esc(unit) + '</small>' : ''}</b><i>${esc(label)}</i></div>`;
+    el.hidden = false;
+    el.innerHTML = `<header class="ride-head"><button class="icon-btn" data-a="ride-min" aria-label="${esc(t('minimize'))}">${IC.down}</button><div><b>${esc(t('rideLive'))}</b><i data-r="gps"></i></div><button class="btn primary" data-a="ride-finish">${esc(t('finish'))}</button></header>
+      <div class="ride-map live" data-map="live"><button class="icon-btn ride-center" data-a="ride-center" aria-label="${esc(t('rideCenter'))}" hidden>${IC.locate}</button></div>
+      <div class="ride-panel"><div class="rs-main"><b data-r="dist">0,00</b><i>km</i></div>
+      <div class="ride-grid">${box('time', t('rideTime'))}${box('spd', t('rideSpeed'), 'km/h')}${box('avg', t('rideAvg'), 'km/h')}${box('gain', t('rideGain'), 'm')}${box('hr', t('rideHr'), 'bpm')}${box('cad', t('rideCad'), 'rpm')}${box('pw', t('ridePower'), 'W')}</div>
+      <div class="ride-controls"><button class="btn big" data-a="ride-pause" data-r="pause"></button><button class="link" data-a="ride-discard">${esc(t('rideDiscard'))}</button></div>
+      <p class="cap ride-note">${esc(t(isIOS ? 'rideKeepOpenIOS' : 'rideKeepOpen'))}</p></div>`;
+    rideDrawNow(); rideMapsMount(el);
+  }
+  function rideDraw() { if (!rideDrawF) rideDrawF = requestAnimationFrame(() => { rideDrawF = 0; rideDrawNow(); }); }
+  function rideDrawNow() {
+    const pill = $('#ride-pill'), show = !!ride && !ui.rideOpen;
+    if (pill) { pill.hidden = !show; pill.setAttribute('aria-label', t('rideInProgress')); }
+    if (!ride) return;
+    const now = Date.now(), gpsFresh = rideLive.gps === 'ok' && now - (ride.lastFix || 0) < 8000;
+    const speed = ride.paused ? 0 : gpsFresh ? ride.spd * 3.6 : liveFresh('wspd') ? rideLive.wspd * 3.6 : 0;
+    const v = { dist: km(ride.dist + (ride.dist < 100 ? ride.wheel : 0)), time: hms(Rides.elapsed(ride, now)), spd: kmh(speed), avg: kmh(ride.moving > 0 ? ride.dist / ride.moving * 3.6 : ride.wheel > 0 && Rides.elapsed(ride, now) > 0 ? ride.wheel / Rides.elapsed(ride, now) * 3.6 : 0), gain: String(Math.round(ride.gain)),
+      hr: liveFresh('hr') ? String(rideLive.hr) : null, cad: liveFresh('cad') ? String(rideLive.cad) : null, pw: liveFresh('pw') ? String(rideLive.pw) : null,
+      gps: ride.paused ? t('ridePaused') : t('rideGps_' + (rideLive.gps || 'search'), ride.acc != null ? ride.acc : '–'), pause: '' };
+    if (show) pill.innerHTML = `<span class="ride-dot${ride.paused ? ' paused' : ''}"></span>${IC.bike}<b>${esc(v.dist)} km</b><span>${esc(v.time)}</span>`;
+    const live = $('#ride-live');
+    if (live && !live.hidden) {
+      $$('[data-r]', live).forEach(n => { const k = n.dataset.r; if (k === 'pause') { n.innerHTML = ride.paused ? IC.play + esc(t('rideResume')) : IC.pause + esc(t('ridePause')); n.classList.toggle('primary', ride.paused); return; } if (n.textContent !== (v[k] ?? '–')) n.textContent = v[k] ?? '–'; });
+      const offered = new Set(rideSensors.flatMap(x => x.kinds.flatMap(k => k === 'csc' ? ['cad'] : k === 'pw' ? ['pw', 'cad'] : [k])));
+      ['hr', 'cad', 'pw'].forEach(k => { const b = $(`[data-box="${k}"]`, live); if (b) b.hidden = v[k] == null && !offered.has(k); });
+      live.dataset.gps = ride.paused ? 'paused' : rideLive.gps || 'search';
+    }
+    $$('[data-rh]').forEach(n => { const k = n.dataset.rh; n.textContent = k === 'dist' ? v.dist + ' km' : v.time + (ride.paused ? ' · ' + t('ridePaused') : ''); });
+  }
+  /* ---------- maps (Leaflet with OpenStreetMap tiles, loaded only when a map is shown) ---------- */
+  function leaflet() {
+    if (window.L && window.L.map) return Promise.resolve(window.L);
+    if (!leafletP) leafletP = new Promise((ok, bad) => {
+      if (!$('link[href="vendor/leaflet/leaflet.css"]')) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'vendor/leaflet/leaflet.css'; document.head.append(l); }
+      const s = document.createElement('script'); s.src = 'vendor/leaflet/leaflet.js'; s.onload = () => ok(window.L); s.onerror = () => { leafletP = null; bad(new Error('map')); }; document.head.append(s);
+    });
+    return leafletP;
+  }
+  function rideMapDrop(key) { const m = rideMaps.get(key); if (m) { try { m.map.remove(); } catch (e) {} rideMaps.delete(key); } }
+  function rideMapsMount(root) {
+    $$('.ride-map[data-map]', root).forEach(async el => {
+      const key = el.dataset.map, liveMap = key === 'live';
+      rideMapDrop(key);
+      let Lf; try { Lf = await leaflet(); } catch (e) { el.classList.add('no-map'); return; }
+      if (!el.isConnected) return;
+      const pts = liveMap ? (ride ? ride.pts.map(p => [p[0], p[1]]) : []) : Rides.route((D().workouts.find(w => w.id === key) || {}).ride).map(p => [p.lat, p.lon]);
+      const map = Lf.map(el, { zoomControl: false, attributionControl: true, dragging: liveMap, touchZoom: liveMap, scrollWheelZoom: liveMap, doubleClickZoom: liveMap, boxZoom: false, keyboard: false, fadeAnimation: !calm(), zoomAnimation: !calm() });
+      map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+      Lf.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(map);
+      const line = Lf.polyline(pts, { className: 'ride-line', weight: 5, interactive: false }).addTo(map);
+      const m = { map, line, follow: true };
+      if (liveMap) {
+        const last = pts[pts.length - 1];
+        m.dot = Lf.circleMarker(last || [0, 0], { className: 'ride-here', radius: 7, weight: 3, interactive: false }).addTo(map);
+        if (last) map.setView(last, 16); else { map.setView([47.4979, 19.0402], 5); navigator.geolocation && navigator.geolocation.getCurrentPosition(p => { if (rideMaps.get('live') === m && !ride.pts.length) { map.setView([p.coords.latitude, p.coords.longitude], 16); m.dot.setLatLng([p.coords.latitude, p.coords.longitude]); } }, () => {}, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }); }
+        const center = $('.ride-center', el.parentElement);
+        map.on('dragstart', () => { m.follow = false; if (center) center.hidden = false; });
+        m.recenter = () => { m.follow = true; if (center) center.hidden = true; const ll = m.dot.getLatLng(); if (ll.lat || ll.lng) map.setView(ll, Math.max(map.getZoom(), 15)); };
+      } else if (pts.length > 1) {
+        Lf.circleMarker(pts[0], { className: 'ride-start', radius: 6, weight: 3, interactive: false }).addTo(map);
+        Lf.circleMarker(pts[pts.length - 1], { className: 'ride-finish', radius: 6, weight: 3, interactive: false }).addTo(map);
+        map.fitBounds(line.getBounds(), { padding: [22, 22] });
+      }
+      rideMaps.set(key, m);
+      setTimeout(() => { try { map.invalidateSize(); if (!liveMap && pts.length > 1) map.fitBounds(line.getBounds(), { padding: [22, 22] }); } catch (e) {} }, 320);
+    });
+  }
+  /* ---------- small route pictures and the elevation profile (plain SVG, no map needed) ---------- */
+  function rideThumb(r) {
+    const pts = Rides.route(r); if (pts.length < 2) return IC.bike;
+    const k = Math.cos(pts[0].lat * Math.PI / 180), xs = pts.map(p => p.lon * k), ys = pts.map(p => -p.lat);
+    const x0 = Math.min(...xs), y0 = Math.min(...ys), span = Math.max(Math.max(...xs) - x0, Math.max(...ys) - y0) || 1;
+    const ox = (span - (Math.max(...xs) - x0)) / 2, oy = (span - (Math.max(...ys) - y0)) / 2;
+    const step = Math.max(1, Math.floor(pts.length / 120));
+    const d = pts.filter((_, i) => i % step === 0 || i === pts.length - 1).map((p, i) => (i ? 'L' : 'M') + (4 + (p.lon * k - x0 + ox) / span * 40).toFixed(1) + ' ' + (4 + (-p.lat - y0 + oy) / span * 40).toFixed(1)).join('');
+    return `<svg class="ride-shape" viewBox="0 0 48 48" aria-hidden="true"><path d="${d}"/></svg>`;
+  }
+  function rideProfile(r) {
+    const pts = Rides.route(r).filter(p => p.e != null); if (pts.length < 3) return '';
+    let acc = 0; const xs = pts.map((p, i) => (acc += i ? Rides.dist(pts[i - 1], p) : 0));
+    const lo = Math.min(...pts.map(p => p.e)), hi = Math.max(...pts.map(p => p.e)), range = Math.max(10, hi - lo), total = acc || 1;
+    const line = pts.map((p, i) => (i ? 'L' : 'M') + (xs[i] / total * 300).toFixed(1) + ' ' + (88 - (p.e - lo) / range * 76).toFixed(1)).join('');
+    return `<section class="ride-profile"><h3>${esc(t('rideElevation'))}</h3><svg viewBox="0 0 300 92" preserveAspectRatio="none" role="img" aria-label="${esc(t('rideElevation'))}: ${Math.round(lo)}–${Math.round(hi)} m"><path class="fill" d="${line}L300 92L0 92Z"/><path class="stroke" d="${line}"/></svg><div class="cap"><span>${Math.round(lo)} m</span><span>${Math.round(hi)} m</span></div></section>`;
+  }
+  function shRide(id, fresh) {
+    const fn = () => {
+      const w = D().workouts.find(x => x.id === id); if (!w || !w.ride) return { title: '', html: '' };
+      const r = w.ride, kc = WorkoutEnergy.workout(w).cardio, time = new Date(w.start).toLocaleTimeString(loc(), { hour: '2-digit', minute: '2-digit' });
+      const k = [[km(r.dist), 'km'], [hms(r.moving), t('rideMoving')], [kmh(Rides.avgSpeed(r)), t('rideAvg') + ' km/h']];
+      if (r.maxSpd) k.push([kmh(r.maxSpd), t('rideMax') + ' km/h']);
+      if (r.path || r.gain) k.push([compact(r.gain), t('rideGain') + ' m']);
+      k.push([hms(r.elapsed), t('rideElapsed')]);
+      if (r.hr) k.push([r.hr.avg + (r.hr.max ? ' / ' + r.hr.max : ''), t('rideHr') + ' bpm']);
+      if (r.cad) k.push([String(r.cad.avg), t('rideCad') + ' rpm']);
+      if (r.pw) k.push([r.pw.avg + (r.pw.max ? ' / ' + r.pw.max : ''), t('ridePower') + ' W']);
+      let h = `<p class="lead">${esc(fmtDate(w.start, true))} · ${esc(time)}</p>`;
+      h += r.path ? `<div class="ride-map" data-map="${esc(w.id)}" role="img" aria-label="${esc(t('rideRoute'))}"></div>` : `<div class="note"><b>${esc(t(r.wheel ? 'rideIndoor' : 'rideNoRoute'))}</b></div>`;
+      h += `<div class="ride-kpis">${k.map(([v, l]) => `<div><b>${esc(v)}</b><i>${esc(l)}</i></div>`).join('')}</div>`;
+      h += rideProfile(r);
+      h += `<p class="history-energy">${kc ? `${esc(t('cardioEnergy'))}: ~${compact(kc)} kcal` : esc(t('rideNoWeight'))}</p>`;
+      if (r.src !== 'gps') h += `<p class="cap">${esc(t('rideFromFile', r.src.toUpperCase()))}</p>`;
+      return { title: fresh ? t('rideSaved') : w.name, html: h, foot: `${r.path ? `<button class="btn" data-a="ride-gpx" data-id="${esc(w.id)}">${IC.share}${esc(t('rideExport'))}</button>` : ''}<button class="btn danger" data-a="wk-del" data-id="${esc(w.id)}">${esc(t('rideDelete'))}</button>` };
+    };
+    fn.kind = 'ride'; return fn;
+  }
+  function rideRow(w) {
+    const r = w.ride;
+    return `<button class="ride-row" data-a="ride-view" data-id="${esc(w.id)}"><span class="ride-thumb">${rideThumb(r)}</span><span class="rr-t"><b>${esc(w.name)}</b><i>${esc(fmtDate(w.start))} · ${esc(hms(r.moving))}</i></span><span class="rr-n"><b>${esc(km(r.dist))} km</b><i>${esc(kmh(Rides.avgSpeed(r)))} km/h</i></span></button>`;
+  }
+  function rideTotals(list, from) {
+    const l = list.filter(w => w.start >= from), dist = l.reduce((n, w) => n + w.ride.dist, 0), mov = l.reduce((n, w) => n + w.ride.moving, 0), gain = l.reduce((n, w) => n + w.ride.gain, 0);
+    return `<b>${esc(km(dist))} km</b><i>${l.length} ${esc(t('ridesWord'))} · ${esc(hms(mov))} · ${compact(gain)} m</i>`;
+  }
+  function rideView() {
+    const rides = D().workouts.filter(w => w.ride), month = new Date(); month.setDate(1); month.setHours(0, 0, 0, 0);
+    let h = ride
+      ? `<button class="hero ride-hero resume" data-a="ride-open"><small>${esc(t('rideInProgress'))}</small><strong data-rh="dist"></strong><span data-rh="time"></span></button>`
+      : `<section class="hero ride-hero"><small>${esc(t('rideTitle'))}</small><strong>${esc(t('rideReady'))}</strong><span>${esc(t('rideLead'))}</span><button class="btn primary big" data-a="ride-start">${IC.play}${esc(t('rideStart'))}</button></section>`;
+    if (isIOS) h += `<p class="cap ride-ios">${esc(t('rideIOSNote'))}</p>`;
+    h += `<div class="ride-totals"><div><small>${esc(t('rideThisWeek'))}</small>${rideTotals(rides, weekStart(Date.now()).getTime())}</div><div><small>${esc(t('rideThisMonth'))}</small>${rideTotals(rides, month.getTime())}</div></div>`;
+    h += `<section class="card ride-sensors"><h3>${esc(t('rideSensors'))}</h3>`;
+    if (Rides.bluetooth()) {
+      h += rideSensors.map((s, i) => `<div class="sensor-row">${IC.bt}<span><b>${esc(s.name || t('rideSensor'))}</b><i>${esc(s.kinds.map(k => t('rideKind_' + k)).join(' · '))}</i></span><button class="link" data-a="ride-sensor-off" data-i="${i}">${esc(t('rideDisconnect'))}</button></div>`).join('');
+      h += `<p class="cap">${esc(t('rideSensorHint'))}</p><div class="row2"><button class="btn" data-a="ride-sensor">${IC.plus}${esc(t('rideAddSensor'))}</button><label class="ride-wheel"><span>${esc(t('rideWheel'))}</span><select data-in="ride-wheel">${WHEELS.map(w => `<option value="${w[0]}"${w[0] === wheelCirc() ? ' selected' : ''}>${w[1]}</option>`).join('')}</select></label></div>`;
+    } else h += `<p class="cap">${esc(t(isIOS ? 'rideBtIOS' : 'rideBtNone'))}</p>`;
+    h += `</section><section class="card ride-import"><div><h3>${esc(t('rideImport'))}</h3><p class="cap">${esc(t('rideImportHint'))}</p></div><label class="btn">${IC.upload}${esc(t('rideChooseFile'))}<input class="sr" type="file" data-in="ride-file"></label></section>`;
+    const limit = ui.rideLimit || 30, list = rides.slice().reverse();
+    h += `<div class="h2row"><h2>${esc(t('rideHistory'))}</h2><span class="cap">${rides.length}</span></div>`;
+    h += list.length ? `<div class="ride-list">${list.slice(0, limit).map(rideRow).join('')}</div>${list.length > limit ? `<button class="btn" data-a="ride-more">${esc(t('showMore'))}</button>` : ''}` : `<p class="empty">${esc(t('rideNone'))}</p>`;
+    return h;
+  }
+  async function rideImport(file) {
+    if (file.size > 30 * 1024 * 1024) { toast(t('rideImportBad')); return; }
+    let out; try { out = Rides.parse(await file.text()); } catch (e) { out = { error: 'format' }; }
+    if (out.error) { toast(t('rideImportBad')); return; }
+    if (D().workouts.some(w => w.ride && Math.abs(w.start - out.start) < 60000 && Math.abs(w.ride.dist - out.ride.dist) <= Math.max(50, out.ride.dist * 0.02))) { toast(t('rideDuplicate')); return; }
+    if (out.start > Date.now() + 86400000) { toast(t('rideImportBad')); return; }
+    const w = rideWorkout(out.ride, out.start, out.end, out.name);
+    if (!rideAdd(w)) { toast(t('saveFailed')); return; }
+    rerender(); openSheet(shRide(w.id)); toast(t('rideImported'));
+  }
+  function rideSensorData(kind, dv) {
+    try {
+      const now = Date.now();
+      if (kind === 'hr') { const b = Rides.parseHr(dv); rideLive.hr = b; rideLive.at.hr = now; if (ride) Rides.sensor(ride, 'hr', b); }
+      else {
+        const cur = kind === 'csc' ? Rides.parseCsc(dv) : Rides.parsePower(dv);
+        if (kind === 'pw') { rideLive.pw = Math.max(0, cur.watts); rideLive.at.pw = now; if (ride) Rides.sensor(ride, 'pw', rideLive.pw); }
+        const d = Rides.revDelta(rideRev[kind], cur, wheelCirc()); rideRev[kind] = cur;
+        if (d.cadence != null) { rideLive.cad = Math.round(d.cadence); rideLive.at.cad = now; if (ride) Rides.sensor(ride, 'cad', d.cadence); }
+        if (d.speed != null) { rideLive.wspd = d.speed; rideLive.at.wspd = now; }
+        if (d.dist && ride && kind === 'csc') Rides.sensor(ride, 'wheel', d.dist);
+      }
+      rideDraw();
+    } catch (e) { /* a malformed packet is ignored */ }
+  }
+  async function rideSensorAdd() {
+    let s = null;
+    try {
+      s = await Rides.pair(rideSensorData, () => { rideSensors = rideSensors.filter(x => x !== s); toast(t('rideSensorLost')); if (ui.tab === 'home' && ui.workout === 'ride') rerender(); });
+      rideSensors.push(s); toast(t('rideSensorOn', s.name || t('rideSensor'))); if (ui.tab === 'home' && ui.workout === 'ride') rerender();
+    } catch (e) { if (e && e.name === 'NotFoundError') return; toast(t(e && e.message === 'unsupported' ? 'rideSensorUnsupported' : 'rideSensorFail')); }
+  }
+
   function workoutHistory(workouts) {
-    return workouts.length?workouts.map(w=>`<article class="workout-history"><button class="history-title" data-a="wk-open" data-id="${esc(w.id)}"><span><b>${esc(w.name)}</b><small>${esc(fmtDate(w.start))} · ${setsOf(w)} ${esc(t('setsWord'))}</small></span>${IC.chev}</button>${w.tick?`<p class="cap">${esc(t('tickedTag'))}</p>`:!w.entries.length?'':`<details class="workout-volume"><summary><span>${volumeText(volOf(w))} kg <small>${esc(t('volume'))}</small></span>${IC.down}</summary>${volumeBreakdown(w)}</details>`}${!w.tick?`<p class="history-energy">${esc(t('strengthEnergy'))}: ${WorkoutEnergy.workout(w).missing?'—':'~'+compact(WorkoutEnergy.workout(w).strength)} kcal · ${esc(t('cardioEnergy'))}: ~${compact(WorkoutEnergy.workout(w).cardio)} kcal</p>`:''}</article>`).join(''):`<p class="empty">${esc(t('noWorkouts'))}</p>`;
+    return workouts.length?workouts.map(w=>`<article class="workout-history"><button class="history-title" data-a="wk-open" data-id="${esc(w.id)}"><span><b>${esc(w.name)}</b><small>${esc(fmtDate(w.start))} · ${w.ride?esc(km(w.ride.dist))+' km · '+esc(hms(w.ride.moving)):setsOf(w)+' '+esc(t('setsWord'))}</small></span>${IC.chev}</button>${w.tick?`<p class="cap">${esc(t('tickedTag'))}</p>`:!w.entries.length?'':`<details class="workout-volume"><summary><span>${volumeText(volOf(w))} kg <small>${esc(t('volume'))}</small></span>${IC.down}</summary>${volumeBreakdown(w)}</details>`}${!w.tick?`<p class="history-energy">${esc(t('strengthEnergy'))}: ${WorkoutEnergy.workout(w).missing?'—':'~'+compact(WorkoutEnergy.workout(w).strength)} kcal · ${esc(t('cardioEnergy'))}: ~${compact(WorkoutEnergy.workout(w).cardio)} kcal</p>`:''}</article>`).join(''):`<p class="empty">${esc(t('noWorkouts'))}</p>`;
   }
   function rankBadge(tier) {
     return `<span class="rank-badge rank-${tier<3?'entry-'+tier:tier-3}" aria-hidden="true"><svg viewBox="0 0 40 44"><path d="M20 3 35 10v13c0 9-15 18-15 18S5 32 5 23V10z"/><path d="m12 22 8-9 8 9-8 9z"/>${tier>=5?'<path d="M12 10h16"/>':''}${tier>=7?'<path d="m16 21 4-4 4 4-4 4z"/>':''}</svg></span>`;
@@ -375,8 +618,9 @@
     if(isIOS&&!standalone)h+=`<div class="note" data-a="install-help"><b>${esc(t('installTitle'))}</b><span>${esc(t('installShort'))}</span></div>`;
     if(Store.memoryOnly)h+=`<div class="note warn"><b>${esc(t('noStorage'))}</b></div>`;
     if(Store.failed)h+=`<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
-    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
+    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','ride','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
     if(ui.workout==='plans')return h+routineGrid();
+    if(ui.workout==='ride')return h+rideView();
     if(ui.workout==='history')return h+`<div class="h2row"><h2>${esc(t('history'))}</h2><span class="cap">${d.workouts.length} ${esc(t('totalWorkouts'))}</span></div>`+workoutHistory(d.workouts.slice().reverse().slice(0,ui.homeHistLimit||40))+(d.workouts.length>(ui.homeHistLimit||40)?`<button class="btn" data-a="workout-history-more">${esc(t('showMore'))}</button>`:'');
     if(ui.workout==='exercises')return h+complexCards()+libControls()+`<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`;
     const goal=d.settings.weekGoal;
@@ -809,6 +1053,7 @@
     d.dataset.nav = nav || '';                                   // fwd / back: the new content slides in from that side
     d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title" tabindex="-1" autofocus>${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
     $('.sheet-body', d).scrollTop = y;
+    [...rideMaps.keys()].filter(k => k !== 'live').forEach(rideMapDrop); rideMapsMount(d);
   }
   let closeT = 0, unlockSheet = null;
   function openSheet(fn) {
@@ -1403,7 +1648,8 @@
   function shAccHelp() { return () => ({ title: t('account'), html: `<p class="lead">${esc(t('accHelpLead'))}</p><ol class="steps">${[1, 2, 3, 4, 5].map(i => `<li>${esc(t('accStep' + i))}</li>`).join('')}</ol><p class="cap">${esc(t('accHelpCap'))}</p>` }); }
   async function saveFile(name, blob) {
     try { const f = new File([blob], name, { type: blob.type }); if (isIOS && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: name }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); toast(t('exported'));
+    // Everything outside an open modal panel is inert, so the download link must live inside it to work.
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.hidden = true; ([...document.querySelectorAll('dialog[open]')].pop() || document.body).appendChild(a); a.click(); a.remove(); toast(t('exported'));
   }
   function exportCSV() {
     const rows = [['date', 'workout', 'exercise', 'set', 'kg', 'reps', 'warmup']];
@@ -1768,7 +2014,7 @@
     },
     'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
     'open-ranks'() {closeSheet(true);go('tab',()=>{ui.tab='profile';ui.profilePage='ranks';render();});loadSocial();},
-    'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises'].includes(el.dataset.v))return;go('tab',()=>{ui.tab='home';ui.workout=el.dataset.v;render();}); },
+    'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises','ride'].includes(el.dataset.v))return;go('tab',()=>{ui.tab='home';ui.workout=el.dataset.v;render();}); },
     'wk-volume'() { const panel=$('#sheet [data-volume]');if(panel)panel.open=!panel.open; },
     'update-restart'() { return A['update-now'](); },
     'release-notes'() {
@@ -2052,7 +2298,19 @@
     /* progress */
     prog(el) { const v = el.dataset.v === 'history' ? 'history' : 'overview'; ui.histLimit = 60; if (ui.prog !== v) go('tab', () => { ui.prog = v; render(); }); else render(); },
     'hist-more'() { ui.histLimit = (ui.histLimit || 60) + 120; rerender(); },
-    'wk-open'(el) { openSheet(shWorkout(el.dataset.id, null)); },
+    'wk-open'(el) { const w = D().workouts.find(x => x.id === el.dataset.id); openSheet(w && w.ride ? shRide(w.id) : shWorkout(el.dataset.id, null)); },
+    'ride-start'() { rideBegin(); },
+    'ride-open'() { if (ride) rideOpen(true); },
+    'ride-min'() { rideOpen(false); if (ui.tab === 'home' && ui.workout === 'ride') rerender(); },
+    'ride-pause'() { if (!ride) return; if (ride.paused) { Rides.resume(ride, Date.now()); rideGeo(true); rideWake(); } else Rides.pause(ride, Date.now()); rideStore(true); rideDraw(); },
+    'ride-finish'() { if (!ride) return; const tiny = ride.dist < 50 && ride.wheel < 50; if (tiny) { if (confirm(t('rideTooShort'))) rideEnd(false); return; } if (confirm(t('rideFinishConfirm'))) rideEnd(true); },
+    'ride-discard'() { if (ride && confirm(t('rideDiscardConfirm'))) rideEnd(false); },
+    'ride-center'() { const m = rideMaps.get('live'); if (m && m.recenter) m.recenter(); },
+    'ride-view'(el) { openSheet(shRide(el.dataset.id)); },
+    'ride-more'() { ui.rideLimit = (ui.rideLimit || 30) + 30; rerender(); },
+    'ride-gpx'(el) { const w = D().workouts.find(x => x.id === el.dataset.id); if (!w || !w.ride) return; saveFile('reppsy-' + ymd(w.start) + '-' + w.id + '.gpx', new Blob([Rides.gpx(w.ride, w.start, w.name)], { type: 'application/gpx+xml' })); },
+    'ride-sensor'() { rideSensorAdd(); },
+    'ride-sensor-off'(el) { const s = rideSensors[+el.dataset.i]; if (s) { rideSensors = rideSensors.filter(x => x !== s); s.close(); } rerender(); },
     'wk-to-routine'(el) {
       const w = D().workouts.find(x => x.id === el.dataset.id); if (!w) return;
       ui.edit = { id: uid(), name: '', _old: false,
@@ -2193,6 +2451,8 @@
   document.addEventListener('dblclick',e=>{const figure=e.target.closest?.('.profile-photo-view[data-photo-like]');if(figure)A['photo-double-like'](figure);});
   document.addEventListener('change', async e => {
     const el = e.target, k = el.dataset && el.dataset.in;
+    if (k === 'ride-file' && el.files[0]) { const file = el.files[0]; el.value = ''; rideImport(file); return; }
+    if (k === 'ride-wheel') { try { localStorage.setItem(WKEY, el.value); } catch (er) {} rideRev.csc = null; return; }
     if(k==='profile-cover-photo'&&el.files[0]){const file=el.files[0],draft=ui.profileDraft;el.value='';if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>20*1024*1024){toast(t('picBad'));return;}try{const pic=await smallPic(file,true);if(draft===ui.profileDraft&&topIs('profile-edit')){draft.coverPhoto=pic;ui.profileStyleDraft.cover='photo';refreshSheet();}}catch(error){toast(t('picBad'));}}
     if(k==='profile-photo'&&el.files[0]){const file=el.files[0],draft=ui.profileDraft;el.value='';try{const pic=await smallPic(file);if(draft===ui.profileDraft&&topIs('profile-edit')){draft.avatar=pic;refreshSheet();}}catch(error){toast(t('picBad'));}}
     if (k === 'ai-file' && el.files[0]) { const file = el.files[0]; el.value = ''; const s0 = ui.ai; try { const r = await FoodAI.shrink(file, 1568); if (ui.ai === s0 && s0.imgs.length < 2) { s0.imgs.push({ url: r.dataUrl, b64: r.base64, warn: r.luma < 45 ? 'dark' : r.side < 640 ? 'small' : '' }); s0.err = null; } } catch (er) { s0.err = { code: 'image' }; } if (ui.ai === s0) refreshSheet(); }   // 1568 px: the largest size the model looks at without shrinking it again
@@ -2334,6 +2594,10 @@
     if (CL.user) signedIn();
   }
   setInterval(tick, 500);
+  if (ride) { if (!ride.paused) rideGeo(true); rideDraw(); }
+  setInterval(() => { if (ride && !document.hidden) rideDraw(); }, 1000);
+  addEventListener('pagehide', () => rideStore(true));
+  document.addEventListener('visibilitychange', () => { if (!ride) return; if (document.hidden) rideStore(true); else { if (ui.rideOpen) rideWake(); if (!ride.paused) rideGeo(true); rideDraw(); } });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { dayCheck(); tick(); if (D().active && ui.wOpen) wake(); if (CL && CL.user && Date.now() - CL.state.at > 30000) doSync(false); } });
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { ui.persisted = p; }).catch(() => {});
   if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',()=>checkForUpdate(true));
@@ -2342,7 +2606,7 @@
   window.addEventListener('online',()=>checkForUpdate(true));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkForUpdate();});
   setInterval(()=>{if(!document.hidden)checkForUpdate();},60000);
-  window.__gym = { ui, render, A, checkForUpdate, updateOverlay, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
+  window.__gym = { ui, render, A, rideFix, rideSensorData, get ride() { return ride; }, checkForUpdate, updateOverlay, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
 
 

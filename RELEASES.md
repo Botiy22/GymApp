@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.22.0 — 2026-10-11 (build 20261011.2)
+
+Workout → Ride records bike rides with `navigator.geolocation.watchPosition` (high accuracy), filtering fixes worse than ±35 m, sub-accuracy jitter and >120 km/h jumps. Moving time counts intervals above ~2.9 km/h; speed is a ~5 s window (or the device's reported speed); climb uses smoothed altitude with a 5 m threshold and is an estimate. The running ride is stored separately (`gymapp.v1.ride`) every few seconds and on hide, resumes after reload, and supports pause/resume (no straight line across pauses), discard and a floating progress pill. Finished rides are ordinary workouts with a cleaned `ride` part (Douglas–Peucker route at 6 m plus a point every 200 m, encoded polyline with time and elevation deltas), so history, goals, account sync and the existing cycling calorie estimate (when a body weight is known) include them. Detail sheets show an OpenStreetMap map (Leaflet 1.9.4 vendored, loaded on demand; CSP allows `tile.openstreetmap.org` images), totals and an elevation profile, and export GPX 1.1. GPX/TCX import (including indoor TCX without positions) skips duplicates. Web Bluetooth pairing reads standard heart-rate, cycling speed/cadence and cycling-power profiles; wheel distance replaces GPS for indoor rides.
+
+Also fixed: downloads started from inside an open panel (ride GPX, the install sheet's backup) did nothing because content outside a modal dialog is inert; the glass tab bar now has a near-opaque fill so it no longer looks see-through during page-change snapshots on iPhone.
+
+Limits: iPhone web apps receive no location while the screen is locked or another app is in front, and Safari has no Web Bluetooth. No direct Strava account connection (needs a server-side secret). Validation: node unit tests for recording/noise/pause/encoding/import/export/BLE packets, browser tests for record→reload→finish→export→reimport, simulated sensors, 320 px layouts in both languages and tab-bar opacity. No physical device, real GPS or real sensor verification.
+
 ## 2.21.3 — 2026-10-11 (build 20261011.1)
 
 Update installation shows only the Reppsy mark (new transparent `icons/reppsy-mark.png`, cached by the service worker). It accelerates for 0.45 s, turns at a constant ~343°/s and, when the release is ready, decelerates to an upright stop before reloading. The orbiting ring, progress track and dialog focus outline were removed; reduced motion/Calm keep it still. The header update button only dims while busy.

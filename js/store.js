@@ -88,9 +88,10 @@ window.Store = (function () {
       }).filter(Boolean);
       const tick = w.tick === true;                                              // ticked as done, without a set-by-set log; "pl" remembers the planned sets
       const cardio=arr(w.cardio).slice(0,40).map(WorkoutEnergy.cleanCardio).filter(Boolean).map(c=>({...c,id:c.id||newId()}));
-      if (!start || !(entries.length || tick || cardio.length)) return null;
+      const ride = globalThis.Rides ? Rides.clean(w.ride) : null;                    // a bike ride: route and totals
+      if (!start || !(entries.length || tick || cardio.length || ride)) return null;
       const o = { id: idStr(w.id) || newId(), rid: idStr(w.rid) || null, name: str(w.name, 80) || 'Workout', start, end: num(w.end, start, 4e12, start), entries, warm: w.warm === true, cool: w.cool === true };
-      if(cardio.length||w.cardioAt)o.cardio=cardio;
+      if(cardio.length||w.cardioAt)o.cardio=cardio;if(ride)o.ride=ride;
       if(w.cardioAt)o.cardioAt=num(w.cardioAt,0,4e12,0);if(w.energyAt)o.energyAt=num(w.energyAt,0,4e12,0);
       const energy=WorkoutEnergy.cleanStrength(w.energy);if(energy&&!tick&&entries.length)o.energy=energy;
       if (tick && !entries.length) { o.tick = true; o.pl = arr(w.pl).slice(0, 60).map(z => { z = obj(z); return EXID.test(str(z.ex, 90)) ? { ex: z.ex, n: int(z.n, 1, 12, 3) } : null; }).filter(Boolean); }
@@ -242,7 +243,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    retiredPersonalSplit:true,supportsMaterial:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { [KEY, AKEY, KEY + '.corrupt'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */
