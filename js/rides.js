@@ -140,8 +140,9 @@ globalThis.Rides = (() => {
     const keep = [...kept].sort((a, b) => a - b).map(i => pts[i]);
     let total = s.dist, wheel = false;
     if (total < 100 && s.wheel > total) { total = s.wheel; wheel = true; }           // indoor trainer or no GPS: the wheel sensor measured the distance
-    const lastT = pts.length ? pts[pts.length - 1].t : 0, elapsedS = Math.round(src === 'gps' ? Math.max(elapsed(s, now), lastT) : lastT);
-    let moving = Math.round(s.moving); if (wheel || moving < 1) moving = elapsedS;
+    // Route timestamps retain wall-clock gaps for GPX export; the ride timer excludes pauses.
+    const lastT = pts.length ? pts[pts.length - 1].t : 0, elapsedS = Math.round(!src || src === 'gps' ? elapsed(s, now) : lastT);
+    let moving = Math.round(s.moving); if (wheel) moving = elapsedS;
     const ride = { v: 1, src: src || 'gps', dist: Math.round(total), moving: Math.min(moving, elapsedS || moving), elapsed: elapsedS, gain: Math.round(s.gain), maxSpd: Math.round(s.maxSpd * 36) / 10 };
     if (keep.length >= 2) {
       ride.path = encodePath(keep); ride.ts = encInts(keep.map(p => p.t));
@@ -193,7 +194,8 @@ globalThis.Rides = (() => {
       const re = /<trkpt\b([^>]*?)(\/>|>([\s\S]*?)<\/trkpt>)/gi; let m;
       while ((m = re.exec(text))) {
         const body = m[3] || '';
-        points.push({ lat: +attr(m[1], 'lat'), lon: +attr(m[1], 'lon'), alt: tag(body, 'ele') === '' ? NaN : +tag(body, 'ele'), t: Date.parse(tag(body, 'time')), hr: +tag(body, 'hr') || 0, cad: +tag(body, 'cad') || 0, pw: +tag(body, 'power') || 0 });
+        const lat = attr(m[1], 'lat').trim(), lon = attr(m[1], 'lon').trim();
+        points.push({ lat: lat === '' ? NaN : +lat, lon: lon === '' ? NaN : +lon, alt: tag(body, 'ele') === '' ? NaN : +tag(body, 'ele'), t: Date.parse(tag(body, 'time')), hr: +tag(body, 'hr') || 0, cad: +tag(body, 'cad') || 0, pw: +tag(body, 'power') || 0 });
       }
     } else if (/<TrainingCenterDatabase[\s>]/i.test(text)) {
       kind = 'tcx'; const act = /<Activity\b([^>]*)>/i.exec(text); sport = act ? attr(act[1], 'Sport') : '';
@@ -215,9 +217,9 @@ globalThis.Rides = (() => {
     if (total > s.dist + 50 && s.dist < 100) { s.wheel = total; }                    // indoor file: distance without positions
     else if (total > 0 && Math.abs(total - s.dist) < s.dist * 0.2) s.dist = total;   // trust the device's own distance when it roughly agrees
     const ride = finish(s, end, kind);
-    ride.elapsed = Math.round((end - timed[0].t) / 1000); if (!ride.moving || ride.wheel) ride.moving = ride.elapsed; ride.moving = Math.min(ride.moving, ride.elapsed);
+    ride.elapsed = Math.round((end - timed[0].t) / 1000); if (ride.wheel) ride.moving = ride.elapsed; ride.moving = Math.min(ride.moving, ride.elapsed);
     if (!ride.dist && !ride.moving) return { error: 'empty' };
-    return { ride, start: timed[0].t, end, name: unxml(name).slice(0, 80), sport };
+    return { ride, start: timed[0].t, end, name: name.slice(0, 80), sport };
   }
   const xmlEsc = s => String(s).replace(/[<>&'"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
   function gpx(ride, startMs, name) {

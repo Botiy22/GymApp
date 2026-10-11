@@ -1,3 +1,11 @@
+# Reppsy — logo refinement, 2.23.0
+
+The v2 mark keeps the two angular apricot/coral links, with warmer gradients, cleaner separation and balanced padding. Built-in imagegen refined the original raster mark; the generated master is preserved in `icons/reppsy-source-v2.png`. Deployment exports use versioned `-v2.png` paths so cached icon URLs are distinct. The transparent `reppsy-mark-v2.png` is centered on a square canvas for update rotation; install icons use graphite backgrounds, with extra maskable padding. Previous assets remain available.
+
+Final image prompt: “Keep exactly this two-link shape, geometry, gradients and diagonal placement. Remove red and yellow speckles and stray fragments around the outside and inside every hole and seam. Only the large solid smooth logo bands remain. Clean antialiased edges; no texture, grain, shadow, glow or text. Center on a square transparent canvas with equal margins.” Exports resize the generated alpha and composite install icons onto graphite.
+
+Local Chromium checks verified mobile/desktop HU/EN layouts, offline assets, logo spin, upright settling and reduced motion. Restart now waits for the settling animation. Physical OS icon refresh remains unverified.
+
 # Reppsy — working name, 2.16.0
 
 The user selected Reppsy as the current app name. The new custom AI-generated logo uses two interlocking angular apricot/coral motion links on graphite, expressing repetitions, strength and momentum. It contains no letter R, monogram or wordmark. No third-party logo was supplied or copied; name/trademark availability remains unverified.

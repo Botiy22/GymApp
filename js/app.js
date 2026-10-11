@@ -200,7 +200,7 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal, update=false) => (sub === title ? (sub = '') : 0, `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`);
+  const head = (title, sub, cal, update=false) => (sub === title ? (sub = '') : 0, `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192-v2.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`);
   function popFav(on) { const b = $('#sheet .favbtn'); if (b && on) b.classList.add('pop'); }
   const BI_RIDS = new Set((window.EXTRA_ROUTINES || []).map(r => r.id));
   const bi = (s, rid) => { if (!BI_RIDS.has(rid)) return s; const p = String(s).split(' / '); return p.length === 2 && p[0] && p[1] ? p[L() === 'hu' ? 0 : 1] : s; };
@@ -219,9 +219,9 @@
   }
   function updateOverlay(){
     const dialog=document.createElement('dialog');dialog.className='app-update-overlay';dialog.id='app-update-progress';dialog.setAttribute('aria-label',t('updating'));
-    dialog.innerHTML=`<div class="app-update-card" role="status" aria-live="polite"><div class="reload-mark"><img src="icons/reppsy-mark.png" width="80" height="80" alt=""></div><b>Reppsy</b><p>${esc(t('updating'))}</p></div>`;
+    dialog.innerHTML=`<div class="app-update-card" role="status" aria-live="polite"><div class="reload-mark"><img src="icons/reppsy-mark-v2.png" width="80" height="80" alt=""></div><b>Reppsy</b><p>${esc(t('updating'))}</p></div>`;
     dialog.addEventListener('cancel',e=>e.preventDefault());document.body.append(dialog);const unlock=ModalLock.acquire(dialog);dialog.showModal();
-    return {message:key=>{$('p',dialog).textContent=t(key);dialog.classList.add('ready');settleMark($('.reload-mark img',dialog));},close:()=>{dialog.close();dialog.remove();unlock();}};
+    return {message:key=>{$('p',dialog).textContent=t(key);dialog.classList.add('ready');return settleMark($('.reload-mark img',dialog));},close:()=>{dialog.close();dialog.remove();unlock();}};
   }
   /* Ready: the spinning mark slows down and comes to rest upright instead of freezing mid-turn. */
   function settleMark(img){
@@ -232,6 +232,7 @@
       const ms=Math.max(500,Math.min(1100,rest/0.343*1.6));                                   // starts at the spinning speed (343°/s), then eases out
       spin.forEach(a=>a.cancel());img.style.transform='rotate('+(angle+rest)+'deg)';
       img.animate([{transform:'rotate('+angle+'deg)'},{transform:'rotate('+(angle+rest)+'deg)'}],{duration:ms,easing:'cubic-bezier(.33,.53,.3,1)'});
+      return ms;
     }catch(e){}
   }
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
@@ -1597,7 +1598,7 @@
   const DEF_HUE = 55;                                                                 // default apricot hue; explicitly saved hues remain unchanged
   function colorWheel(h,kind='app'){
     const a=h*Math.PI/180,gradient=Array.from({length:73},(_,i)=>'rgb('+(vividFill(i*5%360)||hueRGB(i*5,.68)).join(',')+') '+i*5+'deg').join(',');
-    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true"><img src="icons/reppsy-192.png" width="28" height="28" alt=""><b>Reppsy</b></span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="${kind==='profile'?'profile-hue':'set-hue'}"></div>`;
+    return `<div class="hue-wheel" role="slider" tabindex="0" aria-label="${esc(t('customAccent'))}" aria-valuemin="0" aria-valuemax="359" aria-valuenow="${h}" aria-valuetext="${h}°" style="background:conic-gradient(${gradient})"><span class="hue-wheel-preview" aria-hidden="true"><img src="icons/reppsy-192-v2.png" width="28" height="28" alt=""><b>Reppsy</b></span><span class="hue-wheel-thumb" aria-hidden="true" style="left:${50+40*Math.sin(a)}%;top:${50-40*Math.cos(a)}%"></span><input class="sr" tabindex="-1" aria-hidden="true" type="range" min="0" max="359" value="${h}" data-in="${kind==='profile'?'profile-hue':'set-hue'}"></div>`;
   }
   function applyLook() {
     const s = D().settings, e = document.documentElement;
@@ -1802,7 +1803,7 @@
     document.title = t('appName');
     const apple = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (apple) apple.content = t('appName');
     // A cached older HTML shell may still reference the old brand's icon files.
-    for (const [rel, path] of [['apple-touch-icon','icons/reppsy-apple-180.png'],['icon','icons/reppsy-192.png'],['manifest','manifest.webmanifest']]) {
+    for (const [rel, path] of [['apple-touch-icon','icons/reppsy-apple-180-v2.png'],['icon','icons/reppsy-192-v2.png'],['manifest','manifest.webmanifest']]) {
       let link = document.querySelector('link[rel="' + rel + '"]');
       if (!link) { link = document.createElement('link'); link.rel = rel; document.head.append(link); }
       if (link.getAttribute('href') !== path) link.href = path;
@@ -1865,9 +1866,9 @@
     document.documentElement.lang = L();
     const s = ui.gate, m = s.mode;
     if (m === 'up' && setupState().step < 4) {
-      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/reppsy-192.png" alt=""><b>${esc(t('appName'))}</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
+      g.innerHTML = `<form class="gate-in setup-in" data-f="gate-setup" novalidate><div class="setup-brand"><img src="icons/reppsy-192-v2.png" alt=""><b>${esc(t('appName'))}</b></div>${setupView()}<div class="seg lang"><button type="button" class="${L() === 'hu' ? 'on' : ''}" data-a="gate-lang" data-v="hu">Magyar</button><button type="button" class="${L() === 'en' ? 'on' : ''}" data-a="gate-lang" data-v="en">English</button></div></form>`; g.scrollTop = 0; return;
     }
-    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/reppsy-192.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
+    g.innerHTML = `<form class="gate-in" data-f="gate" novalidate><div class="gate-logo brand-logo"><img src="icons/reppsy-192-v2.png" alt=""></div><h1>${esc(t('appName'))}</h1><p class="lead">${esc(t('gate_' + m))}</p>
       ${m === 'in' || m === 'up' ? `<div class="seg"><button type="button" class="${m === 'in' ? 'on' : ''}" data-a="gate-mode" data-v="in">${esc(t('signIn'))}</button><button type="button" class="${m === 'up' ? 'on' : ''}" data-a="gate-mode" data-v="up">${esc(t('signUp'))}</button></div>` : ''}
       ${s.err ? `<div class="note warn" role="alert"><b>${esc(s.err)}</b></div>` : ''}${s.info ? `<div class="note" role="status"><b>${esc(s.info)}</b></div>` : ''}
       ${m === 'up' ? `<div class="setup-account-summary"><span>${esc(t('setupYourTarget'))}<b>${compact(calcTargets(setupState().profile).kcal)} kcal</b></span><button type="button" class="link" data-a="setup-edit">${esc(t('edit'))}</button></div>` : ''}
@@ -1884,7 +1885,7 @@
   async function signedIn() {
     const u = CL && CL.user; if (!u) return;
     let d = D();
-    if (d.owner && d.owner !== u.id) { Store.wipe(); d = D(); ui.wOpen = false; ui.foodDate = today(); ui.coach = newCoach(); }      // another person's data is never mixed in
+    if (d.owner && d.owner !== u.id) { rideEnd(false); Store.wipe(); d = D(); ui.wOpen = false; ui.foodDate = today(); ui.coach = newCoach(); }      // another person's data is never mixed in
     if (d.owner !== u.id) Store.stamp(u.id, d.workouts.length > 0 || Object.keys(d.food).length > 0 || d.body.length > 0 || !!d.settings.targets);
     applyLook(); await doSync(true); adoptRegistrationProfile(); renderGate(); render();
   }
@@ -2215,8 +2216,8 @@
         if(!Store.save())throw new Error('data could not be saved');
         // Success is shown only when the new page's build matches the expected release.
         try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version:AppUpdates.cacheId(latest), at: Date.now() })); } catch (e) {}
-        ui.updateStatus=result?'updateRestarting':'updateReloading';overlay.message(ui.updateStatus);
-        setTimeout(() => location.reload(), 900);                                  // time for the mark to come to rest
+        ui.updateStatus=result?'updateRestarting':'updateReloading';const settleMs=overlay.message(ui.updateStatus)||0;
+        setTimeout(() => location.reload(), Math.max(900,settleMs+100));             // let the mark finish settling before restart
       } catch(e){ui.updateBusy=false;ui.updateStatus='updateFail';overlay.close();syncUpdateButton();toast(t('updateFail'));}
     },
     /* workout */

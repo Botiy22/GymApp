@@ -244,7 +244,7 @@ window.Store = (function () {
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
     retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
-    wipe() { try { [KEY, AKEY, KEY + '.corrupt'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
+    wipe() { try { [KEY, AKEY, KEY + '.corrupt', KEY + '.ride'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */
     adopt(doc) {

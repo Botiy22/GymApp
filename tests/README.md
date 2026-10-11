@@ -1,5 +1,11 @@
 # Browser regression checks
 
+## Local logo/code review (2.23.0)
+
+`node tests/test_brand_review.cjs` uses Node Playwright and Chrome (override with `GYMAPP_BROWSER_EXECUTABLE`). Set `NODE_PATH` to the bundled Node package directory if Playwright is not otherwise installed. It disables account configuration and external HTTPS, checks 32 responsive main views, logo loading/spin/upright settling/reduced motion, verified offline installation, separate ride cleanup and runtime errors. Preview: `artifacts/logo-update.png`.
+
+The focused JavaScript suites passed 30 tests, including new pause-finish, stationary GPS, missing-coordinate and escaped-name regressions. `test_release_files.py` passed after LF normalization. Full Python browser suites were not run in this environment because Python Playwright is missing and its download failed.
+
 Run from the repository root:
 
 ```sh

@@ -41,6 +41,27 @@ test('weak fixes, glitches and paused time are not counted', () => {
   assert.equal(R.add(s, { lat: north(47, 910), lon: 19, t: 67000, acc: 5 }), 'ok');
   assert.ok(Math.abs(s.dist - 20) < 0.5, 'distance ' + s.dist);
   assert.equal(Math.round(R.elapsed(s, 67000)), 7);
+  const finished = R.finish(s, 67000, 'gps');
+  assert.equal(finished.elapsed, 7);
+  assert.equal(R.route(finished).at(-1).t, 67, 'GPX timestamps still include the pause');
+  assert.equal(R.finish(s, 67000).elapsed, 7, 'default source also excludes pauses');
+  R.pause(s, 68000);
+  assert.equal(R.finish(s, 120000, 'gps').elapsed, 8, 'finishing while paused freezes the timer');
+});
+
+test('stationary GPS recordings never invent moving time', () => {
+  const s = R.start(0);
+  R.add(s, {lat:47,lon:19,t:0,acc:5});
+  R.add(s, {lat:47,lon:19,t:60000,acc:5});
+  assert.equal(R.finish(s,60000,'gps').moving,0);
+});
+
+test('GPX missing coordinates are not plotted at zero and names decode once', () => {
+  const empty = R.parse('<gpx><trk><trkseg><trkpt><time>2026-10-01T08:00:00Z</time></trkpt><trkpt><time>2026-10-01T08:01:00Z</time></trkpt></trkseg></trk></gpx>');
+  assert.equal(empty.error,'empty');
+  const out = R.parse('<gpx><trk><name>A &amp;lt; B</name><trkseg><trkpt lat="0" lon="0"><time>2026-10-01T08:00:00Z</time></trkpt><trkpt lat="0.001" lon="0"><time>2026-10-01T08:01:00Z</time></trkpt></trkseg></trk></gpx>');
+  assert.equal(out.name,'A &lt; B');
+  assert.equal(R.route(out.ride)[0].lat,0,'explicit zero remains valid');
 });
 
 test('finished ride is simplified, compact and survives cleaning', () => {

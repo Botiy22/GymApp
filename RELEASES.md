@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.23.0 — 2026-10-12 (build 20261012.2)
+
+Refined the existing interlocking logo and added versioned install/transparent update assets. Restart waits for the mark to settle upright. Ride fixes: finished duration excludes pauses; stationary GPS does not invent moving time; missing GPX coordinates do not become zero; GPX names decode once. Clearing device data also removes the separate running-ride record, and switching account owners stops the in-memory ride.
+
+Release packaging explicitly reads UTF-8 and writes LF, rejects CRLF app-shell inputs, and `.gitattributes` requests LF checkout. Existing app-shell text was normalized before rebuilding hashes. Validation: 30 JavaScript tests, release line-ending test, 32 responsive Chromium views, update-logo spin/settle/reduced motion, verified offline loading and no browser runtime errors. The full Python browser suite could not run because its Playwright dependency is unavailable and package download failed; live services and physical Safari/iPhone were not tested.
+
 ## 2.22.1 — 2026-10-12 (build 20261012.1)
 
 The vendored `vendor/leaflet/leaflet.css` had CRLF line endings. `.gitattributes` (`* text=auto`) committed it with LF, so the published bytes no longer matched the release manifest and the verified service-worker install rejected the whole 2.22.0 update; the app reported it as a connection problem. The file is now LF and the manifest is rebuilt. New `tests/test_release_files.py` fails if any manifest text asset contains CRLF. Validation: published-tree hash check of every manifest asset against `origin/main` content, plus the existing suites. No SQL changes.
