@@ -1,3 +1,9 @@
+# Update — Reppsy 2.22.1, 2026-10-12
+
+User reported the 2.22.0 update failing with "check internet connection". Cause: CRLF in vendored leaflet.css was normalised to LF by git, so its published sha256 differed from release-manifest.json and the service worker's verified install failed. Converted to LF, rebuilt manifest, added `tests/test_release_files.py`. Always run that test (or check `git show origin/main:<path>` hashes) after adding vendored files.
+
+---
+
 # Update — Reppsy 2.22.0, 2026-10-11
 
 User asked for a Strava-like cycling section (session tracking, route, smart accessories) and reported the tab bar briefly see-through when pages load. Added `js/rides.js` (recording state machine, polyline storage, GPX/TCX parse, GPX export, BLE packet parsing/pairing), ride UI in `js/app.js` (Workout → Ride tab, live overlay `#ride-live`, pill `#ride-pill`, detail sheet, import), `css/ride.css`, vendored `vendor/leaflet` (BSD-2). Rides are workouts with `ride` (cleaned by `Rides.clean` in `Store.clean`; `Store.supportsRides` gates stale shells). CSP img-src now includes `https://tile.openstreetmap.org`. Fixed inert download links inside modal dialogs. Tests: `tests/test_rides.js`, `tests/test_rides_browser.py`. User may later want a native (Capacitor or fully native) app for background GPS and Bluetooth on iPhone.

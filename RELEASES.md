@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.22.1 — 2026-10-12 (build 20261012.1)
+
+The vendored `vendor/leaflet/leaflet.css` had CRLF line endings. `.gitattributes` (`* text=auto`) committed it with LF, so the published bytes no longer matched the release manifest and the verified service-worker install rejected the whole 2.22.0 update; the app reported it as a connection problem. The file is now LF and the manifest is rebuilt. New `tests/test_release_files.py` fails if any manifest text asset contains CRLF. Validation: published-tree hash check of every manifest asset against `origin/main` content, plus the existing suites. No SQL changes.
+
 ## 2.22.0 — 2026-10-11 (build 20261011.2)
 
 Workout → Ride records bike rides with `navigator.geolocation.watchPosition` (high accuracy), filtering fixes worse than ±35 m, sub-accuracy jitter and >120 km/h jumps. Moving time counts intervals above ~2.9 km/h; speed is a ~5 s window (or the device's reported speed); climb uses smoothed altitude with a 5 m threshold and is an estimate. The running ride is stored separately (`gymapp.v1.ride`) every few seconds and on hide, resumes after reload, and supports pause/resume (no straight line across pauses), discard and a floating progress pill. Finished rides are ordinary workouts with a cleaned `ride` part (Douglas–Peucker route at 6 m plus a point every 200 m, encoded polyline with time and elevation deltas), so history, goals, account sync and the existing cycling calorie estimate (when a body weight is known) include them. Detail sheets show an OpenStreetMap map (Leaflet 1.9.4 vendored, loaded on demand; CSP allows `tile.openstreetmap.org` images), totals and an elevation profile, and export GPX 1.1. GPX/TCX import (including indoor TCX without positions) skips duplicates. Web Bluetooth pairing reads standard heart-rate, cycling speed/cadence and cycling-power profiles; wheel distance replaces GPS for indoor rides.
