@@ -1,8 +1,9 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.21.2';
-  const build = '20261010.7';
+  const version = '2.21.3';
+  const build = '20261011.1';
   const history = [
+    {version:'2.21.3',build:'20261011.1',date:'2026-10-11',en:['Updating now shows only the Reppsy logo turning: it eases in, spins evenly and settles upright when done. The moving outline is gone.','Fixed checkmarks and hearts that briefly appeared oversized when Settings, exercise pickers or favorites opened; they now animate only when you tap them.','Sections glide open and closed, tab bars stay visible while scrolling, and translated routine notes show in your language only.'],hu:['Frissítéskor már csak a Reppsy logó forog: finoman indul, egyenletesen pörög, és a végén egyenesen megáll. A körbefutó keret megszűnt.','Javítva: a Beállítások, a gyakorlatválasztó és a kedvencek megnyitásakor a pipák és szívek egy pillanatra túl nagyok voltak; most csak koppintásra animálnak.','A szakaszok finoman nyílnak és zárulnak, a fülsávok görgetéskor is látszanak, a kétnyelvű tervmegjegyzések pedig csak a te nyelveden jelennek meg.']},
     {version:'2.21.2',build:'20261010.7',date:'2026-10-10',en:['Canceling a profile photo or cover picker keeps the editor and your draft open.','Confirmed photo likes animate the heart and count, respecting reduced motion.'],hu:['A profilkép- vagy borítóválasztó megszakítása nyitva hagyja a szerkesztőt és megtartja a módosításokat.','A sikeres képkedvelés finoman animálja a szívet és a számlálót, a csökkentett mozgást figyelembe véve.']},
     {version:'2.21.1',build:'20261010.6',date:'2026-10-10',en:['Smooth logo rotation during updates. Centered daily goal counters.','Goals and calorie clocks charge smoothly as entries change, including undo and rapid taps. Reduced-motion settings are respected.'],hu:['Finoman forgó logó frissítéskor. Középre igazított napi célszámlálók.','A cél- és kalóriaórák finoman töltődnek változáskor, visszavonásnál és gyors koppintásoknál is. A csökkentett mozgás beállítása megmarad.']},
     {version:'2.21.0',build:'20261010.5',date:'2026-10-10',

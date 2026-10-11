@@ -157,7 +157,7 @@ dialog#sheet{position:fixed;inset:auto 0 0 0;margin:0 auto;width:100%;max-width:
 dialog#sheet[open]{display:flex}
 dialog#sheet::backdrop{background:rgba(0,0,0,.62)}
 .sheet-head{display:flex;align-items:center;gap:8px;padding:10px 10px 8px;border-bottom:1px solid var(--line);flex:none}
-.sheet-head h2{flex:1;margin:0;text-align:center;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-head h2:focus{outline:none}.sheet-head h2{flex:1;margin:0;text-align:center;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sheet-head .sp{width:44px}
 .sheet-head .icon-btn{background:none}
 .sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px 16px calc(20px + var(--sb));flex:1;min-height:0}
@@ -454,7 +454,7 @@ dialog#sheet.closing{pointer-events:auto}
   .swatch:active{transform:scale(.9)}
   .pill:active{transform:scale(.93)}
   .qrow:active{filter:brightness(1.25)}
-  .pickrow.on .pk-n{animation:pop .3s cubic-bezier(.3,1.4,.5,1)}
+  .pickrow.pop .pk-n{animation:pop .3s cubic-bezier(.3,1.4,.5,1)}                  /* only the row just ticked, not every selected row whenever the list is redrawn */
   .kpis .hl b{animation:nudge .32s cubic-bezier(.3,1.4,.5,1)}
   #tabbar svg{transition:transform .16s cubic-bezier(.2,.7,.3,1)}
   #tabbar button:active svg{transform:scale(.82)}
@@ -463,6 +463,7 @@ dialog#sheet.closing{pointer-events:auto}
 
   /* a new screen: its blocks rise in one after the other */
   #view[data-anim="tab"]>*{animation:rise .3s cubic-bezier(.2,.8,.2,1) backwards}
+  #view[data-anim="tab"]>.top{animation-name:fade-in}                              /* the header stays put and only fades: no jump of the logo and buttons on every tab change */
   #view[data-anim="tab"]>:nth-child(2){animation-delay:.03s}
   #view[data-anim="tab"]>:nth-child(3){animation-delay:.06s}
   #view[data-anim="tab"]>:nth-child(4){animation-delay:.09s}
@@ -480,7 +481,7 @@ dialog#sheet.closing{pointer-events:auto}
   dialog#sheet.closing::backdrop{animation:fade-out .2s ease-in forwards}
   dialog#sheet[data-nav="fwd"] .sheet-body,dialog#sheet[data-nav="fwd"] .sheet-head h2,dialog#sheet[data-nav="fwd"] .sheet-foot{animation:nav-fwd .24s cubic-bezier(.2,.8,.2,1)}
   dialog#sheet[data-nav="back"] .sheet-body,dialog#sheet[data-nav="back"] .sheet-head h2,dialog#sheet[data-nav="back"] .sheet-foot{animation:nav-back .24s cubic-bezier(.2,.8,.2,1)}
-  .ai-on:not(.wait) svg{animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+  .ai-on.pop:not(.wait) svg{animation:pop .4s cubic-bezier(.3,1.4,.5,1)}          /* only right after a key is verified, never on an ordinary redraw */
 
   /* live workout */
   #workout{animation:sheet-in .34s cubic-bezier(.2,.85,.25,1)}
@@ -585,7 +586,7 @@ label.btn+.cap{margin-bottom:12px}
 @media (prefers-reduced-motion:no-preference){
   .rtile:active,.cd:not(:disabled):active,.wd:not(:disabled):active,.favbtn:active,.datebtn:active{transform:scale(.95)}
   .rtile,.cd,.wd,.favbtn,.datebtn,.icons button{transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .14s,background-color .18s,border-color .18s,color .18s,opacity .18s}
-  .favbtn.on svg{animation:pop .34s cubic-bezier(.3,1.4,.5,1)}
+  .favbtn.pop svg{animation:pop .34s cubic-bezier(.3,1.4,.5,1)}
   dialog#sheet,#workout{will-change:transform}
 }
 /* ---------- v1.5: drawings, AI coach, account ---------- */
@@ -628,7 +629,7 @@ input[type=email]{width:100%;min-height:46px;border-radius:12px;border:1px solid
 @media (prefers-reduced-motion:no-preference){
   #coach{transition:transform .16s cubic-bezier(.2,.8,.2,1),bottom .25s cubic-bezier(.2,.8,.2,1)}
   #coach:active{transform:scale(.9)}
-  .msg{animation:rise .22s cubic-bezier(.2,.8,.2,1)}
+  #chat>.msg:last-child{animation:rise .22s cubic-bezier(.2,.8,.2,1)}              /* the newest message only; earlier ones stay still */
 }
 /* ---------- v1.6: colour scale, coach history, scan details ---------- */
 .hue{padding:4px 0}

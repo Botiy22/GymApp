@@ -194,7 +194,10 @@
   }
 
   /* ================= VIEWS ================= */
-  const head = (title, sub, cal, update=false) => `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`;
+  const head = (title, sub, cal, update=false) => (sub === title ? (sub = '') : 0, `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`);
+  function popFav(on) { const b = $('#sheet .favbtn'); if (b && on) b.classList.add('pop'); }
+  const BI_RIDS = new Set((window.EXTRA_ROUTINES || []).map(r => r.id));
+  const bi = (s, rid) => { if (!BI_RIDS.has(rid)) return s; const p = String(s).split(' / '); return p.length === 2 && p[0] && p[1] ? p[L() === 'hu' ? 0 : 1] : s; };
   function updateButton(){return ui.updateAvailable||ui.updateBusy?`<button class="icon-btn update-app${ui.updateBusy?' busy':''}" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateAvailable'))}" ${ui.updateBusy?'disabled':''}>${IC.refresh}<span class="update-dot" aria-hidden="true"></span></button>`:'';}
   function syncUpdateButton(){
     const actions=$('#view > .top .top-actions');if(!actions||ui.tab!=='settings')return;
@@ -210,9 +213,20 @@
   }
   function updateOverlay(){
     const dialog=document.createElement('dialog');dialog.className='app-update-overlay';dialog.id='app-update-progress';dialog.setAttribute('aria-label',t('updating'));
-    dialog.innerHTML=`<div class="app-update-card" role="status" aria-live="polite"><div class="reload-mark"><img src="icons/reppsy-192.png" width="64" height="64" alt=""></div><b>Reppsy</b><p>${esc(t('updating'))}</p><div class="reload-track" aria-hidden="true"><i></i></div></div>`;
+    dialog.innerHTML=`<div class="app-update-card" role="status" aria-live="polite"><div class="reload-mark"><img src="icons/reppsy-mark.png" width="80" height="80" alt=""></div><b>Reppsy</b><p>${esc(t('updating'))}</p></div>`;
     dialog.addEventListener('cancel',e=>e.preventDefault());document.body.append(dialog);const unlock=ModalLock.acquire(dialog);dialog.showModal();
-    return {message:key=>{$('p',dialog).textContent=t(key);dialog.classList.add('ready');},close:()=>{dialog.close();dialog.remove();unlock();}};
+    return {message:key=>{$('p',dialog).textContent=t(key);dialog.classList.add('ready');settleMark($('.reload-mark img',dialog));},close:()=>{dialog.close();dialog.remove();unlock();}};
+  }
+  /* Ready: the spinning mark slows down and comes to rest upright instead of freezing mid-turn. */
+  function settleMark(img){
+    try{
+      if(!img||!img.getAnimations)return;const spin=img.getAnimations();if(!spin.length)return;
+      const m=new DOMMatrix(getComputedStyle(img).transform),angle=(Math.atan2(m.b,m.a)*180/Math.PI+360)%360;
+      let rest=360-angle;if(rest<120)rest+=360;                                              // at least a third of a turn, so it never stops abruptly
+      const ms=Math.max(500,Math.min(1100,rest/0.343*1.6));                                   // starts at the spinning speed (343°/s), then eases out
+      spin.forEach(a=>a.cancel());img.style.transform='rotate('+(angle+rest)+'deg)';
+      img.animate([{transform:'rotate('+angle+'deg)'},{transform:'rotate('+(angle+rest)+'deg)'}],{duration:ms,easing:'cubic-bezier(.33,.53,.3,1)'});
+    }catch(e){}
   }
   /* steps and burned calories of a day (typed in or pasted from the phone's health app) */
   const actOf = k => D().act[k] || { steps: 0, kcal: 0 };
@@ -793,7 +807,7 @@
     ownSync();
     const s = fn(), d = dlg(), old = $('.sheet-body', d), y = old && ui.sheetKeep ? old.scrollTop : 0; ui.sheetKeep = false;
     d.dataset.nav = nav || '';                                   // fwd / back: the new content slides in from that side
-    d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title">${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
+    d.innerHTML = `<div class="sheet-head">${ui.sheets.length > 1 ? `<button class="icon-btn" data-a="sheet-back" aria-label="${esc(t('back'))}">${IC.back}</button>` : '<span class="sp"></span>'}<h2 id="sheet-title" tabindex="-1" autofocus>${esc(s.title)}</h2><button class="icon-btn" data-a="sheet-close" aria-label="${esc(t('close'))}">${IC.close}</button></div><div class="sheet-body">${s.html}</div>${s.foot ? `<div class="sheet-foot">${s.foot}</div>` : ''}`;
     $('.sheet-body', d).scrollTop = y;
   }
   let closeT = 0, unlockSheet = null;
@@ -894,7 +908,7 @@
       const r = getR(id); if (!r) return { title: '', html: '' };
       const complex=RoutineTemplates.isComplex(r);
       const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + (r.info ? `<p class="cap rinfo">${esc(typeof r.info === 'object' ? r.info[L()] || r.info.en || '' : r.info)}</p>` : '') + `<p class="cap">${r.items.length} ${esc(t('exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(t('setsWord'))}${complex?'':' · ~'+estMin(r)+' '+esc(t('min'))}</p>${!complex?`<p class="cap">${esc(t('durationHint'))}</p>`:''}${prepRow('warm', { entries: r.items }, ` data-r="${esc(r.id)}"`)}${prepRow('cool', { entries: r.items }, ` data-r="${esc(r.id)}"`)}<div class="exlist prep-gap">` +
-        r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(it.reps)}${it.rir ? ' · RIR ' + esc(it.rir) : ''} · ${esc(t('rest'))} ${clock(it.rest)}</i>${it.note ? `<i class="nt">${esc(it.note)}</i>` : ''}</span>${IC.chev}</button>`).join('') + `</div>` +
+        r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(bi(it.reps, r.id))}${it.rir ? ' · RIR ' + esc(it.rir) : ''} · ${esc(t('rest'))} ${clock(it.rest)}</i>${it.note ? `<i class="nt">${esc(bi(it.note, r.id))}</i>` : ''}</span>${IC.chev}</button>`).join('') + `</div>` +
         (complex?'':`<button class="btn tickbtn" data-a="w-tick" data-id="${esc(r.id)}">${IC.check}${esc(t('tickWorkout'))}</button>`) + (D().plan && D().plan.train.length ? `<button class="link" data-a="plan-notes">${esc(t('planRules'))}</button>` : '');
       return { title: rName(r), html: h, foot: `<button class="btn primary" data-a="w-start" data-id="${esc(r.id)}">${esc(t(complex?'startComplex':'startWorkout'))}</button><button class="btn" data-a="r-edit" data-id="${esc(r.id)}">${esc(t('edit'))}</button><button class="btn routine-remove" data-a="routine-remove" data-id="${esc(r.id)}" aria-label="${esc(t('deleteRoutine'))}">${IC.close}</button>` };
     };
@@ -927,7 +941,7 @@
   }
   function pickSync() {                                                                // after a tick: update numbers, button and chip without redrawing (keeps scroll and keyboard)
     const st = ui.pick, n = st.sel.length;
-    $$('#pick-list .pickrow').forEach(r => { const i = st.sel.indexOf(r.dataset.id); r.classList.toggle('on', i >= 0); $('.pk-n', r).textContent = i >= 0 ? i + 1 : ''; $('.pk-main', r).setAttribute('aria-pressed', i >= 0); });
+    $$('#pick-list .pickrow').forEach(r => { const i = st.sel.indexOf(r.dataset.id), was = r.classList.contains('on'); r.classList.toggle('on', i >= 0); r.classList.toggle('pop', i >= 0 && !was); $('.pk-n', r).textContent = i >= 0 ? i + 1 : ''; $('.pk-main', r).setAttribute('aria-pressed', i >= 0); });
     const c = $('#pk-count'), b = $('#sheet [data-a="pick-done"]'), chip = $('#pk-selchip'), row = $('#pk-selrow');
     if (c) c.textContent = n ? ' (' + n + ')' : ''; if (b) b.disabled = !n; if (chip) $('span', chip).textContent = n; if (row) row.hidden = !n;
   }
@@ -976,9 +990,9 @@
       <div class="workout-jump"><label><span>${esc(t('jumpExercise'))}</span><select data-in="w-jump" aria-label="${esc(t('jumpExercise'))}"><option value="">${esc(t('chooseExercise'))}</option>${a.entries.map((en,i)=>`<option value="${i}">${i+1}. ${esc(itemName(en))} · ${en.sets.filter(s=>s.done).length}/${en.sets.length}</option>`).join('')}</select></label><span class="workout-completion">${a.entries.reduce((n,e)=>n+e.sets.filter(s=>s.done).length,0)}/${a.entries.reduce((n,e)=>n+e.sets.length,0)} ${esc(t('setsWord'))}</span></div>
       <div class="w-body">${circuitGuide(a)}${a.info ? `<p class="cap rinfo">${esc(typeof a.info === 'object' ? a.info[L()] || a.info.en || '' : a.info)}</p>` : ''}${prepRow('warm', a, '')}${a.entries.map((en, i) => {
         const hst = exHistory(en.ex), prev = hst.length ? hst[hst.length - 1].sets : [];
-        return `<section class="wex" data-ex-index="${i}"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(en.reps)}${en.rir ? ' · RIR ' + esc(en.rir) : ''} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
+        return `<section class="wex" data-ex-index="${i}"><div class="wex-h"><button class="wex-img" data-a="ex-open" data-id="${esc(en.ex)}" data-w="${i}" aria-label="${esc(t('details'))}"><img src="${thumb(en.ex)}" alt="" decoding="async"></button><div><b>${esc(itemName(en))}</b><i>${en.target} × ${esc(bi(en.reps, a.rid))}${en.rir ? ' · RIR ' + esc(en.rir) : ''} · ${esc(t('rest'))} ${clock(en.rest)}</i></div><button class="icon-btn sm" data-a="w-tools" data-i="${i}" aria-label="${esc(t('more'))}">⋯</button></div>
           ${ui.wTools === i ? `<div class="wex-tools${ui.fx === 'tools' ? ' in' : ''}"><button class="btn sm" data-a="w-up" data-i="${i}" ${i ? '' : 'disabled'}>${IC.up}${esc(t('moveUp'))}</button><button class="btn sm" data-a="w-down" data-i="${i}" ${i < a.entries.length - 1 ? '' : 'disabled'}>${IC.down}${esc(t('moveDown'))}</button><button class="btn sm danger" data-a="w-delex" data-i="${i}">${esc(t('remove'))}</button></div>` : ''}
-          ${en.note ? `<p class="hint wnote">${esc(en.note)}</p>` : ''}<p class="hint">${esc(hintFor(en, hst))}</p>
+          ${en.note ? `<p class="hint wnote">${esc(bi(en.note, a.rid))}</p>` : ''}<p class="hint">${esc(hintFor(en, hst))}</p>
           <div class="sets"><div class="set set-hd"><span>#</span><span>${esc(t('prev'))}</span><span>kg</span><span>${esc(t('reps'))}</span><span></span></div>
           ${en.sets.map((s, j) => { const p = prev[j];
             return `<div data-i="${i}" data-j="${j}" class="set${s.done ? ' done' : ''}${ui.fx === 'pop' + i + '-' + j ? ' pop' : ''}${ui.fx === 'new' + i + '-' + j ? ' in' : ''}"><button class="set-n${s.w ? ' w' : ''}" data-a="w-warm" data-i="${i}" data-j="${j}" aria-label="${esc(t('warmToggle'))}">${s.w ? 'W' : j + 1 - en.sets.slice(0, j).filter(x => x.w).length}</button><span class="prev">${p ? (p.kg ? p.kg + '×' : '') + p.reps : '–'}</span>
@@ -1301,8 +1315,9 @@
     const nn = D().aiNotes.length;
     const model = `<label class="fld"><span>${esc(t('model'))}</span><select data-in="set-model">${MODELS.map(([v, n]) => `<option value="${v}" ${s.model === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label><label class="fld"><span>${esc(t('photoModel'))}</span><select data-in="set-photo-model"><option value="">${esc(t('sameModel'))}</option>${MODELS.map(([v, n]) => `<option value="${v}" ${s.photoModel === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
       <p class="cap" id="ai-learn">${esc(nn ? t('aiLearnN', nn) : t('aiLearn0'))}</p>${nn ? `<button class="link mut" data-a="ai-forget">${esc(t('aiForget'))}</button>` : ''}`;
+    const pop = ui.keyPop; ui.keyPop = false;
     if (s.apiKey && s.keyState !== 'bad')                                    // a key is saved and nothing says it is wrong: no key field at all
-      return `<p class="ai-on${s.keyState === 'ok' ? '' : ' wait'}">${IC.check}<span><b>${esc(t(s.keyState === 'ok' ? 'aiOn' : 'aiSaved'))}</b><i>${esc(t(s.keyState === 'ok' ? 'aiOnSub' : 'aiSavedSub'))}</i></span></p>${model}<button class="link mut" data-a="key-remove">${esc(t('keyRemove'))}</button>`;
+      return `<p class="ai-on${s.keyState === 'ok' ? (pop ? ' pop' : '') : ' wait'}">${IC.check}<span><b>${esc(t(s.keyState === 'ok' ? 'aiOn' : 'aiSaved'))}</b><i>${esc(t(s.keyState === 'ok' ? 'aiOnSub' : 'aiSavedSub'))}</i></span></p>${model}<button class="link mut" data-a="key-remove">${esc(t('keyRemove'))}</button>`;
     return (s.keyState === 'bad' ? `<div class="note warn"><b>${esc(t('keyBad'))}</b><span>${esc(t('keyBadNew'))}</span></div>` : '') +
       `<p class="cap">${esc(t('aiExplain'))}</p><label class="fld"><span>${esc(t('apiKey'))}</span><input type="password" data-in="key-draft" value="${esc(ui.keyDraft || '')}" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" ${ui.keyBusy ? 'disabled' : ''}></label>
       <button class="btn primary${ui.keyBusy ? ' busy' : ''}" data-a="key-save" ${ui.keyBusy || !(ui.keyDraft || '').trim() ? 'disabled' : ''}>${esc(t(ui.keyBusy ? 'keyChecking' : 'keySave'))}</button>`;
@@ -1807,8 +1822,8 @@
       Store.save(); closeSheet(); if (topIs('day')) refreshSheet(); rerender(); toast(t('saved'));
     },
     /* favourites */
-    'fav-ex'(el) { const id = el.dataset.id, f = D().favEx, k = f.indexOf(id); if (!EX[id]) return; if (k >= 0) f.splice(k, 1); else f.push(id); Store.save(); refreshSheet(); if (ui.tab === 'lib') rerender(); },
-    'fav-food'() { const key = ui.fa && ui.fa.food.key, f = D().favFoods; if (!key) return; const k = f.indexOf(key); if (k >= 0) f.splice(k, 1); else f.unshift(key); Store.save(); refreshSheet(); },
+    'fav-ex'(el) { const id = el.dataset.id, f = D().favEx, k = f.indexOf(id); if (!EX[id]) return; if (k >= 0) f.splice(k, 1); else f.push(id); Store.save(); refreshSheet(); popFav(k < 0); if (ui.tab === 'lib') rerender(); },
+    'fav-food'() { const key = ui.fa && ui.fa.food.key, f = D().favFoods; if (!key) return; const k = f.indexOf(key); if (k >= 0) f.splice(k, 1); else f.unshift(key); Store.save(); refreshSheet(); popFav(k < 0); },
     'fs-fav'(el) { const x = (ui.fs.favs || [])[+el.dataset.n]; if (!x) return; pickFood(x); },
     'fs-brand'(el) { ui.fs.q = String(el.dataset.q || '').slice(0, 40); refreshSheet(); const b = $('#sheet .sheet-body'); if (b) b.scrollTop = 0; },
     'ai-forget'() { if (!confirm(t('aiForgetConfirm'))) return; D().aiNotes = []; Store.save(); refreshSheet(); },
@@ -1955,7 +1970,7 @@
         // Success is shown only when the new page's build matches the expected release.
         try { sessionStorage.setItem('gym-update-result', JSON.stringify({ version:AppUpdates.cacheId(latest), at: Date.now() })); } catch (e) {}
         ui.updateStatus=result?'updateRestarting':'updateReloading';overlay.message(ui.updateStatus);
-        setTimeout(() => location.reload(), 700);
+        setTimeout(() => location.reload(), 900);                                  // time for the mark to come to rest
       } catch(e){ui.updateBusy=false;ui.updateStatus='updateFail';overlay.close();syncUpdateButton();toast(t('updateFail'));}
     },
     /* workout */
@@ -2080,7 +2095,7 @@
       const r = FoodAI.check ? await FoodAI.check(k) : 'unknown';
       ui.keyBusy = false;
       if (r === 'bad') { toast(t('err_auth')); if (topIs('settings')) refreshSheet(); return; }      // a rejected key is never stored
-      const st = D().settings; st.apiKey = k; st.keyState = r === 'ok' ? 'ok' : ''; Store.save(); ui.keyDraft = '';
+      const st = D().settings; st.apiKey = k; st.keyState = r === 'ok' ? 'ok' : ''; Store.save(); ui.keyDraft = ''; ui.keyPop = r === 'ok';
       if (ui.ai && ui.ai.err && ui.ai.err.code === 'auth') ui.ai.err = null;                           // the old 'key rejected' message no longer applies
       toast(t(r === 'ok' ? 'keyOk' : 'keyUnchecked')); if (topIs('settings')) refreshSheet();
     },
@@ -2280,6 +2295,22 @@
     e.preventDefault(); closeSheet(true);
   });      // Esc key: close with the same slide
   document.addEventListener('click',e=>{const summary=e.target.closest?.('summary'),details=summary?.parentElement;if(details?.dataset.section){ui.sections=ui.sections||{};ui.sections[details.dataset.section]=!details.open;}});
+  /* Opening and closing a section glides to its new height instead of jumping (skipped with fewer animations). */
+  document.addEventListener('click', e => {
+    const sum = e.target.closest && e.target.closest('summary'), d = sum && sum.parentElement, ctl = e.target.closest && e.target.closest('a,button,input,select,label,textarea');
+    if (!d || d.tagName !== 'DETAILS' || sum !== d.firstElementChild || (ctl && ctl !== sum && sum.contains(ctl)) || calm() || !d.animate) return;
+    e.preventDefault();
+    const cs = getComputedStyle(d), from = d.getBoundingClientRect().height, closing = d._glide ? !d._glideClosing : d.open;   // a second tap mid-way turns it around
+    if (d._glide) { const g = d._glide; d._glide = null; g.cancel(); }
+    if (!closing) d.open = true;
+    const to = closing ? sum.getBoundingClientRect().bottom - d.getBoundingClientRect().top + parseFloat(cs.paddingBottom) + parseFloat(cs.borderBottomWidth) : d.getBoundingClientRect().height;
+    if (Math.abs(to - from) < 2) { if (closing) d.open = false; return; }
+    d.style.overflow = 'hidden';
+    const g = d.animate({ height: [from + 'px', to + 'px'] }, { duration: Math.round(Math.min(340, 170 + Math.abs(to - from) * 0.2)), easing: 'cubic-bezier(.2,.8,.2,1)' });
+    d._glide = g; d._glideClosing = closing;
+    g.onfinish = () => { if (d._glide !== g) return; d._glide = null; d.style.overflow = ''; if (closing) d.open = false; };
+    g.oncancel = () => { d.style.overflow = ''; };
+  }, true);
   document.addEventListener('toggle', e => { if(e.target.isConnected&&e.target.dataset?.section){ui.sections=ui.sections||{};ui.sections[e.target.dataset.section]=e.target.open;} if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
@@ -2311,7 +2342,7 @@
   window.addEventListener('online',()=>checkForUpdate(true));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkForUpdate();});
   setInterval(()=>{if(!document.hidden)checkForUpdate();},60000);
-  window.__gym = { ui, render, A, checkForUpdate, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
+  window.__gym = { ui, render, A, checkForUpdate, updateOverlay, parseAct, aiMemo, dbCheck, autoIcon, coachContext, coachSystem, doSync, hueRGB, calcTargets, prepList, dayTargets, nextRoutine, applyPlan }; window.__gymFood = { search: foodSearch, of: foodOf };
 })();
 
 

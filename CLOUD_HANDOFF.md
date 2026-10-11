@@ -1,3 +1,9 @@
+# Update — Reppsy 2.21.3, 2026-10-11
+
+User reported the Settings → Account checkmark briefly rendering large, asked for a whole-app bug/animation pass, and for updates to show only a nicer spinning logo without the moving outline. Pop keyframes moved from persistent state classes to one-shot `.pop` classes (AI key, picker rows, favorites); chat/header replay removed; overlay now uses `icons/reppsy-mark.png` with ease-in + linear spin and `settleMark()` to an upright stop; ring/track/focus outline removed. Details sections glide via WAAPI, tab bars sticky, bilingual clip routine notes split by language. Release 2.21.3/build 20261011.1, no SQL. `tests/test_browser.py` failures pre-date this change (stale profile tab / seeded split / energy prompt assumptions).
+
+---
+
 # Update — Reppsy 2.21.2, 2026-10-10
 
 Work branch `codex/profile-picker-likes-20261010`; remote backup `backup/main-20261010-before-profile-picker` preserves main 1ef257fae38afb8622701380d20434283deefa97. Backup is code, not private diary data. Normal fast-forward publication remains authorized.

@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.21.3 — 2026-10-11 (build 20261011.1)
+
+Update installation shows only the Reppsy mark (new transparent `icons/reppsy-mark.png`, cached by the service worker). It accelerates for 0.45 s, turns at a constant ~343°/s and, when the release is ready, decelerates to an upright stop before reloading. The orbiting ring, progress track and dialog focus outline were removed; reduced motion/Calm keep it still. The header update button only dims while busy.
+
+Pop animations were bound to persistent state (`.on`, `.ai-on`), so they replayed on every render: the AI-key check in Settings → Account, selected exercise-picker rows and favorite hearts briefly rendered oversized. They now use a one-shot `pop` class added only on the tap that changes state. Chat messages no longer re-animate on redraw (only the newest one rises), headers just fade on tab switches, duplicate Goals subtitles are hidden, the sheet title takes initial focus without a ring, collapsible sections glide open/closed (reversible, Calm-aware), Workout/Goals/Profile tabs stay sticky, and bilingual “HU / EN” notes in the built-in clip routines display one language.
+
+Validation: animation-replay crawl of every tab and non-destructive action at 390 px, idle animation listener, workout set/rest flow, section glide, update overlay spin/settle angle sampling and reduced motion; project unit, node and browser suites. Legacy `tests/test_browser.py` still has pre-existing failures from earlier navigation/energy changes (identical on the untouched 2.21.2 code). No physical iOS or hosted deployment verification.
+
 ## 2.21.2 — 2026-10-10 (build 20261010.7)
 
 Canceling the native profile-photo or cover picker now keeps the editor, draft and modal scroll lock intact. Only the dialog’s own cancel event dismisses the sheet; explicit close and Save still work. Confirmed photo likes animate the updated count and enlarged-photo heart. Failed requests leave counts unchanged; reduced motion and Calm disable these animations. No SQL changes.
