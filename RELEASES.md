@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.24.0 — 2026-10-12 (build 20261012.3)
+
+The 22 distinct exercises in the built-in starter templates have matching faceless anatomical line-art thumbnails and separate start/finish images. Eleven reuse existing attributed SVG pairs; eleven use generated boards exported to compact WebP pairs. Instructions retain the existing HU/EN text and move into numbered cards ahead of personal exercise statistics. Own thumbnails still take priority, broken drawings fall back to the exact exercise photos, and the anatomical muscle map is retained. No changes to exercise IDs, saved routines, food, goals or diary schemas.
+
+The broader Today/Workout-first phone redesign is an interactive concept, not applied to the app navigation. Source/asset details: `img/routine-line/README.md`.
+
 ## 2.23.0 — 2026-10-12 (build 20261012.2)
 
 Refined the existing interlocking logo and added versioned install/transparent update assets. Restart waits for the mark to settle upright. Ride fixes: finished duration excludes pauses; stationary GPS does not invent moving time; missing GPX coordinates do not become zero; GPX names decode once. Clearing device data also removes the separate running-ride record, and switching account owners stops the in-memory ride.

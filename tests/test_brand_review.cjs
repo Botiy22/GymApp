@@ -55,6 +55,26 @@ const mime = {'.js':'text/javascript','.mjs':'text/javascript','.css':'text/css'
     await context.setOffline(true);
     await page.reload();await page.waitForFunction(()=>!!window.__gym);
     assert.ok(await page.locator('.app-wordmark img').evaluate(e=>e.complete&&e.naturalWidth>0),'offline logo');
+    const routineIds=await page.evaluate(()=>[...new Set(RoutineTemplates.templates.flatMap(t=>t.days.flatMap(d=>d.items.map(i=>i.ex))))]);
+    assert.equal(routineIds.length,22);
+    for(const id of routineIds){
+      await page.evaluate(id=>__gym.A['ex-open']({dataset:{id}}),id);
+      const images=page.locator('#sheet .drawing-pair img');
+      assert.equal(await images.count(),2,id+' start/finish pair');
+      for(const picture of await images.all())assert.ok(await picture.evaluate(e=>e.decode().then(()=>e.naturalWidth>0)),id+' offline image');
+      assert.ok(await page.locator('#sheet .routine-steps li').count()>0,id+' technique steps');
+      if(['Barbell_Full_Squat','Barbell_Bench_Press_-_Medium_Grip','Wide-Grip_Lat_Pulldown'].includes(id)){
+        await page.locator('#sheet .drawing-phase').first().click();
+        assert.ok(await page.locator('#sheet .drawing-zoom img').evaluate(e=>e.decode().then(()=>e.naturalWidth>0)),id+' enlarged start');
+        await page.evaluate(id=>{__gym.ui.sheets=[];document.getElementById('sheet').close();__gym.A['ex-open']({dataset:{id}});},id);
+      }
+      await page.locator('#sheet [data-a="ex-visual"][data-v="muscles"]').click();
+      assert.ok(await page.locator('#sheet .mm svg').count()>0,id+' anatomical map retained');
+      await page.evaluate(()=>{__gym.ui.sheets=[];document.getElementById('sheet').close();});
+    }
+    await page.evaluate(()=>__gym.A['ex-open']({dataset:{id:'Barbell_Full_Squat'}}));
+    await page.screenshot({path:path.join(root,'artifacts/routine-line-detail.png')});
+    await page.evaluate(()=>{__gym.ui.sheets=[];document.getElementById('sheet').close();});
     await page.evaluate(()=>{localStorage.setItem('gymapp.v1.ride',JSON.stringify(Rides.start(Date.now())));Store.wipe();});
     assert.equal(await page.evaluate(()=>localStorage.getItem('gymapp.v1.ride')),null,'delete/sign-out clears separately stored ride');
     assert.deepEqual(errors,[]);

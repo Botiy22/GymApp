@@ -836,6 +836,11 @@ textarea{min-height:96px;resize:vertical;line-height:1.4}
 .drawing-caption{display:block;padding:10px 6px;font-size:.8rem;font-weight:600;background:var(--raised);color:var(--ink)}
 .drawing-zoom{max-width:640px;margin:0 auto}
 .drawing-phase:focus-visible{outline:2px solid var(--acc-tx);outline-offset:2px}
+.exrow img[src^="img/routine-line/"],.exrow img[src$=".svg"],.re-top img[src^="img/routine-line/"],.re-top img[src$=".svg"]{object-fit:contain;background:#fff;padding:5px}
+.routine-steps{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px;counter-reset:technique}
+.routine-steps li{display:flex;gap:12px;align-items:flex-start;padding:13px;border-radius:12px;background:var(--bg);line-height:1.5;min-width:0}
+.routine-steps li>span{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;background:var(--acc);color:var(--acc-ink);font-weight:700}
+.routine-steps li>p{margin:0;color:var(--ink);overflow-wrap:anywhere;min-width:0}
 .momentum-month .habit-today{display:block;margin:8px 0 0 auto;width:auto;min-height:36px;padding:6px 10px;font-size:.78rem}
 .update-status{min-height:1.4em;margin:8px 0;line-height:1.4}
 

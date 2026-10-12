@@ -1,5 +1,9 @@
 # Browser regression checks
 
+## Starter routine artwork and phone concept (2.24.0)
+
+`node --test tests/test_routine_art.js` verifies exact-ID pairs, thumbnails and offline hashes for all 22 starter exercises. `test_brand_review.cjs` now loads all 22 pairs and numbered instruction lists offline, retains their muscle maps and checks representative enlargement. `node tests/test_phone_preview.cjs` verifies the interactive concept's 15 phone/navigation layouts and sample meal/habit updates; this concept does not change app navigation. The six focused JavaScript suites passed 31 tests. Chromium reported no runtime errors. Generated art was visually reviewed, not independently certified by a trainer. The missing Python Playwright dependency still prevents the full legacy Python browser suite in this environment.
+
 ## Local logo/code review (2.23.0)
 
 `node tests/test_brand_review.cjs` uses Node Playwright and Chrome (override with `GYMAPP_BROWSER_EXECUTABLE`). Set `NODE_PATH` to the bundled Node package directory if Playwright is not otherwise installed. It disables account configuration and external HTTPS, checks 32 responsive main views, logo loading/spin/upright settling/reduced motion, verified offline installation, separate ride cleanup and runtime errors. Preview: `artifacts/logo-update.png`.

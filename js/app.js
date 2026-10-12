@@ -1,5 +1,10 @@
 (function startGymApp() {
   'use strict';
+  if (!window.ROUTINE_ART) {
+    const script=document.createElement('script');script.src='data/routine-art.js';
+    script.onload=startGymApp;script.onerror=()=>{window.ROUTINE_ART={};startGymApp();};
+    document.head.append(script);return;
+  }
   if (!document.querySelector('link[href="css/design.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/design.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/profile.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/profile.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/otisport-theme.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/otisport-theme.css'; document.head.append(style); }
@@ -72,7 +77,7 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
+  const thumb = id => ownPic(id) || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
   const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
@@ -1097,10 +1102,11 @@
       const focus = ui.muscleFocus && ui.muscleFocus.id === id ? ui.muscleFocus.group : '', mm = focus ? MuscleMap.fromLists(e.p.includes(focus) ? [focus] : [], e.s.includes(focus) ? [focus] : []) : pl && pl.mm ? pl.mm : MuscleMap.fromLists(e.p, e.s), hst = exHistory(id);
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
-      const art = (window.EX_ART || {})[id], figure = FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
+      const routineArt = !ui.figBad[id] && !ownPic(id) && window.ROUTINE_ART[id];
+      const art = !routineArt && (window.EX_ART || {})[id], figure = !routineArt && FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
       const drawing = !ui.figBad[id] && figure;
-      const photos = !board && !drawing && e.k >= 2;
-      const pair = drawing ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : photos ? [img(id,0),img(id,1)] : [];
+      const photos = !routineArt && !board && !drawing && e.k >= 2;
+      const pair = routineArt ? routineArt.pair : drawing ? [0, 1].map(phase => 'img/fig/' + figure + '-' + phase + '.svg') : photos ? [img(id,0),img(id,1)] : [];
       const visual = ui.exVisual && ui.exVisual.id === id ? ui.exVisual.mode : 'movement';
       const muscleName = m => (window.MUSCLE_DETAIL[m] || [mus(m), mus(m)])[L() === 'hu' ? 0 : 1];
       const mapLabel = focus ? t('muscleSelected', muscleName(focus)) : [t('musclesWorked'), t('primary') + ': ' + e.p.map(muscleName).join(', '), t('secondary') + ': ' + e.s.map(muscleName).join(', ')].join('. ');
@@ -1109,11 +1115,12 @@
       h += visual === 'muscles' ? map : e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
+      if (routineArt && st.list.length) h += `<section class="card routine-technique"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="routine-steps">${st.list.map((x,i) => `<li><span aria-hidden="true">${i+1}</span><p>${esc(x)}</p></li>`).join('')}</ol></section>`;
       h += `<div class="exmeta"><p class="en">${name !== e.n ? esc(e.n) : ''}</p><button class="favbtn${fav ? ' on' : ''}" data-a="fav-ex" data-id="${esc(id)}" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button></div><div class="chips">${visual !== 'muscles' ? e.p.map(m => `<button class="chip on" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}">${esc(mus(m))}</button>`).join('') : ''}${visual !== 'muscles' ? e.s.map(m => `<button class="chip" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}">${esc(mus(m))}</button>`).join('') : ''}<span class="chip">${esc(eqp(e.eq))}</span></div>`;
       if (pl && pl.tip) h += `<div class="tip"><b>${esc(t('coachNote'))}</b>${esc(pl.tip[L()])}</div>`;
       h += `<section class="card"><h3>${esc(t('myStats'))}</h3>` + (hst.length ? `<div class="kpis"><div><b>${best ? r1(best) : '–'}</b><i>${esc(t('est1rm'))}</i></div><div><b>${top ? (top.kg ? top.kg + '×' + top.reps : top.reps) : '–'}</b><i>${esc(t('bestSet'))}</i></div><div><b>${hst.length}</b><i>${esc(t('sessions'))}</i></div></div>${pts.length > 1 ? Charts.line(pts.slice(-20), { unit: ' kg' }) + `<p class="cap">${esc(t('e1rmChart'))}</p>` : ''}
         <div class="lastlist">${hst.slice(-3).reverse().map(x => `<p><i>${esc(fmtDate(x.d))}</i>${x.sets.map(s => `<span>${s.w ? 'W ' : ''}${s.kg ? s.kg + '×' : ''}${s.reps}</span>`).join('')}</p>`).join('')}</div>` : `<p class="empty">${esc(t('noHistoryEx'))}</p>`) + `</section>`;
-      if (st.list.length) h += `<section class="card"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
+      if (!routineArt && st.list.length) h += `<section class="card"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="steps">${st.list.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>`;
       if (e.own) h += `<section class="card"><h3>${esc(t('myExOwn'))}</h3><button class="btn" data-a="mx-edit" data-id="${esc(id)}">${IC.pen}${esc(t('edit'))}</button></section>`;
       const foot = (D().active ? `<button class="btn primary" data-a="ex-to-workout" data-id="${esc(id)}">${esc(t('addToWorkout'))}</button>` : '') + `<button class="btn" data-a="ex-to-routine" data-id="${esc(id)}">${esc(t('addToRoutine'))}</button>`;
       return { title: name, html: h, foot };
@@ -2525,9 +2532,10 @@
   /* A photo missing from this copy of the app is fetched from the open dataset instead (needs a connection). */
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
-    if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0) {
+    if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0 || src.indexOf('img/routine-line/') === 0) {
       const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
       if (id) ui.figBad[id] = 1;
+      if (!el.closest('.drawing-picture') && id && window.ROUTINE_ART[id] && EX[id]?.k >= 2) { el.src=img(id,'t');return; }
       const picture = el.closest('.drawing-picture');
       if (picture && id && EX[id] && EX[id].k >= 2) { const button=picture.closest('button'),phase=Number((button||holder).dataset.phase)||0;const source=img(id,phase);el.className='';el.src=source;if(button){button.dataset.source=source;button.dataset.board='0';button.setAttribute('aria-label',t('figPhoto')+': '+el.alt);}return; }
       if (picture) { picture.innerHTML = `<span class="phase-missing">${esc(t('artUnavailable'))}</span>`; const button = picture.closest('button'); if (button) button.disabled = true; }

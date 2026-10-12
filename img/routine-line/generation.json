@@ -1,0 +1,107 @@
+{
+  "tool": "built-in imagegen",
+  "date": "2026-10-12",
+  "styleReference": "img/fig/0227-0.svg",
+  "prompt": "Create a single production exercise illustration board, landscape 2:1 canvas, pure white background. EXACTLY TWO equal-sized side-by-side panels divided by a thin light-grey vertical line exactly at 50% canvas width. NO text, labels, arrows, logos, decorative art, inset figures, muscle highlights or UI. Image 1 is exact FIRST pose reference, image 2 exact SECOND pose reference, image 3 is ONLY drawing style reference. Recreate exact equipment, grips, body posture and direction of each photo in its corresponding half. Style must match image 3: black and white anatomical contour drawing, bold tapered clean ink lines, faceless oval head, realistic adult muscular anatomy with inner muscle contours, shirtless figure wearing simple shorts, no skin colors or photo shading, no hair or face. Keep head-to-feet and whole relevant equipment contained within each half with equal generous margins so panels can be cropped separately. Same angle/scale/athlete in both halves, white fill, minimal shading, serious fitness manual style. Retain floor contacts, real fingers, correct joints, exercise-specific equipment and cable attachment. Remove irrelevant gym backgrounds and other people.",
+  "images": [
+    {
+      "id": "Barbell_Full_Squat",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-df4805b6-d998-47d4-ae3b-d046529ed4be.png",
+      "references": [
+        "img/ex/Barbell_Full_Squat/0.jpg",
+        "img/ex/Barbell_Full_Squat/1.jpg"
+      ],
+      "master": "source/Barbell_Full_Squat.png"
+    },
+    {
+      "id": "Romanian_Deadlift",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-69f18f46-4e09-4a88-a197-3cf696a9d514.png",
+      "references": [
+        "img/ex/Romanian_Deadlift/0.jpg",
+        "img/ex/Romanian_Deadlift/1.jpg"
+      ],
+      "master": "source/Romanian_Deadlift.png"
+    },
+    {
+      "id": "Dumbbell_Shoulder_Press",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-3266e0c2-a464-465b-bcec-8410473e0dac.png",
+      "references": [
+        "img/ex/Dumbbell_Shoulder_Press/0.jpg",
+        "img/ex/Dumbbell_Shoulder_Press/1.jpg"
+      ],
+      "master": "source/Dumbbell_Shoulder_Press.png"
+    },
+    {
+      "id": "Wide-Grip_Lat_Pulldown",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-538c19d6-fee5-40fb-b99b-230496444df5.png",
+      "references": [
+        "img/ex/Wide-Grip_Lat_Pulldown/0.jpg",
+        "img/ex/Wide-Grip_Lat_Pulldown/1.jpg"
+      ],
+      "master": "source/Wide-Grip_Lat_Pulldown.png"
+    },
+    {
+      "id": "Leverage_Iso_Row",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-c663cbb0-bca9-47d1-9ffa-391bef7fbeaf.png",
+      "references": [
+        "img/ex/Leverage_Iso_Row/0.jpg",
+        "img/ex/Leverage_Iso_Row/1.jpg"
+      ],
+      "master": "source/Leverage_Iso_Row.png"
+    },
+    {
+      "id": "Hanging_Leg_Raise",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-81830b4c-3eea-4f50-98bc-30f95850311d.png",
+      "references": [
+        "img/ex/Hanging_Leg_Raise/0.jpg",
+        "img/ex/Hanging_Leg_Raise/1.jpg"
+      ],
+      "master": "source/Hanging_Leg_Raise.png"
+    },
+    {
+      "id": "Dumbbell_Flyes",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-ce9d531a-764a-40ff-9824-6c8bedafe19c.png",
+      "references": [
+        "img/ex/Dumbbell_Flyes/0.jpg",
+        "img/ex/Dumbbell_Flyes/1.jpg"
+      ],
+      "master": "source/Dumbbell_Flyes.png"
+    },
+    {
+      "id": "Cable_Rope_Overhead_Triceps_Extension",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-ef550cbb-d9e3-4420-9c4c-5770739b9c1c.png",
+      "references": [
+        "img/ex/Cable_Rope_Overhead_Triceps_Extension/0.jpg",
+        "img/ex/Cable_Rope_Overhead_Triceps_Extension/1.jpg"
+      ],
+      "master": "source/Cable_Rope_Overhead_Triceps_Extension.png"
+    },
+    {
+      "id": "Face_Pull",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-78271915-65a4-4050-94d5-0e2bb739dcb2.png",
+      "references": [
+        "img/ex/Face_Pull/0.jpg",
+        "img/ex/Face_Pull/1.jpg"
+      ],
+      "master": "source/Face_Pull.png"
+    },
+    {
+      "id": "Incline_Dumbbell_Curl",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-b7d11bf0-59d4-4be1-a392-e1e477f23ade.png",
+      "references": [
+        "img/ex/Incline_Dumbbell_Curl/0.jpg",
+        "img/ex/Incline_Dumbbell_Curl/1.jpg"
+      ],
+      "master": "source/Incline_Dumbbell_Curl.png"
+    },
+    {
+      "id": "Straight-Arm_Pulldown",
+      "generatedPath": "C:\\Users\\pthbt\\.codex\\generated_images\\01a12d30-e8a9-7023-95f2-ac43b62c72e8\\exec-ecdc90a4-428c-4589-b598-6b7a4e8c3460.png",
+      "references": [
+        "img/ex/Straight-Arm_Pulldown/0.jpg",
+        "img/ex/Straight-Arm_Pulldown/1.jpg"
+      ],
+      "master": "source/Straight-Arm_Pulldown.png"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+const fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const target=process.argv[2];
+if(!target)throw new Error('Pass the phone-preview fragment path.');
+global.window=global;
+require('../data/body.js');require('../js/musclemap.js');
+const data=(file,type)=>'data:'+type+';base64,'+fs.readFileSync(path.join(root,file)).toString('base64');
+const mm=MuscleMap.fromLists(['biceps'],['forearms']);
+const map=MuscleMap.svg(mm[0],mm[1],'Front','Back','Hammer curl muscles').replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replace('</svg>','<style>.mm-m{fill:#babdc4;stroke:#656b75;stroke-width:2}.mm-out{fill:none;stroke:#6c727c;stroke-width:3}.mm-hi{fill:#f38678;stroke:#b45e52;stroke-width:2}.mm-lo{fill:#edb099;stroke:#9b786b;stroke-width:2}.mm-hair{fill:#555}.mm-lbl{fill:#777;font:30px sans-serif}</style></svg>');
+const replacements={__BENCH__:data('img/fig/0042-0.svg','image/svg+xml'),__SQUAT__:data('img/fig/0122-0.svg','image/svg+xml'),__HAMMER__:data('img/fig/0227-0.svg','image/svg+xml'),__FINISH__:data('img/fig/0227-1.svg','image/svg+xml'),__LOGO__:data('icons/reppsy-192-v2.png','image/png'),__MAP__:'data:image/svg+xml;base64,'+Buffer.from(map).toString('base64')};
+let html=fs.readFileSync(target,'utf8');
+html=html.replace('<section class="rp-section"><div class="rp-section-head"><h3>Last session</h3><button class="rp-link cursor-interaction" data-action="history">View history</button></div><div class="rp-card"><b>Lower body</b><p>Saturday · 68 min · 21 sets</p></div></section>','<button class="rp-last cursor-interaction" data-action="history"><span><b>Last session · Lower body</b><span class="rp-meta">Saturday · 68 min · 21 sets</span></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>');
+for(const [key,value]of Object.entries(replacements))html=html.replaceAll(key,value);
+if(/__(BENCH|SQUAT|HAMMER|FINISH|LOGO|MAP)__/.test(html))throw new Error('Missing preview asset');
+fs.writeFileSync(target,html);
+console.log('Phone preview assets embedded:',Buffer.byteLength(html),'bytes');
