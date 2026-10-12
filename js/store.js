@@ -17,7 +17,7 @@ window.Store = (function () {
     return {
       v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
+        accent: 'volt', bg: 'aurora', calm: false, solid: false, mealGroups:false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profileStyle:Profile.cleanStyle(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
@@ -40,6 +40,7 @@ window.Store = (function () {
     const f = fresh(), r = obj(raw), s = obj(r.settings), p = obj(s.profile), out = fresh(), tg = obj(s.targets);
     out.settings = {
       onboardingVersion: s.onboardingVersion === 1 ? 1 : 0,
+      mealGroups:s.mealGroups===true,
       publicProfile: Profile.clean(s.publicProfile),profileStyle:Profile.cleanStyle(s.profileStyle),
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
@@ -119,6 +120,7 @@ window.Store = (function () {
       const r1 = v => Math.round(num(v, 0, 10000, 0) * 10) / 10;
       const o = { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' || z.src === 'plan' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
       const vml=num(z.vml,0,5000,0);if(vml>0)o.vml=Math.round(vml*100)/100;
+      if(['breakfast','lunch','dinner','snack','other'].includes(z.meal)){o.meal=z.meal;const at=num(z.mealAt,0,4e12,0);if(at)o.mealAt=at;}
       const pm = idStr(z.pm); if (pm) o.pm = pm;                                    // which meal of the plan this ticks off
       return o;
     };
@@ -243,7 +245,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { [KEY, AKEY, KEY + '.corrupt', KEY + '.ride'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

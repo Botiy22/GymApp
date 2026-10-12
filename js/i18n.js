@@ -1,5 +1,6 @@
 window.I18N = {
   hu: {
+    groupMeals:'Étkezések szerint',mealType:'Melyik étkezés?',meal_breakfast:'Reggeli',meal_lunch:'Ebéd',meal_dinner:'Vacsora',meal_snack:'Nassolás',meal_other:'Egyéb',mealEmpty:'Még nincs hozzáadott étel.',addFoodTo:'Étel hozzáadása: {0}',moveMeal:'Étkezés módosítása',
     appName: 'Reppsy', tabHome: 'Edzés', tabLib: 'Gyakorlatok', tabProg: 'Fejlődés', tabFood: 'Étkezés', tabHabits: 'Szokások',
     settings: 'Beállítások', back: 'Vissza', close: 'Bezárás', save: 'Mentés', saved: 'Elmentve', added: 'Hozzáadva', done: 'Kész', edit: 'Szerkesztés', delete: 'Törlés', remove: 'Eltávolítás', more: 'Továbbiak', details: 'Részletek', name: 'Név', all: 'Mind',
     min: 'perc', h: 'ó', exercises: 'gyakorlat', setsWord: 'sorozat', set: 'sorozat', reps: 'ism.', rest: 'pihenő', prev: 'előző', today: 'Ma',
@@ -114,6 +115,7 @@ window.I18N = {
     eq: { barbell: 'kétkezes rúd', dumbbell: 'kézisúlyzó', other: 'egyéb', 'body only': 'saját testsúly', cable: 'kábel', machine: 'gép', kettlebells: 'kettlebell', bands: 'gumiszalag', 'medicine ball': 'medicinlabda', 'exercise ball': 'fitlabda', 'foam roll': 'SMR-henger', 'e-z curl bar': 'EZ-rúd' }
   },
   en: {
+    groupMeals:'Group by meal',mealType:'Which meal?',meal_breakfast:'Breakfast',meal_lunch:'Lunch',meal_dinner:'Dinner',meal_snack:'Snacks',meal_other:'Other',mealEmpty:'No foods logged yet.',addFoodTo:'Add food to {0}',moveMeal:'Change meal',
     appName: 'Reppsy', tabHome: 'Workout', tabLib: 'Exercises', tabProg: 'Progress', tabFood: 'Food', tabHabits: 'Habits',
     settings: 'Settings', back: 'Back', close: 'Close', save: 'Save', saved: 'Saved', added: 'Added', done: 'Done', edit: 'Edit', delete: 'Delete', remove: 'Remove', more: 'More', details: 'Details', name: 'Name', all: 'All',
     min: 'min', h: 'h', exercises: 'exercises', setsWord: 'sets', set: 'set', reps: 'reps', rest: 'rest', prev: 'prev', today: 'Today',

@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.25.0 — 2026-10-12 (build 20261012.4)
+
+Food has an opt-in “Group by meal” switch, with Breakfast, Lunch, Dinner, Snacks and Other sections. Each section adds food separately; database amounts, manual entries, AI results and recipe portions offer a category picker. Existing uncategorized entries stay in Other without being rewritten. “Change meal” updates only category metadata, preserving entry IDs, timestamps and nutrition. Switching grouping off preserves both foods and saved labels. Cleaning, backups and cloud merges retain meal metadata; later meal-assignment timestamps win without dropping stale clients' diary entries. Failed saves keep the draft and roll back the grouping preference.
+
+Exercise index images now use available SVG drawings outside the 22 starter exercises too, and active-workout illustration thumbnails fit without cropping. Custom uploaded pictures are retained. New drawing thumbnails are cached in the verified offline shell.
+
+The additive Supabase migration `20261012134226_admin_user_directory.sql` is applied to the configured Tungsten project. The read-only admin directory joins account ID/email with existing saved/public usernames and display names. Normal app roles have no view privileges, and the view uses invoker security. Before/after checks found all six accounts and six saved-data records intact with identical diary fingerprints; four accounts currently have saved usernames. No user, diary or social-profile rows were rewritten.
+
+Validation uses isolated browser fixtures with live account configuration disabled: five meal groups, reassignment, switch/reload, backup cleaning, concurrent/stale cloud merge, database/AI logging, storage-error rollback, HU/EN phone widths, starter/non-starter thumbnails, verified offline installation and existing routine detail/enlargement checks. Physical Safari and live client sync are not claimed tested.
+
 ## 2.24.0 — 2026-10-12 (build 20261012.3)
 
 The 22 distinct exercises in the built-in starter templates have matching faceless anatomical line-art thumbnails and separate start/finish images. Eleven reuse existing attributed SVG pairs; eleven use generated boards exported to compact WebP pairs. Instructions retain the existing HU/EN text and move into numbered cards ahead of personal exercise statistics. Own thumbnails still take priority, broken drawings fall back to the exact exercise photos, and the anatomical muscle map is retained. No changes to exercise IDs, saved routines, food, goals or diary schemas.

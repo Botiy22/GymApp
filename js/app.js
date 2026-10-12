@@ -11,8 +11,8 @@
   if (!document.querySelector('link[href="css/ride.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/ride.css'; document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides) || !window.ModalLock) {
-    const src = !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -77,7 +77,7 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
+  const thumb = id => ownPic(id) || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (!ui.figBad[id] && window.FIG?.[id] ? 'img/fig/'+window.FIG[id]+'-0.svg' : '') || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
   const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
@@ -745,8 +745,18 @@
       ${fromPlan ? `<p class="cap plancap">${esc(t('planTgCap'))}</p>` : tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
     h += planCard(ui.foodDate, true);
     h += `<div class="food-actions"><button class="btn primary" data-a="food-manual">${IC.plus}<span>${esc(t('foodSearchBtn'))}</span></button><button class="btn" data-a="food-ai" data-m="photo">${IC.cam}<span>${esc(t('scanPhoto'))}</span></button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}<span>${esc(t('describe'))}</span></button></div>`;
-    h += actRow(ui.foodDate) + `<h2>${esc(t('meals'))}</h2>` + (list.length ? `<div class="flist">` + list.map(f => `<div class="frow"><span><b>${esc(f.name)}</b><i>${foodAmountText(f)?esc(foodAmountText(f))+' · ':''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src === 'ai' ? ' · AI' : f.src === 'plan' ? ' · ' + esc(t('planTag')) : ''}</i></span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('') + `</div>` : `<p class="empty">${esc(t('noMeals'))}</p>`);
+    h += actRow(ui.foodDate) + `<div class="meal-mode"><h2>${esc(t('meals'))}</h2><label class="sw"><input type="checkbox" role="switch" data-in="meal-groups" ${d.settings.mealGroups?'checked':''}><span>${esc(t('groupMeals'))}</span></label></div>` + foodDiary(list);
     return h;
+  }
+  const MEAL_KINDS=['breakfast','lunch','dinner','snack','other'];
+  const mealKind=v=>MEAL_KINDS.includes(v)?v:'other';
+  const mealLabel=v=>t('meal_'+mealKind(v));
+  const plannedMealKind=name=>{const n=norm(name);return /\b(breakfast|reggeli)\b/.test(n)?'breakfast':/\b(lunch|ebed)\b/.test(n)?'lunch':/\b(dinner|vacsora)\b/.test(n)?'dinner':/\b(snack|snacks|tizorai|uzsonna)\b/.test(n)?'snack':'other';};
+  function mealPicker(){return D().settings.mealGroups?`<label class="fld meal-picker"><span>${esc(t('mealType'))}</span><select data-in="food-meal">${MEAL_KINDS.map(k=>`<option value="${k}" ${mealKind(ui.foodMeal)===k?'selected':''}>${esc(mealLabel(k))}</option>`).join('')}</select></label>`:'';}
+  function diaryRows(list){return `<div class="flist">${list.map(f=>`<div class="frow" data-food-id="${esc(f.id)}"><span><b>${esc(f.name)}</b><i>${foodAmountText(f)?esc(foodAmountText(f))+' · ':''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src==='ai'?' · AI':f.src==='plan'?' · '+esc(t('planTag')):''}</i>${D().settings.mealGroups?`<button class="link meal-change" data-a="food-meal-edit" data-id="${esc(f.id)}" aria-label="${esc(t('moveMeal'))}: ${esc(f.name)}">${esc(t('moveMeal'))}</button>`:''}</span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('')}</div>`;}
+  function foodDiary(list){
+    if(!D().settings.mealGroups)return list.length?diaryRows(list):`<p class="empty">${esc(t('noMeals'))}</p>`;
+    return MEAL_KINDS.map(k=>{const rows=list.filter(f=>mealKind(f.meal)===k),total=rows.reduce((n,f)=>n+f.kcal,0);return `<section class="card meal-group" data-meal="${k}"><div class="h2row"><h3>${esc(mealLabel(k))}</h3><span class="cap">${Math.round(total)} kcal</span></div>${rows.length?diaryRows(rows):`<p class="cap">${esc(t('mealEmpty'))}</p>`}<button class="btn meal-add" data-a="food-group-add" data-meal="${k}">${IC.plus}${esc(t('addFoodTo',mealLabel(k)))}</button></section>`;}).join('');
   }
   /* ---------- meal ideas ---------- */
   const RCP = window.RECIPES || { items: [], videos: [] };
@@ -766,7 +776,7 @@
     return () => {
       const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
       const k = L() === 'hu' ? 0 : 1, q = ui.recipeQty || 1, macro = key => r[key] == null ? '—' : r1(r[key] * q);
-      return { title: r[L()] || r.en, html: `${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
+      return { title: r[L()] || r.en, html: `${mealPicker()}${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
         <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
         <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li${typeof i[2]==='string'&&i[2].length>24?' class="long-quantity"':''}><span>${esc(i[k])}</span><b>${typeof i[2] === 'number' ? i[2] + ' g' : esc(i[2])}</b></li>`).join('')}</ul></section>
         <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
@@ -831,7 +841,7 @@
     return myBlock + (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => foodHit(x, k, 'fs-pick')).join('')}</div>` : mine.length ? '' : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
   }
   function shFoodFind() {
-    const fn = () => ({ title: t('addFoodTitle'), html: `<div class="search"><input type="search" data-in="fs-q" value="${esc(ui.fs.q)}" placeholder="${esc(t('foodSearchPh'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="${esc(t('addFoodTitle'))}"></div><div id="fs-list">${foodRows()}</div>` });
+    const fn = () => ({ title: t('addFoodTitle'), html: `${mealPicker()}<div class="search"><input type="search" data-in="fs-q" value="${esc(ui.fs.q)}" placeholder="${esc(t('foodSearchPh'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="${esc(t('addFoodTitle'))}"></div><div id="fs-list">${foodRows()}</div>` });
     fn.kind = 'foodfind'; return fn;
   }
   function faOut() {
@@ -850,7 +860,7 @@
         ${f.volume?.liquid&&!canDl?`<p class="cap">${esc(t('volumeMissing'))}</p><button class="btn" data-a="fa-label">${esc(t('useLiquidLabel'))}</button>`:''}
         <label class="fld"><span>${esc(t(dl?'decilitres':'grams'))}</span><input type="text" inputmode="decimal" data-in="fa-g" value="${esc(ui.fa.g)}" autocomplete="off" enterkeyhint="done"></label>
         <div class="chips">${chips.map(([v, l]) => `<button class="chip${num(ui.fa.g) === v ? ' on' : ''}" data-a="fa-set" data-g="${v}">${esc(l)}</button>`).join('')}</div>
-        <div id="fa-out">${faOut()}</div><p class="cap">${esc(t(f.my ? 'myFoodSrc' : 'foodSrc'))}</p>`,
+        ${mealPicker()}<div id="fa-out">${faOut()}</div><p class="cap">${esc(t(f.my ? 'myFoodSrc' : 'foodSrc'))}</p>`,
         foot: `<button class="btn primary" data-a="fa-add">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -1435,14 +1445,15 @@
   /* ================= NUTRITION ================= */
   const foodAmountText=f=>f.vml>0?dec(r1(f.vml/100))+' dl':f.g?f.g+' g':'';
   function addFood(items, src) {
-    const d = D(), day = d.food[ui.foodDate] = d.food[ui.foodDate] || [];
+    return Store.apply(d=>{const day = d.food[ui.foodDate] = d.food[ui.foodDate] || [];
     items.forEach(i => {
       const f = { id: uid(), name: String(i.name || '').trim() || t('meal'), g: Math.round(num(i.g)) || 0, kcal: Math.round(num(i.kcal)), p: r1(num(i.p)), c: r1(num(i.c)), f: r1(num(i.f)), src, t: Date.now() };
+      if(d.settings.mealGroups){f.meal=mealKind(ui.foodMeal);f.mealAt=Date.now();}
       if(num(i.vml)>0&&num(i.vml)<=5000)f.vml=Math.round(num(i.vml)*100)/100;
       day.push(f);
       d.recentFoods = [{ name: f.name, g: f.g, kcal: f.kcal, p: f.p, c: f.c, f: f.f,...(f.vml?{vml:f.vml}:{}) }].concat(d.recentFoods.filter(x => x.name.toLowerCase() !== f.name.toLowerCase())).slice(0, 12);
     });
-    Store.save();
+    });
   }
   function shFoodManual() {
     return () => {
@@ -1451,7 +1462,7 @@
       return { title: t('foodOwn'), html: `${rc.length ? `<p class="cap">${esc(t('recent'))}</p><div class="chips">${rc.map((r, i) => `<button class="chip" data-a="food-recent" data-i="${i}">${esc(r.name)}</button>`).join('')}</div>` : ''}
         ${v.requireMacros ? `<p class="cap">${esc(t('recipeMissing'))}</p>` : ''}<form data-f="food-manual" id="fm"><label class="fld"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(v.name || '')}" autocomplete="off" required></label>
         <label class="fld"><span>${esc(t('amountUnit'))}</span><select name="unit" data-in="fm-unit"><option value="g" ${!dl?'selected':''}>g</option><option value="dl" ${dl?'selected':''}>dl</option></select></label><div class="grid2">${fld('g',t(dl?'decilitres':'grams'),'decimal',dl?(v.vml?v.vml/100:v.g||''):v.g||'')}${fld('kcal','kcal','numeric',v.kcal)}</div><div class="grid3">${fld('p', t('protein') + ' (g)', 'decimal', v.p)}${fld('c', t('carbs') + ' (g)', 'decimal', v.c)}${fld('f', t('fat') + ' (g)', 'decimal', v.f)}</div>
-        <label class="sw"><input type="checkbox" role="switch" name="keep"><span>${esc(t('myFoodKeep'))}</span></label></form>`,
+        ${mealPicker()}<label class="sw"><input type="checkbox" role="switch" name="keep"><span>${esc(t('myFoodKeep'))}</span></label></form>`,
         foot: `<button class="btn primary" form="fm">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -1461,7 +1472,7 @@
     return () => {
       const s = ui.ai, st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad;
       const shots = edit => s.imgs.length ? `<div class="ai-shots${s.imgs.length < 2 ? ' one' : ''}">${s.imgs.map((x, i) => `<div class="ai-shot"><img class="ai-prev${edit ? '' : ' sm'}" src="${x.url}" alt="${esc(t('yourPhoto'))}">${edit ? `<button class="icon-btn sm" data-a="ai-rm" data-i="${i}" aria-label="${esc(t('removePhoto'))}">${IC.close}</button>` : ''}</div>`).join('')}</div>` : '';
-      let h = '';
+      let h = mealPicker();
       if (!key) h += `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'needKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`;
       if (s.res) {
         const tot = s.res.items.reduce((a, i) => a + num(i.kcal), 0), q = s.res.question && (s.qa || []).length < 2 ? s.res.question : null;
@@ -2116,7 +2127,7 @@
       const k = el.dataset.d, pd = planDay(k), m = pd && pd.meals.find(x => x.id === el.dataset.m); if (!m) return;
       const d = D(), day = d.food[k] || [], had = day.some(f => f.pm === m.id);
       if (had) d.food[k] = day.filter(f => f.pm !== m.id);
-      else d.food[k] = day.concat([{ id: uid(), name: (pmName(m) + ': ' + m.items.map(i => i.n).join(', ')).slice(0, 80), g: Math.round(m.items.reduce((a, i) => a + i.g, 0)), kcal: m.kcal, p: m.p, c: m.c, f: m.f, src: 'plan', pm: m.id, t: Date.now() }]);
+      else d.food[k] = day.concat([{ id: uid(), name: (pmName(m) + ': ' + m.items.map(i => i.n).join(', ')).slice(0, 80), g: Math.round(m.items.reduce((a, i) => a + i.g, 0)), kcal: m.kcal, p: m.p, c: m.c, f: m.f, src: 'plan', pm: m.id, t: Date.now(),...(d.settings.mealGroups?{meal:plannedMealKind(pmName(m)),mealAt:Date.now()}:{}) }]);
       if (!d.food[k].length) delete d.food[k];
       Store.save(); if (D().settings.vibrate && navigator.vibrate && !had) navigator.vibrate(20); rerender();
     },
@@ -2327,13 +2338,16 @@
     },
     'wk-del'(el) { if (confirm(t('deleteWorkoutConfirm'))) { D().workouts = D().workouts.filter(w => w.id !== el.dataset.id); Store.save(); closeSheet(true); rerender(); } },
     /* food */
+    'food-group-add'(el){ui.foodMeal=mealKind(el.dataset.meal);A['food-manual']();},
+    'food-meal-edit'(el){if(!dayFood().some(f=>f.id===el.dataset.id))return;ui.moveFood=el.dataset.id;ui.foodMeal=mealKind(dayFood().find(f=>f.id===ui.moveFood).meal);openSheet(()=>({title:t('moveMeal'),html:mealPicker(),foot:`<button class="btn primary" data-a="food-meal-save">${esc(t('save'))}</button>`}));},
+    'food-meal-save'(){const id=ui.moveFood,meal=mealKind(ui.foodMeal);if(!Store.apply(d=>{const f=(d.food[ui.foodDate]||[]).find(x=>x.id===id);if(f){f.meal=meal;f.mealAt=Date.now();}})){toast(t('saveFailed'));return;}closeSheet(true);rerender();toast(t('saved'));},
     'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) go(+el.dataset.d < 0 ? 'back' : 'fwd', () => { ui.foodDate = ymd(d); render(); }); },
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
     'food-view'(el) { const v = el.dataset.v === 'ideas' ? 'ideas' : el.dataset.v === 'plan' && D().plan ? 'plan' : 'diary'; if (ui.food !== v) go('tab', () => { ui.food = v; render(); }); else render(); },
     'idea-cat'(el) {go('tab',()=>{ui.idea = el.dataset.c;rerender();});},
     'idea-open'(el) { ui.recipeQty = 1; openSheet(shRecipe(el.dataset.id)); },
     'recipe-qty'(el) { ui.recipeQty = Math.max(.5, Math.min(20, (ui.recipeQty || 1) + num(el.dataset.n))); refreshSheet(); },
-    'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; const q = ui.recipeQty || 1, food = { name: (r[L()] || r.en) + (q !== 1 ? ' × ' + q : ''), g: Math.round((r.g || 0) * q) }; ['kcal', 'p', 'c', 'f'].forEach(k => { food[k] = r[k] == null ? '' : r1(r[k] * q); }); if (['kcal', 'p', 'c', 'f'].some(k => r[k] == null)) { ui.manual = Object.assign(food, { requireMacros: true }); openSheet(shFoodManual()); return; } addFood([food], r.source ? 'manual' : 'db'); closeSheet(true); rerender(); toast(t('added')); },
+    'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; const q = ui.recipeQty || 1, food = { name: (r[L()] || r.en) + (q !== 1 ? ' × ' + q : ''), g: Math.round((r.g || 0) * q) }; ['kcal', 'p', 'c', 'f'].forEach(k => { food[k] = r[k] == null ? '' : r1(r[k] * q); }); if (['kcal', 'p', 'c', 'f'].some(k => r[k] == null)) { ui.manual = Object.assign(food, { requireMacros: true }); openSheet(shFoodManual()); return; } if(!addFood([food], r.source ? 'manual' : 'db')){toast(t('saveFailed'));return;} closeSheet(true); rerender(); toast(t('added')); },
     'food-manual'() { ui.fs = { q: '', hits: [] }; openSheet(shFoodFind()); },
     'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); if (topIs('foodfind')) openSheet(shFoodManual()); else refreshSheet(); },
     'fs-pick'(el) { const x = ui.fs.hits[+el.dataset.n]; if (x) pickFood(x); },
@@ -2348,13 +2362,13 @@
     'fa-set'(el) { ui.fa.g = String(+el.dataset.g); refreshSheet(); },
     'fa-add'() {
       const f = ui.fa.food, q=FoodVolume.quantity(f,ui.fa.g,ui.fa.unit); if (!q||!q.k) { toast(t('badValue')); return; }
-      addFood([{name:f.name,g:q.g,vml:q.vml,kcal:f.kcal*q.k,p:f.p*q.k,c:f.c*q.k,f:f.f*q.k}], 'db'); closeSheet(true); rerender(); toast(t('added'));
+      if(!addFood([{name:f.name,g:q.g,vml:q.vml,kcal:f.kcal*q.k,p:f.p*q.k,c:f.c*q.k,f:f.f*q.k}], 'db')){toast(t('saveFailed'));return;} closeSheet(true); rerender(); toast(t('added'));
     },
     'food-ai'(el) { ui.ai = aiNew(el.dataset.m === 'photo' ? 'photo' : 'text'); openSheet(shFoodAI()); },
     'ai-go'() { aiGo(); },
     'ai-reset'() { ui.ai = aiNew(ui.ai.mode, ui.ai.text); refreshSheet(); },
     'ai-del'(el) { const it = ui.ai.res.items.splice(+el.dataset.i, 1)[0]; if (it && it._b) ui.ai.gone.push(it.en || it._b.name); refreshSheet(); },
-    'ai-add'() { const s = ui.ai, learned = aiLearn(s); addFood(s.res.items.map(i => ({ name: i.name, g: i.grams, kcal: i.kcal, p: i.p, c: i.c, f: i.f })), 'ai'); closeSheet(true); rerender(); toast(t(learned ? 'aiLearned' : 'added')); },
+    'ai-add'() { const s = ui.ai, learned = aiLearn(s); if(!addFood(s.res.items.map(i => ({ name: i.name, g: i.grams, kcal: i.kcal, p: i.p, c: i.c, f: i.f })), 'ai')){toast(t('saveFailed'));return;} closeSheet(true); rerender(); toast(t(learned ? 'aiLearned' : 'added')); },
     async 'key-save'() {
       const k = (ui.keyDraft || '').replace(/[^\x21-\x7e]/g, ''); if (!k || ui.keyBusy) return;
       ui.keyBusy = true; refreshSheet();
@@ -2381,6 +2395,8 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
+    'meal-groups'(el){const enabled=el.checked;if(!Store.apply(d=>{d.settings.mealGroups=enabled;})){el.checked=!enabled;toast(t('saveFailed'));return;}rerender();},
+    'food-meal'(el){ui.foodMeal=mealKind(el.value);},
     'gate-username'(el){ui.gate.username=el.value;},
     'review-text'(el){if(!ui.reviewDraft)return;ui.reviewDraft.body=el.value;ui.reviewError='';const count=$('[data-review-count]');if(count)count.textContent=el.value.length+' / 280';},
     'profile-draft'(el) {if(ui.profileDraft){ui.profileDraft[el.name]=el.value;const preview=$('.profile-preview');if(preview)preview.outerHTML=profilePreview(ui.profileDraft,ui.profileStyleDraft||profileStyle());}},
@@ -2495,7 +2511,7 @@
       if(dl&&(!(amount>0)||vml>5000)){toast(t('badValue'));return;}
       if(v.keep&&amount>0){const divisor=dl?vml:g,k100=x=>r1(num(x)*100/divisor),d=D(),same=d.myFoods.find(z=>z.name.toLowerCase()===nm.toLowerCase());
         const z={id:same?same.id:uid(),name:nm,kcal:k100(v.kcal),p:k100(v.p),c:k100(v.c),f:k100(v.f),port:Math.round(divisor),t:Date.now(),...(dl?{basis:'ml'}:{})};d.myFoods=same?d.myFoods.map(o=>o.id===z.id?z:o):d.myFoods.concat([z]);}
-      addFood([{...v,g,...(dl?{vml}:{})}], 'manual'); closeSheet(true); rerender(); toast(t('added')); }
+      if(!addFood([{...v,g,...(dl?{vml}:{})}], 'manual')){toast(t('saveFailed'));return;} closeSheet(true); rerender(); toast(t('added')); }
     if (k === 'myfood') {
       const nm = String(v.name || '').trim().slice(0, 80), kc = num(v.kcal); if (!nm || !(kc >= 0 && kc <= 950)||!String(v.kcal).trim()) { toast(t('badValue')); return; }
       if ([v.p, v.c, v.f].some(x => num(x) < 0 || num(x) > 100)) { toast(t('badValue')); return; }

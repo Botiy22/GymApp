@@ -1,5 +1,9 @@
 # Browser regression checks
 
+## Optional meal grouping and drawing thumbnails (2.25.0)
+
+`node tests/test_meal_groups.cjs` runs isolated Chromium handlers with no live account/API calls. It covers five group-specific manual additions, moving an old entry without changing ID/nutrition/log time, grouped/flat switch and reload, backup cleaning, category timestamps during cloud merge, database/AI additions, failed-write rollback, HU/EN widths and starter/non-starter line thumbnails. `test_brand_review.cjs` verifies the release's offline install and all starter pairs/muscle maps. Live database verification for the admin-only directory is documented in `SOCIAL.md`.
+
 ## Starter routine artwork and phone concept (2.24.0)
 
 `node --test tests/test_routine_art.js` verifies exact-ID pairs, thumbnails and offline hashes for all 22 starter exercises. `test_brand_review.cjs` now loads all 22 pairs and numbered instruction lists offline, retains their muscle maps and checks representative enlargement. `node tests/test_phone_preview.cjs` verifies the interactive concept's 15 phone/navigation layouts and sample meal/habit updates; this concept does not change app navigation. The six focused JavaScript suites passed 31 tests. Chromium reported no runtime errors. Generated art was visually reviewed, not independently certified by a trainer. The missing Python Playwright dependency still prevents the full legacy Python browser suite in this environment.

@@ -841,6 +841,12 @@ textarea{min-height:96px;resize:vertical;line-height:1.4}
 .routine-steps li{display:flex;gap:12px;align-items:flex-start;padding:13px;border-radius:12px;background:var(--bg);line-height:1.5;min-width:0}
 .routine-steps li>span{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;background:var(--acc);color:var(--acc-ink);font-weight:700}
 .routine-steps li>p{margin:0;color:var(--ink);overflow-wrap:anywhere;min-width:0}
+.meal-mode{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 12px}
+.meal-mode h2{margin:0}.meal-mode .sw{margin:0;min-height:44px;padding:0;gap:9px}.meal-mode .sw span{font-size:.85rem}
+.meal-group{margin-bottom:12px}.meal-group .h2row{margin-bottom:8px}.meal-group .flist{margin:0 0 10px}.meal-group .frow{padding-left:0;padding-right:0}
+.meal-group .meal-add{width:100%;min-height:44px}.meal-change{font-size:.76rem;min-height:32px;padding:3px 0;text-align:left}
+.meal-picker{margin:0 0 14px}.meal-picker select{min-height:44px}
+.wex-img img[src^="img/routine-line/"],.wex-img img[src$=".svg"]{object-fit:contain;background:#fff;padding:4px}
 .momentum-month .habit-today{display:block;margin:8px 0 0 auto;width:auto;min-height:36px;padding:6px 10px;font-size:.78rem}
 .update-status{min-height:1.4em;margin:8px 0;line-height:1.4}
 
