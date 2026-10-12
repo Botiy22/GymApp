@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.26.0 — 2026-10-12 (build 20261012.5)
+
+Food meal groups are compact and initially collapsed. Tap the meal heading to expand its food list; each header has a 44px + control, a small calorie clock showing that meal's share of logged daily calories, protein/carbs/fat totals and a proportional macro bar. The grouping switch stays mounted so its thumb animates, and cards enter with a short stagger. Expansion preserves its state during diary redraws. Reduced-motion and Calm settings disable the new motion.
+
+Imported PDF/Word/Excel meal check-ins assign recognized meal names even when grouping is off. They preserve the document's meal totals and copy the food list with supplied individual calories into the saved log. Missing individual calories remain unknown; no nutrient values are invented. Older plan entries use their linked meal or recorded name for grouping without rewriting their saved data. Imported plans are still plans until marked eaten.
+
+Goals weekly progress has previous/next arrows, a visible date range and horizontal swipe navigation, including upcoming weeks. Vertical scrolling remains available and future dates cannot be checked off. Browsing weeks preserves the selected daily goal date and existing data.
+
+Validation: local Chromium checks cover group expansion/inert collapsed controls, five logging categories, exact imported meal totals and item persistence, grouping-switch identity, responsive HU/EN Food, swipe directions, arrow navigation, vertical gestures and future-date restrictions. Physical phone gestures and live deployment are not verified.
+
 ## 2.25.0 — 2026-10-12 (build 20261012.4)
 
 Food has an opt-in “Group by meal” switch, with Breakfast, Lunch, Dinner, Snacks and Other sections. Each section adds food separately; database amounts, manual entries, AI results and recipe portions offer a category picker. Existing uncategorized entries stay in Other without being rewritten. “Change meal” updates only category metadata, preserving entry IDs, timestamps and nutrition. Switching grouping off preserves both foods and saved labels. Cleaning, backups and cloud merges retain meal metadata; later meal-assignment timestamps win without dropping stale clients' diary entries. Failed saves keep the draft and roll back the grouping preference.

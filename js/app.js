@@ -99,7 +99,7 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', goals: 'habits', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', goals: 'habits', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), mealOpen: {}, habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -281,8 +281,8 @@
     h += `<div class="datenav habit-nav"><button class="icon-btn" data-a="habit-date" data-d="-1" aria-label="${esc(t('prevDay'))}">${IC.back}</button><b>${k === today() ? esc(t('today')) : esc(d.toLocaleDateString(loc, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><button class="icon-btn flip" data-a="habit-date" data-d="1" aria-label="${esc(t('nextDay'))}" ${k >= today() ? 'disabled' : ''}>${IC.back}</button></div>`;
     const stats = Momentum.summary(D().habits, k, D()), percent = Math.round(stats.ratio * 100);
     h += `<section class="card momentum-hero"><div class="momentum-dial" data-clock-key="goals-${esc(k)}" data-clock-ratio="${percent/100}">${Profile.dial(percent,100,percent+"%")}<b>${percent}%</b></div><div><small>${esc(t('momentumSub'))}</small><h2>${esc(t(due.length ? done === due.length ? 'momentumDone' : 'momentumProgress' : 'momentumRest'))}</h2><p>${done} / ${due.length} ${esc(t('momentumRate'))}</p></div></section>`;
-    const start = ymd(weekStart(k + 'T12:00'));
-    h += `<h3>${esc(t('momentumWeek'))}</h3><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div>`;
+    const start = ui.habitWeek || ymd(weekStart(k + 'T12:00'));
+    h += `<section class="momentum-week-browser" aria-label="${esc(t('weekBrowse'))}"><div class="momentum-week-nav"><button class="icon-btn sm" data-a="habit-week-step" data-d="-1" aria-label="${esc(t('prevWeek'))}">${IC.back}</button><span><b>${esc(t('weekBrowse'))}</b><small aria-live="polite">${esc(fmtDate(start+'T12:00',true))} – ${esc(fmtDate(Momentum.shift(start,6)+'T12:00',true))}</small></span><button class="icon-btn sm flip" data-a="habit-week-step" data-d="1" aria-label="${esc(t('nextWeek'))}">${IC.back}</button></div><div class="momentum-week">${Array.from({ length: 7 }, (_, i) => { const key = Momentum.shift(start, i), s = Momentum.summary(D().habits, key, D()); return `<button class="${key === k ? 'selected' : ''}" data-a="habit-select-date" data-d="${key}" ${key > today() ? 'disabled' : ''} aria-label="${esc(fmtDate(key + 'T12:00', true))}: ${s.done}/${s.total}"><i>${esc(new Date(key + 'T12:00').toLocaleDateString(loc, { weekday: 'narrow' }))}</i><b>${key.slice(-2)}</b><span style="--fill:${s.total ? s.ratio * 100 : 0}%"></span></button>`; }).join('')}</div></section>`;
     h += `<div class="card habit-card"><div class="h2row"><h2>${esc(t('habitsDaily'))}</h2><span class="habit-count">${done}/${due.length}</span></div>${habitRows(k)}</div><button class="btn primary habit-add" data-a="habit-new">${IC.plus}${esc(t('habitAdd'))}</button>`;
     h += `<details class="card goal-templates"><summary>${esc(t('momentumTemplates'))}${IC.down}</summary><div class="chips">${['Water', 'Read', 'Stretch', 'Steps', 'Workout', 'Protein'].map((n, i) => `<button class="chip" data-a="habit-template" data-i="${i}">${esc(t('tpl' + n))}</button>`).join('')}</div><p class="cap">${esc(t('habitEmpty'))}</p></details>`;
     let recentTotal = 0, recentDone = 0;
@@ -745,7 +745,7 @@
       ${fromPlan ? `<p class="cap plancap">${esc(t('planTgCap'))}</p>` : tg ? `<button class="link" data-a="targets">${esc(t('editTargets'))}</button>` : ''}</section>`;
     h += planCard(ui.foodDate, true);
     h += `<div class="food-actions"><button class="btn primary" data-a="food-manual">${IC.plus}<span>${esc(t('foodSearchBtn'))}</span></button><button class="btn" data-a="food-ai" data-m="photo">${IC.cam}<span>${esc(t('scanPhoto'))}</span></button><button class="btn" data-a="food-ai" data-m="text">${IC.pen}<span>${esc(t('describe'))}</span></button></div>`;
-    h += actRow(ui.foodDate) + `<div class="meal-mode"><h2>${esc(t('meals'))}</h2><label class="sw"><input type="checkbox" role="switch" data-in="meal-groups" ${d.settings.mealGroups?'checked':''}><span>${esc(t('groupMeals'))}</span></label></div>` + foodDiary(list);
+    h += actRow(ui.foodDate) + `<div class="meal-mode"><h2>${esc(t('meals'))}</h2><label class="sw"><input type="checkbox" role="switch" data-in="meal-groups" ${d.settings.mealGroups?'checked':''}><span>${esc(t('groupMeals'))}</span></label></div>` + `<div id="food-diary">${foodDiary(list)}</div>`;
     return h;
   }
   const MEAL_KINDS=['breakfast','lunch','dinner','snack','other'];
@@ -753,10 +753,19 @@
   const mealLabel=v=>t('meal_'+mealKind(v));
   const plannedMealKind=name=>{const n=norm(name);return /\b(breakfast|reggeli)\b/.test(n)?'breakfast':/\b(lunch|ebed)\b/.test(n)?'lunch':/\b(dinner|vacsora)\b/.test(n)?'dinner':/\b(snack|snacks|tizorai|uzsonna)\b/.test(n)?'snack':'other';};
   function mealPicker(){return D().settings.mealGroups?`<label class="fld meal-picker"><span>${esc(t('mealType'))}</span><select data-in="food-meal">${MEAL_KINDS.map(k=>`<option value="${k}" ${mealKind(ui.foodMeal)===k?'selected':''}>${esc(mealLabel(k))}</option>`).join('')}</select></label>`:'';}
-  function diaryRows(list){return `<div class="flist">${list.map(f=>`<div class="frow" data-food-id="${esc(f.id)}"><span><b>${esc(f.name)}</b><i>${foodAmountText(f)?esc(foodAmountText(f))+' · ':''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src==='ai'?' · AI':f.src==='plan'?' · '+esc(t('planTag')):''}</i>${D().settings.mealGroups?`<button class="link meal-change" data-a="food-meal-edit" data-id="${esc(f.id)}" aria-label="${esc(t('moveMeal'))}: ${esc(f.name)}">${esc(t('moveMeal'))}</button>`:''}</span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`).join('')}</div>`;}
+  function linkedMeal(f){return f.pm?planDay(ui.foodDate)?.meals.find(m=>m.id===f.pm):null;}
+  function loggedMealKind(f){return MEAL_KINDS.includes(f.meal)?f.meal:f.src==='plan'?plannedMealKind(linkedMeal(f)?.name||f.name.split(':')[0]):'other';}
+  function diaryRows(list){return `<div class="flist">${list.map(f=>{
+    const items=f.items||linkedMeal(f)?.items||[];
+    return `<div class="frow" data-food-id="${esc(f.id)}"><span><b>${esc(f.name)}</b><i>${foodAmountText(f)?esc(foodAmountText(f))+' · ':''}${esc(t('pShort'))} ${Math.round(f.p)} · ${esc(t('cShort'))} ${Math.round(f.c)} · ${esc(t('fShort'))} ${Math.round(f.f)}${f.src==='ai'?' · AI':f.src==='plan'?' · '+esc(t('planTag')):''}</i>${items.length?`<ul class="meal-food-parts">${items.map(i=>`<li><span>${esc(i.n)} · ${dec(i.g)} g</span>${i.kcal==null?'':`<b>${Math.round(i.kcal)} kcal</b>`}</li>`).join('')}</ul>`:''}${D().settings.mealGroups?`<button class="link meal-change" data-a="food-meal-edit" data-id="${esc(f.id)}" aria-label="${esc(t('moveMeal'))}: ${esc(f.name)}">${esc(t('moveMeal'))}</button>`:''}</span><strong>${Math.round(f.kcal)}</strong><button class="icon-btn sm" data-a="food-del" data-id="${esc(f.id)}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>`;
+  }).join('')}</div>`;}
   function foodDiary(list){
     if(!D().settings.mealGroups)return list.length?diaryRows(list):`<p class="empty">${esc(t('noMeals'))}</p>`;
-    return MEAL_KINDS.map(k=>{const rows=list.filter(f=>mealKind(f.meal)===k),total=rows.reduce((n,f)=>n+f.kcal,0);return `<section class="card meal-group" data-meal="${k}"><div class="h2row"><h3>${esc(mealLabel(k))}</h3><span class="cap">${Math.round(total)} kcal</span></div>${rows.length?diaryRows(rows):`<p class="cap">${esc(t('mealEmpty'))}</p>`}<button class="btn meal-add" data-a="food-group-add" data-meal="${k}">${IC.plus}${esc(t('addFoodTo',mealLabel(k)))}</button></section>`;}).join('');
+    const dayTotal=list.reduce((n,f)=>n+f.kcal,0);
+    return MEAL_KINDS.map(k=>{
+      const rows=list.filter(f=>loggedMealKind(f)===k),sum=rows.reduce((a,f)=>({kcal:a.kcal+f.kcal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f}),{kcal:0,p:0,c:0,f:0}),share=dayTotal?sum.kcal/dayTotal:0,open=!!ui.mealOpen[ui.foodDate+'-'+k],label=mealLabel(k),macroEnergy=sum.p*4+sum.c*4+sum.f*9;
+      return `<section class="card meal-group${open?' expanded':''}" data-meal="${k}"><div class="meal-group-head"><button class="meal-toggle" data-a="food-group-toggle" data-meal="${k}" aria-expanded="${open}" aria-controls="meal-panel-${k}"><span class="meal-clock" data-clock-key="meal-${ui.foodDate}-${k}" data-clock-ratio="${share}">${Profile.dial(sum.kcal,dayTotal,t('mealShareLabel',label,Math.round(sum.kcal),Math.round(share*100)))}<span><b>${Math.round(sum.kcal)}</b><small>kcal</small></span></span><span class="meal-summary"><b>${esc(label)}${IC.down}</b><span class="meal-macros">${[['p','pShort'],['c','cShort'],['f','fShort']].map(([m,n])=>`<span title="${esc(t({p:'protein',c:'carbs',f:'fat'}[m]))}">${esc(t(n))} ${Math.round(sum[m])} g</span>`).join('')}</span><span class="meal-macro-bar" aria-hidden="true">${['p','c','f'].map(m=>`<i class="macro-${m}" style="width:${macroEnergy?sum[m]*(m==='f'?9:4)/macroEnergy*100:0}%"></i>`).join('')}</span></span></button><button class="icon-btn meal-add" data-a="food-group-add" data-meal="${k}" aria-label="${esc(t('addFoodTo',label))}" title="${esc(t('addFoodTo',label))}">${IC.plus}</button></div><div class="meal-panel" id="meal-panel-${k}" ${open?'':'inert'}><div><div class="meal-panel-content">${rows.length?diaryRows(rows):`<p class="cap">${esc(t('mealEmpty'))}</p>`}<p class="meal-share cap">${esc(t('mealShare',Math.round(share*100)))}</p></div></div></div></section>`;
+    }).join('');
   }
   /* ---------- meal ideas ---------- */
   const RCP = window.RECIPES || { items: [], videos: [] };
@@ -2068,16 +2077,17 @@
     },
     'habit-count'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || !/^\d{4}-\d\d-\d\d$/.test(k) || k > today() || !habitDue(h, k)) return; h.logs[k] = { v: Math.max(0, Math.min(200000, r1(Momentum.value(h, k, D()) + num(el.dataset.n)))), t: Date.now() }; Store.save(); if (topIs('day')) refreshSheet(); rerender(); },
     'habit-amount'(el) { const h = D().habits.find(x => x.id === el.dataset.id), k = el.dataset.d; if (!h || h.source !== 'count' || k > today() || !habitDue(h, k)) return; ui.habitAmount = { id: h.id, day: k }; openSheet(() => ({ title: h.name, html: `<form id="habit-amount-form" data-f="habit-amount"><label class="fld"><span>${esc(t('momentumAmount'))} ${esc(h.unit)}</span><input name="value" inputmode="decimal" required value="${Momentum.value(h, k, D())}"></label></form>`, foot: `<button class="btn primary" form="habit-amount-form">${esc(t('save'))}</button>` })); },
-    'habit-select-date'(el) {
+    'habit-select-date'(el) { ui.habitWeek=null;
       if (!/^\d{4}-\d\d-\d\d$/.test(el.dataset.d) || el.dataset.d > today()) return;
       const group = el.classList.contains('momentum-cell') ? '.momentum-heat' : '.momentum-week', top = el.getBoundingClientRect().top;
       ui.habitDate = el.dataset.d; rerender();
       const button = $(group + ' [data-d="' + ui.habitDate + '"]');
       if (button) { button.focus({ preventScroll: true }); window.scrollBy(0, button.getBoundingClientRect().top - top); }
     },
-    'habit-month-step'(el) { const d = new Date(ui.habitMonth + '-01T12:00'); d.setMonth(d.getMonth() + +el.dataset.d); const month = ymd(d).slice(0, 7); if (month > today().slice(0, 7)) return; const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); ui.habitMonth = month; ui.habitDate = month + '-' + pad(Math.min(Number(ui.habitDate.slice(-2)), last)); if (ui.habitDate > today()) ui.habitDate = today(); rerender(); const button = $('.momentum-month-nav [data-d="' + el.dataset.d + '"]'); const focus = button && !button.disabled ? button : $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (focus) focus.focus({ preventScroll: true }); },
-    'habit-today'() { ui.habitDate = today(); ui.habitMonth = today().slice(0, 7); rerender(); const button = $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); },
-    'habit-date'(el) { const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); ui.habitMonth = ui.habitDate.slice(0, 7); rerender(); } },
+    'habit-month-step'(el) { ui.habitWeek=null; const d = new Date(ui.habitMonth + '-01T12:00'); d.setMonth(d.getMonth() + +el.dataset.d); const month = ymd(d).slice(0, 7); if (month > today().slice(0, 7)) return; const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); ui.habitMonth = month; ui.habitDate = month + '-' + pad(Math.min(Number(ui.habitDate.slice(-2)), last)); if (ui.habitDate > today()) ui.habitDate = today(); rerender(); const button = $('.momentum-month-nav [data-d="' + el.dataset.d + '"]'); const focus = button && !button.disabled ? button : $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (focus) focus.focus({ preventScroll: true }); },
+    'habit-week-step'(el){const start=ui.habitWeek||ymd(weekStart(ui.habitDate+'T12:00'));ui.habitWeek=Momentum.shift(start,+el.dataset.d<0?-7:7);ui.keepScroll=true;rerender();},
+    'habit-today'() { ui.habitWeek=null; ui.habitDate = today(); ui.habitMonth = today().slice(0, 7); rerender(); const button = $('.momentum-heat [data-d="' + ui.habitDate + '"]'); if (button) button.focus({ preventScroll: true }); },
+    'habit-date'(el) { ui.habitWeek=null; const d = new Date(ui.habitDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) { ui.habitDate = ymd(d); ui.habitMonth = ui.habitDate.slice(0, 7); rerender(); } },
     'act-est'() { const w = num(D().settings.profile.weight), st = num(ui.act.steps); if (!(st > 0)) { toast(t('actEstNeed')); return; } ui.act.kcal = String(Math.round(st * w * 0.00055)); const b = $('#act-kcal'); if (b) b.value = ui.act.kcal; },
     async 'act-paste'() { let txt = ''; try { txt = await navigator.clipboard.readText(); } catch (e) { toast(t('actClipNo')); return; } if (topIs('act')) actFill(parseAct(txt)); },
     'act-save'(el) {
@@ -2125,11 +2135,9 @@
     /* the plan: tick a meal, tick a workout */
     'pm-tick'(el) {
       const k = el.dataset.d, pd = planDay(k), m = pd && pd.meals.find(x => x.id === el.dataset.m); if (!m) return;
-      const d = D(), day = d.food[k] || [], had = day.some(f => f.pm === m.id);
-      if (had) d.food[k] = day.filter(f => f.pm !== m.id);
-      else d.food[k] = day.concat([{ id: uid(), name: (pmName(m) + ': ' + m.items.map(i => i.n).join(', ')).slice(0, 80), g: Math.round(m.items.reduce((a, i) => a + i.g, 0)), kcal: m.kcal, p: m.p, c: m.c, f: m.f, src: 'plan', pm: m.id, t: Date.now(),...(d.settings.mealGroups?{meal:plannedMealKind(pmName(m)),mealAt:Date.now()}:{}) }]);
-      if (!d.food[k].length) delete d.food[k];
-      Store.save(); if (D().settings.vibrate && navigator.vibrate && !had) navigator.vibrate(20); rerender();
+      const had=(D().food[k]||[]).some(f=>f.pm===m.id),at=Date.now();
+      if(!Store.apply(d=>{const day=d.food[k]||[];d.food[k]=had?day.filter(f=>f.pm!==m.id):day.concat([{id:uid(),name:(pmName(m)+': '+m.items.map(i=>i.n).join(', ')).slice(0,80),g:Math.round(m.items.reduce((a,i)=>a+i.g,0)),kcal:m.kcal,p:m.p,c:m.c,f:m.f,src:'plan',pm:m.id,t:at,meal:plannedMealKind(m.name),mealAt:at,items:m.items.map(i=>({n:i.n,g:i.g,kcal:i.kcal??null}))}]);if(!d.food[k].length)delete d.food[k];})){toast(t('saveFailed'));return;}
+      if(D().settings.vibrate&&navigator.vibrate&&!had)navigator.vibrate(20);rerender();
     },
     'plan-notes'() { openSheet(shPlanNotes()); },
     'plan-remove'() { if (!confirm(t('planRemoveConfirm'))) return; D().plan = null; Store.save(); refreshSheet(); rerender(); toast(t('saved')); },
@@ -2338,7 +2346,8 @@
     },
     'wk-del'(el) { if (confirm(t('deleteWorkoutConfirm'))) { D().workouts = D().workouts.filter(w => w.id !== el.dataset.id); Store.save(); closeSheet(true); rerender(); } },
     /* food */
-    'food-group-add'(el){ui.foodMeal=mealKind(el.dataset.meal);A['food-manual']();},
+    'food-group-toggle'(el){const k=mealKind(el.dataset.meal),key=ui.foodDate+'-'+k,open=!ui.mealOpen[key];ui.mealOpen[key]=open;el.setAttribute('aria-expanded',String(open));const card=el.closest('.meal-group');card.classList.toggle('expanded',open);$('.meal-panel',card).inert=!open;},
+    'food-group-add'(el){ui.foodMeal=mealKind(el.dataset.meal);ui.mealOpen[ui.foodDate+'-'+ui.foodMeal]=true;A['food-manual']();},
     'food-meal-edit'(el){if(!dayFood().some(f=>f.id===el.dataset.id))return;ui.moveFood=el.dataset.id;ui.foodMeal=mealKind(dayFood().find(f=>f.id===ui.moveFood).meal);openSheet(()=>({title:t('moveMeal'),html:mealPicker(),foot:`<button class="btn primary" data-a="food-meal-save">${esc(t('save'))}</button>`}));},
     'food-meal-save'(){const id=ui.moveFood,meal=mealKind(ui.foodMeal);if(!Store.apply(d=>{const f=(d.food[ui.foodDate]||[]).find(x=>x.id===id);if(f){f.meal=meal;f.mealAt=Date.now();}})){toast(t('saveFailed'));return;}closeSheet(true);rerender();toast(t('saved'));},
     'food-day'(el) { const d = new Date(ui.foodDate + 'T12:00'); d.setDate(d.getDate() + +el.dataset.d); if (ymd(d) <= today()) go(+el.dataset.d < 0 ? 'back' : 'fwd', () => { ui.foodDate = ymd(d); render(); }); },
@@ -2395,7 +2404,7 @@
   let hueT = 0;
   let saveA; const lazyActive = () => { clearTimeout(saveA); saveA = setTimeout(() => Store.saveActive(), 250); };
   const IN = {
-    'meal-groups'(el){const enabled=el.checked;if(!Store.apply(d=>{d.settings.mealGroups=enabled;})){el.checked=!enabled;toast(t('saveFailed'));return;}rerender();},
+    'meal-groups'(el){const enabled=el.checked;if(!Store.apply(d=>{d.settings.mealGroups=enabled;})){el.checked=!enabled;toast(t('saveFailed'));return;}const diary=$('#food-diary');if(diary){diary.innerHTML=foodDiary(dayFood());diary.classList.remove('meal-mode-enter');void diary.offsetWidth;diary.classList.add('meal-mode-enter');animateClocks(new Map());}},
     'food-meal'(el){ui.foodMeal=mealKind(el.value);},
     'gate-username'(el){ui.gate.username=el.value;},
     'review-text'(el){if(!ui.reviewDraft)return;ui.reviewDraft.body=el.value;ui.reviewError='';const count=$('[data-review-count]');if(count)count.textContent=el.value.length+' / 280';},
@@ -2597,6 +2606,12 @@
     g.oncancel = () => { d.style.overflow = ''; };
   }, true);
   document.addEventListener('toggle', e => { if(e.target.isConnected&&e.target.dataset?.section){ui.sections=ui.sections||{};ui.sections[e.target.dataset.section]=e.target.open;} if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
+  // Horizontal swipes browse weeks; vertical gestures keep normal page scrolling.
+  let weekGesture=null,weekSuppressUntil=0;
+  document.addEventListener('touchstart',e=>{const card=e.target.closest?.('.momentum-week-browser');const touch=e.touches[0];weekGesture=card&&e.touches.length===1?{card,x:touch.clientX,y:touch.clientY,at:performance.now()}:null;},{passive:true});
+  document.addEventListener('touchcancel',()=>{weekGesture=null;},{passive:true});
+  document.addEventListener('touchend',e=>{const g=weekGesture;weekGesture=null;if(!g||!g.card.isConnected||e.touches.length)return;const p=e.changedTouches[0];if(!p)return;const dx=p.clientX-g.x,dy=p.clientY-g.y;if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.5||performance.now()-g.at>1200)return;weekSuppressUntil=performance.now()+400;A['habit-week-step']({dataset:{d:dx<0?'1':'-1'}});},{passive:true});
+  document.addEventListener('click',e=>{if(performance.now()<weekSuppressUntil&&e.target.closest?.('.momentum-week-browser')){e.preventDefault();e.stopImmediatePropagation();}},true);
   document.addEventListener('touchstart', () => {}, { passive: true });                   // lets iOS show the pressed state of buttons
   dlg().addEventListener('click', e => { if (e.target !== dlg()) return; const r = dlg().getBoundingClientRect(); if (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right) closeSheet(true); });
   Charts.bind(document);HueWheel.bind(document);

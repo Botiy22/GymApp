@@ -121,6 +121,7 @@ window.Store = (function () {
       const o = { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' || z.src === 'plan' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
       const vml=num(z.vml,0,5000,0);if(vml>0)o.vml=Math.round(vml*100)/100;
       if(['breakfast','lunch','dinner','snack','other'].includes(z.meal)){o.meal=z.meal;const at=num(z.mealAt,0,4e12,0);if(at)o.mealAt=at;}
+      if(z.src==='plan'&&Array.isArray(z.items))o.items=z.items.slice(0,20).map(i=>{i=obj(i);const n=str(i.n,80).trim();return n?{n,g:num(i.g,0,100000,0),kcal:i.kcal==null?null:int(i.kcal,0,20000,0)}:null;}).filter(Boolean);
       const pm = idStr(z.pm); if (pm) o.pm = pm;                                    // which meal of the plan this ticks off
       return o;
     };
