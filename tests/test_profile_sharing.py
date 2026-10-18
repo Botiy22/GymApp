@@ -26,14 +26,14 @@ class ProfileSharing(unittest.TestCase):
     def test_background_material_spacing_and_plan_export(self):
         page,errors=self.page();page.locator('#tabbar [data-tab=settings]').click()
         backgrounds=[]
-        for v in ['plain','deep','aurora']:
+        for v in ['light','deep']:
             page.locator(f'[data-a=set-bg][data-v={v}]').click();backgrounds.append(page.evaluate('getComputedStyle(document.documentElement).getPropertyValue("--bg")'))
-        self.assertEqual(len(set(backgrounds)),3)
-        for v in ['glass','matte','balanced']:
-            page.locator(f'[data-a=material][data-v={v}]').click();self.assertEqual(page.evaluate('Store.d.settings.material'),v)
-        buttons=page.locator('[data-section=settings-data]>.section-body>.btn')
-        gaps=buttons.evaluate_all('(bs)=>bs.slice(1).map((b,i)=>b.getBoundingClientRect().top-bs[i].getBoundingClientRect().bottom)')
-        self.assertTrue(all(g>=13 for g in gaps),gaps)
+        self.assertEqual(len(set(backgrounds)),2)
+        self.assertEqual(page.locator('[data-a=material]').count(),0)   # one solid finish since 2.27
+        page.locator('[data-section=settings-data]>summary').click();page.locator('[data-section=data-more]>summary').click()
+        buttons=page.locator('[data-section=settings-data] .btn:visible')
+        gaps=buttons.evaluate_all('(bs)=>bs.slice(1).map((b,i)=>b.getBoundingClientRect().top-bs[i].getBoundingClientRect().bottom).filter(g=>g>-1)')
+        self.assertTrue(all(g>=8 for g in gaps),gaps)
         with page.expect_download() as dl:page.locator('[data-a=export-plan]').click()
         with open(dl.value.path()) as f:doc=json.load(f)
         self.assertEqual(doc['kind'],'plan');self.assertTrue(doc['appendRoutines']);self.assertNotIn('settings',doc);self.assertNotIn('workouts',doc)

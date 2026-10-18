@@ -1,0 +1,119 @@
+/* Reppsy clean look (2.27). Loaded last: one calm, solid design system for every page.
+   Solid surfaces (no glass or background glow), one radius scale, one text scale, one button and control style. */
+:root:root {
+  --bg: #111217; --card: #1a1c22; --raised: #23262e; --line: #2b2e37; --edge: #2b2e37;
+  --ink: #f4f4f6; --mut: #9c9eab;
+  --glass: var(--card); --glass-2: var(--raised); --panel: var(--card); --bar: #1a1c22;
+  --frost: none; --ambient: none; --shine: none; --shine-s: none;
+  --r-card: 20px; --r-ctl: 14px; --r-pill: 999px;
+  --gap: 12px;
+}
+:root:root[data-bg=light] {
+  --bg: #f4f4f7; --card: #ffffff; --raised: #eeeff3; --line: #e2e3e9; --edge: #e2e3e9;
+  --ink: #1d1e24; --mut: #666874; --bar: #ffffff;
+}
+html, body { background: var(--bg); }
+body::before { display: none; }
+body::after { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+#workout, #ride-live { background: var(--bg); }
+
+/* ---------- page header ---------- */
+.top { border-bottom: 0; padding-bottom: 6px; margin-bottom: 18px; }
+.top h1 { font-size: 1.85rem; font-weight: 750; letter-spacing: -.035em; }
+.app-wordmark { letter-spacing: .14em; }
+
+/* ---------- surfaces ---------- */
+.card, .hero, .rcard, .workout-history, .rank-preview, .cardio-shortcut, .ride-row, .ride-totals > div, .note, .settings-group,
+.training-week, .qrow, .extile, details.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.card, .hero, .settings-group { padding: 18px; }
+.hero { background: var(--card); }
+.hero::before, .hero::after, .card::before, .card::after { display: none; }
+.h2row { margin: 26px 2px 10px; }
+.h2row h2, h2 { font-size: 1.08rem; font-weight: 700; letter-spacing: -.01em; }
+.card h3 { font-size: 1rem; font-weight: 700; }
+.cap, .lbl { color: var(--mut); }
+.lbl { font-size: .78rem; font-weight: 600; margin: 14px 0 6px; }
+
+/* small labels above titles read the same everywhere */
+.hero > small, .import-eyebrow, .rs-label, .clock small {
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--acc-tx);
+}
+
+/* ---------- buttons and controls ---------- */
+.btn { min-height: 48px; border-radius: var(--r-ctl); background: var(--raised); border: 1px solid var(--line); color: var(--ink); box-shadow: none; font-weight: 650; }
+.btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); }
+.btn.danger { background: transparent; color: var(--hi); border-color: rgba(229,72,77,.35); }
+.btn.big { min-height: 54px; font-size: 1.02rem; }
+.btn.sm { min-height: 38px; }
+.icon-btn { border-radius: var(--r-ctl); background: var(--raised); border: 1px solid var(--line); box-shadow: none; }
+.link { color: var(--acc-tx); font-weight: 650; }
+.seg { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 4px; gap: 4px; box-shadow: none; }
+.seg button { border-radius: 10px; font-weight: 600; color: var(--mut); }
+.seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+:root[data-bg=light] .seg button.on { box-shadow: 0 1px 3px rgba(20,22,30,.12); }
+.workout-tabs, .goals-tabs, .profile-tabs { background: var(--bg); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.chip { border-radius: var(--r-pill); }
+.fld input, .fld select, .fld textarea, input[type=text], input[type=search], input[type=password], input[type=number], select, textarea {
+  border-radius: var(--r-ctl); background: var(--raised); border: 1px solid var(--line); color: var(--ink);
+}
+
+/* ---------- navigation ---------- */
+#tabbar, :root[data-material] #tabbar { background: var(--bar); border: 1px solid var(--line); box-shadow: 0 8px 28px rgba(0,0,0,.22); -webkit-backdrop-filter: none; backdrop-filter: none; }
+:root[data-bg=light] #tabbar { box-shadow: 0 8px 24px rgba(20,22,30,.08); }
+#tabbar .on { background: rgba(var(--acc-rgb),.12); }
+#coach { width: 50px; height: 50px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+
+/* ---------- sheets ---------- */
+dialog#sheet, .pdf-plan-dialog { background: var(--card); border: 1px solid var(--line); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.sheet-head { background: var(--card); border-bottom: 1px solid var(--line); }
+.sheet-foot { background: var(--card); border-top: 1px solid var(--line); }
+
+/* ---------- workout home ---------- */
+.training-week { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+.training-week span { text-transform: none; font-size: .86rem; color: var(--mut); }
+.training-week span::first-letter { text-transform: uppercase; }
+.training-hero { display: flex; flex-direction: column; gap: 6px; }
+.hero-preview { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; color: var(--ink); padding: 0; background: none; border: 0; }
+.hero-preview strong { font-size: 1.9rem; line-height: 1.12; font-weight: 760; letter-spacing: -.03em; }
+.hero-preview svg { width: 22px; height: 22px; flex: none; fill: none; stroke: var(--mut); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hero-plan { color: var(--mut); font-size: .84rem; font-weight: 600; }
+.training-hero .btn.big { margin-top: 10px; }
+.hero-links { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 4px; }
+.hero-links .link { display: inline-flex; align-items: center; gap: 6px; font-size: .9rem; color: var(--mut); }
+.hero-links .link:first-child { color: var(--acc-tx); }
+.hero-links svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- finished workout: sets per exercise ---------- */
+.wk-sets { border: 1px solid var(--line); border-radius: 16px; background: var(--raised); margin: 8px 0; overflow: hidden; }
+.wk-sets > summary { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; list-style: none; }
+.wk-sets > summary::-webkit-details-marker { display: none; }
+.wk-sets > summary img { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; background: #fff; flex: none; }
+.wk-sets > summary span { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wk-sets > summary b { font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wk-sets > summary i { font-style: normal; font-size: .8rem; color: var(--mut); }
+.wk-sets > summary > svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--mut); stroke-width: 2; transition: transform .2s; }
+.wk-sets[open] > summary > svg { transform: rotate(180deg); }
+.set-list { list-style: none; margin: 0; padding: 0 12px 6px; }
+.set-list li { display: grid; grid-template-columns: 1fr auto 64px; gap: 10px; align-items: baseline; padding: 9px 2px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.set-list li span { color: var(--mut); font-size: .86rem; }
+.set-list li b { text-align: right; font-weight: 650; }
+.set-list li.warm span, .set-list li.warm b { color: var(--mut); font-weight: 500; }
+.wk-sets > .link { display: flex; align-items: center; gap: 4px; padding: 8px 14px 12px; font-size: .86rem; }
+.wk-sets > .link svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kpis b { font-size: 1.25rem; line-height: 1.2; }
+
+/* ---------- settings ---------- */
+.settings-jumps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin: 0 0 16px; }
+.settings-jumps .chip { justify-content: center; padding-inline: 4px; min-width: 0; font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.accent-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
+.swatch { width: 40px; height: 40px; border-radius: 50%; background: var(--swatch); border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); display: grid; place-items: center; padding: 0; }
+.swatch.on { border-color: var(--ink); }
+.swatch svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 1px rgba(0,0,0,.4)); }
+.settings-group .btn + .btn, .settings-group .row2 + .btn, .settings-group .btn + .row2, .settings-group .section-body > .btn + .btn { margin-top: 10px; }
+.settings-group .row2 { margin-top: 10px; }
+.app-info { text-align: center; color: var(--mut); }
+.hero-links .training-tick { width: auto; margin: 0; font-size: .9rem; }
+#ride-pill { background: var(--card); }

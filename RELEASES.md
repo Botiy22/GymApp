@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.27.0 — 2026-10-18 (build 20261018.1)
+
+New `css/clean.css`, loaded last, sets one solid design system: neutral dark/light tokens, no background glow, glass blur or decorative gradients, one radius scale (cards 20 px, controls 14 px), consistent buttons, segmented controls, inputs, sheets and tab bar. `applyLook` always uses the matte finish; saved `material`/`solid` values are kept but no longer offered.
+
+Settings: Appearance shows language, a Dark/Light theme switch (older aurora/plain backgrounds still render dark), compact accent swatches and the custom wheel under a closed "Custom colour" section, and "Fewer animations". Removed from Settings: background tiles, surface finish (glass/normal/matte), reduce-transparency switch and the storage size in kB. Own exercises/foods moved into Data; plan export, CSV export, restoring built-in routines and deleting all data sit under "More options". The AI and Data groups start closed. "Resets Monday · UTC" now reads "Resets every Monday".
+
+Workout: the next-up card shows the session name ("Push") with its split underneath; tapping it or "View exercises" opens the routine without starting. Finished workouts list each exercise as an expandable row with every set (warm-up marked), weight and reps, plus a link to the how-to. History cards no longer repeat calorie estimates. Durations read "1 h" instead of "1 h 0 min" (HU "1 óra"); session names drop the split prefix in headers; English counts use the singular for one ("1 set", "1 workout in total").
+
+Validation: new `tests/test_workout_preview_sets.py`; settings/colour/material tests updated for the new layout; JS suites; responsive, update, ride and release suites; page-by-page screenshots in HU/EN, dark/light. No data or SQL changes.
+
 ## 2.26.1 — 2026-10-17 (build 20261017.1)
 
 A PDF training plan headed by weekdays ("THURSDAY - UPPER A / STRENGTH") with an `Exercise | Sets x Reps | RIR | Rest` table imported nothing: weekday lines were only treated as meal-plan days and routine headings had to read "N. nap"/"Day N". A short weekday heading now starts a workout that is created only once an exercise row follows, so weekday meal plans are unchanged. A table heading maps the unlabelled RIR and Rest columns; rest ranges ("3-4 min", "60-90 sec", "2.5-3 perc", "90 mp") use the midpoint rounded to 15 s. All-caps headings are shown in title case. `PlanSheet.exercise` (PDF, Word and Excel imports) falls back to an ordered list of common Hungarian gym phrases mapped to existing library IDs when no name matches exactly; unknown wording stays unmatched for the user to choose in the import editor.

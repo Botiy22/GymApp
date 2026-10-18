@@ -14,7 +14,7 @@ class ColorVolume(unittest.TestCase):
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         page=context.new_page();page.goto(f'http://127.0.0.1:{self.server.server_port}/')
         page.wait_for_function('()=>!!window.__gym')
-        page.locator('#tabbar [data-tab=settings]').click()
+        page.locator('#tabbar [data-tab=settings]').click();page.locator('[data-section=custom-accent]>summary').click()
         wheel=page.locator('.hue-wheel');wheel.scroll_into_view_if_needed();box=wheel.bounding_box()
         x=box['x']+box['width']/2;y=box['y']+box['height']/2;r=box['width']*.4
         scroll=page.evaluate('scrollY');cdp=context.new_cdp_session(page)
@@ -30,7 +30,7 @@ class ColorVolume(unittest.TestCase):
     def test_visible_wheel_drag_keyboard_and_theme_changes(self):
         for width,lang,text in [(320,'hu',20),(390,'en',16)]:
             page,errors=self.page(width,844,lang,text)
-            page.locator('#tabbar [data-tab=settings]').click()
+            page.locator('#tabbar [data-tab=settings]').click();page.locator('[data-section=custom-accent]>summary').click()   # the wheel lives under "Custom colour"
             wheel=page.locator('.hue-wheel');self.assertTrue(wheel.is_visible())
             self.assertGreaterEqual(wheel.bounding_box()['width'],180)
             wheel.scroll_into_view_if_needed();box=wheel.bounding_box()
@@ -44,9 +44,9 @@ class ColorVolume(unittest.TestCase):
             self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
             page.reload();page.wait_for_function('()=>!!window.__gym')
             self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
-            page.locator('#tabbar [data-tab=settings]').click()
+            page.locator('#tabbar [data-tab=settings]').click();page.locator('[data-section=custom-accent]>summary').click()
             page.locator('[data-a=set-palette]').first.click()
-            self.assertTrue(wheel.is_visible())
+            self.assertTrue(wheel.is_visible())   # stays open while colours change
             page.locator('[data-a=set-bg]').first.click()
             self.assertTrue(wheel.is_visible());self.bounds(page,'settings wheel')
             self.assertEqual(errors,[])

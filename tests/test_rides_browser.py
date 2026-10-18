@@ -143,7 +143,7 @@ class RideBrowser(unittest.TestCase):
 
     def test_tab_bar_is_not_see_through_on_glass(self):
         page, _ = self.page()
-        page.evaluate('()=>{Store.d.settings.material="glass";Store.d.settings.solid=false;Store.save();__gym.render()}')
+        page.evaluate('()=>{Store.d.settings.material="glass";Store.d.settings.solid=false;Store.save();__gym.A["set-bg"]({dataset:{v:"deep"}})}')
         alpha = page.locator('#tabbar').evaluate('(e)=>{const m=getComputedStyle(e).backgroundColor.match(/rgba?\\(([^)]+)\\)/)[1].split(",");return m.length>3?+m[3]:1}')
         self.assertGreaterEqual(alpha, 0.94)
 

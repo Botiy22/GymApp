@@ -528,3 +528,9 @@ Object.assign(I18N.hu,{workout_ride:'Bringa',rideTitle:'Kerékpározás',rideRea
 
 Object.assign(I18N.en,{weekBrowse:'Weekly progress',prevWeek:'Previous week',nextWeek:'Next week'});
 Object.assign(I18N.hu,{weekBrowse:'Heti haladás',prevWeek:'Előző hét',nextWeek:'Következő hét'});
+
+Object.assign(I18N.en,{theme:'Theme',themeDark:'Dark',themeLight:'Light',viewExercises:'View exercises',setN:'Set {0}',warmShort:'Warm-up',exerciseGuide:'How to do it',dataWhere:'Your data is stored on this device. Make a backup now and then.',dataWhereCloud:'Your data is stored on this device and in your account.',moreOptions:'More options'});
+Object.assign(I18N.hu,{theme:'Téma',themeDark:'Sötét',themeLight:'Világos',viewExercises:'Gyakorlatok megtekintése',setN:'{0}. sorozat',warmShort:'Bemelegítő',exerciseGuide:'Végrehajtás',dataWhere:'Az adataid ezen az eszközön vannak. Időnként készíts biztonsági mentést.',dataWhereCloud:'Az adataid ezen az eszközön és a fiókodban vannak.',moreOptions:'További lehetőségek',buildNumber:'Kiadás: {0}'});
+Object.assign(I18N.en,{competitionReset:'Resets every Monday',pointsPrivacy:'Self-reported. Resets every Monday. Ties share a place. Only totals are shared; lift ranks still use logged weights.'});
+Object.assign(I18N.hu,{h:'óra',competitionReset:'Minden hétfőn újraindul',pointsPrivacy:'Saját napló alapján. Minden hétfőn újraindul. Döntetlennél közös helyezés. Csak az összesítést látják; az erőranghoz naplózott súly kell.'});
+Object.assign(I18N.en,{setsWord1:'set',ridesWord1:'ride',totalWorkouts1:'workout in total',exercises1:'exercise',workoutsWord1:'workout'});

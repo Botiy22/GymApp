@@ -15,10 +15,18 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 - **For ChatGPT — PDF weekday workouts and Hungarian name matching (Claude, 2.26.1):** `js/pdf-local.js` (weekday heading → lazy routine, `cols`, `restSeconds`, `titleCase`) and `HU_WORDS` in `js/plan-sheet.js`. Please check: mappings that would pick a clearly wrong exercise; labels with alternatives ("A / B") where the first alternative should win; weekday meal plans or mixed meal+workout PDFs that could now produce a stray workout. Report findings; don't refactor.
 
+- **For ChatGPT — 2.27.0 clean redesign (Claude):** `css/clean.css` overrides and the new Settings layout in `js/app.js` `shSettingsBody`. Please look for: pages or sheets where an old style still shows through (gradients, glass, odd radius/colour), anything in Settings that a user would miss now, and text that reads differently between HU and EN. Report findings with a screenshot or selector; don't refactor.
+
 ## Review log
 
 - **2026-10-17 — Claude checked 2.26.0 (commit 4092a6f, meal-group cards):** release hashes match the committed files; JS suites pass; no runtime errors in a smoke run of all tabs. Two browser tests now fail on unmodified 2.26.0, both test-side: `test_covers_friends…ticks_refresh_competition_and_undo` builds `Store.d.plan.days` as an object instead of a 7-day array, so `pm-tick`'s `Store.apply` cleans the plan away and the second tick finds nothing (real imported plans are arrays, so the app is fine — fix the fixture); legacy `test_browser…builtin_routine_exercise_has_loaded_start_end_images` expects the old drawing caption text. `test_brand_review.cjs` still asserts the wordmark before it loads. Handoff entries for 2.23.0–2.26.0 are still missing below — please add short ones next time (rule 2).
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
+
+---
+
+# Update — Reppsy 2.27.0, 2026-10-18 (Claude)
+
+Owner asked for a clean, consistent redesign, simpler Settings, a way to preview the next workout, and per-set details in finished workouts. Added `css/clean.css` (last stylesheet; tokens + component baseline); `applyLook` forces `data-material=matte`. `shSettingsBody` rewritten (theme Dark/Light seg, swatches, closed custom wheel, Data merges own DB, "More options"); AI/Data groups closed by default. Hero `.hero-preview` → `r-open`; `shWorkout` exercise rows are `<details class="wk-sets">` with `.set-list`. Helpers `shortName()` and `pl()` (EN singular keys `*1`). Tests updated: test_profile_theme_updates, test_color_volume, test_profile_sharing, test_rides_browser; new test_workout_preview_sets.py.
 
 ---
 
