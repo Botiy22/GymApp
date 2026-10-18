@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.26.1 — 2026-10-17 (build 20261017.1)
+
+A PDF training plan headed by weekdays ("THURSDAY - UPPER A / STRENGTH") with an `Exercise | Sets x Reps | RIR | Rest` table imported nothing: weekday lines were only treated as meal-plan days and routine headings had to read "N. nap"/"Day N". A short weekday heading now starts a workout that is created only once an exercise row follows, so weekday meal plans are unchanged. A table heading maps the unlabelled RIR and Rest columns; rest ranges ("3-4 min", "60-90 sec", "2.5-3 perc", "90 mp") use the midpoint rounded to 15 s. All-caps headings are shown in title case. `PlanSheet.exercise` (PDF, Word and Excel imports) falls back to an ordered list of common Hungarian gym phrases mapped to existing library IDs when no name matches exactly; unknown wording stays unmatched for the user to choose in the import editor.
+
+Validation: the owner's 2-page PDF imports as 4 workouts with 32 exercises, all matched, and adds through the import dialog; new `tests/test_pdf_weekday_plan.js` (synthetic plan, weekday meal plan unchanged, no guessing for unknown names); existing suites. No data or SQL changes.
+
 ## 2.26.0 — 2026-10-12 (build 20261012.5)
 
 Food meal groups are compact and initially collapsed. Tap the meal heading to expand its food list; each header has a 44px + control, a small calorie clock showing that meal's share of logged daily calories, protein/carbs/fat totals and a proportional macro bar. The grouping switch stays mounted so its thumb animates, and cards enter with a short stagger. Expansion preserves its state during diary redraws. Reduced-motion and Calm settings disable the new motion.

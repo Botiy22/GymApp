@@ -58,6 +58,13 @@ window.PDFLocal = (() => {
   }
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const blankDay=()=>({type:'',total:null,meals:[]});
+  // "3-4 min", "60-90 sec", "2.5-3 perc", "90 mp": the middle of a range, in seconds, rounded to 15 s.
+  const restSeconds=text=>{
+    const m=/([0-9]+(?:[.,][0-9]+)?)(?:\s*[-–]\s*([0-9]+(?:[.,][0-9]+)?))?\s*(mp|masodperc|s|sec|secs|seconds?|p|perc|min|mins|minutes?)\b/.exec(String(text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());
+    if(!m)return null;const a=Number(m[1].replace(',','.')),b=m[2]?Number(m[2].replace(',','.')):a,unit=/^(p|perc|min)/.test(m[3])?60:1,sec=(a+b)/2*unit;
+    return sec>0&&sec<=3600?Math.round(sec/15)*15:null;
+  };
+  const titleCase=s=>s===s.toUpperCase()&&/[A-ZÁÉÍÓÖŐÚÜŰ]{3}/.test(s)?s.toLowerCase().replace(/(^|[\s\-\/(])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase()).replace(/\b([a-zA-Z])\b/g,c=>c.toUpperCase()):s;
   const nutrients=s=>{
     s=String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const value=labels=>{
@@ -80,16 +87,22 @@ window.PDFLocal = (() => {
         if(parsed.plan){const p=diet();p.name=parsed.plan.name;parsed.plan.days.forEach((d,i)=>{p.days[i].meals.push(...d.meals);if(d.total)p.days[i].total=d.total;if(d.type)p.days[i].type=d.type;});}
         continue;
       }
-      let routine=null,day=-1,meal=null,dayType='',calorieTable=null,inRules=false;
+      let routine=null,day=-1,meal=null,dayType='',calorieTable=null,inRules=false,cols=null;
+      const listed=new Set();   // a weekday heading becomes a workout only once an exercise row follows it
       for(const line of source.lines){
         const s=line.text.replace(/\s*\|\s*/g,' ').trim(),plain=norm(s);if(!s)continue;
         const ref=source.name+' · '+(hu?'hely ':'location ')+line.page;
         if(/^(fixed rules|rogzitett szabalyok|alapszabalyok)$/.test(plain)){inRules=true;routine=null;day=-1;meal=null;calorieTable=null;continue;}
         if(inRules){if(out.plan&&!/^page [0-9]+$/.test(plain))out.plan.notes.push(s.replace(/^[•*]\s*/,''));continue;}
         const wi=weekdays.findIndex((w,i)=>new RegExp('^'+w+'\\b|^'+enweek[i]+'\\b').test(plain));
-        if(wi>=0){day=wi;routine=null;meal=null;calorieTable=null;dayType=/edzesnap|training day/.test(plain)?'train':/pihenonap|rest day/.test(plain)?'rest':'';continue;}
+        if(wi>=0){
+          day=wi;meal=null;calorieTable=null;cols=null;dayType=/edzesnap|training day/.test(plain)?'train':/pihenonap|rest day/.test(plain)?'rest':'';
+          // "THURSDAY - UPPER A / STRENGTH": a short weekday heading may introduce an exercise table instead of meals.
+          routine=s.length<=70&&!/[:.]\s/.test(s)?{name:titleCase(s).slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]}:null;
+          continue;
+        }
         const head=/^(?:([1-9][0-9]?)\s*[.)]?\s*nap|nap\s*([1-9][0-9]?)|day\s*([1-9][0-9]?))\b/i.exec(plain);
-        if(head){routine={name:s.slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]};out.routines.push(routine);day=-1;meal=null;continue;}
+        if(head){routine={name:s.slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]};out.routines.push(routine);listed.add(routine);day=-1;meal=null;cols=null;continue;}
         if(day>=0 && /^(napi osszes|napi cel|osszesen|daily total|daily target|total)\b/.test(plain)){diet().days[day].total=nutrients(s);meal=null;continue;}
         if(day>=0 && /^(reggeli|tizorai|ebed|uzsonna|vacsora|breakfast|lunch|dinner|snack|[1-9] etkezes|meal [1-9])\b/.test(plain)){
           calorieTable=null;meal=Object.assign({name:s.split(/[:|]/)[0].replace(/\s+(?:kcal|kaloria|calories|protein|feherje|carbs|szenhidrat|fat|zsir)\b.*$/i,'').slice(0,40),items:[]},nutrients(s));diet().days[day].type=dayType;diet().days[day].meals.push(meal);continue;
@@ -124,13 +137,20 @@ window.PDFLocal = (() => {
           continue;
         }
         if(routine){
+          // A table heading such as "Exercise | Sets x Reps | RIR | Rest" says which unlabelled column holds RIR and rest.
+          const columns=line.text.split('|').map(c=>c.trim()).filter(Boolean),names=columns.map(norm);
+          if(columns.length>1&&names.some(c=>/^(exercise|gyakorlat|feladat)$/.test(c))&&names.some(c=>/sets|reps|sorozat|ismetles/.test(c))){
+            cols={n:columns.length,rir:names.findIndex(c=>/^rir$/.test(c)),rest:names.findIndex(c=>/^(rest|piheno|pihenoido|szunet)$/.test(c))};continue;
+          }
           const rx=/\b([1-9][0-9]?)\s*[x×]\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
           if(rx){
             const label=s.slice(0,rx.index).replace(/^[\s•*\-\d.)]+|[|:;\s]+$/g,'').trim();if(!label)continue;
-            const exercise=PlanSheet.exercise(label,catalog);
-            const rest=/(?:piheno|rest)\s*[:=]?\s*([0-9]+)\s*(mp|s|sec|perc|min)\b/i.exec(plain);
-            const rir=/\brir\s*[:=]?\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
-            routine.items.push({ex:exercise,label,sets:Number(rx[1]),reps:rx[2].replace(/\s+/g,''),rest:rest?Number(rest[1])*(/perc|min/.test(rest[2])?60:1):null,rir:rir?rir[1]:'',note:ref+' · '+s.slice(rx.index+rx[0].length).trim()});
+            const exercise=PlanSheet.exercise(label,catalog),table=cols&&columns.length===cols.n;
+            const rest=table&&cols.rest>=0?restSeconds(columns[cols.rest]):(r=>r?restSeconds(r[1]):null)(/(?:piheno|rest)\s*[:=]?\s*([0-9].*)$/i.exec(plain));
+            const rirCell=table&&cols.rir>=0?/^([0-9]+(?:\s*[-–]\s*[0-9]+)?)$/.exec(columns[cols.rir]):null,rir=rirCell||/\brir\s*[:=]?\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
+            const extra=table?(columns.find(c=>rx[0]&&c.includes(rx[0]))||'').replace(rx[0],'').trim():s.slice(rx.index+rx[0].length).trim();
+            if(!listed.has(routine)){out.routines.push(routine);listed.add(routine);}
+            routine.items.push({ex:exercise,label,sets:Number(rx[1]),reps:rx[2].replace(/\s+/g,''),rest,rir:rir?rir[1].replace(/\s+/g,''):'',note:ref+(extra?' · '+extra:'')});
           }
         }
       }

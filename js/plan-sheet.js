@@ -35,9 +35,62 @@ window.PlanSheet = (() => {
     const kind = map.ex != null ? 'workout' : (map.food != null || map.meal != null) && ['grams','kcal','p','c','f'].some(k => map[k] != null) ? 'meal' : '';
     return {map,kind};
   }
+  // Common Hungarian gym wording -> library exercise, tried in order when no name matches exactly.
+  // "A / B" labels are read as one string, so the first rule that fits wins; the import editor shows every match for review.
+  const HU_WORDS = [
+    [/szuk fogasu fekvenyomas|szukfogasos fekvenyomas/, 'Close-Grip_Barbell_Bench_Press'],
+    [/ferdepados.*(kezisulyz|kezi sulyz)/, 'Incline_Dumbbell_Press'],
+    [/ferdepados.*rud/, 'Barbell_Incline_Bench_Press_-_Medium_Grip'],
+    [/ferdepados.*gep/, 'Leverage_Incline_Chest_Press'],
+    [/ferdepados.*nyomas/, 'Incline_Dumbbell_Press'],
+    [/fekvenyomas.*(kezisulyz|kezi sulyz)|(kezisulyz|kezi sulyz).*fekvenyomas/, 'Dumbbell_Bench_Press'],
+    [/fekvenyomas/, 'Barbell_Bench_Press_-_Medium_Grip'],
+    [/allas huzodzkodas|forditott fogasu huzodzkodas/, 'Chin-Up'],
+    [/huzodzkodas/, 'Pullups'],
+    [/mellhez huzas|lehuzas/, 'Wide-Grip_Lat_Pulldown'],
+    [/(mellkassal|mellre) tamasztott evezes/, 'Dumbbell_Incline_Row'],
+    [/csigas evezes|evezes csigan|ulo evezes/, 'Seated_Cable_Rows'],
+    [/egykezes evezes|kezisulyzos evezes/, 'One-Arm_Dumbbell_Row'],
+    [/rudas evezes|dontott torzsu evezes/, 'Bent_Over_Barbell_Row'],
+    [/(vallbol nyomas|vallnyomas).*(gep)|gepes vall/, 'Machine_Shoulder_Military_Press'],
+    [/(vallbol nyomas|vallnyomas).*rud|rudas vall/, 'Barbell_Shoulder_Press'],
+    [/vallbol nyomas|vallnyomas/, 'Dumbbell_Shoulder_Press'],
+    [/hatso ?vall|forditott tarogatas/, 'Reverse_Machine_Flyes'],
+    [/oldalemeles csigan|csigas oldalemeles/, 'Cable_Seated_Lateral_Raise'],
+    [/oldalemeles/, 'Side_Lateral_Raise'],
+    [/tarogatas.*(csig|kabel)|csigas tarogatas|keresztcsiga/, 'Cable_Crossover'],
+    [/tarogatas.*gep|pillango|butterfly/, 'Butterfly'],
+    [/tarogatas/, 'Dumbbell_Flyes'],
+    [/gepes mellnyomas|mellnyomo gep|mellnyomas gepen/, 'Leverage_Chest_Press'],
+    [/tolodzkodas/, 'Dips_-_Chest_Version'],
+    [/scott/, 'Preacher_Curl'],
+    [/kalapacs/, 'Hammer_Curls'],
+    [/bicepsz.*csig|csigas bicepsz/, 'Standing_Biceps_Cable_Curl'],
+    [/bicepsz.*rud|rudas bicepsz/, 'Barbell_Curl'],
+    [/bicepsz/, 'Dumbbell_Bicep_Curl'],
+    [/fej folotti.*tricepsz|tricepsz.*fej folott/, 'Cable_Rope_Overhead_Triceps_Extension'],
+    [/koteles tricepsz|tricepsz.*kotel/, 'Triceps_Pushdown_-_Rope_Attachment'],
+    [/tricepsz letolas|letolas/, 'Triceps_Pushdown'],
+    [/hack/, 'Hack_Squat'],
+    [/bolgar/, 'Split_Squat_with_Dumbbells'],
+    [/roman felhuzas/, 'Romanian_Deadlift'],
+    [/felhuzas/, 'Barbell_Deadlift'],
+    [/guggolas/, 'Barbell_Full_Squat'],
+    [/labtolo|labpres/, 'Leg_Press'],
+    [/ulo.*combhajlitas|combhajlitas.*ul/, 'Seated_Leg_Curl'],
+    [/fekvo.*combhajlitas|combhajlitas.*fekv/, 'Lying_Leg_Curls'],
+    [/combhajlitas/, 'Lying_Leg_Curls'],
+    [/labnyujtas/, 'Leg_Extensions'],
+    [/ulo vadli/, 'Seated_Calf_Raise'],
+    [/vadli/, 'Standing_Calf_Raises'],
+    [/haspres.*csig|csigas haspres/, 'Cable_Crunch'],
+    [/haspres/, 'Crunches']
+  ];
   function exercise(label,catalog) {
     const n = norm(label), found = catalog.filter(e => [e.id,e.hu,e.en,...(e.aliases || [])].some(s => s && norm(s) === n));
-    return found.length === 1 ? found[0].id : '';
+    if (found.length) return found.length === 1 ? found[0].id : '';
+    const rule = HU_WORDS.find(r => r[0].test(n));
+    return rule && catalog.some(e => e.id === rule[1]) ? rule[1] : '';
   }
   const blank = () => ({type:'',total:null,meals:[]});
   function parse(source,catalog,hu,mappings = {}) {

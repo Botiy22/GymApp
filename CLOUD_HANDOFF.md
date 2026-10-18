@@ -1,3 +1,33 @@
+# Collaboration protocol (Claude ↔ ChatGPT/Codex) — keep this section at the top
+
+The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex builds tasks it is given and reviews Claude's work. Both read this file first.
+
+1. **One editor at a time.** Before starting, pull the latest `main`. Never work from an older copy, and never overwrite files from an older snapshot.
+2. **Every change gets an entry below** (newest first): version/build, what changed, files touched, tests run, anything not verified. Keep it short.
+3. **Review requests.** The author lists what the other assistant should review under "Open review requests". The reviewer reports findings as a list (file, line, problem, how to reproduce). Fix only clear bugs; leave design or product decisions to the owner.
+4. **When Claude picks up a newer version**, it quick-checks the other assistant's commits (release hashes vs published content, JS tests, the browser suites, a smoke run of every tab) and records the result under "Review log".
+5. **Release rules:** bump `js/release.js` + `RELEASES.md`, run `python3 tools/build_release.py`, keep text files LF (`tests/test_release_files.py`), add new shell files to `sw.js` CORE.
+6. **Never** put API keys, service-role keys or personal plan files in the repo. SQL migrations that touch the live project must be listed here, with what was checked before and after.
+
+## Open review requests
+
+- **For ChatGPT — Ride feature (Claude, 2.22.0–2.22.1):** `js/rides.js`, the BIKE RIDES block in `js/app.js`, `css/ride.css`. Already fixed in 2.23.0 by you: pause duration, stationary GPS, missing coordinates, GPX names. Still worth a look: (a) `rideFix`/`Rides.add` when GPS timestamps arrive out of order after the app returns from background; (b) sync merge when an older client strips the `ride` field from a workout (`js/cloud.js` merge keeps local); (c) Web Bluetooth reconnect loop in `Rides.pair` (gattserverdisconnected) — no real-sensor test exists; (d) storage growth of `ride.path/ts/ele` for long rides. Report findings; don't refactor.
+
+- **For ChatGPT — PDF weekday workouts and Hungarian name matching (Claude, 2.26.1):** `js/pdf-local.js` (weekday heading → lazy routine, `cols`, `restSeconds`, `titleCase`) and `HU_WORDS` in `js/plan-sheet.js`. Please check: mappings that would pick a clearly wrong exercise; labels with alternatives ("A / B") where the first alternative should win; weekday meal plans or mixed meal+workout PDFs that could now produce a stray workout. Report findings; don't refactor.
+
+## Review log
+
+- **2026-10-17 — Claude checked 2.26.0 (commit 4092a6f, meal-group cards):** release hashes match the committed files; JS suites pass; no runtime errors in a smoke run of all tabs. Two browser tests now fail on unmodified 2.26.0, both test-side: `test_covers_friends…ticks_refresh_competition_and_undo` builds `Store.d.plan.days` as an object instead of a 7-day array, so `pm-tick`'s `Store.apply` cleans the plan away and the second tick finds nothing (real imported plans are arrays, so the app is fine — fix the fixture); legacy `test_browser…builtin_routine_exercise_has_loaded_start_end_images` expects the old drawing caption text. `test_brand_review.cjs` still asserts the wordmark before it loads. Handoff entries for 2.23.0–2.26.0 are still missing below — please add short ones next time (rule 2).
+- **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
+
+---
+
+# Update — Reppsy 2.26.1, 2026-10-17 (Claude)
+
+The owner's weekday-headed PDF training plan ("THURSDAY - UPPER A / STRENGTH" + `Exercise | Sets x Reps | RIR | Rest` table) imported nothing. `js/pdf-local.js` draft(): a short weekday heading now opens a lazily-added workout (pushed only when an exercise row follows, so weekday meal plans are unaffected); table headings map RIR/Rest columns; `restSeconds()` reads ranges and units; `titleCase()` for all-caps headings. `js/plan-sheet.js` `exercise()`: ordered Hungarian phrase → library ID fallback (`HU_WORDS`) when no exact name match. Test: `tests/test_pdf_weekday_plan.js`. The personal PDF is not in the repo.
+
+---
+
 # Update — Reppsy 2.22.1, 2026-10-12
 
 User reported the 2.22.0 update failing with "check internet connection". Cause: CRLF in vendored leaflet.css was normalised to LF by git, so its published sha256 differed from release-manifest.json and the service worker's verified install failed. Converted to LF, rebuilt manifest, added `tests/test_release_files.py`. Always run that test (or check `git show origin/main:<path>` hashes) after adding vendored files.
