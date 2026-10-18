@@ -33,5 +33,18 @@ window.MuscleMap = (function () {
     return `<svg viewBox="0 70 1448 1400" role="img" aria-label="${txt(label || 'muscle map')}">${side(B.front, FRONT, f || {})}${side(B.back, BACK, b || {})}` +
       `<text class="mm-lbl" x="362" y="1452" text-anchor="middle">${txt(lblFront)}</text><text class="mm-lbl" x="1086" y="1452" text-anchor="middle">${txt(lblBack)}</text></svg>`;
   }
-  return { svg, fromLists };
+  /* Rank colours: each region filled with the colour of its group's tier (0-8); unranked regions stay plain. */
+  function sideTiers(data, map, tiers) {
+    const lvl = {};
+    Object.keys(map).forEach(k => { const v = tiers[k]; if (!(v >= 0)) return; const slug = map[k][0], idx = map[k][1];
+      (data.parts[slug] || []).forEach((p, i) => { if (idx && idx.indexOf(i) < 0) return; const key = slug + '#' + i; lvl[key] = Math.max(lvl[key] ?? -1, v); }); });
+    let s = '';
+    Object.keys(data.parts).forEach(slug => data.parts[slug].forEach((p, i) => { const l = lvl[slug + '#' + i]; s += `<path class="${l >= 0 ? 'mm-t mm-t' + l : slug === 'hair' ? 'mm-hair' : 'mm-m'}" d="${p}"/>`; }));
+    return s + data.outline.map(p => `<path class="mm-out" d="${p}"/>`).join('');
+  }
+  function ranked(f, b, lblFront, lblBack, label) {
+    return `<svg class="mm-ranked" viewBox="0 70 1448 1400" role="img" aria-label="${txt(label || 'muscle ranks')}">${sideTiers(B.front, FRONT, f || {})}${sideTiers(B.back, BACK, b || {})}` +
+      `<text class="mm-lbl" x="362" y="1452" text-anchor="middle">${txt(lblFront)}</text><text class="mm-lbl" x="1086" y="1452" text-anchor="middle">${txt(lblBack)}</text></svg>`;
+  }
+  return { svg, fromLists, ranked };
 })();

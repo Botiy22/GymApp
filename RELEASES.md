@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.28.0 — 2026-10-18 (build 20261018.2)
+
+Stories, photo posts, highlights and likes. New `migrations/20261018_stories_posts.sql` (tables `social_posts`, `social_post_likes`, `social_highlights`, `social_highlight_items`; all access through `security definer` functions, tables revoked from `anon`/`authenticated`). Audience per item: everyone signed in, friends, or only me. Stories expire after 1 h–7 days (24 h when not given); ended stories stay in the owner's archive for 30 days and are kept for good inside a highlight. Limits: 30 new items a day, 300 posts, 30 highlights. New `js/stories.js` (server calls, on-device JPEG shrinking to ≤1080 px / ≤400 kB plus a 360 px thumbnail, seen-state on the device, time labels, the like button and the full-screen story viewer with progress bars, tap/hold/swipe, keyboard and owner menu) and `css/stories.css`. Profile → Friends has the story row and a post feed (full pictures load as cards scroll into view); Profile → Overview and friend profiles show highlights and a post grid; stranger profiles open from the feed. The profile-photo like button uses the same heart animation. Entrance animations play once per item; Calm and reduced motion turn them off.
+
+Muscle ranks (Profile → Ranks): `js/muscle-ranks.js` ranks eight muscle groups by the best estimated 1RM (Epley, reps capped at 12) relative to body weight, women scaled by 0.7, coloured on the body figure (`MuscleMap.ranked`) with cards for each group; the old barbell milestones sit underneath. Plan import: `pdf-local.js`/`plan-sheet.js` read generic headings ("PUSH DAY", "Day 2", weekday + title), sets × reps in many spellings, scheme-before-name lines, Excel title rows, a combined "Sets x Reps" column and unitless rest; more meal headings and amount-first foods.
+
+Validation: `tests/test_stories_sql.py` (real PostgreSQL 16 with a Supabase stub: visibility, expiry, highlights, cleanup, likes, refusals, no direct table access), `tests/test_stories_browser.py` (8 flows against `tests/stories_fixture.py`), `tests/test_import_layouts.js`; existing suites. The migration has **not** been applied to the live Supabase project from this session.
+
 ## 2.27.0 — 2026-10-18 (build 20261018.1)
 
 New `css/clean.css`, loaded last, sets one solid design system: neutral dark/light tokens, no background glow, glass blur or decorative gradients, one radius scale (cards 20 px, controls 14 px), consistent buttons, segmented controls, inputs, sheets and tab bar. `applyLook` always uses the matte finish; saved `material`/`solid` values are kept but no longer offered.

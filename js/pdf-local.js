@@ -64,6 +64,18 @@ window.PDFLocal = (() => {
     if(!m)return null;const a=Number(m[1].replace(',','.')),b=m[2]?Number(m[2].replace(',','.')):a,unit=/^(p|perc|min)/.test(m[3])?60:1,sec=(a+b)/2*unit;
     return sec>0&&sec<=3600?Math.round(sec/15)*15:null;
   };
+  const LABEL_TRIM=/^(?:[\s•*·\-–>]+|\d{1,2}\s*[.)]\s*|[A-Za-z]\d\s*[.):]?\s+)+|[|:;,\s–-]+$/g;   // bullets, "1." numbering, superset codes such as "A1)"
+  // Sets and reps in every common spelling: 3x8, 3 × 8-12, 4x8,8,6, 3x AMRAP, 3x30 mp, "4 sets of 10", "4 sorozat 8-10 ismétlés".
+  function scheme(s){
+    const reps='(\\d+(?:\\s*[-–]\\s*\\d+)?(?:\\s*[,/]\\s*\\d+(?!\\s*(?:kg|g)\\b))*(?:\\s*(?:mp|s|sec|secs|perc|min)\\b)?|amrap|max(?:imum)?)';
+    let m=new RegExp('(?:^|[\\s|:(–-])([1-9][0-9]?)\\s*[x×*]\\s*'+reps,'i').exec(s);
+    if(!m)m=new RegExp('(?:^|[\\s|:(–-])([1-9][0-9]?)\\s*(?:sets?|sorozat|sor)\\b\\s*(?:of|x|×|,|-|–)?\\s*'+reps+'\\s*(?:reps?|ism[eé]tl[eé]s(?:sel)?|ism\\.?)?','i').exec(s);
+    if(!m)return null;
+    const lead=m[0].length-m[0].replace(/^[\s|:(–-]+/,'').length,text=m[0].slice(lead).trim();
+    return {index:m.index+lead,text,sets:Number(m[1]),reps:m[2].replace(/\s+/g,'').replace(/^maximum$/i,'max').toUpperCase()==='AMRAP'?'AMRAP':m[2].replace(/\s+(?=[a-z])/gi,' ').replace(/\s*([-–,/])\s*/g,'$1').trim()};
+  }
+  // A short title line: no table cells, no sentence punctuation, not a page number.
+  const isHeading=s=>s.length>=3&&s.length<=60&&!s.includes('|')&&!/[.!?]\s|[.!?:]$/.test(s)&&/\p{L}{3}/u.test(s)&&!/^(page|oldal)\s*\d+$/i.test(s)&&!/^\d/.test(s);
   const titleCase=s=>s===s.toUpperCase()&&/[A-ZÁÉÍÓÖŐÚÜŰ]{3}/.test(s)?s.toLowerCase().replace(/(^|[\s\-\/(])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase()).replace(/\b([a-zA-Z])\b/g,c=>c.toUpperCase()):s;
   const nutrients=s=>{
     s=String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -87,7 +99,7 @@ window.PDFLocal = (() => {
         if(parsed.plan){const p=diet();p.name=parsed.plan.name;parsed.plan.days.forEach((d,i)=>{p.days[i].meals.push(...d.meals);if(d.total)p.days[i].total=d.total;if(d.type)p.days[i].type=d.type;});}
         continue;
       }
-      let routine=null,day=-1,meal=null,dayType='',calorieTable=null,inRules=false,cols=null;
+      let routine=null,day=-1,meal=null,dayType='',calorieTable=null,inRules=false,cols=null,heading='',newHeading=false,weekdayHead=false;
       const listed=new Set();   // a weekday heading becomes a workout only once an exercise row follows it
       for(const line of source.lines){
         const s=line.text.replace(/\s*\|\s*/g,' ').trim(),plain=norm(s);if(!s)continue;
@@ -99,12 +111,13 @@ window.PDFLocal = (() => {
           day=wi;meal=null;calorieTable=null;cols=null;dayType=/edzesnap|training day/.test(plain)?'train':/pihenonap|rest day/.test(plain)?'rest':'';
           // "THURSDAY - UPPER A / STRENGTH": a short weekday heading may introduce an exercise table instead of meals.
           routine=s.length<=70&&!/[:.]\s/.test(s)?{name:titleCase(s).slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]}:null;
+          weekdayHead=!!routine;newHeading=false;heading=routine?s:heading;
           continue;
         }
         const head=/^(?:([1-9][0-9]?)\s*[.)]?\s*nap|nap\s*([1-9][0-9]?)|day\s*([1-9][0-9]?))\b/i.exec(plain);
-        if(head){routine={name:s.slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]};out.routines.push(routine);listed.add(routine);day=-1;meal=null;cols=null;continue;}
+        if(head){routine={name:s.slice(0,80),opt:/opcionalis|optional/.test(plain),info:ref,items:[]};out.routines.push(routine);listed.add(routine);day=-1;meal=null;cols=null;newHeading=false;weekdayHead=false;continue;}
         if(day>=0 && /^(napi osszes|napi cel|osszesen|daily total|daily target|total)\b/.test(plain)){diet().days[day].total=nutrients(s);meal=null;continue;}
-        if(day>=0 && /^(reggeli|tizorai|ebed|uzsonna|vacsora|breakfast|lunch|dinner|snack|[1-9] etkezes|meal [1-9])\b/.test(plain)){
+        if(day>=0 && /^(reggeli|tizorai|ebed|uzsonna|vacsora|breakfast|lunch|dinner|supper|snack|nasi|[1-9] etkezes|etkezes [1-9]|meal [1-9]|pre workout|post workout|edzes elott|edzes utan)\b/.test(plain)){
           calorieTable=null;meal=Object.assign({name:s.split(/[:|]/)[0].replace(/\s+(?:kcal|kaloria|calories|protein|feherje|carbs|szenhidrat|fat|zsir)\b.*$/i,'').slice(0,40),items:[]},nutrients(s));diet().days[day].type=dayType;diet().days[day].meals.push(meal);continue;
         }
         if(day>=0 && meal){
@@ -132,25 +145,35 @@ window.PDFLocal = (() => {
             for(const k of ['kcal','p','c','f'])if(ns[k]!==null)meal[k]=ns[k];
             continue;
           }
-          const grams=/\b([0-9]+(?:[.,][0-9]+)?)\s*(?:g|gramm|grams)\b/i.exec(s);
-          if(grams){const food=s.slice(0,grams.index).replace(/[|:;\s]+$/,'').trim();if(food && !/^(ossz|total|feherje|protein|szenhidrat|carbs|zsir|fat)/.test(norm(food)))meal.items.push({n:food,g:Number(grams[1].replace(',','.')),kcal:ns.kcal===null?tableKcal():ns.kcal});}
+          const grams=/\b([0-9]+(?:[.,][0-9]+)?)\s*(?:g|gr|gramm|grams|ml)\b\.?/i.exec(s);
+          // "Zabpehely 80 g" and "80 g zabpehely" both name the food.
+          if(grams){const food=(s.slice(0,grams.index).replace(/^[\s•*·\-–]+|[|:;,\s–-]+$/g,'')||s.slice(grams.index+grams[0].length).replace(/^[\s|:;,–-]+|[|:;,\s]+$/g,'').replace(/\s*\d+(?:[.,]\d+)?\s*kcal.*$/i,'')).trim();if(food && !/^(ossz|total|feherje|protein|szenhidrat|carbs|zsir|fat)/.test(norm(food)))meal.items.push({n:food,g:Number(grams[1].replace(',','.')),kcal:ns.kcal===null?tableKcal():ns.kcal});}
           continue;
         }
-        if(routine){
+        {
           // A table heading such as "Exercise | Sets x Reps | RIR | Rest" says which unlabelled column holds RIR and rest.
           const columns=line.text.split('|').map(c=>c.trim()).filter(Boolean),names=columns.map(norm);
-          if(columns.length>1&&names.some(c=>/^(exercise|gyakorlat|feladat)$/.test(c))&&names.some(c=>/sets|reps|sorozat|ismetles/.test(c))){
-            cols={n:columns.length,rir:names.findIndex(c=>/^rir$/.test(c)),rest:names.findIndex(c=>/^(rest|piheno|pihenoido|szunet)$/.test(c))};continue;
+          if(columns.length>1&&names.some(c=>/^(exercise|exercises|gyakorlat|gyakorlatok|feladat|movement)$/.test(c))&&names.some(c=>/sets|reps|sorozat|ismetles|volume/.test(c))){
+            cols={n:columns.length,rir:names.findIndex(c=>/^(rir|rpe)$/.test(c)),rest:names.findIndex(c=>/^(rest|rest time|piheno|pihenoido|szunet)\b/.test(c))};continue;
           }
-          const rx=/\b([1-9][0-9]?)\s*[x×]\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
+          const rx=scheme(s);
           if(rx){
-            const label=s.slice(0,rx.index).replace(/^[\s•*\-\d.)]+|[|:;\s]+$/g,'').trim();if(!label)continue;
+            let label=s.slice(0,rx.index).replace(LABEL_TRIM,'').trim();
+            if(!label)label=s.slice(rx.index+rx.text.length).replace(/^[\s|:;,–-]+/,'').replace(/\s*(?:rest|pihenő|piheno|rir|rpe)\b.*$/i,'').replace(LABEL_TRIM,'').trim();   // "3x8 Bench press"
+            if(!label||label.length>80)continue;
+            // A routine needs a heading: weekday or "Day 1" lines, otherwise the last short title line ("PUSH DAY", "Upper A", "Mell + tricepsz").
+            if(!routine||newHeading){routine={name:titleCase(heading||(hu?'Edzés':'Workout')+' '+(out.routines.length+1)).slice(0,80),opt:/opcionalis|optional/.test(norm(heading)),info:ref,items:[]};newHeading=false;}
             const exercise=PlanSheet.exercise(label,catalog),table=cols&&columns.length===cols.n;
-            const rest=table&&cols.rest>=0?restSeconds(columns[cols.rest]):(r=>r?restSeconds(r[1]):null)(/(?:piheno|rest)\s*[:=]?\s*([0-9].*)$/i.exec(plain));
-            const rirCell=table&&cols.rir>=0?/^([0-9]+(?:\s*[-–]\s*[0-9]+)?)$/.exec(columns[cols.rir]):null,rir=rirCell||/\brir\s*[:=]?\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
-            const extra=table?(columns.find(c=>rx[0]&&c.includes(rx[0]))||'').replace(rx[0],'').trim():s.slice(rx.index+rx[0].length).trim();
+            const rest=table&&cols.rest>=0?restSeconds(columns[cols.rest]):(r=>r?restSeconds(r[1]):null)(/(?:piheno|rest|szunet)\s*[:=]?\s*([0-9].*)$/i.exec(s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()));
+            const rirCell=table&&cols.rir>=0?/^([0-9]+(?:[.,][0-9])?(?:\s*[-–]\s*[0-9]+(?:[.,][0-9])?)?)$/.exec(columns[cols.rir]):null,rir=rirCell||/\b(?:rir|rpe)\s*[:=@]?\s*([0-9]+(?:\s*[-–]\s*[0-9]+)?)/i.exec(s);
+            const extra=table?(columns.find(c=>c.includes(rx.text))||'').replace(rx.text,'').trim():s.slice(rx.index+rx.text.length).trim();
             if(!listed.has(routine)){out.routines.push(routine);listed.add(routine);}
-            routine.items.push({ex:exercise,label,sets:Number(rx[1]),reps:rx[2].replace(/\s+/g,''),rest,rir:rir?rir[1].replace(/\s+/g,''):'',note:ref+(extra?' · '+extra:'')});
+            routine.items.push({ex:exercise,label,sets:rx.sets,reps:rx.reps,rest,rir:rir?rir[1].replace(/\s+/g,''):'',note:ref+(extra?' · '+extra:'')});
+            continue;
+          }
+          if(isHeading(s)){
+            if(routine&&!listed.has(routine)&&!routine.items.length&&weekdayHead){routine.name=(routine.name+' – '+titleCase(s)).slice(0,80);weekdayHead=false;}   // "MONDAY" then "Push day"
+            else{heading=s;if(routine&&routine.items.length)newHeading=true;else if(routine&&!weekdayHead)routine=null;}
           }
         }
       }

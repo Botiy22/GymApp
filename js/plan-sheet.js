@@ -15,6 +15,7 @@ window.PlanSheet = (() => {
     if (/^(edzes|edzesterv|edzes neve|workout|routine|workout name|routine name)$/.test(n)) return 'routine';
     if (/^(nap tipusa|day type|type)$/.test(n)) return 'type';
     if (/^(gyakorlat|gyakorlat neve|exercise|exercise name|movement)$/.test(n)) return 'ex';
+    if (/^(sets x reps|sets reps|set x rep|sets and reps|sorozat x ismetles|sorozat ismetles|sorozat ismetlesszam|scheme|volume|terheles)$/.test(n)) return 'scheme';
     if (/^(sorozat|sorozatok|sorozatszam|sets|set|sets count)(?: db| count)?$/.test(n)) return 'sets';
     if (/^(ismetles|ismetlesek|ismetlesszam|reps|repetitions|rep|duration)(?: db| count)?$/.test(n)) return 'reps';
     if (/^(piheno|pihenoid[o]?|rest|rest time|recovery)(?: |$)/.test(n)) return 'rest';
@@ -84,7 +85,49 @@ window.PlanSheet = (() => {
     [/ulo vadli/, 'Seated_Calf_Raise'],
     [/vadli/, 'Standing_Calf_Raises'],
     [/haspres.*csig|csigas haspres/, 'Cable_Crunch'],
-    [/haspres/, 'Crunches']
+    [/haspres/, 'Crunches'],
+    // Common English gym names that are not the library's exact titles.
+    [/incline.*(dumbbell|db).*press|incline db/, 'Incline_Dumbbell_Press'],
+    [/incline.*bench/, 'Barbell_Incline_Bench_Press_-_Medium_Grip'],
+    [/close grip bench/, 'Close-Grip_Barbell_Bench_Press'],
+    [/(dumbbell|db) bench/, 'Dumbbell_Bench_Press'],
+    [/^bench( press)?$|barbell bench|flat bench( press)?$/, 'Barbell_Bench_Press_-_Medium_Grip'],
+    [/chin ?ups?/, 'Chin-Up'],
+    [/pull ?ups?/, 'Pullups'],
+    [/lat pull ?down|pull ?down/, 'Wide-Grip_Lat_Pulldown'],
+    [/seated (cable )?row|cable row/, 'Seated_Cable_Rows'],
+    [/chest supported row/, 'Dumbbell_Incline_Row'],
+    [/(barbell|bent over) row/, 'Bent_Over_Barbell_Row'],
+    [/(dumbbell|db|one arm) row/, 'One-Arm_Dumbbell_Row'],
+    [/^(ohp|overhead press|military press)$|barbell (shoulder|overhead) press/, 'Barbell_Shoulder_Press'],
+    [/shoulder press/, 'Dumbbell_Shoulder_Press'],
+    [/lateral raises?|side raises?/, 'Side_Lateral_Raise'],
+    [/rear delt|reverse fly/, 'Reverse_Machine_Flyes'],
+    [/cable (fly|flye|crossover)/, 'Cable_Crossover'],
+    [/pec deck|butterfly/, 'Butterfly'],
+    [/preacher/, 'Preacher_Curl'],
+    [/hammer curl/, 'Hammer_Curls'],
+    [/cable curl/, 'Standing_Biceps_Cable_Curl'],
+    [/barbell curl/, 'Barbell_Curl'],
+    [/(bicep|biceps|dumbbell) curls?/, 'Dumbbell_Bicep_Curl'],
+    [/overhead (triceps|tricep) extension/, 'Cable_Rope_Overhead_Triceps_Extension'],
+    [/rope pushdown/, 'Triceps_Pushdown_-_Rope_Attachment'],
+    [/(triceps?|tricep) push ?downs?|push ?downs?/, 'Triceps_Pushdown'],
+    [/^dips?$|chest dips?/, 'Dips_-_Chest_Version'],
+    [/^(rdl|romanian deadlift)s?$|romanian/, 'Romanian_Deadlift'],
+    [/deadlifts?$/, 'Barbell_Deadlift'],
+    [/hack squat/, 'Hack_Squat'],
+    [/bulgarian|split squat/, 'Split_Squat_with_Dumbbells'],
+    [/^(back )?squats?$|barbell squat/, 'Barbell_Full_Squat'],
+    [/leg press/, 'Leg_Press'],
+    [/seated leg curl/, 'Seated_Leg_Curl'],
+    [/leg curls?|hamstring curl/, 'Lying_Leg_Curls'],
+    [/leg extensions?/, 'Leg_Extensions'],
+    [/seated calf/, 'Seated_Calf_Raise'],
+    [/calf raises?/, 'Standing_Calf_Raises'],
+    [/cable crunch/, 'Cable_Crunch'],
+    [/^crunch(es)?$/, 'Crunches'],
+    [/^planks?$/, 'Plank']
   ];
   function exercise(label,catalog) {
     const n = norm(label), found = catalog.filter(e => [e.id,e.hu,e.en,...(e.aliases || [])].some(s => s && norm(s) === n));
@@ -103,13 +146,14 @@ window.PlanSheet = (() => {
     }
     const plan = () => out.plan || (out.plan = {name:source.name.replace(/\.[^.]+$/,''),targets:true,days:Array.from({length:7},blank),notes:[],train:[]});
     for (const [table,rows] of tables) {
-      let map = null, labels = [], kind = '', name = '', day = weekday(table), meal = '', lastRow = 0, foundHeader = false;
+      let map = null, labels = [], kind = '', name = '', title = '', day = weekday(table), meal = '', lastRow = 0, foundHeader = false;
       const custom = mappings[source.name + ':' + table];
       for (const [index,row] of rows.entries()) {
         if (custom && index < custom.headerRow) continue;
         const head = custom && index === custom.headerRow ? {map:custom.map,kind:custom.kind} : headers(row.cells);
-        if (head.kind) { map=head.map;kind=head.kind;labels=row.cells.slice();if(custom&&index===custom.headerRow){if(map.rest!=null)labels[map.rest]='Rest (sec)';if(map.grams!=null)labels[map.grams]='Grams';}foundHeader=true;name='';meal='';day=custom && custom.day != null ? Number(custom.day) : weekday(table);lastRow=row.row || 0;continue; }
-        if (!map) continue;
+        if (head.kind) { map=head.map;kind=head.kind;labels=row.cells.slice();if(custom&&index===custom.headerRow){if(map.rest!=null)labels[map.rest]='Rest (sec)';if(map.grams!=null)labels[map.grams]='Grams';}foundHeader=true;name=title;title='';meal='';day=custom && custom.day != null ? Number(custom.day) : weekday(table);lastRow=row.row || 0;continue; }
+        const filled=row.cells.filter(c=>String(c||'').trim());
+        if (!map) { if (filled.length===1) title=String(filled[0]).trim().slice(0,80); continue; }   // a title row above the first table
         if (row.row && lastRow && row.row > lastRow + 1) {name='';meal='';day=custom && custom.day != null ? Number(custom.day) : weekday(table);}
         lastRow=row.row || lastRow;
         const get = key => {
@@ -122,13 +166,18 @@ window.PlanSheet = (() => {
         if (kind === 'workout') {
           const label=get('ex');
           if (/^(total|osszesen|napi osszes)/.test(norm(label))) continue;
+          // A lone cell between blocks ("Day 2 – Pull") titles the exercises below it.
+          if (label && row.cells.filter(c => String(c || '').trim()).length === 1 && !get('sets') && !get('reps') && !get('scheme')) { name = title = label.slice(0, 80); continue; }
           name=get('routine') || explicitDay || name || table;
           if (!label) continue;
           let routine=out.routines.find(r=>r.name===name);
           if (!routine) {routine={name,opt:/optional|opcionalis/.test(norm(name)),info:ref,items:[]};out.routines.push(routine);}
           const v=get('rest'), units=norm(labels[map.rest] || '')+' '+norm(v), duration=numeric(v.replace(/\s*(?:mp|s|sec|seconds|min|minutes|perc)\s*$/i,''));
-          const rest=duration == null ? null : /\b(min|minutes|perc)\b/.test(units) ? duration*60 : /\b(mp|s|sec|seconds|masodperc)\b/.test(units) ? duration : null;
-          routine.items.push({ex:exercise(label,catalog),label,sets:numeric(get('sets')),reps:get('reps'),rest,rir:get('rir'),note:[ref,get('note'),rest==null&&v?(hu?'Pihenő a fájlban: ':'Rest in file: ')+v:''].filter(Boolean).join(' · ')});
+          // Without a unit, small numbers are minutes ("2") and larger ones seconds ("90").
+          const rest=duration == null ? null : /\b(min|minutes|perc)\b/.test(units) ? duration*60 : /\b(mp|s|sec|seconds|masodperc)\b/.test(units) ? duration : duration > 0 && duration <= 10 ? duration*60 : duration >= 15 && duration <= 600 ? duration : null;
+          // "3 x 8-12" in one column.
+          const combo=/^\s*([1-9][0-9]?)\s*[x×*]\s*(.+?)\s*$/i.exec(get('scheme') || (!get('reps') ? get('sets') : ''));
+          routine.items.push({ex:exercise(label,catalog),label,sets:combo?Number(combo[1]):numeric(get('sets')),reps:combo?combo[2].replace(/\s*([-–])\s*/g,'$1'):get('reps'),rest,rir:get('rir'),note:[ref,get('note'),rest==null&&v?(hu?'Pihenő a fájlban: ':'Rest in file: ')+v:''].filter(Boolean).join(' · ')});
         } else {
           if (explicitDay) { const next=weekday(explicitDay); if (next!==day || next<0) meal='';day=next; }
           const mealName=get('meal'), food=get('food'), type=norm(get('type') || explicitDay);

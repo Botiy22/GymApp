@@ -117,3 +117,32 @@ dialog#sheet, .pdf-plan-dialog { background: var(--card); border: 1px solid var(
 .app-info { text-align: center; color: var(--mut); }
 .hero-links .training-tick { width: auto; margin: 0; font-size: .9rem; }
 #ride-pill { background: var(--card); }
+
+/* ---------- ranks: tier colours, body figure, muscle cards ---------- */
+:root { --t0:#9aa0a6; --t1:#b87d4b; --t2:#d0a17a; --t3:#b9c3cf; --t4:#e8b343; --t5:#3fbf8f; --t6:#4a90e2; --t7:#9b6cf0; --t8:#ef4e6a; }
+.mm-ranked .mm-t { stroke: #2b2b2b; stroke-width: 2.4; stroke-linejoin: round; transition: fill .35s ease; }
+.mm-t0{fill:var(--t0)}.mm-t1{fill:var(--t1)}.mm-t2{fill:var(--t2)}.mm-t3{fill:var(--t3)}.mm-t4{fill:var(--t4)}.mm-t5{fill:var(--t5)}.mm-t6{fill:var(--t6)}.mm-t7{fill:var(--t7)}.mm-t8{fill:var(--t8)}
+.tier-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--line); flex: none; }
+.tier-dot.t0{background:var(--t0)}.tier-dot.t1{background:var(--t1)}.tier-dot.t2{background:var(--t2)}.tier-dot.t3{background:var(--t3)}.tier-dot.t4{background:var(--t4)}.tier-dot.t5{background:var(--t5)}.tier-dot.t6{background:var(--t6)}.tier-dot.t7{background:var(--t7)}.tier-dot.t8{background:var(--t8)}
+.muscle-hero { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); padding: 16px; display: grid; gap: 12px; }
+.muscle-figure { background: #fff; border-radius: 16px; padding: 10px 6px 0; }
+.muscle-figure svg { display: block; width: 100%; height: auto; max-height: 340px; }
+.muscle-hero-text small { color: var(--mut); font-size: .76rem; }
+.muscle-hero-text h2 { font-size: 1.5rem; margin: 2px 0 6px; }
+.tier-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .74rem; color: var(--mut); }
+.tier-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tier-legend span.on { color: var(--ink); font-weight: 650; }
+.tier-legend .tier-dot { width: 10px; height: 10px; }
+.muscle-cards { display: grid; gap: 8px; margin: 14px 0; }
+.muscle-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.muscle-card > summary { display: grid; grid-template-columns: auto 1fr 74px auto; align-items: center; gap: 12px; padding: 12px 14px; list-style: none; cursor: pointer; }
+.muscle-card > summary::-webkit-details-marker { display: none; }
+.muscle-card > summary span:first-of-type { display: flex; flex-direction: column; min-width: 0; }
+.muscle-card small { color: var(--mut); font-size: .78rem; }
+.muscle-card > summary > svg { width: 18px; height: 18px; fill: none; stroke: var(--mut); stroke-width: 2; transition: transform .25s ease; }
+.muscle-card[open] > summary > svg { transform: rotate(180deg); }
+.muscle-bar { height: 6px; border-radius: 99px; background: var(--raised); overflow: hidden; }
+.muscle-bar > span { display: block; height: 100%; border-radius: inherit; background: var(--t0); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.muscle-bar > .t1{background:var(--t1)}.muscle-bar > .t2{background:var(--t2)}.muscle-bar > .t3{background:var(--t3)}.muscle-bar > .t4{background:var(--t4)}.muscle-bar > .t5{background:var(--t5)}.muscle-bar > .t6{background:var(--t6)}.muscle-bar > .t7{background:var(--t7)}.muscle-bar > .t8{background:var(--t8)}
+.muscle-body { padding: 0 14px 12px 38px; display: grid; gap: 4px; font-size: .9rem; }
+.lift-milestones { margin-top: 6px; }

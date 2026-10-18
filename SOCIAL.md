@@ -1,6 +1,6 @@
 # Profiles and friends
 
-The bottom bar is **Workout · Food · Goals · Settings**. Open Profile using your photo at the top right. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Profile has **Overview · Your lift ranks · Friends** pages at the top. Earned badges stay in Overview; lift rankings have their own page; search, requests, connected profiles and optional weekly competition are in Friends.
+The bottom bar is **Workout · Food · Goals · Settings**. Open Profile using your photo at the top right. Workout contains Train, Plans, Exercises and History. Goals contains Habits and Progress. Profile has **Overview · Ranks · Friends** pages at the top. Earned badges stay in Overview; lift rankings have their own page; search, requests, connected profiles and optional weekly competition are in Friends.
 
 ## Activate friends in Supabase
 
@@ -123,6 +123,32 @@ Open a friend's avatar, then double-tap (or double-click) to like the current ph
 Reviews show a compact rating summary and author cards. Use the pencil-plus icon to open the review editor; select one to five stars and write up to 280 characters. Sending closes the editor and clears its draft only after success. Explicit Edit reloads your saved review. Errors retain your writing; one editable review per author/target is still enforced by the server.
 
 Manage sharing shows Private, Changes ready to share or Up to date. Update replaces the same published routine snapshot and refetches it from the server; a confirmation appears when complete. Logged weights are private and are not shared template changes. The existing profile-sharing SQL already supports these operations; 2.21 adds no SQL file.
+# Stories, photo posts and highlights (2.28)
+
+Install [20261018_stories_posts.sql](https://github.com/Botiy22/GymApp/blob/main/migrations/20261018_stories_posts.sql) in a new SQL Editor query after the earlier files. It only adds tables and functions; existing data is untouched. Until it is installed, Profile → Friends shows a note naming this file instead of the story row and feed.
+
+- **Stories** appear in the row at the top of Profile → Friends (your own first, then friends, then other accounts). They disappear after the time chosen when sharing (1 h, 6 h, 12 h, 24 h, 3 days or 7 days); when nothing is chosen, after 24 hours. Ended stories stay in the owner's archive for 30 days, then they are deleted unless they are kept in a highlight.
+- **Posts** are photos that stay on the profile until deleted. They show in the Friends page feed and in the profile grid.
+- **Highlights** are named story collections ("Chest day", "Leg day") shown as bubbles on the profile. They keep their stories after the stories end.
+- **Who can see it**: Everyone (any signed-in Reppsy account), Friends (accepted friends only) or Only me. It can be changed later for posts. Nobody but the owner sees which setting was chosen.
+- **Likes**: anyone who can see an item can like it (double-tap a post photo, or the heart). Only the owner sees who liked it.
+- Pictures are shrunk on the phone before upload (at most 1080 px, under about 300 KB, plus a small square thumbnail) and stored with the post row. Limits: 30 new items a day, 300 posts and 30 highlights per account.
+- Everything goes through `security definer` functions; the tables themselves are not readable by the app's key. Deleting an account removes its posts, stories, highlights and likes (foreign keys cascade from `social_profiles`).
+- Tests: `tests/test_stories_sql.py` runs the migration on a local PostgreSQL (set `GYMAPP_PG`), `tests/test_stories_browser.py` drives the screens against an in-memory backend (`tests/stories_fixture.py`).
+
+# What the account stores in Supabase (2.28 audit)
+
+| Where | What | Who can read it |
+|---|---|---|
+| `auth.users` (Supabase Auth) | email, optional phone, password hash, sign-up username | Supabase only |
+| `userdata` (one row per account) | the whole app document: workouts and sets, routines and plans, food diary, own foods and exercises (with their photos), body weight, habits, goals, rides, body profile, settings, badges choice, deletion markers | the owner (row-level security) |
+| `social_profiles` | username, display name, bio, profile photo, cover, colours, showcased badges | friends via functions; name and photo also next to public posts and stories |
+| `social_connections`, `social_discovery`, `social_lookup_limits` | friendships and requests, email/phone discovery opt-ins, lookup rate limits | the two people involved / functions only |
+| `social_photo_likes`, `social_reviews`, `social_routines` | profile photo likes, reviews, opt-in shared routines | friends via functions |
+| `social_posts`, `social_post_likes`, `social_highlights`, `social_highlight_items` | posts, stories, highlights, likes (2.28) | depends on each item's audience |
+
+Kept only on the device, on purpose: the workout or ride that is still running (saved on every tap and uploaded the moment it is finished, so two phones cannot overwrite each other's live session), the bike wheel size (it belongs to that phone's sensor), which stories this phone has already shown, and the AI API key unless **Sync API key** is turned on.
+
 # Administrator account directory (2.25.0)
 
 Open `public.admin_user_directory` in Supabase to see `user_id`, `email`, `username`, `display_name`, account creation/last sign-in timestamps and whether saved data exists. Alternatively, run `select user_id, email, username, display_name from public.admin_user_directory order by account_created_at;` in the SQL Editor.
