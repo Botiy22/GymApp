@@ -28,6 +28,7 @@ window.Cloud = (function () {
     let body = null; try { body = await res.json(); } catch (e) {}
     if (res.ok) return body;
     const c = String((body && (body.error_code || body.code || body.error)) || ''), m = String((body && (body.msg || body.message || body.error_description)) || '');
+    if(c.startsWith('planner')){const error=fail(c,m);error.status=res.status;error.backendCode=c;throw error;}
     if (res.status === 429 || /rate.?limit/i.test(c + m)) throw fail('rate', m);
     if (c === 'invalid_credentials' || /invalid login/i.test(m)) throw fail('creds', m);
     if (c === 'email_not_confirmed' || /not confirmed/i.test(m)) throw fail('confirm', m);
@@ -81,6 +82,7 @@ window.Cloud = (function () {
     if (newer('favs')) { out.favEx = list(b.favEx); out.favFoods = list(b.favFoods); }
     if (newer('notes')) out.aiNotes = list(b.aiNotes);
     if (newer('own')) { out.myEx = list(b.myEx); out.myFoods = list(b.myFoods); out.exMedia = map(b.exMedia); }                     // own exercises, foods and pictures: the side that changed them last
+    out.planner = DailyPlanner.merge(a.planner,b.planner,del);
     out.habits = Momentum.merge(a.habits, b.habits, del);
     if (newer('plan')) out.plan = b.plan && typeof b.plan === 'object' ? b.plan : null;
     const mine = map(a.settings), theirs = map(b.settings);
@@ -120,6 +122,13 @@ window.Cloud = (function () {
   }
 
   return {
+    supportsPlanner:true,
+    async calendarFeed(url) {
+      if(!on)throw fail('plannerCalendarSetup');
+      const run=tk=>call('/functions/v1/calendar-feed',{method:'POST',auth:tk,body:{url}});
+      try{return await run(await token());}
+      catch(e){if(e.status===404)throw fail('plannerCalendarSetup');if(e.backendCode?.startsWith('planner'))throw fail(e.backendCode);if(e.code!=='auth'||!ses)throw e;return run(await refresh());}
+    },
     supportsMealGroups:true,consistencyRpc:true,usernameSignup:true,on, merge, sync, state,
     async rpc(name, body) {
       if (!on || !/^[a-z][a-z0-9_]{0,62}$/.test(name)) throw fail('api');

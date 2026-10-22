@@ -66,11 +66,11 @@ class CoversFriends(unittest.TestCase):
     def test_weekly_challenges_complete_and_recalculate_after_undo(self):
         page,errors=self.page(320,844,'hu',20)
         page.evaluate("""()=>{const now=Date.now(),day=new Date().toISOString().slice(0,10);Store.d.workouts=[{id:'challenge',start:now,end:now,entries:[{ex:'Barbell_Bench_Press_-_Medium_Grip',sets:Array.from({length:10},()=>({kg:5,reps:8}))}]}];Store.d.food={[day]:[{id:'meal',kcal:400}]};Store.save();}""")
-        page.locator('#tabbar [data-tab=goals]').click();self.bounds(page,'weekly challenges')
+        page.locator('#tabbar [data-tab=goals]').click();page.locator('[data-a=goals-view][data-v=habits]').click();self.bounds(page,'weekly challenges')
         values=page.locator('.weekly-challenges progress').evaluate_all('(els)=>els.map(e=>[e.value,e.max])');self.assertEqual(values,[[1,3],[10,10],[1,5]])
         page.locator('.weekly-challenges summary').click();self.assertFalse(page.locator('.weekly-challenges').evaluate('(e)=>e.open'))
         page.locator('.profile-shortcut').click();page.locator('[data-a=profile-view][data-v=ranks]').click();page.locator('[data-section=lift-milestones] > summary').click();self.assertIn('Alapozó',page.locator('[data-rank=bench]').inner_text())   # 2.28: barbell milestones sit in a closed section under the muscle ranks
-        page.evaluate("()=>{Store.d.workouts=[];Store.save()}");page.locator('#tabbar [data-tab=goals]').click();self.assertEqual(page.locator('.weekly-challenges progress').first.evaluate('(e)=>e.value'),0);self.assertEqual(errors,[])
+        page.evaluate("()=>{Store.d.workouts=[];Store.save()}");page.locator('#tabbar [data-tab=goals]').click();page.locator('[data-a=goals-view][data-v=habits]').click();self.assertEqual(page.locator('.weekly-challenges progress').first.evaluate('(e)=>e.value'),0);self.assertEqual(errors,[])
 
     def test_missing_new_migration_keeps_friends_and_explains_scoring(self):
         page,calls,errors=self.auth_page()

@@ -11,7 +11,7 @@ class ClockMotion(unittest.TestCase):
     def goals(self,motion=True):
         page,errors=self.page(320,844,'en',20)
         page.emulate_media(reduced_motion='no-preference' if motion else 'reduce')
-        page.evaluate('''()=>{Store.d.settings.calm=false;__gym.A['set-bg']({dataset:{v:Store.d.settings.bg}});Store.d.habits=[Momentum.clean({id:'water',name:'Water',source:'count',goal:3,unit:'Liter',days:[0,1,2,3,4,5,6],logs:{}})];Store.save();__gym.ui.tab='goals';__gym.render();}''')
+        page.evaluate('''()=>{Store.d.settings.calm=false;__gym.A['set-bg']({dataset:{v:Store.d.settings.bg}});Store.d.habits=[Momentum.clean({id:'water',name:'Water',source:'count',goal:3,unit:'Liter',days:[0,1,2,3,4,5,6],logs:{}})];Store.save();__gym.ui.tab='goals';__gym.ui.goals='habits';__gym.render();}''')
         return page,errors
 
     def test_goal_charge_rapid_changes_undo_and_centered_counter(self):

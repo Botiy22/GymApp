@@ -27,6 +27,18 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.29.0, 2026-10-22 (Codex)
+
+Owner requested a bilingual audit followed by a minimal daily-routine planner replacing the Goals landing, calendar sync, then commit/push to main for trying it. Branch `codex/daily-planner-20261022`; verified remote backup `backup/main-20261022-before-daily-planner` at actual main b4eabb3ba2421a40eb69d1007eea38de049227bd. Restore by normal commit, never force/reset. Backup is code, not private account data.
+
+- **UI:** `css/planner.css`, `js/app.js` Schedule day/week timetable and activity editor; old habits and progress remain secondary tabs. Completion doesn't log exercise/calories or add competition points. English/Hungarian keys audited (including nested vocabulary/placeholders) and pages/forms/registration exercised; five missing Hungarian singular keys and the nav's aria-label fixed. 876 exercise names and all recipe titles/steps have translations.
+- **Data:** `js/daily-planner.js` cleans/merges private planner records, repeats, done/undo, calendar import/resync; `js/store.js` tracks/export/import/deletes planner records and `js/cloud.js` merges them. Calendar links live only in device-local per-owner storage, not exported userdata. Added ICAL.js 2.2.1 UMD distribution/license under `vendor/ical`, npm integrity verified. All new shell files registered in index/CORE, stale-shell helper gates added, release manifest regenerated.
+- **Calendar service:** `supabase/functions/calendar-feed/{index.ts,handler.mjs}` is an authenticated read-only HTTPS/host-allowlisted relay with exact CORS, safe redirects, limits and no credential forwarding/storage/logging. **NOT deployed live**: no Supabase tool/CLI/auth binding available. No SQL migration needed. `.ics` import works without it. URL subscriptions require deployment + allowed origins per `CALENDARS.md`; one-way refresh every 15 minutes with Schedule visible. No direct browser access to phone calendars, private OAuth/CalDAV or background sync claimed.
+- **Checks:** Node planner/relay/translations + existing routine/ride suites; browser planner create/edit/repeat/undo/delete/reload/export, file cancel/import/resync, live-relay fixtures/failure/missing service/private URLs, day/week phone/light/dark/larger text; translation walks including registration. Existing responsive/offline, clock and verified-update tests pass. Only browser fixtures/local unit checks, no physical iOS or hosted/live account verification.
+- **Other assistants:** review the calendar parser range/exception handling, merge/tombstone behavior and function deployment/configuration before extending to private calendar authorization. Keep the explicit unconfigured state until actually deployed.
+
+---
+
 # Update — Reppsy 2.28.0, 2026-10-18 (Claude)
 
 Owner asked for: a more robust PDF/Word/Excel importer, reworked ranks with a muscle figure in a Profile tab, an audit of what lives in Supabase, photo posts, Instagram-style stories that expire (default one day) with named highlight bubbles, likes with a new like button and animation, and smooth open/close/interaction motion. Visibility rule from the owner: anyone with an account, with a private option (implemented as Everyone / Friends / Only me).

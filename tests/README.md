@@ -82,3 +82,13 @@ Focused fixture-only browser suites: `test_covers_friends.py`, `test_profile_sha
 `test_clock_motion.py` exercises real goal count handlers, intermediate/final dial fill, rapid updates and undo, centered number bounds, Food/Profile continuity, and reduced-motion/date separation. The verified-update browser test checks the actual logo animation and reduced-motion disablement inside the modal.
 
 Meal cards and week browsing: `node tests/test_meal_groups.cjs` also checks collapsed/expanded meals, individual imported food persistence, animated-switch DOM preservation, swipe directions, vertical gestures and upcoming-week restrictions using an isolated local Chromium app.
+
+
+Daily planner and translations (2.29):
+
+```sh
+node --test tests/test_daily_planner.js tests/test_calendar_feed.mjs tests/test_translations.js
+PYTHONPATH=tests python -m unittest test_daily_planner_browser test_translations_browser -v
+```
+
+The calendar relay is tested with in-memory fetch responses; the browser uses synthetic authenticated accounts and `.ics` fixtures. No private calendars or live Supabase rows are read/changed. See [CALENDARS.md](../CALENDARS.md) for function deployment (not performed by these tests), one-way sync limits and offline file import. The retained Goals/Habits section is now opened explicitly by clock/challenge tests.

@@ -11,10 +11,11 @@
   if (!document.querySelector('link[href="css/ride.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/ride.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/clean.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/clean.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/stories.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/stories.css'; document.head.append(style); }
+  if (!document.querySelector('link[href="css/planner.css"]')) { const style=document.createElement('link');style.rel='stylesheet';style.href='css/planner.css';document.head.append(style); }
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
-    const src = !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -104,7 +105,7 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', goals: 'habits', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), mealOpen: {}, habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', goals: 'planner', plannerDate:today(), plannerView:'day', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), mealOpen: {}, habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -141,7 +142,7 @@
     chat: '<svg viewBox="0 0 24 24"><path d="M4 5.500h16v10.500h-8.500L7 20v-4H4z"/><path d="M8.500 9.500h7M8.500 12.500h4.500"/></svg>',
     send: '<svg viewBox="0 0 24 24"><path d="M4 12l16-7.500-5 15.500-3.500-6z"/><path d="M11.500 14L20 4.500"/></svg>',
     stretch: '<svg viewBox="0 0 24 24"><circle cx="12" cy="4.300" r="1.800"/><path d="M12 7v7.500M12 9.500L6.500 5M12 9.500L17.500 5M12 14.500L8 21M12 14.500L16 21"/></svg>',
-    habit: '<svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 9-9M12 17a5 5 0 1 1 5-5M12 12l8-8M16 4h4v4"/></svg>'
+    habit: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 10h18M8 15l3 3 5-5"/></svg>'
   };
   /* routine icons: chosen from the muscles of the routine, or picked by hand in the editor */
   const RICON = {
@@ -920,11 +921,79 @@
   function badgeChip(b, detailed) {
     return `<span class="achievement${b.earned?' earned':' locked'}" data-badge="${esc(b.id)}">${Profile.symbol(b.icon)}<span><b>${esc(b[L()])}</b>${detailed?`<small>${esc(b[L()+'Hint'])}</small>`:''}</span></span>`;
   }
+  /* ================= DAILY ROUTINE ================= */
+  const plannerTime = ms => new Date(ms).toLocaleTimeString(L()==='hu'?'hu-HU':'en-GB',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const plannerIcon = kind => ({gym:IC.home,swim:'<svg viewBox="0 0 24 24"><path d="M3 19c3-3 3 3 6 0s3 3 6 0 3 3 6 0M5 13l5-4 5 4 4-3M10 9l-3-4H3"/><circle cx="16" cy="6" r="2"/></svg>',run:IC.walk,focus:IC.prog,personal:IC.profile,recovery:IC.habit,other:IC.cal}[kind]||IC.habit);
+  function plannerDays(){const d=ui.plannerDate;return ui.plannerView==='week'?Array.from({length:7},(_,i)=>Momentum.shift(DailyPlanner.day(weekStart(d+'T12:00')),i)):[d];}
+  function vPlanner(){
+    const d=ui.plannerDate,loc=L()==='hu'?'hu-HU':'en-GB',week=DailyPlanner.day(weekStart(d+'T12:00')),days=plannerDays();
+    const items=days.map(k=>DailyPlanner.occurrences(D().planner,k));
+    const layouts=items.flatMap((es,i)=>DailyPlanner.layout(es,days[i]));
+    const startHour=Math.min(6,...layouts.map(e=>Math.floor(e.from/60))),endHour=Math.max(23,...layouts.map(e=>Math.ceil(e.to/60)));
+    const sourceCount=D().planner.sources.length,local=DailyPlanner.occurrences(D().planner,d),completed=local.filter(e=>e.complete).length;
+    const dateLabel=new Date(d+'T12:00').toLocaleDateString(loc,{month:'long',year:'numeric'});
+    let h=`<section class="daily-planner"><div class="planner-toolbar"><div><p class="planner-month">${esc(dateLabel)}</p><h2>${esc(d===today()?t('today'):new Date(d+'T12:00').toLocaleDateString(loc,{weekday:'long'}))}<span>${new Date(d+'T12:00').getDate()}</span></h2></div><div class="planner-tools"><button class="icon-btn" data-a="planner-calendar" aria-label="${esc(t('plannerCalendars'))}" title="${esc(t('plannerCalendars'))}">${IC.cal}${sourceCount?'<i class="planner-connected-dot"></i>':''}</button><button class="btn sm primary" data-a="planner-new">${IC.plus}<span>${esc(t('add'))}</span></button></div></div>`;
+    h+=`<div class="planner-week-row"><button class="icon-btn" data-a="planner-shift" data-d="-7" aria-label="${esc(t('prevWeek'))}">${IC.back}</button><div class="planner-week">${Array.from({length:7},(_,i)=>{const k=Momentum.shift(week,i),e=DailyPlanner.occurrences(D().planner,k);return `<button data-a="planner-day" data-d="${k}" class="${k===d?'selected':''}" aria-pressed="${k===d}" ${k===today()?'aria-current="date"':''} aria-label="${esc(fmtDate(k+'T12:00',true))}"><small>${esc(new Date(k+'T12:00').toLocaleDateString(loc,{weekday:'short'}).replace(/\.$/,''))}</small><b>${k.slice(-2)}</b><i class="${e.length?'has-events':''}"></i></button>`;}).join('')}</div><button class="icon-btn flip" data-a="planner-shift" data-d="7" aria-label="${esc(t('nextWeek'))}">${IC.back}</button></div>`;
+    h+=`<div class="planner-view-row"><span class="planner-summary">${local.length?esc(t('plannerDayCount',completed,local.length)):esc(t('plannerOpenDay'))}</span><div class="planner-view-switch" aria-label="${esc(t('plannerView'))}">${['day','week'].map(v=>`<button class="${ui.plannerView===v?'on':''}" data-a="planner-view" data-v="${v}" aria-pressed="${ui.plannerView===v}">${esc(t(v==='day'?'plannerDay':'plannerWeek'))}</button>`).join('')}</div>${d!==today()?`<button class="link planner-today" data-a="planner-today">${esc(t('today'))}</button>`:''}</div>`;
+    const from=startHour*60,span=(endHour-startHour)*60;
+    h+=`<div class="planner-scroll" data-start-hour="${startHour}" tabindex="0" role="region" aria-label="${esc(t('plannerTimetable'))}" style="--planner-days:${days.length};--planner-height:${span*1.2}px"><div class="planner-canvas${days.length>1?' planner-wide':''}"><div class="planner-grid-head"><span>${esc(t('plannerTime'))}</span>${days.map(k=>`<b>${esc(new Date(k+'T12:00').toLocaleDateString(loc,{weekday:'short',day:'numeric'}))}</b>`).join('')}</div>`;
+    if(items.some(es=>es.some(e=>e.allDay)))h+=`<div class="planner-all-day"><small>${esc(t('plannerAllDay'))}</small>${items.map(es=>`<div>${es.filter(e=>e.allDay).map(e=>`<button class="planner-all-event${e.complete?' complete':''}" data-a="planner-edit" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||e.day}">${esc(e.title)}</button>`).join('')}</div>`).join('')}</div>`;
+    h+=`<div class="planner-timetable"><div class="planner-hours">${Array.from({length:endHour-startHour+1},(_,i)=>`<span style="top:${i*72}px">${pad(startHour+i)}:00</span>`).join('')}</div>${days.map((k,index)=>{
+      const events=DailyPlanner.layout(items[index],k),now=new Date(),minute=now.getHours()*60+now.getMinutes();
+      return `<div class="planner-day-column" aria-label="${esc(fmtDate(k+'T12:00',true))}">${Array.from({length:(endHour-startHour)*2},(_,i)=>`<button class="planner-slot" style="top:${i*36}px" data-a="planner-new" data-d="${k}" data-minute="${from+i*30}" aria-label="${esc(t('plannerAddAt',pad(Math.floor((from+i*30)/60))+':'+pad((from+i*30)%60)))}"></button>`).join('')}${!events.length&&!items[index].length&&days.length===1?`<div class="planner-empty" style="top:${Math.max(72,(9-startHour)*72)}px"><span>${IC.cal}</span><b>${esc(t('plannerEmptyTitle'))}</b><p>${esc(t('plannerEmptyHint'))}</p><button class="link" data-a="planner-new">${IC.plus}${esc(t('plannerFirst'))}</button></div>`:''}${events.map(e=>`<article class="planner-event kind-${e.category}${e.complete?' complete':''}${e.lanes>2?' compact-event':''}" style="--event-top:${(e.from-from)*1.2}px;--event-height:${Math.max(43,(e.to-e.from)*1.2-4)}px;--event-lane:${e.lane};--event-lanes:${e.lanes}"><button class="planner-event-main" data-a="planner-edit" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||k}" aria-label="${esc(e.title+' · '+plannerTime(e.start)+'–'+plannerTime(e.end))}"><b>${esc(e.title)}</b><small>${plannerTime(e.start)} – ${plannerTime(e.end)}${e.source?' · '+esc(t('plannerCalendarShort')):''}</small>${e.note&&e.to-e.from>=70?`<span>${esc(e.note)}</span>`:''}</button>${days.length===1&&e.lanes<3?`<button class="planner-done" data-a="planner-done" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||k}" aria-pressed="${e.complete}" aria-label="${esc(t(e.complete?'plannerMarkUndone':'plannerMarkDone')+': '+e.title)}">${e.complete?IC.check:'<span></span>'}</button>`:''}</article>`).join('')}${k===today()&&minute>=from&&minute<=from+span?`<div class="planner-now" style="top:${(minute-from)*1.2}px" aria-label="${esc(t('plannerNow'))}"><i></i></div>`:''}</div>`;
+    }).join('')}</div></div></div>`;
+    h+=`<div class="planner-quick"><span>${esc(t('plannerQuickAdd'))}</span>${['gym','swim','focus'].map(kind=>`<button class="chip" data-a="planner-new" data-kind="${kind}">${plannerIcon(kind)}${esc(t('plannerKind_'+kind))}</button>`).join('')}</div>${ui.calendarStatus?`<p class="planner-status" role="status">${esc(t(ui.calendarStatus))}</p>`:''}</section>`;
+    return h;
+  }
+  function shPlannerEvent(){
+    const fn=()=>{const e=ui.plannerDraft,imported=!!e.source;
+      const form=`<form id="planner-event-form" data-f="planner-event"><label class="fld"><span>${esc(t('plannerActivity'))}</span><input name="title" maxlength="100" required value="${esc(e.title)}" placeholder="${esc(t('plannerTitleHint'))}"></label><label class="fld"><span>${esc(t('date'))}</span><input type="date" name="date" required value="${DailyPlanner.day(e.start)}"></label><label class="sw"><input type="checkbox" name="allDay" data-in="planner-all-day" role="switch" ${e.allDay?'checked':''}><span>${esc(t('plannerAllDay'))}</span></label><div class="planner-time-fields"><label class="fld"><span>${esc(t('plannerStart'))}</span><input type="time" name="start" required value="${plannerTime(e.start)}" ${e.allDay?'disabled':''}></label><label class="fld"><span>${esc(t('plannerEnd'))}</span><input type="time" name="end" required value="${plannerTime(e.end)}" ${e.allDay?'disabled':''}></label></div><div class="planner-time-fields"><label class="fld"><span>${esc(t('plannerCategory'))}</span><select name="category">${DailyPlanner.categories.map(k=>`<option value="${k}" ${e.category===k?'selected':''}>${esc(t('plannerKind_'+k))}</option>`).join('')}</select></label><label class="fld"><span>${esc(t('plannerRepeat'))}</span><select name="repeat">${['none','daily','weekdays','weekly'].map(k=>`<option value="${k}" ${e.repeat===k?'selected':''}>${esc(t('plannerRepeat_'+k))}</option>`).join('')}</select></label></div><label class="fld"><span>${esc(t('plannerNote'))}</span><input name="note" maxlength="500" value="${esc(e.note||'')}" placeholder="${esc(t('plannerNoteHint'))}"></label><p class="planner-form-error note warn" role="status" hidden></p></form>`;
+      return {title:t(e.existing?'plannerEditActivity':'plannerNewActivity'),html:imported?`<div class="planner-import-detail"><span class="eyebrow">${esc(D().planner.sources.find(s=>s.id===e.source)?.name||t('plannerCalendarShort'))}</span><h3>${esc(e.title)}</h3><p>${esc(fmtDate(e.start,true))}</p><p>${e.allDay?esc(t('plannerAllDay')):plannerTime(e.start)+' – '+plannerTime(e.end)}</p>${e.note?`<p>${esc(e.note)}</p>`:''}<p class="cap">${esc(t('plannerImportedReadOnly'))}</p></div>`:form,foot:imported?`<button class="btn primary" data-a="planner-done" data-id="${esc(e.id)}" data-d="${ui.plannerEditDay}" data-close="1">${IC.check}${esc(t(e.done?.[ui.plannerEditDay]?.value?'plannerMarkUndone':'plannerMarkDone'))}</button>`:`<div class="planner-form-actions">${e.existing?`<button class="icon-btn danger" data-a="planner-delete" data-id="${esc(e.id)}" aria-label="${esc(t('delete'))}">${IC.del}</button>`:''}<button class="btn primary" form="planner-event-form">${esc(t('save'))}</button></div>`};
+    };fn.kind='planner-event';return fn;
+  }
+  const calendarKey=()=> 'gymapp.v1.calendar.'+(CL?.user?.id||'local');
+  function calendarLinks(){try{const v=JSON.parse(localStorage.getItem(calendarKey())||'{}');return v&&typeof v==='object'&&!Array.isArray(v)?v:{};}catch(_){return {};}}
+  function saveCalendarLinks(v){try{localStorage.setItem(calendarKey(),JSON.stringify(v));return true;}catch(_){toast(t('saveFailed'));return false;}}
+  function shPlannerCalendars(){const fn=()=>({title:t('plannerCalendars'),html:`<p class="planner-calendar-intro">${esc(t('plannerCalendarIntro'))}</p><label class="btn planner-import-file">${IC.upload}${esc(t('plannerImportFile'))}<input type="file" class="sr" data-in="planner-ics" accept=".ics,text/calendar"></label><p class="cap">${esc(t('plannerImportRange'))}</p>${D().planner.sources.length?`<div class="planner-sources">${D().planner.sources.map(s=>`<article><span class="planner-source-icon">${IC.cal}</span><div><b>${esc(s.name)}</b><small>${esc(t(s.kind==='feed'?'plannerSubscribed':'plannerFileSnapshot'))} · ${esc(fmtDate(s.syncedAt))}</small></div>${s.kind==='feed'?`<button class="icon-btn" data-a="planner-sync-one" data-id="${s.id}" aria-label="${esc(t('plannerSyncNow'))}" ${ui.calendarBusy?'disabled':''}>${IC.refresh}</button>`:''}<button class="icon-btn" data-a="planner-disconnect" data-id="${s.id}" aria-label="${esc(t('remove'))}">${IC.close}</button></article>`).join('')}</div>`:''}<details class="mini-section planner-feed-setup" open><summary>${esc(t('plannerSubscribe'))}${IC.down}</summary><div class="section-body"><p class="cap">${esc(t('plannerFeedHint'))}</p><form id="planner-calendar-form" data-f="planner-calendar"><label class="fld"><span>${esc(t('name'))}</span><input name="name" maxlength="80" value="${esc(ui.calendarDraft?.name||'')}" placeholder="${esc(t('plannerCalendarName'))}"></label><label class="fld"><span>${esc(t('plannerFeedUrl'))}</span><input type="text" inputmode="url" name="url" value="${esc(ui.calendarDraft?.url||'')}" required maxlength="2048" autocomplete="off" spellcheck="false" placeholder="webcal://…"></label><p class="cap">${esc(t('plannerLinkPrivacy'))}</p><p class="planner-calendar-error note warn" role="status" ${ui.calendarError?'':'hidden'}>${esc(t(ui.calendarError||''))}</p><button class="btn primary" ${ui.calendarBusy?'disabled':''}>${IC.refresh}${esc(t(ui.calendarBusy?'plannerSyncing':'plannerConnect'))}</button></form></div></details><details class="mini-section"><summary>${esc(t('plannerWhereCalendar'))}${IC.down}</summary><div class="section-body"><p><b>Apple / iCloud</b><br>${esc(t('plannerAppleHelp'))}</p><p><b>Google Calendar</b><br>${esc(t('plannerGoogleHelp'))}</p><p><b>Outlook</b><br>${esc(t('plannerOutlookHelp'))}</p><p class="cap">${esc(t('plannerCalendarLimits'))}</p></div></details>`});fn.kind='planner-calendars';return fn;}
+  function plannerCommit(next){const before=D().planner;D().planner=DailyPlanner.clean(next);if(!Store.save()){D().planner=before;return false;}return true;}
+  async function syncCalendars(force=false,only=null){
+    if(ui.calendarBusy||!force&&Date.now()-(ui.calendarAttempt||0)<15*60000)return;const links=calendarLinks(),owner=calendarKey();
+    const sources=D().planner.sources.filter(s=>s.kind==='feed'&&(!only||s.id===only)&&(force||Date.now()-s.syncedAt>15*60000));
+    if(!sources.length)return;
+    if(!CL?.user){ui.calendarStatus='plannerCalendarSignIn';return;}
+    ui.calendarAttempt=Date.now();
+    ui.calendarBusy=true;ui.calendarStatus='plannerSyncing';if(topIs('planner-calendars'))refreshSheet();
+    try{for(const s of sources){
+      if(!links[s.id]){ui.calendarStatus='plannerReconnect';continue;}
+      const result=await CL.calendarFeed(links[s.id]);if(calendarKey()!==owner)return;
+      if(!D().planner.sources.some(x=>x.id===s.id))continue;
+      const events=DailyPlanner.parseICS(result?.ics,s.id);if(!plannerCommit(DailyPlanner.replaceSource(D().planner,s,events)))return;ui.calendarStatus='plannerSynced';
+    }}catch(e){ui.calendarStatus=e.code==='plannerCalendarSetup'?'plannerCalendarSetup':e.code?.startsWith('planner')?e.code:'plannerSyncFailed';}
+    finally{ui.calendarBusy=false;if(calendarKey()===owner){if(topIs('planner-calendars'))refreshSheet();if(ui.tab==='goals'&&ui.goals==='planner')rerender();}}
+  }
+  async function connectCalendar(v){
+    if(ui.calendarBusy)return;ui.calendarDraft={name:String(v.name||'').trim(),url:String(v.url||'').trim()};ui.calendarError='';
+    const normalized=ui.calendarDraft.url.replace(/^webcal:/i,'https:');let url;try{url=new URL(normalized);if(url.protocol!=='https:'||url.username||url.password||url.port&&url.port!=='443')throw 0;}catch(_){ui.calendarError='plannerBadUrl';refreshSheet();return;}
+    if(!CL?.user){ui.calendarError='plannerCalendarSignIn';refreshSheet();return;}
+    if(D().planner.sources.length>=8){ui.calendarError='plannerCalendarLimit';refreshSheet();return;}
+    const owner=calendarKey(),links=calendarLinks(),existing=D().planner.sources.find(s=>links[s.id]===url.href);
+    const source={id:existing?.id||'pc_'+uid(),name:ui.calendarDraft.name||t('plannerCalendarName'),kind:'feed'};
+    ui.calendarBusy=true;refreshSheet();
+    try{const result=await CL.calendarFeed(url.href);if(calendarKey()!==owner)return;
+      const events=DailyPlanner.parseICS(result?.ics,source.id);
+      if(!saveCalendarLinks({...links,[source.id]:url.href}))return;
+      if(!plannerCommit(DailyPlanner.replaceSource(D().planner,source,events))){saveCalendarLinks(links);return;}
+      ui.calendarDraft=null;ui.calendarStatus='plannerSynced';toast(t('plannerSynced'));if(topIs('planner-calendars'))closeSheet();rerender();
+    }catch(e){if(calendarKey()===owner){ui.calendarError=e.code==='plannerCalendarSetup'?'plannerCalendarSetup':e.code?.startsWith('planner')?e.code:'plannerSyncFailed';}}
+    finally{ui.calendarBusy=false;if(calendarKey()===owner&&topIs('planner-calendars'))refreshSheet();}
+  }
+
   function vGoals() {
-    const navigation=`<nav class="seg goals-tabs" aria-label="${esc(t('tabGoals'))}">${['habits','progress'].map(v=>`<button data-a="goals-view" data-v="${v}" class="${ui.goals===v?'on':''}" aria-pressed="${ui.goals===v}">${esc(t(v==='habits'?'tabHabits':'tabProg'))}</button>`).join('')}</nav>`;
+    const navigation=`<nav class="seg goals-tabs" aria-label="${esc(t('tabGoals'))}">${['planner','habits','progress'].map(v=>`<button data-a="goals-view" data-v="${v}" class="${ui.goals===v?'on':''}" aria-pressed="${ui.goals===v}">${esc(t(v==='planner'?'plannerSchedule':v==='habits'?'tabHabits':'tabProg'))}</button>`).join('')}</nav>`;
+    if(ui.goals==='planner')return head(t('plannerTitle'))+navigation+vPlanner();
     const content=ui.goals==='progress'?vProg():vHabits();
     const end=content.indexOf('</header>')+9;
-    return head(t('tabGoals'),t(ui.goals==='progress'?'tabProg':'tabHabits'))+navigation+(ui.goals==='habits'?weeklyChallenges():'')+content.slice(end);
+    return head(t('plannerTitle'))+navigation+(ui.goals==='habits'?weeklyChallenges():'')+content.slice(end);
   }
   function weeklyChallenges(){
     const week=Competition.week(D()),items=[['challengeTraining',week.days,3],['challengeSets',week.sets,10],['challengeMeals',week.meal_days,5]];
@@ -1194,16 +1263,20 @@
   }
   let animT = 0;
   function render() {
+    const oldPlanner=$('.planner-scroll');if(oldPlanner){if(ui.plannerScroll!==null)ui.plannerScroll=oldPlanner.scrollTop;if(ui.plannerScrollX!==null)ui.plannerScrollX=oldPlanner.scrollLeft;}
     ownSync();
     document.documentElement.lang = L();
+    $('#tabbar').setAttribute('aria-label',t('mainNavigation'));
     refreshBrandMetadata();
     const y = ui.keepScroll ? window.scrollY : 0; ui.keepScroll = false;
     const v = $('#view'),previousClocks=new Map($$('[data-clock-key]',v).map(c=>[c.dataset.clockKey,+(c.dataset.clockDisplay??c.dataset.clockRatio)])), entering=ui.anim; ui.anim='';
     // Async profile/sync redraws must not cancel a tab's entry animation immediately.
     if(entering){v.dataset.anim=entering;clearTimeout(animT);animT=setTimeout(()=>{delete v.dataset.anim;},600);}
     v.innerHTML = VIEWS[ui.tab]();
+    const plannerScroll=$('.planner-scroll');if(plannerScroll){const firstHour=+plannerScroll.dataset.startHour;plannerScroll.scrollTop=ui.plannerScroll==null?Math.max(0,(9-firstHour)*72-35):ui.plannerScroll+((ui.plannerHourStart??firstHour)-firstHour)*72;ui.plannerScroll=plannerScroll.scrollTop;ui.plannerHourStart=firstHour;plannerScroll.scrollLeft=ui.plannerScrollX??(ui.plannerView==='week'?plannerDays().indexOf(ui.plannerDate)*118:0);ui.plannerScrollX=plannerScroll.scrollLeft;}
     animateClocks(previousClocks);
     postImages(v);
+    if(ui.tab==='goals'&&ui.goals==='planner')queueMicrotask(()=>syncCalendars(false));
     $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
     window.scrollTo(0, y);
@@ -1593,7 +1666,7 @@
   async function wake() { try { if (D().settings.awake && 'wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) {} }
   function unwake() { try { if (lock) lock.release(); } catch (e) {} lock = null; }
   function startRest(sec) { const a = D().active; if (!a || !D().settings.restAuto || !sec) return; a.restEnd = Date.now() + sec * 1000; a.restTotal = sec; Store.saveActive(); tick(); }
-  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.foodDate === ui.day) ui.foodDate = d; if (ui.habitDate === ui.day) { if (ui.habitMonth === ui.day.slice(0, 7)) ui.habitMonth = d.slice(0, 7); ui.habitDate = d; } ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
+  function dayCheck() { const d = today(); if (d !== ui.day) { if (ui.plannerDate === ui.day) ui.plannerDate=d; if (ui.foodDate === ui.day) ui.foodDate = d; if (ui.habitDate === ui.day) { if (ui.habitMonth === ui.day.slice(0, 7)) ui.habitMonth = d.slice(0, 7); ui.habitDate = d; } ui.day = d; if (!ui.sheets.length && !ui.wOpen) rerender(); } }
   function tick() {
     dayCheck();
     prepTick();
@@ -2138,7 +2211,24 @@
         }
       });
     },
-    'goals-view'(el) {if(!['habits','progress'].includes(el.dataset.v))return;go('tab',()=>{ui.goals=el.dataset.v;render();});},
+    'planner-new'(el){
+      const k=DailyPlanner.validDay(el.dataset.d)?el.dataset.d:ui.plannerDate,kind=DailyPlanner.categories.includes(el.dataset.kind)?el.dataset.kind:'other';
+      const start=new Date(k+'T00:00'),now=new Date();let minute=el.dataset.minute!==undefined?+el.dataset.minute:Math.min(22*60,Math.ceil((now.getHours()*60+now.getMinutes())/30)*30);
+      if(!Number.isFinite(minute))minute=9*60;start.setMinutes(Math.max(0,Math.min(1439,minute)));
+      ui.plannerDraft={id:'pe_'+uid(),title:kind==='other'?'':t('plannerKind_'+kind),start:+start,end:+start+36e5,allDay:false,category:kind,repeat:'none',note:'',done:{}};
+      ui.plannerEditDay=k;openSheet(shPlannerEvent());
+    },
+    'planner-edit'(el){const e=D().planner.events.find(e=>e.id===el.dataset.id);if(!e)return;ui.plannerDraft={...e,existing:true};ui.plannerEditDay=el.dataset.d||ui.plannerDate;openSheet(shPlannerEvent());},
+    'planner-delete'(el){const e=D().planner.events.find(e=>e.id===el.dataset.id);if(!e||e.source)return;if(e.repeat!=='none'&&!confirm(t('plannerDeleteSeries')))return;if(plannerCommit({...D().planner,events:D().planner.events.filter(x=>x.id!==e.id)})){closeSheet();rerender();}},
+    'planner-done'(el){const k=el.dataset.d,e=D().planner.events.find(e=>e.id===el.dataset.id);if(!e||!DailyPlanner.validDay(k))return;const next={...e,done:{...e.done,[k]:{value:!e.done[k]?.value,at:Date.now()}}};if(plannerCommit({...D().planner,events:D().planner.events.map(x=>x.id===e.id?next:x)})){if(el.dataset.close)closeSheet();rerender();}},
+    'planner-day'(el){if(!DailyPlanner.validDay(el.dataset.d))return;ui.plannerDate=el.dataset.d;ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
+    'planner-shift'(el){ui.plannerDate=Momentum.shift(ui.plannerDate,+el.dataset.d);ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
+    'planner-today'(){ui.plannerDate=today();ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
+    'planner-view'(el){if(!['day','week'].includes(el.dataset.v))return;ui.plannerView=el.dataset.v;ui.plannerScrollX=null;rerender();},
+    'planner-calendar'(){ui.calendarError='';openSheet(shPlannerCalendars());},
+    'planner-sync-one'(el){syncCalendars(true,el.dataset.id);},
+    'planner-disconnect'(el){if(!confirm(t('plannerDisconnectConfirm')))return;const id=el.dataset.id;if(plannerCommit({sources:D().planner.sources.filter(s=>s.id!==id),events:D().planner.events.filter(e=>e.source!==id)})){const links=calendarLinks();delete links[id];saveCalendarLinks(links);ui.calendarStatus='';refreshSheet();rerender();}},
+    'goals-view'(el) {if(!['planner','habits','progress'].includes(el.dataset.v))return;go('tab',()=>{ui.goals=el.dataset.v;render();if(ui.goals==='planner')syncCalendars(false);});},
     'profile-view'(el) {if(!['overview','ranks','friends'].includes(el.dataset.v))return;go('tab',()=>{ui.profilePage=el.dataset.v;render();if(ui.profilePage==='friends')loadSocial();});},
     'open-profile'() {closeSheet(true);ui.tab='profile';render();loadSocial();},
     'profile-home'(){go('tab',()=>{ui.tab='profile';ui.profilePage='overview';render();});if(CL&&CL.user)loadSocial();},
@@ -2676,6 +2766,15 @@
     const el = e.target, k = el.dataset && el.dataset.in;
     if (k === 'ride-file' && el.files[0]) { const file = el.files[0]; el.value = ''; rideImport(file); return; }
     if (k === 'ride-wheel') { try { localStorage.setItem(WKEY, el.value); } catch (er) {} rideRev.csc = null; return; }
+    if(k==='planner-all-day'){const f=el.form;for(const field of ['start','end'])f.elements[field].disabled=el.checked;}
+    if(k==='planner-ics'&&el.files[0]){
+      const file=el.files[0],owner=calendarKey();el.value='';if(file.size>2*1024*1024){toast(t('plannerCalendarLimit'));return;}
+      const existing=D().planner.sources.find(s=>s.kind==='file'&&s.name===file.name.slice(0,80));
+      if(!existing&&D().planner.sources.length>=8){toast(t('plannerCalendarLimit'));return;}
+      const source={id:existing?.id||'pc_'+uid(),name:file.name.slice(0,80),kind:'file'};
+      try{const events=DailyPlanner.parseICS(await file.text(),source.id);if(calendarKey()!==owner)return;if(plannerCommit(DailyPlanner.replaceSource(D().planner,source,events))){ui.calendarStatus='plannerImported';if(topIs('planner-calendars'))closeSheet();rerender();toast(t('plannerImportedCount',events.length));}}
+      catch(error){if(calendarKey()===owner)toast(t(error.code||'plannerInvalidCalendar'));}
+    }
     if(k==='profile-cover-photo'&&el.files[0]){const file=el.files[0],draft=ui.profileDraft;el.value='';if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>20*1024*1024){toast(t('picBad'));return;}try{const pic=await smallPic(file,true);if(draft===ui.profileDraft&&topIs('profile-edit')){draft.coverPhoto=pic;ui.profileStyleDraft.cover='photo';refreshSheet();}}catch(error){toast(t('picBad'));}}
     if(k==='compose-file'&&el.files[0]){const file=el.files[0],c=ui.compose;el.value='';if(!c||c.busy)return;if(file.size>40*1024*1024){c.error='photoTooBig';refreshSheet();return;}c.reading=true;c.error='';refreshSheet();try{const r=await Stories.shrink(file);if(ui.compose===c){c.image=r.image;c.thumb=r.thumb;}}catch(er){if(ui.compose===c)c.error=Stories.message(er);}finally{if(ui.compose===c){c.reading=false;if(topIs('compose'))refreshSheet();}}return;}
     if(k==='profile-photo'&&el.files[0]){const file=el.files[0],draft=ui.profileDraft;el.value='';try{const pic=await smallPic(file);if(draft===ui.profileDraft&&topIs('profile-edit')){draft.avatar=pic;refreshSheet();}}catch(error){toast(t('picBad'));}}
@@ -2724,6 +2823,19 @@
       if (EX[id]) { if (vid || (had && had.img)) D().exMedia[id] = { img: (had && had.img) || '', vid }; else delete D().exMedia[id]; Store.save(); closeSheet(); toast(t('saved')); }
     }
     if (k === 'coach') coachSend(v.q);
+    if(k==='planner-calendar')connectCalendar(v);
+    if(k==='planner-event'){
+      const draft=ui.plannerDraft;if(!draft||draft.source)return;
+      const date=String(v.date||''),allDay=v.allDay==='on',validTime=x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x||'');
+      const error=$('.planner-form-error',f);
+      if(!String(v.title||'').trim()||!DailyPlanner.validDay(date)||!allDay&&(!validTime(v.start)||!validTime(v.end))){error.hidden=false;error.textContent=t('badValue');return;}
+      const start=+new Date(date+'T'+(allDay?'00:00':v.start)),endDate=new Date(date+'T'+(allDay?'00:00':v.end));
+      if(allDay||+endDate<=start)endDate.setDate(endDate.getDate()+1);
+      const next=DailyPlanner.cleanEvent({...draft,title:v.title,start,end:+endDate,allDay,repeat:v.repeat,category:v.category,note:v.note,updatedAt:Date.now()});
+      if(!next){error.hidden=false;error.textContent=t('badValue');return;}
+      if(D().planner.events.length>=6000&&!draft.existing){error.hidden=false;error.textContent=t('plannerCalendarLimit');return;}
+      if(plannerCommit({...D().planner,events:D().planner.events.filter(e=>e.id!==next.id).concat([next])})){ui.plannerDate=date;closeSheet();rerender();}
+    }
     if (k === 'profile-edit') saveProfile(v);
     if(k==='cardio')saveCardio(v);
     if(k==='workout-energy'){
@@ -2826,6 +2938,8 @@
     if (CL.user) signedIn();
   }
   setInterval(tick, 500);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ui.tab==='goals'&&ui.goals==='planner')syncCalendars(false);});
+  setInterval(()=>{if(!document.hidden&&ui.tab==='goals'&&ui.goals==='planner')syncCalendars(false);},60000);
   if (ride) { if (!ride.paused) rideGeo(true); rideDraw(); }
   setInterval(() => { if (ride && !document.hidden) rideDraw(); }, 1000);
   addEventListener('pagehide', () => rideStore(true));

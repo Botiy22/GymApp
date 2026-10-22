@@ -351,3 +351,10 @@ Reppsy 2.19 adds profile color wheels, Glass/Normal/Matte surfaces, plan export 
 ## Original personal routine file
 
 [Download the original five-day split](exports/reppsy-original-five-day.json). Import it in **Settings → Data → Import JSON** to add Upper, Lower, Push, Pull and Legs with the original 35 exercises, sets, reps and rests. It appends editable copies and does not replace your diary. This personal split is no longer automatically added for everyone; only unchanged automatic copies are retired when clients update. Edited copies and history stay.
+
+
+### Daily routine (2.29)
+
+The Routine tab opens an editable day/week timetable. Tap a time to add gym, swimming or any activity, choose a repeat and mark it done. Existing Goals and Progress remain beside Schedule. Private plans are backed up and synced with your account.
+
+Import calendar `.ics` files from Routine → Calendars. Automatic subscription-link refresh needs the included Supabase `calendar-feed` function deployed; it is not a native Apple Calendar connection. See [CALENDARS.md](CALENDARS.md) for setup, privacy and supported behavior.

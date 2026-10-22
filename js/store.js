@@ -19,7 +19,7 @@ window.Store = (function () {
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
         accent: 'volt', bg: 'aurora', calm: false, solid: false, mealGroups:false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profileStyle:Profile.cleanStyle(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
-      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], chats: [],
+      routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], planner: DailyPlanner.clean(null), chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
     };
@@ -133,6 +133,7 @@ window.Store = (function () {
     out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
     Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
+    out.planner = DailyPlanner.clean(r.planner);
     out.habits = arr(r.habits).slice(0, 100).map(Momentum.clean).filter(Boolean).filter((h, i, list) => list.findIndex(x => x.id === h.id) === i);
     /* coach conversations: newest 40, and never more than about 400 000 characters in all */
     let room = 400000;
@@ -196,11 +197,11 @@ window.Store = (function () {
 
   /* What changed since the last save? Each part gets a "last changed" time and every removed workout, meal or routine leaves a marker,
      so that two devices signed in to the same account can be merged without one overwriting the other. */
-  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'habits', 'own', 'plan'];
-  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, habits: d => d.habits, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan };
+  const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'habits', 'own', 'plan', 'planner'];
+  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, habits: d => d.habits, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan, planner: d => d.planner };
   function shot(d) {
     const o = { ids: {} }; SECTS.forEach(k => { o[k] = JSON.stringify(PART[k](d)); });
-    d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.habits.forEach(h => { o.ids[h.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
+    d.planner.events.concat(d.planner.sources).forEach(e => { o.ids[e.id] = 1; }); d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.habits.forEach(h => { o.ids[h.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
     return o;
   }
   function track() {
@@ -246,8 +247,8 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
-    wipe() { try { [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
+    supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */
     adopt(doc) {
