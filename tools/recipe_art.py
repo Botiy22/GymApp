@@ -123,6 +123,7 @@ def render(pieces):
         b.close()
     print(len(pieces), 'recipe illustrations written to', root)
 if __name__ == '__main__':
+    raise SystemExit('Legacy art generator retired. Use tools/export_generated_art.py with reviewed image-generator outputs; see the image README.')
     pieces = {k: juice(v) for k, v in JUICES.items()}
     pieces['clip-protein-banana-muffins'] = muffins()
     pieces['clip-pizza-meat-roll'] = meat_roll()

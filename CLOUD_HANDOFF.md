@@ -29,6 +29,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.31.1, 2026-10-24 (Codex)
+
+- Backed up current main `bc7dfd9` to remote `backup/main-20261024-before-food-recovery-art` before changes.
+- Owner clarified recovery should match the exercise library's simple black-outline sketches. Replaced all 17 movement pairs (34 phase URLs); shaded anatomical trials were discarded. `data/recovery.js` instructions, IDs and programme doses remain unchanged. Portrait preview ratio in `css/recipes-stability.css` fits the new phase artwork.
+- Seven clip recipes now have separate full-resolution food photos matching the existing neutral stone/ivory-tableware style. `data/clip-recipes.js` uses the existing AI-photo caption; nutrition and ingredients unchanged. No food sheet crops. Cooking-step sketches are retained.
+- Provenance/README files in `img/recipes/` and `img/recovery/`; `tools/export_generated_art.py` encodes reviewed original generated PNGs. Legacy procedural generators stop rather than overwrite the reviewed artwork.
+- Validation: 19 browser/LF checks passed (recovery recipes including all 34 sketch decodes, responsive polish including offline recipes, recipes/stability routing, verified update preserving diary, release LF); translation and routine-art Node checks passed (3 tests). Mobile previews visually checked. No live account/database changes; physical iOS not checked.
+
 # Update — Reppsy 2.31.0, 2026-10-23 (Claude)
 
 Owner put six screen recordings and seven screenshots in `Videos_Photos/` (kept out of git via `.gitignore`) and asked for their content in the app: a recovery part for the knee, plus foods side by side with macro names and images, little guide images and more separate steps. Videos were read frame by frame (no speech transcription available here: the model hosts are blocked), so only what is shown on screen is used and everything else is marked as our suggestion.

@@ -53,7 +53,7 @@
 .recovery-step-name{display:grid;flex:1;min-width:0}.recovery-step-name b{font-size:.95rem;line-height:1.3}.recovery-step-name small{color:var(--acc-tx);font-weight:700;font-size:.8rem}
 .recovery-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
 .recovery-pair figure{margin:0;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line)}
-.recovery-pair img{display:block;width:100%;aspect-ratio:1;object-fit:contain}
+.recovery-pair img{display:block;width:100%;aspect-ratio:3/4;object-fit:contain}
 .recovery-pair figcaption{font-size:.7rem;color:#555a66;background:#fff;padding:0 8px 6px}
 .recovery-cues{margin:8px 0 0;padding-left:20px;display:grid;gap:6px;font-size:.86rem;line-height:1.5;color:var(--ink)}
 @media(max-width:350px){.recipe-step{grid-template-columns:56px minmax(0,1fr);gap:10px}.recipe-step-art{width:56px;height:56px;padding:7px}.recovery-open{grid-template-columns:88px minmax(0,1fr)}.recovery-art{width:88px;height:76px}.recipe-grid .recipe-card-macros small{font-size:.62rem;gap:4px}.recipe-grid .recipe-card-macros b{font-size:.7rem}}

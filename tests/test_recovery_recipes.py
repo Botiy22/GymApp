@@ -20,6 +20,17 @@ class RecoveryRecipes(unittest.TestCase):
         self.assertEqual(page.evaluate('RECOVERY_PROGRAMS[1].items.map(i=>i.sets+"x"+i.reps)'), ['2x15', '2x12', '3x20 s', '3x15', '2x15 s', '3x30 s', '2x8', '3x12', '4x8'])
         self.assertEqual(errors, [])
 
+    def test_all_recovery_sketch_phases_decode(self):
+        page, errors = self.page()
+        results = page.evaluate('''async()=>{const ids=EXERCISES.filter(e=>/^Rehab_/.test(e.id)).map(e=>e.id);
+          return Promise.all(ids.flatMap(id=>ROUTINE_ART[id].pair.map(src=>new Promise(resolve=>{
+            const image=new Image();image.onload=()=>resolve([src,image.naturalWidth,image.naturalHeight]);
+            image.onerror=()=>resolve([src,0,0]);image.src=src;
+          }))));}''')
+        self.assertEqual(len(results), 34)
+        self.assertTrue(all((w,h)==(768,1024) for _,w,h in results), results)
+        self.assertEqual(errors, [])
+
     def test_knee_page_preview_add_and_start(self):
         for width, lang in [(320, 'hu'), (390, 'en')]:
             with self.subTest(width=width, lang=lang):
@@ -61,7 +72,7 @@ class RecoveryRecipes(unittest.TestCase):
         self.assertEqual(page.locator('#sheet .recipe-step').count(), steps)
         self.assertEqual(page.locator('#sheet .recipe-step svg').count(), steps)
         self.assertIn('egy csipet', page.locator('#sheet .ing').inner_text())
-        self.assertIn('illusztráció', page.locator('#sheet .recipe-reference figcaption').inner_text())
+        self.assertIn('AI-generált kép', page.locator('#sheet .recipe-reference figcaption').inner_text())
         page.wait_for_function('()=>{const i=document.querySelector("#sheet .recipe-hero img");return i.complete&&i.naturalWidth===1448}')
         self.bounds(page, 'muffin recipe')
         page.locator('#sheet [data-a=recipe-cook]').click(); page.locator('#sheet [data-a=cook-next]').click()

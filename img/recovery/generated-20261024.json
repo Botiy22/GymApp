@@ -1,0 +1,244 @@
+{
+  "date": "2026-10-24",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "banded-squat",
+      "kind": "recovery-pair",
+      "source": "exec-dba9bd9f-3601-4a88-b965-5ce445f2c897.png",
+      "source_sha256": "fcdcd06fdfef242bcdfdfe332c340fe18807808ce1a03b02c7f0100489941f7b",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "tke",
+      "kind": "recovery-pair",
+      "source": "exec-5d7a3b11-0664-4fda-8469-d90c10a4d605.png",
+      "source_sha256": "dcb840f58af3e771b82c8b6756356fc9dff73e9e275509045bb87228f8be69bc",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "banded-split-squat",
+      "kind": "recovery-pair",
+      "source": "exec-5c6d42b1-5437-4f8d-ad88-dc4d4882fa06.png",
+      "source_sha256": "10bb18ed022a5adc12fd3bbcf4df7bb424dc8702ccd852c1f5c04fed13e33d0b",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "hamstring-hold",
+      "kind": "recovery-pair",
+      "source": "exec-863a2fcc-10fc-4261-ab7b-cc7ebb406aef.png",
+      "source_sha256": "e6a5279a6000544d49ba1af5d77ae93935694692f45b676b945728b037abda85",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "single-leg-balance",
+      "kind": "recovery-pair",
+      "source": "exec-1adc3222-853f-4be6-9090-91decde5d08e.png",
+      "source_sha256": "30e400f8774dc7d9ea9ad1a113c640961c8359c386f4aff34a2fa13cc0d6e32e",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "single-leg-squat-hold",
+      "kind": "recovery-pair",
+      "source": "exec-62804f05-cb8e-478b-a137-fe8605f1c1b8.png",
+      "source_sha256": "5881d6cc41e8125894cd5074446b59f77a6c89609179b3d42c602b5f4bfe8bb9",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "quadruped-kickback",
+      "kind": "recovery-pair",
+      "source": "exec-cb35828f-773e-4eef-a8b4-9606815e9698.png",
+      "source_sha256": "3b7e73db01b1dddf792ea81d70be9907eeb092855bafc1beba248ef1ff476c01",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "knee-drive",
+      "kind": "recovery-pair",
+      "source": "exec-c7c0a97a-53dc-49d8-ade3-853f54af4f5a.png",
+      "source_sha256": "6e7b6d6774d08f062b1d5fc75e6ff37d90056779e21dd28d278b3608c93aa0ad",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "march-hold",
+      "kind": "recovery-pair",
+      "source": "exec-8039107c-01bb-44d9-b000-954747b2a1fe.png",
+      "source_sha256": "683ea80df0b3f204f889098d8b93c09cc817b860ed75f59d0aecbebf134417d6",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "split-stance-hold",
+      "kind": "recovery-pair",
+      "source": "exec-8bff8726-4921-4cfc-8604-230a2a52bc90.png",
+      "source_sha256": "322f5876bb7184d2da6e1ef2e797145c4fa9d4d2dd664de3ce010b7b9bef306b",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "foot-taps",
+      "kind": "recovery-pair",
+      "source": "exec-381f0569-4c2b-4ee4-97b1-e373d6eecc99.png",
+      "source_sha256": "d9563a312b50a0d5dbb8f5c29bc87e01cc59196d23dc8beac2185207ccc640d6",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "step-down",
+      "kind": "recovery-pair",
+      "source": "exec-dbc49778-cf87-43c7-9849-f28be85f3245.png",
+      "source_sha256": "1959911e9f75d21809502dd725bb2c514390c521ee885ed41acdc20335e98a97",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "split-squat-hold",
+      "kind": "recovery-pair",
+      "source": "exec-ffa2c6f1-aca5-4735-b1f8-b098763c0ebe.png",
+      "source_sha256": "c1d4bcda3b454963a1aeb6c23df767d36b3c63ea2a7c7329665627b57f3fe20a",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "plate-balance-swing",
+      "kind": "recovery-pair",
+      "source": "exec-57653141-7481-40b5-ab33-f6e0bc3b465f.png",
+      "source_sha256": "b6f6fddb89b33098a14e484717334229c3f5b3683a15fa32bcbd0e12dbb3b3df",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "sl-rdl-reach",
+      "kind": "recovery-pair",
+      "source": "exec-ef869ac4-ed6b-4882-9cd8-326d21d86657.png",
+      "source_sha256": "1d85a9aa9f8c5b1d836ae8dadbaab6811fbf1ab4dc36e75d274b30544ac983aa",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "ball-reverse-lunge",
+      "kind": "recovery-pair",
+      "source": "exec-fc87bdbc-d421-4698-a5ee-90ba2fa1ac7b.png",
+      "source_sha256": "0eb7eadbb013c9965dbca26f811e401c98e831bc997a67a9066d0b399f3aab72",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "lying-leg-raise",
+      "kind": "recovery-pair",
+      "source": "exec-69a6b8d2-307d-4877-9f5b-7c53de0d76ff.png",
+      "source_sha256": "190e4666b8561180ebe920c429d6bef8eb365a0d64b6643e170a2a3ee688bc23",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    }
+  ]
+}

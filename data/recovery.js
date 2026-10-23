@@ -2,7 +2,8 @@
    circuits by Matthew Maloney (KneeHab) and a four-move pelvic-tilt routine by purple.faction.
    Sets, reps and hold times are the ones printed in the clips; where a clip shows none, the numbers are marked as our
    starting suggestion. Movement names and cues are our reading of what the clips show. The drawings in
-   img/recovery/ are original Reppsy line drawings (tools/recovery_art.py), not frames from the clips. */
+   img/recovery/ are original black-outline exercise sketches generated for Reppsy, not frames from the clips.
+   Reviewed sources and export details: img/recovery/README.md. */
 (function () {
   const ART = name => ({ pair: ['img/recovery/' + name + '-0.svg', 'img/recovery/' + name + '-1.svg'], thumb: 'img/recovery/' + name + '-0.svg', source: 'Reppsy' });
   // [id, art, EN name, HU name, primary, secondary, equipment, category, force, EN steps, HU steps]

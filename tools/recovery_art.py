@@ -146,6 +146,7 @@ def _(ph):
     b, j = figure(P, x0=170); return b, mat(30, 280)
 
 if __name__ == '__main__':
+    raise SystemExit('Legacy art generator retired. Use tools/export_generated_art.py with reviewed image-generator outputs; see the image README.')
     out = Path(__file__).resolve().parents[1] / 'img' / 'recovery'
     out.mkdir(parents=True, exist_ok=True)
     for name, fn in EX.items():

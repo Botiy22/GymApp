@@ -1,6 +1,6 @@
 # Individual recipe images
 
-Each of the 19 current recipes has its own independently generated OpenAI food photograph, created on 2026-10-08. No contact sheet, atlas or tile crops are used. The prompt used each recipe's dish and existing ingredients, one centered serving, natural side light, ivory tableware and a neutral stone surface.
+Each of the 26 current recipes has its own independently generated OpenAI food photograph, created on 2026-10-08 or 2026-10-24. No contact sheet, atlas or tile crops are used. The prompt used each recipe's dish and existing ingredients, one centered serving, natural side light, ivory tableware and a neutral stone surface.
 
 Files use the exact recipe ID: `<id>.webp` is the 1448 × 1086 full image; `<id>-thumb.webp` is a 384 × 288 derivative of that same whole image. Full-resolution detail views load eagerly; list thumbnails load lazily. WebP quality 92 for detail and 90 for thumbnails retains native detail while reducing page transfer. Both versions are bundled and content-hashed for offline use. The prior atlas and flatbread PNG are removed from this release and preserved in the pre-change Git backup.
 
@@ -8,6 +8,6 @@ These are serving ideas, not verified photographs or portion/ingredient measurem
 
 Source PNG files were retained unchanged under `/workspace/generated_images` during this task; the app exports above are the durable repository assets. To replace an image later, generate the dish separately and export the whole frame at both sizes. Never crop a new recipe out of a collage.
 
-## Illustrations added in 2.31
+## Clip recipes refreshed in 2.31.1
 
-The seven recipes read from the owner's October 2026 clips and screenshots (`clip-protein-banana-muffins`, `clip-pizza-meat-roll` and the five `clip-juice-*` drinks) use original flat illustrations drawn by `tools/recipe_art.py`, not photographs and not frames from the clips. Their detail caption reads "Serving idea · illustration" (`illustration: true` in `data/clip-recipes.js`). Same file sizes and naming as above; rerun the script to regenerate them.
+The seven clip recipes now use separate food photographs matching the existing recipes: neutral stone, ivory tableware, soft side light and consistent framing. Each was generated individually at full resolution, not cut from a sheet. `generated-20261024.json` records source hashes; `tools/export_generated_art.py` publishes reviewed sources. Their detail caption identifies AI-generated imagery. The old procedural generator is retired to prevent accidental replacement. Cooking-step guide sketches remain separate from the serving photos.

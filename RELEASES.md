@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.31.1 — 2026-10-24 (build 20261024.1)
+
+Seventeen recovery movements use original black-outline exercise sketches with separate portrait start/finish views, matching the exercise library style. The seven clip recipes now have separate full-resolution food photos with consistent neutral tableware, lighting and framing. No recipe collages are used. Existing recipes, nutrition, exercise IDs, programme doses and saved data are retained. Food captions identify AI imagery. Provenance and publishing instructions accompany each asset set; legacy procedural generators are retired.
+
 ## 2.31.0 — 2026-10-23 (build 20261023.3)
 
 Content from the owner's `Videos_Photos` folder (6 screen recordings, 7 screenshots), read frame by frame; the videos have no captions with amounts and their speech could not be transcribed here, so only what is shown on screen is used.

@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-24",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "clip-protein-banana-muffins",
+      "kind": "food-photo",
+      "source": "exec-11a216d1-052e-4502-b055-d410d156c000.png",
+      "source_sha256": "350d7a09d85c8e7531780ffb357928e4a20efc1878e82f75f7a107ca42b4be57",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-pizza-meat-roll",
+      "kind": "food-photo",
+      "source": "exec-2a2a5c1a-6373-4b46-a7a9-3957de19709e.png",
+      "source_sha256": "dab76b65a7ecc7e177ecbf58dbe8181fe54ebd0cd0eb0520731be99cf6f08ae1",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-juice-carrot-orange",
+      "kind": "food-photo",
+      "source": "exec-5b83d5bf-3c04-46a1-8717-101cf298d175.png",
+      "source_sha256": "db7a8d4807e5bcd932b79383243eb0db3961252aa64582cb9d72091933c7f652",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-juice-beet-carrot",
+      "kind": "food-photo",
+      "source": "exec-fbee28d7-289d-4e50-98d1-b9d24f954c2d.png",
+      "source_sha256": "c89f7ba09f6d58ce2d55035165c09d79a477f817d6765f10dcb2ab4c473ace07",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-juice-pineapple-hibiscus",
+      "kind": "food-photo",
+      "source": "exec-3971a44c-2978-4572-a149-4f0004669ebe.png",
+      "source_sha256": "012011c871390641e05c7ddc46780ebdc8e5663b6272d801ab1152ab3e19a04b",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-juice-watermelon-beet",
+      "kind": "food-photo",
+      "source": "exec-71236b75-5fc4-49dc-b5d6-0981cd345e70.png",
+      "source_sha256": "a59f1f33fdccb42f2df5813340dcd4f9c67b96da6490048f9e92925a039017c7",
+      "size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "clip-juice-cucumber-lemon-chia",
+      "kind": "food-photo",
+      "source": "exec-098eaf31-091f-42ae-9936-4381ee01c2b5.png",
+      "source_sha256": "ac60918d31b83575d96abc915877fcb9aaf4f25e11e755563bdf677882133328",
+      "size": [
+        1448,
+        1086
+      ]
+    }
+  ]
+}
