@@ -20,7 +20,7 @@ class TranslationsBrowser(unittest.TestCase):
                 page.evaluate('(tab)=>{__gym.ui.tab=tab;__gym.render()}',tab)
                 self.assertEqual(page.locator('html').get_attribute('lang'),lang)
                 if tab=='home':
-                    for inner in ['plans','exercises','history','ride','train']:
+                    for inner in ['plans','exercises','stability','history','ride','train']:
                         page.evaluate('(v)=>__gym.A["workout-view"]({dataset:{v}})',inner)
                     page.evaluate('()=>__gym.A["ex-open"]({dataset:{id:EXERCISES[0].id}})');page.evaluate('__gym.A["sheet-close"]()')
                     for action in ['routine-library','cardio-add']:

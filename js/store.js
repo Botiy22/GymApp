@@ -71,6 +71,7 @@ window.Store = (function () {
       const o = { id: idStr(x.id) || newId(), name: name || 'Routine', sub: pair(x.sub), builtin: x.builtin === true, icon: ICONS.indexOf(x.icon) >= 0 ? x.icon : '', items: arr(x.items).slice(0, 60).map(item).filter(Boolean) };
       const info = typeof x.info === 'object' && x.info ? { hu: str(x.info.hu, 1200), en: str(x.info.en, 1200) } : str(x.info, 1200).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;
       if (x.circuit === true) o.circuit = true;
+      if(['stability','knee'].includes(x.focus))o.focus=x.focus;
       return o;
     });
     if (!out.routines.length && !Array.isArray(r.routines)) out.routines = f.routines;
@@ -168,7 +169,7 @@ window.Store = (function () {
   }
   function isOriginalDefault(r){
     const d=window.PLAN.days.find(d=>d.id===r.id);
-    if(!d||!r.builtin||r.opt||r.circuit||r.info||r.icon&&r.icon!==d.id)return false;
+    if(!d||!r.builtin||r.opt||r.circuit||r.info||r.focus||r.icon&&r.icon!==d.id)return false;
     const same=(a,b)=>a?.hu===b.hu&&a?.en===b.en;
     if(!same(r.name,{hu:d.hu,en:d.en})||!same(r.sub,d.sub))return false;
     const expected=window.PLAN.items.filter(i=>i.day===d.id);
@@ -247,7 +248,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

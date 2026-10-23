@@ -27,6 +27,17 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.30.0, 2026-10-23 (Codex)
+
+Owner requests watching new videos and extracting their content, separate knee recovery/stability inside Workout, and Recipes instead of Ideas with equal-height two-column photo/name/macro cards and cooking tutorials. **No new videos or URLs were supplied.** Asked for links through asynchronous input; extraction and populating recovery from those sources remain pending. Do not claim to have watched new clips. Existing data/additions.js transcriptions retained; no medical program, missing nutrition or ingredient quantities invented.
+
+- Branch `codex/recipes-stability-20261023`; verified remote backup `backup/main-20261023-before-recipes-stability` at 343fd881e8a057f63034ec7b751d2f6b07dd92fa. Code backup only. Normal fast-forward publication remains authorized.
+- `js/app.js`, `css/recipes-stability.css`: two equal recipe columns, existing individual full-frame photos, all macros with missing values preserved, category filters, collapsible source clips; guided nested cooking sheet with ingredient checklist, per-step vector illustration, original steps, progress and Back/Next. No automatic food logging. Ingredient checks kept in UI session memory; localized known bilingual quantity strings without changing numbers.
+- Workout → Stability has Stability/Knee recovery subpages with honest empty states, new sequence picker and existing routine move flow. Routine editor adds Section selector. Optional private `routine.focus=stability|knee` is cleaned/preserved by Store and travels through existing routine sync/export/import. Strength lists/next rotation exclude these. Public sharing deliberately does not add health-related section labels. No IDs or history changed, no SQL. Added Store capability gate for stale shells and stylesheet/CORE entry; six Workout tabs fit 3×2 on phones.
+- Checks: new recipes/stability browser suite covers two columns/equal height/all macros/unknowns/filtering, cooking checklist/back/finish/no-auto-log, missing nutrition, move/create/edit/reload/export/private merge; existing translation walks, individual recipe image/mobile/offline and verified update tests. Text LF and committed hashes checked. No physical iOS or live account mutations.
+
+---
+
 # Update — Reppsy 2.29.1, 2026-10-23 (Codex)
 
 User supplied a BME Neptun timetable synchronization URL. Added exact `neptun.bme.hu` host to the calendar relay (no arbitrary subdomains); full query/endpoint preserved. Calendar connection defaults its name to BME Neptun and adds EN/HU help. No personal URL/token/calendar contents in repo. The supplied live GET was unavailable (URLError), so tests use invented fixtures and do not establish live compatibility. The Edge Function is still NOT deployed; deploy/redeploy per CALENDARS.md. No SQL migration.

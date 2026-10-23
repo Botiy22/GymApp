@@ -63,7 +63,7 @@ class ResponsivePolish(unittest.TestCase):
                                 page.locator(selector).click();self.assertTrue(page.locator('#sheet').evaluate('(d)=>d.open'))
                                 page.locator('[data-a=sheet-close]').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
                         if tab=='home':
-                            for v in ['plans','exercises','history','train']:
+                            for v in ['plans','exercises','stability','history','train']:
                                 page.locator(f'.workout-tabs [data-v={v}]').click();self.bounds(page,f'{width}/{lang}/workout/{v}')
                             page.locator('[data-a=w-start]').first.click();self.bounds(page,'active workout')
                             page.evaluate('()=>{Store.d.active=null;__gym.ui.wOpen=false;Store.save();__gym.render()}')
@@ -109,7 +109,7 @@ class ResponsivePolish(unittest.TestCase):
         cards=page.locator('.recipe-card');self.assertEqual(cards.count(),19)
         for index in range(cards.count()):
             card=cards.nth(index);card.scroll_into_view_if_needed()
-            page.wait_for_function('(id)=>{const i=document.querySelector(`[data-id="${id}"].recipe-card img`);return i?.complete&&i.naturalWidth===384}',arg=card.get_attribute('data-id'))
+            page.wait_for_function('(id)=>{const i=document.querySelector(`[data-id="${id}"].recipe-card img`);return i?.complete&&i.naturalWidth>0&&i.currentSrc.endsWith(`${id}-thumb.webp`)}',arg=card.get_attribute('data-id'))
             card.click();page.wait_for_function('()=>document.querySelector(".recipe-hero img")?.naturalWidth===1448')
             page.locator('[data-a=sheet-close]').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
 

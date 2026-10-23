@@ -1,5 +1,15 @@
 # Release versions
 
+## 2.30.0 — 2026-10-23 (build 20261023.2)
+
+Food → Recipes replaces Ideas. A two-column feed uses equal-height cards with each existing individual dish photo, a two-line name, calories, preparation time, protein, carbs and fat. Unknown nutrition stays unknown. Category filters and source clips remain; clips are tucked into a collapsible section.
+
+Recipe detail includes a guided cooking view with the original ingredient quantities, a checklist, full-batch yield, one original instruction per screen, separate original vector cooking illustrations, progress and Back/Next controls. Returning retains ingredient checks during this session. Finishing never logs food automatically. Existing portion logging and mandatory completion of missing nutrition remain. Bilingual ingredient quantities display in the selected language without changing values.
+
+Workout has a separate Stability page and a dedicated Knee recovery subsection. Create a sequence with the existing exercise picker or move an existing routine. A Section selector in the routine editor moves it back to Strength if wanted. Private `focus` metadata is cleaned, exported/imported and synced with the routine; IDs, prescriptions and history stay intact. These sequences are excluded from the regular Strength rotation. The section label is not added to public sharing snapshots. Navigation uses six stable targets, in two rows on phones.
+
+No new videos were attached or linked for this request. **New video extraction and population of knee recovery are pending those sources.** Existing transcribed clips and nutrition are retained; no new rehab protocol or video-derived facts are invented. Tests cover layout, recipe filters/macros, ingredient/step navigation and incomplete nutrition, stability creation/move/edit/reload/private sync, EN/HU pages, individual sharp images, offline use and verified app updates. No SQL change or physical-phone verification.
+
 ## 2.29.1 — 2026-10-23 (build 20261023.1)
 
 The calendar relay now allows the exact BME Neptun host, preserving the full synchronization URL and query. Bilingual calendar help includes Neptun instructions, and unnamed Neptun connections default to BME Neptun. No private subscription URLs or timetable contents are committed. Link sync still requires deployment of the included Supabase function; .ics import remains available without it.

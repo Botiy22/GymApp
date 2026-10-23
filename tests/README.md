@@ -92,3 +92,5 @@ PYTHONPATH=tests python -m unittest test_daily_planner_browser test_translations
 ```
 
 The calendar relay is tested with in-memory fetch responses; the browser uses synthetic authenticated accounts and `.ics` fixtures. No private calendars or live Supabase rows are read/changed. See [CALENDARS.md](../CALENDARS.md) for function deployment (not performed by these tests), one-way sync limits and offline file import. The retained Goals/Habits section is now opened explicitly by clock/challenge tests.
+
+Recipes and stability (2.30): `PYTHONPATH=tests python -m unittest test_recipes_stability -v` checks equal two-column cards, all macro fields, cooking/checklist state, incomplete-nutrition logging, private routine classification and preservation across reload/merge/export. New media extraction is not covered because no new videos were supplied.

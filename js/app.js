@@ -12,10 +12,11 @@
   if (!document.querySelector('link[href="css/clean.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/clean.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/stories.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/stories.css'; document.head.append(style); }
   if (!document.querySelector('link[href="css/planner.css"]')) { const style=document.createElement('link');style.rel='stylesheet';style.href='css/planner.css';document.head.append(style); }
+  if(!document.querySelector('link[href="css/recipes-stability.css"]')){const style=document.createElement('link');style.rel='stylesheet';style.href='css/recipes-stability.css';document.head.append(style);}
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
-    const src = !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -193,7 +194,7 @@
     return m;
   }
   function nextRoutine() {
-    const all = D().routines.filter(r=>!RoutineTemplates.isComplex(r)); if (!all.length) return null;
+    const all = D().routines.filter(r=>!RoutineTemplates.isComplex(r)&&!r.focus); if (!all.length) return null;
     const must = all.filter(r => !r.opt), rs = must.length ? must : all;                  // optional days are never offered as "next"
     const ws = D().workouts; for (let i = ws.length - 1; i >= 0; i--) { const k = rs.findIndex(r => r.id === ws[i].rid); if (k >= 0) return rs[(k + 1) % rs.length]; }
     return rs[0];
@@ -361,7 +362,7 @@
   }
 
   function routineGrid() {
-    const routines=D().routines.filter(r=>!RoutineTemplates.isComplex(r));
+    const routines=D().routines.filter(r=>!RoutineTemplates.isComplex(r)&&!r.focus);
     const groups=RoutineTemplates.templates.map(p=>({p,days:routines.filter(r=>r.sub?.en===p.name.en&&r.sub?.hu===p.name.hu)})).filter(g=>g.days.length);
     const grouped=new Set(groups.flatMap(g=>g.days.map(r=>r.id)));
     const individual=routines.filter(r=>!grouped.has(r.id));
@@ -640,14 +641,22 @@
     h+=ranks.map(r=>`<section class="rank-card" data-rank="${r.id}"><div class="rank-heading">${rankBadge(r.tier)}<div><h3>${esc(r[L()])}</h3><b>${esc(r.tier<0?t('rankUnranked'):StrengthRanks.tiers[r.tier][L()])}</b></div></div><p class="rank-best">${dec(r.best)} <small>kg${r.reps?' × '+r.reps:''}</small></p><p class="cap">${esc(t('heaviestSet'))}</p><div class="rank-progress" role="progressbar" aria-label="${esc(r[L()])}" aria-valuenow="${Math.round(r.progress*100)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${r.progress*100}%"></span></div><p class="rank-next">${r.next?esc(t('rankNext',StrengthRanks.tiers[r.tier+1][L()],dec(r.next),dec(r.next-r.best))):esc(t('rankTop'))}</p>${r.workout?`<button class="link" data-a="wk-open" data-id="${esc(r.workout)}">${esc(t('viewLift'))}</button>`:''}<details class="rank-ladder"><summary>${esc(t('rankMilestones'))}</summary>${r.weights.map((weight,i)=>`<div class="${i<=r.tier?'earned':''}"><span>${esc(StrengthRanks.tiers[i][L()])}</span><b>${weight} kg ${i<=r.tier?'✓':''}</b></div>`).join('')}</details></section>`).join('');
     return h+'</div>'+`<p class="cap rank-method">${esc(t('rankMethod'))}</p>`;
   }
+  function stabilitySymbol(knee=false){return knee?'<svg viewBox="0 0 48 48"><path d="M18 5v11l8 7 3 19M30 5v10l-3 4M15 20l7 7 2 15M30 24l6 5M35 18h7M38 12l-4 4"/><circle cx="25" cy="23" r="5"/></svg>':'<svg viewBox="0 0 48 48"><path d="M9 37h30M24 17v12l-8 8M24 29l8 8M11 23l13-6 13 6M7 43h34"/><circle cx="24" cy="8" r="4"/></svg>';}
+  function vStability(){
+    const focus=ui.stabilityPage==='knee'?'knee':'stability',rows=D().routines.filter(r=>r.focus===focus);
+    return `<section class="stability-page"><div class="stability-heading"><span>${stabilitySymbol(focus==='knee')}</span><div><h2>${esc(t(focus==='knee'?'kneeRecovery':'stabilityTitle'))}</h2><p>${esc(t(focus==='knee'?'kneeRecoverySub':'stabilitySub'))}</p></div></div><nav class="seg stability-tabs" aria-label="${esc(t('stabilityTitle'))}">${['stability','knee'].map(v=>`<button class="${v===focus?'on':''}" data-a="stability-view" data-v="${v}" aria-pressed="${v===focus}">${esc(t(v==='knee'?'kneeRecovery':'stabilityTitle'))}</button>`).join('')}</nav><div class="h2row"><h3>${esc(t('yourSequences'))}</h3><button class="btn sm" data-a="r-new" data-focus="${focus}">${IC.plus}${esc(t('newPlan'))}</button></div>${rows.length?`<div class="rlist stability-routines">${rows.map(r=>`<button class="rcard" data-a="r-open" data-id="${esc(r.id)}"><span class="stability-small-icon">${stabilitySymbol(focus==='knee')}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))}</i></span>${IC.chev}</button>`).join('')}</div>`:`<div class="stability-empty"><span>${stabilitySymbol(focus==='knee')}</span><h3>${esc(t(focus==='knee'?'kneeEmpty':'stabilityEmpty'))}</h3><p>${esc(t('stabilityEmptyHint'))}</p></div>`}<button class="btn stability-organise" data-a="stability-organise" data-focus="${focus}">${IC.plus}${esc(t('moveExistingRoutine'))}</button></section>`;
+  }
+  function shStabilityOrganise(focus){const fn=()=>({title:t('moveExistingRoutine'),html:`<p class="cap">${esc(t('stabilityMoveHint'))}</p><div class="rlist">${D().routines.filter(r=>r.focus!==focus).map(r=>`<button class="rcard" data-a="stability-move" data-id="${esc(r.id)}" data-focus="${focus}"><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))}</i></span>${IC.plus}</button>`).join('')||`<p class="empty">${esc(t('noRoutinesYet'))}</p>`}</div>`});fn.kind='stability-organise';return fn;}
+
   function vHome() {
     const d=D(),nx=nextRoutine(),wk=weekWorkouts(),tk=d.workouts.filter(w=>w.tick&&ymd(w.start)===today()).pop();
     let h=head(t('tabHome'),fmtDate(Date.now(),true),true);
     if(isIOS&&!standalone)h+=`<div class="note" data-a="install-help"><b>${esc(t('installTitle'))}</b><span>${esc(t('installShort'))}</span></div>`;
     if(Store.memoryOnly)h+=`<div class="note warn"><b>${esc(t('noStorage'))}</b></div>`;
     if(Store.failed)h+=`<div class="note warn"><b>${esc(t('saveFailed'))}</b></div>`;
-    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','ride','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
+    h+=`<nav class="workout-tabs seg" aria-label="${esc(t('workoutNavigation'))}">${['train','plans','exercises','stability','ride','history'].map(tab=>`<button class="${ui.workout===tab?'on':''}" data-a="workout-view" data-v="${tab}" aria-pressed="${ui.workout===tab}">${esc(t('workout_'+tab))}</button>`).join('')}</nav>`;
     if(ui.workout==='plans')return h+routineGrid();
+    if(ui.workout==='stability')return h+vStability();
     if(ui.workout==='ride')return h+rideView();
     if(ui.workout==='history')return h+`<div class="h2row"><h2>${esc(t('history'))}</h2><span class="cap">${d.workouts.length} ${esc(pl(d.workouts.length,'totalWorkouts'))}</span></div>`+workoutHistory(d.workouts.slice().reverse().slice(0,ui.homeHistLimit||40))+(d.workouts.length>(ui.homeHistLimit||40)?`<button class="btn" data-a="workout-history-more">${esc(t('showMore'))}</button>`:'');
     if(ui.workout==='exercises')return h+complexCards()+libControls()+`<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`;
@@ -698,7 +707,7 @@
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
   }
   function complexCards(){
-    const rows=D().routines.filter(RoutineTemplates.isComplex);
+    const rows=D().routines.filter(r=>RoutineTemplates.isComplex(r)&&!r.focus);
     return rows.length?`<section class="exercise-complexes"><h3>${esc(t('exerciseComplexes'))}</h3><p class="cap">${esc(t('complexHint'))}</p><div class="rlist rgrid">${rows.map(r=>`<button class="rcard rtile ic-${rIcon(r)}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[rIcon(r)]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))} · ${esc(t(r.circuit?'complexRounds':'complexGrips'))}</i></span>${IC.chev}</button>`).join('')}</div></section>`:'';
   }
   function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + complexCards() + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
@@ -796,25 +805,51 @@
   /* ---------- meal ideas ---------- */
   const RCP = window.RECIPES || { items: [], videos: [] };
   function recipeReference(r,hero=false) {
-    const picture=`<span class="recipe-photo ${hero?'recipe-hero':'recipe-thumb'}" ${hero?`role="img" aria-label="${esc(t('recipeReferenceLabel',r[L()]||r.en))}"`:'aria-hidden="true"'}><img src="img/recipes/${esc(r.id)}${hero?'':'-thumb'}.webp" alt="" loading="${hero?'eager':'lazy'}" decoding="async" width="${hero?1448:384}" height="${hero?1086:288}"></span>`;
+    const picture=`<span class="recipe-photo ${hero?'recipe-hero':'recipe-thumb'}" ${hero?`role="img" aria-label="${esc(t('recipeReferenceLabel',r[L()]||r.en))}"`:'aria-hidden="true"'}><img src="img/recipes/${esc(r.id)}${hero?'':'-thumb'}.webp" alt="" ${hero?'':`srcset="img/recipes/${esc(r.id)}-thumb.webp 384w, img/recipes/${esc(r.id)}.webp 1448w" sizes="(min-width: 760px) 360px, calc((100vw - 44px) / 2)"`} loading="${hero?'eager':'lazy'}" decoding="async" width="${hero?1448:384}" height="${hero?1086:288}"></span>`;
     return hero?`<figure class="recipe-reference">${picture}<figcaption>${esc(t('recipeReferenceCaption'))}</figcaption></figure>`:picture;
   }
   function vIdeas() {
     const cats = [['', t('all')], ['breakfast', t('cat_breakfast')], ['main', t('cat_main')], ['snack', t('cat_snack')]];
-    let h = `<div class="seg">${cats.map(([c, n]) => `<button class="${ui.idea === c ? 'on' : ''}" data-a="idea-cat" data-c="${c}" aria-pressed="${ui.idea === c}">${esc(n)}</button>`).join('')}</div><div class="rlist">` +
-      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard recipe-card" data-a="idea-open" data-id="${esc(r.id)}">${recipeReference(r)}<span class="rc-t"><b>${esc(r[L()] || r.en)}</b><i>${r.source ? esc(t('recipeNew')) + ' · ' : ''}${r.kcal == null ? '—' : r.kcal} kcal · ${r.p == null ? '—' : r.p} g ${esc(t('protein').toLowerCase())} · ${r.min} ${esc(t('min'))}</i></span>${IC.chev}</button>`).join('') + `</div><p class="cap">${esc(t('ideasCap'))}</p>`;
-    const vids = RCP.videos.filter(v => /^https:\/\/www\.tiktok\.com\//.test(v.url));
-    if (vids.length) h += `<h2>${esc(t('videosTitle'))}</h2><div class="rlist">${vids.map(v => `<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p>`;
+    let h = `<nav class="seg recipe-categories" aria-label="${esc(t('recipeCategories'))}">${cats.map(([c, n]) => `<button class="${ui.idea === c ? 'on' : ''}" data-a="idea-cat" data-c="${c}" aria-pressed="${ui.idea === c}">${esc(n)}</button>`).join('')}</nav><div class="recipe-grid">` +
+      RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard recipe-card" data-a="idea-open" data-id="${esc(r.id)}" aria-label="${esc(r[L()]||r.en)}">${recipeReference(r)}<span class="recipe-card-copy"><b class="recipe-card-name">${esc(r[L()]||r.en)}</b><span class="recipe-card-meta"><span>${r.kcal==null?'—':dec(r.kcal)} <small>kcal</small></span><small>${r.min} ${esc(t('min'))}</small></span><span class="recipe-card-macros">${[['p','pShort'],['c','cShort'],['f','fShort']].map(([key,label])=>`<span title="${esc(t({p:'protein',c:'carbs',f:'fat'}[key]))}"><small>${esc(t(label))}</small><b>${r[key]==null?'—':dec(r[key])}<small> g</small></b></span>`).join('')}</span></span></button>`).join('') + `</div>`;
+    const vids=RCP.videos.filter(v=>/^https:\/\/www\.tiktok\.com\//.test(v.url));
+    if(vids.length)h+=`<details class="recipe-source-clips mini-section"><summary>${esc(t('videosTitle'))}${IC.down}</summary><div class="rlist">${vids.map(v=>`<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p></details>`;
     return h;
   }
+  function cookingArt(text='ingredients'){
+    const kind=/oven|bake/i.test(text)?'oven':/blend/i.test(text)?'blender':/pan|cook|simmer|heat|brown/i.test(text)?'pan':/mix|stir|combine/i.test(text)?'mix':/serve|divide|pour|finish|scatter/i.test(text)?'serve':'ingredients';
+    const drawings={ingredients:'<rect x="30" y="29" width="100" height="69" rx="12"/><path d="M111 41v45M104 48h14M104 79h14M52 46l22 27M49 63l24-21M46 72l10 11M43 79l6 7"/><circle cx="87" cy="77" r="11"/><path d="M85 63l4-8m-5 7-8-4"/>',mix:'<path d="M35 59h90a45 35 0 0 1-90 0ZM48 95h64M74 59l30-35M96 37l9 8M43 46l-3-9M57 43v-9"/><path d="M66 78c5 5 17 6 24 0"/>',pan:'<path d="M29 65h81a29 22 0 0 1-81 0ZM110 67l30-10M43 94h55M49 44c-7-8 7-12 0-20M69 44c-7-8 7-12 0-20M89 44c-7-8 7-12 0-20"/><path d="M47 63h8m12 0h8m12 0h8"/>',oven:'<rect x="38" y="21" width="84" height="83" rx="9"/><rect x="48" y="48" width="64" height="45" rx="5"/><path d="M50 37h29M50 77h60M54 70c9-17 39-17 49 0"/><circle cx="94" cy="35" r="3"/><circle cx="108" cy="35" r="3"/>',blender:'<path d="M57 21h45l-5 53H62ZM52 21h54M67 74l-8 28h44l-10-28M102 32h12v24h-14M68 47l20 11m-18 1 19-13"/><circle cx="81" cy="91" r="4"/>',serve:'<ellipse cx="80" cy="75" rx="48" ry="19"/><path d="M51 71c6-24 52-24 58 0M64 52c3-14 16-14 19-5M37 97h86M25 27v22m-6-22v11h12V27m-6 22v23M133 27v45m0-45c-11 8-11 21 0 21"/>'};
+    return `<div class="cooking-art" aria-hidden="true"><svg viewBox="0 0 160 124"><circle class="cooking-art-disc" cx="80" cy="62" r="53"/>${drawings[kind]}</svg></div>`;
+  }
+  function recipeAmount(value){
+    if(typeof value==='number')return dec(value)+' g';
+    const pairs={
+      '400 g (a videóban 390 g / 390 g used in clip)':['400 g (a videóban 390 g)','400 g (390 g used in clip)'],
+      '1½ doboz / cartons':['1½ doboz','1½ cartons'], 'ízlés szerint / to taste':['ízlés szerint','to taste'],
+      '1 db / one':['1 db','1'], '1–3 gerezd / cloves':['1–3 gerezd','1–3 cloves'], '2 db / two':['2 db','2'],
+      '60 g + 15 g a tetejére / topping':['60 g + 15 g a tetejére','60 g + 15 g for topping'],
+      '2 csésze / cups':['2 csésze','2 cups'], '4 db / four':['4 db','4'], '1 tk / tsp':['1 tk','1 tsp'],
+      '4 ek / tbsp':['4 ek','4 tbsp'], '1¼ csésze / cups':['1¼ csésze','1¼ cups'],
+      'mennyiség nem látszik / quantity not shown':['mennyiség nem látszik','quantity not shown']
+    };
+    return pairs[value]?.[L()==='hu'?0:1]||String(value||'');
+  }
+  function recipeCookState(r){ui.recipeCooking=ui.recipeCooking||{};return ui.recipeCooking[r.id]||(ui.recipeCooking[r.id]={step:0,ingredients:{}});}
+  function shRecipeCook(id){
+    const fn=()=>{const r=RCP.items.find(r=>r.id===id);if(!r)return {title:t('method'),html:''};const state=recipeCookState(r),steps=r.steps[L()]||r.steps.en,step=Math.max(0,Math.min(steps.length,state.step)),k=L()==='hu'?0:1;
+      const body=step===0?`<h3>${esc(t('cookGather'))}</h3><p class="cap">${esc(t('recipeYield',r.servings||1))}</p><div class="cook-ingredients">${r.ing.map((i,n)=>`<label class="cook-ingredient${state.ingredients[n]?' checked':''}"><input type="checkbox" data-in="cook-ingredient" data-id="${esc(r.id)}" data-i="${n}" ${state.ingredients[n]?'checked':''}><span><b>${esc(i[k])}</b><small>${esc(recipeAmount(i[2]))}</small></span></label>`).join('')}</div>`:`<small class="eyebrow">${esc(t('cookStep',step,steps.length))}</small><h3>${esc(t(step===steps.length?'cookLastStep':'cookNextStep'))}</h3><p class="cook-instruction">${esc(steps[step-1])}</p>`;
+      return {title:r[L()]||r.en,html:`<section class="recipe-cooking"><div class="cook-progress" role="progressbar" aria-label="${esc(t('cookProgress'))}" aria-valuemin="0" aria-valuemax="${steps.length}" aria-valuenow="${step}"><i style="width:${step/Math.max(1,steps.length)*100}%"></i></div>${cookingArt(step===0?'ingredients':r.steps.en?.[step-1]||'ingredients')}${body}</section>`,foot:`<div class="cook-nav"><button class="btn" data-a="cook-back" data-id="${esc(id)}" ${step===0?'disabled':''}>${IC.back}${esc(t('back'))}</button><button class="btn primary" data-a="cook-next" data-id="${esc(id)}">${esc(t(step===steps.length?'done':step===0?'cookStart':'next'))}${step===steps.length?IC.check:IC.chev}</button></div>`};
+    };fn.kind='recipe-cook';return fn;
+  }
+
   function shRecipe(id) {
     return () => {
       const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
       const k = L() === 'hu' ? 0 : 1, q = ui.recipeQty || 1, macro = key => r[key] == null ? '—' : r1(r[key] * q);
       return { title: r[L()] || r.en, html: `${mealPicker()}${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
         <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
-        <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li${typeof i[2]==='string'&&i[2].length>24?' class="long-quantity"':''}><span>${esc(i[k])}</span><b>${typeof i[2] === 'number' ? i[2] + ' g' : esc(i[2])}</b></li>`).join('')}</ul></section>
-        <section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
+        <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li${typeof i[2]==='string'&&i[2].length>24?' class="long-quantity"':''}><span>${esc(i[k])}</span><b>${esc(recipeAmount(i[2]))}</b></li>`).join('')}</ul></section>
+        <button class="btn primary recipe-cook-launch" data-a="recipe-cook" data-id="${esc(r.id)}">${IC.play}${esc(t('cookTogether'))}</button><section class="card"><h3>${esc(t('method'))}</h3><ol class="steps">${(r.steps[L()] || r.steps.en).map(x => `<li>${esc(x)}</li>`).join('')}</ol></section><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
         foot: `<button class="btn primary" data-a="idea-add" data-id="${esc(r.id)}">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -1413,6 +1448,7 @@
     return () => {
       const r = ui.edit;
       const h = `<label class="fld"><span>${esc(t('routineName'))}</span><input type="text" data-in="re-name" value="${esc(rName(r))}" placeholder="${esc(t('routineNamePh'))}" autocomplete="off"></label>
+        <label class="fld"><span>${esc(t('routineSection'))}</span><select data-in="re-focus">${['strength','stability','knee'].map(v=>`<option value="${v}" ${(r.focus||'strength')===v?'selected':''}>${esc(t('routineSection_'+v))}</option>`).join('')}</select></label>
         <p class="lbl">${esc(t('icon'))}</p><div class="icons">${[''].concat(Store.ICONS).map(v => `<button class="${(r.icon || '') === v ? 'on ' : ''}ic-${v || rIcon(Object.assign({}, r, { icon: '' }))}" data-a="re-icon" data-v="${v}" aria-pressed="${(r.icon || '') === v}" aria-label="${esc(v ? t('icon') + ' ' + ((PLAN.days.find(day => day.id === v) || {})[L()] || v) : t('iconAuto'))}"><span class="r-ic">${v ? RICON[v] : RICON[rIcon(Object.assign({}, r, { icon: '' }))]}</span>${v ? '' : `<i>${esc(t('iconAuto'))}</i>`}</button>`).join('')}</div>
         <div class="re-list">${r.items.map((it, i) => `<div class="re-row"><div class="re-top"><img src="${thumb(it.ex)}" alt="" decoding="async"><b>${esc(itemName(it))}</b><button class="icon-btn sm" data-a="re-up" data-i="${i}" aria-label="${esc(t('moveUp'))}" ${i ? '' : 'disabled'}>${IC.up}</button><button class="icon-btn sm" data-a="re-down" data-i="${i}" aria-label="${esc(t('moveDown'))}" ${i < r.items.length - 1 ? '' : 'disabled'}>${IC.down}</button><button class="icon-btn sm" data-a="re-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
           <div class="re-f"><label><span>${esc(t('setsWord'))}</span><input type="text" inputmode="numeric" data-in="re-sets" data-i="${i}" value="${it.sets}"></label><label><span>${esc(t('reps'))}</span><input type="text" data-in="re-reps" data-i="${i}" value="${esc(it.reps)}"></label><label><span>${esc(t('rest'))} (s)</span><input type="text" inputmode="numeric" data-in="re-rest" data-i="${i}" value="${it.rest}"></label><label><span>RIR</span><input type="text" data-in="re-rir" data-i="${i}" value="${esc(it.rir || '')}" maxlength="8"></label></div></div>`).join('') || `<p class="empty">${esc(t('noItems'))}</p>`}</div>
@@ -2309,7 +2345,10 @@
     },
     'workout-history-more'() {ui.homeHistLimit=(ui.homeHistLimit||40)+40;render();},
     'open-ranks'() {closeSheet(true);go('tab',()=>{ui.tab='profile';ui.profilePage='ranks';render();});loadSocial();},
-    'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises','ride'].includes(el.dataset.v))return;go('tab',()=>{ui.tab='home';ui.workout=el.dataset.v;render();}); },
+    'stability-view'(el){if(!['stability','knee'].includes(el.dataset.v))return;ui.stabilityPage=el.dataset.v;go('tab',render);},
+    'stability-organise'(el){if(['stability','knee'].includes(el.dataset.focus))openSheet(shStabilityOrganise(el.dataset.focus));},
+    'stability-move'(el){const focus=el.dataset.focus,r=getR(el.dataset.id);if(!r||!['stability','knee'].includes(focus))return;if(Store.apply(d=>{d.routines.find(x=>x.id===r.id).focus=focus;})){ui.stabilityPage=focus;closeSheet();rerender();toast(t('saved'));}},
+    'workout-view'(el) { if(el.dataset.v==='ranks'){A['open-ranks']();return;}if(!['train','plans','history','exercises','stability','ride'].includes(el.dataset.v))return;go('tab',()=>{ui.tab='home';ui.workout=el.dataset.v;render();}); },
     'wk-volume'() { const panel=$('#sheet [data-volume]');if(panel)panel.open=!panel.open; },
     'update-restart'() { return A['update-now'](); },
     'release-notes'() {
@@ -2547,8 +2586,9 @@
     'rest-skip'() { const a = D().active; if (a) { a.restEnd = 0; Store.saveActive(); tick(); } },
     /* routines */
     'r-open'(el) { openSheet(shRoutine(el.dataset.id)); },
-    'r-new'() {                                                                      // first tick the exercises, then name it and set the numbers
-      ui.pick = newPick({ title: t('newRoutine'), lead: t('newRoutineLead'), cta: t('next'), done: ids => { ui.edit = { id: uid(), name: '', items: ids.map(itemFor), _old: false }; ui.sheets = []; openSheet(shRoutineEdit()); } });
+    'r-new'(el) {                                                                      // first tick the exercises, then name it and set the numbers
+      const focus=['stability','knee'].includes(el?.dataset?.focus)?el.dataset.focus:null;
+      ui.pick = newPick({ title: t('newRoutine'), lead: t('newRoutineLead'), cta: t('next'), done: ids => { ui.edit = { id: uid(), name: '', ...(focus?{focus}:{}), items: ids.map(itemFor), _old: false }; ui.sheets = []; openSheet(shRoutineEdit()); } });
       openSheet(shPicker());
     },
     'r-edit'(el) { const r = getR(el.dataset.id); ui.edit = JSON.parse(JSON.stringify(r)); ui.edit._old = true; openSheet(shRoutineEdit()); },
@@ -2568,7 +2608,7 @@
     },
     're-save'() {
       const e = cleanEdit(ui.edit), rs = D().routines, k = rs.findIndex(r => r.id === e.id); if (k >= 0) rs[k] = e; else rs.push(e);
-      Store.save(); closeSheet(true); render(); toast(t('saved'));
+      Store.save(); if(ui.tab==='home'){if(e.focus){ui.workout='stability';ui.stabilityPage=e.focus;}else if(ui.workout==='stability')ui.workout='plans';} closeSheet(true); render(); toast(t('saved'));
     },
     pick(el) {
       const id = el.dataset.id, st = ui.pick; if (!EX[id]) return;
@@ -2621,6 +2661,9 @@
     'food-del'(el) { const d = D(); d.food[ui.foodDate] = dayFood().filter(f => f.id !== el.dataset.id); Store.save(); rerender(); },
     'food-view'(el) { const v = el.dataset.v === 'ideas' ? 'ideas' : el.dataset.v === 'plan' && D().plan ? 'plan' : 'diary'; if (ui.food !== v) go('tab', () => { ui.food = v; render(); }); else render(); },
     'idea-cat'(el) {go('tab',()=>{ui.idea = el.dataset.c;rerender();});},
+    'recipe-cook'(el){const r=RCP.items.find(r=>r.id===el.dataset.id);if(r){recipeCookState(r);openSheet(shRecipeCook(r.id));}},
+    'cook-back'(el){const r=RCP.items.find(r=>r.id===el.dataset.id);if(r){const state=recipeCookState(r);state.step=Math.max(0,state.step-1);refreshSheet();}},
+    'cook-next'(el){const r=RCP.items.find(r=>r.id===el.dataset.id);if(!r)return;const state=recipeCookState(r),length=(r.steps[L()]||r.steps.en).length;if(state.step>=length){state.step=0;closeSheet();}else{state.step++;refreshSheet();}},
     'idea-open'(el) { ui.recipeQty = 1; openSheet(shRecipe(el.dataset.id)); },
     'recipe-qty'(el) { ui.recipeQty = Math.max(.5, Math.min(20, (ui.recipeQty || 1) + num(el.dataset.n))); refreshSheet(); },
     'idea-add'(el) { const r = RCP.items.find(x => x.id === el.dataset.id); if (!r) return; const q = ui.recipeQty || 1, food = { name: (r[L()] || r.en) + (q !== 1 ? ' × ' + q : ''), g: Math.round((r.g || 0) * q) }; ['kcal', 'p', 'c', 'f'].forEach(k => { food[k] = r[k] == null ? '' : r1(r[k] * q); }); if (['kcal', 'p', 'c', 'f'].some(k => r[k] == null)) { ui.manual = Object.assign(food, { requireMacros: true }); openSheet(shFoodManual()); return; } if(!addFood([food], r.source ? 'manual' : 'db')){toast(t('saveFailed'));return;} closeSheet(true); rerender(); toast(t('added')); },
@@ -2689,6 +2732,7 @@
     'w-jump'(el) { if(el.value==='')return;const row=$('#workout [data-ex-index="'+Number(el.value)+'"]');if(row)row.scrollIntoView({block:'start',behavior:calm()?'auto':'smooth'}); },
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
+    're-focus'(el){if(['stability','knee'].includes(el.value))ui.edit.focus=el.value;else delete ui.edit.focus;},
     're-name'(el) { ui.edit.name = el.value; }, 're-sets'(el) { ui.edit.items[+el.dataset.i].sets = el.value; },
     're-reps'(el) { ui.edit.items[+el.dataset.i].reps = el.value; }, 're-rir'(el) { ui.edit.items[+el.dataset.i].rir = el.value; },
     'mx-n'(el) { ui.myex.n = el.value; }, 'mx-steps'(el) { ui.myex.steps = el.value; }, 'mx-vid'(el) { ui.myex.vid = el.value; }, 'mx-eq'(el) { ui.myex.eq = EQS.indexOf(el.value) >= 0 ? el.value : 'other'; },
@@ -2766,6 +2810,7 @@
     const el = e.target, k = el.dataset && el.dataset.in;
     if (k === 'ride-file' && el.files[0]) { const file = el.files[0]; el.value = ''; rideImport(file); return; }
     if (k === 'ride-wheel') { try { localStorage.setItem(WKEY, el.value); } catch (er) {} rideRev.csc = null; return; }
+    if(k==='cook-ingredient'){const r=RCP.items.find(r=>r.id===el.dataset.id),n=+el.dataset.i;if(r&&Number.isInteger(n)&&n>=0&&n<r.ing.length){recipeCookState(r).ingredients[n]=el.checked;el.closest('.cook-ingredient')?.classList.toggle('checked',el.checked);}}
     if(k==='planner-all-day'){const f=el.form;for(const field of ['start','end'])f.elements[field].disabled=el.checked;}
     if(k==='planner-ics'&&el.files[0]){
       const file=el.files[0],owner=calendarKey();el.value='';if(file.size>2*1024*1024){toast(t('plannerCalendarLimit'));return;}
