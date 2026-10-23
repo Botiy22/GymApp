@@ -79,9 +79,9 @@ class ResponsivePolish(unittest.TestCase):
     def test_each_recipe_has_its_own_sharp_image(self):
         page,errors=self.page()
         page.locator('#tabbar [data-tab=food]').click();page.locator('[data-a=food-view][data-v=ideas]').click()
-        cards=page.locator('.recipe-card');self.assertEqual(cards.count(),19)
+        cards=page.locator('.recipe-card');self.assertEqual(cards.count(),page.evaluate('RECIPES.items.length'))
         sources=cards.locator('img').evaluate_all('(imgs)=>imgs.map(i=>i.getAttribute("src"))')
-        self.assertEqual(len(set(sources)),19)
+        self.assertEqual(len(set(sources)),cards.count())
         for index in range(cards.count()):
             card=cards.nth(index);recipe_id=card.get_attribute('data-id');card.click()
             img=page.locator('.recipe-hero img');img.wait_for()
@@ -106,7 +106,7 @@ class ResponsivePolish(unittest.TestCase):
         context.set_offline(True)
         page.reload();page.wait_for_function('()=>!!window.__gym')
         page.locator('#tabbar [data-tab=food]').click();page.locator('[data-a=food-view][data-v=ideas]').click()
-        cards=page.locator('.recipe-card');self.assertEqual(cards.count(),19)
+        cards=page.locator('.recipe-card');self.assertEqual(cards.count(),page.evaluate('RECIPES.items.length'))
         for index in range(cards.count()):
             card=cards.nth(index);card.scroll_into_view_if_needed()
             page.wait_for_function('(id)=>{const i=document.querySelector(`[data-id="${id}"].recipe-card img`);return i?.complete&&i.naturalWidth>0&&i.currentSrc.endsWith(`${id}-thumb.webp`)}',arg=card.get_attribute('data-id'))

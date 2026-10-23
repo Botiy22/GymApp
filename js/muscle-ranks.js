@@ -27,6 +27,11 @@ globalThis.MuscleRanks = (() => {
     { id: 'calves', en: 'Calves', hu: 'Vádli', front: ['calves_f'], back: ['calves'], steps: [0.01, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5],
       ex: { 'Standing_Calf_Raises': 1, 'Smith_Machine_Calf_Raise': 1, 'Seated_Calf_Raise': 1.5, 'Calf_Press_On_The_Leg_Press_Machine': 0.6, 'Barbell_Seated_Calf_Raise': 1.5 } }
   ];
+  // How hard each part is to grow, from a popular gym tier list the owner saved (S = hardest … D = easiest). Opinion, not research.
+  const growth = { chest: [['C', 'Chest', 'Mell'], ['S', 'Upper chest', 'Felső mell']], back: [['A', 'Lats', 'Széles hátizom'], ['C', 'Traps', 'Csuklyásizom'], ['C', 'Lower back', 'Alsó hát'], ['D', 'Mid back', 'Középső hát']],
+    shoulders: [['S', 'Side delts', 'Oldalsó váll'], ['A', 'Rear delts', 'Hátsó váll'], ['D', 'Front delts', 'Elülső váll']], biceps: [['B', 'Biceps', 'Bicepsz']], triceps: [['A', 'Triceps', 'Tricepsz']],
+    quads: [['B', 'Quads', 'Combfeszítő']], posterior: [['A', 'Hamstrings', 'Combhajlító'], ['B', 'Glutes', 'Farizom']], calves: [['S', 'Calves', 'Vádli']] };
+  groups.forEach(g => { g.growth = growth[g.id] || []; });
   const finite = v => typeof v === 'number' && Number.isFinite(v);
   // Epley estimate, trusted up to 12 reps; heavier sets are not inflated past what was lifted.
   const e1rm = (kg, reps) => reps <= 1 ? kg : kg * (1 + Math.min(reps, 12) / 30);
@@ -51,7 +56,7 @@ globalThis.MuscleRanks = (() => {
       const steps = g.steps.map(x => x * scale), ratio = best ? best.ratio : 0;
       const tier = steps.reduce((t, need, i) => ratio >= need ? i : t, -1);
       const next = steps[tier + 1] || null, base = tier < 0 ? 0 : steps[tier];
-      return { id: g.id, en: g.en, hu: g.hu, front: g.front, back: g.back, tier, ratio: Math.round(ratio * 100) / 100, best, next, progress: next ? Math.max(0, Math.min(1, (ratio - base) / (next - base))) : 1, steps };
+      return { id: g.id, en: g.en, hu: g.hu, front: g.front, back: g.back, growth: g.growth, tier, ratio: Math.round(ratio * 100) / 100, best, next, progress: next ? Math.max(0, Math.min(1, (ratio - base) / (next - base))) : 1, steps };
     });
   }
   // Region → tier maps for the body figure (a region shared by two groups shows the higher rank).

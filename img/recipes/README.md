@@ -7,3 +7,7 @@ Files use the exact recipe ID: `<id>.webp` is the 1448 × 1086 full image; `<id>
 These are serving ideas, not verified photographs or portion/ingredient measurements. Existing ingredients, quantities, recipe notes and nutrition remain authoritative. Details carry a short AI-generated caption; thumbnails are decorative beside the recipe name and hero images have accessible dish labels. No third-party app images were copied.
 
 Source PNG files were retained unchanged under `/workspace/generated_images` during this task; the app exports above are the durable repository assets. To replace an image later, generate the dish separately and export the whole frame at both sizes. Never crop a new recipe out of a collage.
+
+## Illustrations added in 2.31
+
+The seven recipes read from the owner's October 2026 clips and screenshots (`clip-protein-banana-muffins`, `clip-pizza-meat-roll` and the five `clip-juice-*` drinks) use original flat illustrations drawn by `tools/recipe_art.py`, not photographs and not frames from the clips. Their detail caption reads "Serving idea · illustration" (`illustration: true` in `data/clip-recipes.js`). Same file sizes and naming as above; rerun the script to regenerate them.

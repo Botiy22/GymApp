@@ -144,7 +144,7 @@ class StoriesBrowser(unittest.TestCase):
         page, backend, errors = self.open(seed=False)
         backend.add('owner-fixture', 'story', (220, 80, 60), 'Bench 100', age_hours=40, hours=24)      # already expired, still in the archive
         backend.add('owner-fixture', 'post', (40, 120, 200), 'Progress', age_hours=2)
-        page.wait_for_function('()=>document.querySelector(".media-block .post-tile")')
+        page.wait_for_function('()=>document.querySelector(".media-block .post-tile:not(.ghost)")')
         self.assertIn('1', page.locator('.posts-head small').inner_text())
         page.locator('[data-a=highlight-new]').click(); page.wait_for_function('()=>document.querySelector("[data-a=hl-pick]")')
         self.assertTrue(page.locator('#sheet button[form=highlight-form]').is_disabled())
@@ -176,8 +176,8 @@ class StoriesBrowser(unittest.TestCase):
                 self.friends(page)
                 self.bounds(page, f'friends {lang}')
                 page.locator(f'.post-card [data-a=user-open][data-id={STRANGER}]').click()
-                page.wait_for_function('()=>document.querySelector("#sheet .media-block .post-tile")')
-                self.assertEqual(page.locator('#sheet .post-tile').count(), 1)          # the friends-only post is not shown
+                page.wait_for_function('()=>document.querySelector("#sheet .media-block .post-tile:not(.ghost)")')
+                self.assertEqual(page.locator('#sheet .post-tile:not(.ghost)').count(), 1)          # the friends-only post is not shown
                 self.assertEqual(page.locator('#sheet [data-a=friend-profile]').count(), 0)
                 self.bounds(page, f'stranger {lang}')
                 page.locator('#sheet [data-a=story-user]').click(); page.wait_for_function('()=>document.querySelector("#story-viewer").open')

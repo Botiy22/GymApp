@@ -16,10 +16,10 @@ class RecipesStability(unittest.TestCase):
             p,errors=self.page(width,844,lang,text,light=lang=='hu');self.recipes(p);self.bounds(p,'recipe grid')
             self.assertEqual(p.locator('[data-a=food-view][data-v=ideas]').inner_text(),'Receptek' if lang=='hu' else 'Recipes')
             metrics=p.locator('.recipe-card').evaluate_all('(es)=>es.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})')
-            self.assertEqual(len(metrics),19);self.assertEqual(metrics[0]['y'],metrics[1]['y']);self.assertGreater(metrics[1]['x'],metrics[0]['x'])
+            self.assertEqual(len(metrics),p.evaluate('RECIPES.items.length'));self.assertEqual(metrics[0]['y'],metrics[1]['y']);self.assertGreater(metrics[1]['x'],metrics[0]['x'])
             self.assertLess(max(m['h'] for m in metrics)-min(m['h'] for m in metrics),1)
-            self.assertEqual(p.locator('.recipe-card-macros>span').count(),57)
-            self.assertIn('—',p.locator('.recipe-card').first.inner_text());self.assertEqual(p.locator('.recipe-card').first.locator('img').get_attribute('src'),'img/recipes/clip-chicken-gnocchi-thumb.webp')
+            self.assertEqual(p.locator('.recipe-card-macros>span').count(),3*len(metrics))
+            gnocchi=p.locator('[data-a=idea-open][data-id=clip-chicken-gnocchi]');self.assertIn('—',gnocchi.inner_text());self.assertEqual(gnocchi.locator('img').get_attribute('src'),'img/recipes/clip-chicken-gnocchi-thumb.webp')
             p.locator('[data-a=idea-cat][data-c=breakfast]').click();self.assertEqual(p.locator('.recipe-card').count(),len(p.evaluate('RECIPES.items.filter(r=>r.cat==="breakfast")')))
             p.screenshot(path=f'/tmp/reppsy-recipes-{width}-{lang}.png');self.assertEqual(errors,[])
 
@@ -27,8 +27,8 @@ class RecipesStability(unittest.TestCase):
         context=self.browser.new_context(viewport={'width':390,'height':844},device_scale_factor=3,service_workers='block',reduced_motion='reduce');self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         p=context.new_page();p.goto(f'http://127.0.0.1:{self.server.server_port}/');p.wait_for_function('()=>!!window.__gym');self.recipes(p)
-        image=p.locator('.recipe-card img').first
-        p.wait_for_function('()=>document.querySelector(".recipe-card img")?.complete&&document.querySelector(".recipe-card img").naturalWidth>0&&document.querySelector(".recipe-card img").currentSrc.endsWith("clip-chicken-gnocchi.webp")')
+        image=p.locator('[data-id=clip-chicken-gnocchi] img')
+        image.scroll_into_view_if_needed();p.wait_for_function('()=>{const i=document.querySelector("[data-id=clip-chicken-gnocchi] img");return i?.complete&&i.naturalWidth>0&&i.currentSrc.endsWith("clip-chicken-gnocchi.webp")}')
         self.assertTrue(image.evaluate('(e)=>e.currentSrc.endsWith("clip-chicken-gnocchi.webp")'))
         self.assertEqual(image.evaluate('async e=>{const bitmap=await createImageBitmap(await (await fetch(e.currentSrc)).blob());return bitmap.width}'),1448)
 

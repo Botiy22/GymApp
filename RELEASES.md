@@ -1,5 +1,18 @@
 # Release versions
 
+## 2.31.0 — 2026-10-23 (build 20261023.3)
+
+Content from the owner's `Videos_Photos` folder (6 screen recordings, 7 screenshots), read frame by frame; the videos have no captions with amounts and their speech could not be transcribed here, so only what is shown on screen is used.
+
+- **Recovery** (`data/recovery.js`, Workout → Stability): `RECOVERY_PROGRAMS` — "Knee band routine" (KneeHab clip, 10 moves, 3×15 … 3×15 s as printed), "Knee stability circuit" (9 moves from the "Knee Stability" collage) and "Pelvic tilt reset" (glute bridge, hip flexor stretch, lying leg raise, knee to chest; the clip shows no sets, so ours are marked as suggestions). 17 new `Rehab_*` exercises with EN/HU names and cues and original two-phase line drawings in `img/recovery/` (generator `tools/recovery_art.py`, wired through `ROUTINE_ART`). Cards with Preview / Add / Add and start; adding creates an ordinary editable routine with `focus` and a fixed id, so it never duplicates and stays out of the strength rotation.
+- **Recipes** (`data/clip-recipes.js`, new `drink` category "Juices"): muffins (amounts are our suggestion; ≈100 kcal / 9 g protein each, close to the clip's 100 / 10), pizza-style meat roll (clip's 550 kcal / 66 g protein; carbs/fat unknown and left blank, so logging still asks for them), five juices from the screenshots (amounts suggested, juice nutrition estimated from USDA juice data). Original flat illustrations (`tools/recipe_art.py`) captioned as illustrations. Ingredient amounts may now be `[hu, en]` pairs.
+- **Recipe layout:** cards list Protein / Carbs / Fat by name with colour dots; the method is a list of separate step cards with a guide drawing each (`js/cook-art.js`, 19 drawings chosen by keyword or by the recipe's `art` list), also used in cook-step-by-step. Category tabs wrap instead of clipping.
+- **Ranks:** each muscle card shows the popular "hardest muscles to grow" tier (from the owner's screenshot; labelled as opinion). **Targets:** a fibre suggestion of 14 g per 1,000 kcal. The video's 16–18 kcal/lb bulking rule is not adopted; the existing calculation stays.
+- **Fix:** Routine → New activity: the All-day switch was stretched to full width by `#planner-event-form input{width:100%}` and pushed its label off screen; iOS date/time inputs centred and overflowed.
+- `.gitignore` keeps `Videos_Photos/` out of the public repository.
+
+Validation: new `tests/test_recovery_recipes.py` (programme data, drawings load, preview/add/start, no duplicates, stability page, recipe cards/steps/amounts/illustration, unknown macros, planner editor); `tests/test_recipes_stability.py` made data-driven (recipe count, macro spans, gnocchi card by id); full suite compared with unmodified 2.30.0.
+
 ## 2.30.0 — 2026-10-23 (build 20261023.2)
 
 Food → Recipes replaces Ideas. A two-column feed uses equal-height cards with each existing individual dish photo, a two-line name, calories, preparation time, protein, carbs and fat. Unknown nutrition stays unknown. Category filters and source clips remain; clips are tucked into a collapsible section.

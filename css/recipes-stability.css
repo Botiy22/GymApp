@@ -20,3 +20,44 @@
 @media(min-width:760px){.workout-tabs.seg{grid-template-columns:repeat(6,minmax(0,1fr))}.recipe-card-name{font-size:1rem}.recipe-card-copy{padding:16px}.recipe-grid{gap:18px}.recipe-card-meta{font-size:1.1rem}.recipe-card-macros b{font-size:.85rem}}
 @media(max-width:350px){.recipe-grid{gap:8px}.recipe-card-copy{padding:9px;gap:8px}.recipe-card-name{font-size:.76rem}.recipe-card-meta{font-size:.77rem}.recipe-card-meta small{font-size:.55rem}.recipe-card-macros{gap:2px}.recipe-card-macros b{font-size:.64rem}.recipe-card-macros small{font-size:.53rem}.workout-tabs.seg button{font-size:.66rem}.stability-heading{gap:12px}.stability-heading h2{font-size:1.05rem}.stability-tabs button{font-size:.65rem;padding:10px 4px}.cook-nav button{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.cook-progress>i{transition:none}}:root[data-calm] .cook-progress>i{transition:none}
+/* 2.31: macro names on recipe cards, step cards with guide drawings, recovery programmes. */
+.recipe-grid .recipe-card-macros{display:flex;flex-direction:column;gap:5px;padding-top:9px}
+.recipe-grid .recipe-card-macros>span{flex-direction:row;align-items:baseline;justify-content:space-between;gap:6px}
+.recipe-grid .recipe-card-macros small{font-size:.68rem;color:var(--mut);font-weight:500;display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recipe-grid .recipe-card-macros small::before{content:'';width:7px;height:7px;border-radius:50%;flex:none;background:var(--mut)}
+.recipe-grid .recipe-card-macros .macro-p small::before{background:#4aa3df}.recipe-grid .recipe-card-macros .macro-c small::before{background:#e8b343}.recipe-grid .recipe-card-macros .macro-f small::before{background:#e5484d}
+.recipe-grid .recipe-card-macros b{font-size:.78rem;font-weight:650}.recipe-grid .recipe-card-macros b>small{display:inline;font-size:.62rem}.recipe-grid .recipe-card-macros b>small::before{display:none}
+.cook-art-svg{display:block;width:100%;height:100%;overflow:visible}
+.cook-art-fill>*{fill:rgba(var(--acc-rgb),.18);stroke:none}
+.cook-art-ink>*{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.cooking-art>.cook-art-svg{width:132px;height:132px;padding:12px;border-radius:32px;background:rgba(var(--acc-rgb),.07)}
+.recipe-method-title{margin:26px 2px 12px}
+.recipe-steps{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}
+.recipe-step{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.recipe-step-art{position:relative;display:grid;place-items:center;width:72px;height:72px;border-radius:16px;background:rgba(var(--acc-rgb),.08);padding:10px}
+.recipe-step-art>b{position:absolute;top:-6px;left:-6px;min-width:24px;height:24px;padding:0 6px;display:grid;place-items:center;border-radius:12px;background:var(--acc);color:var(--acc-ink);font-size:.72rem;font-weight:800}
+.recipe-step p{margin:0;font-size:.92rem;line-height:1.55;overflow-wrap:anywhere}
+.recovery-programs{display:grid;gap:12px;margin-bottom:18px}
+.recovery-card{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.recovery-open{display:grid;grid-template-columns:112px minmax(0,1fr);gap:14px;align-items:center;width:100%;padding:12px;background:none;border:0;color:inherit;text-align:left;cursor:pointer}
+.recovery-art{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;width:112px;height:96px;border-radius:12px;overflow:hidden;background:#fff}
+.recovery-art img{width:100%;height:100%;object-fit:contain;background:#fff}.recovery-art img:first-child{grid-row:span 2}
+.recovery-copy{display:grid;gap:4px;min-width:0}.recovery-copy b{font-size:.98rem;line-height:1.3}.recovery-copy small{color:var(--mut);font-size:.78rem;line-height:1.35}
+.recovery-meta{color:var(--acc-tx)!important;font-weight:650}
+.recovery-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px}.recovery-actions .btn{min-width:0;gap:6px}.recovery-actions svg{width:16px;height:16px}
+.recovery-lead{font-weight:650;margin:0 0 10px}.recovery-intro .note{margin:0 0 8px}
+.recovery-steps{list-style:none;margin:16px 0 8px;padding:0;display:grid;gap:12px}
+.recovery-step{border:1px solid var(--line);border-radius:18px;padding:12px;background:var(--card)}
+.recovery-step-head{display:flex;align-items:center;gap:12px}
+.recovery-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink);font-weight:800;font-size:.82rem}
+.recovery-step-name{display:grid;flex:1;min-width:0}.recovery-step-name b{font-size:.95rem;line-height:1.3}.recovery-step-name small{color:var(--acc-tx);font-weight:700;font-size:.8rem}
+.recovery-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}
+.recovery-pair figure{margin:0;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.recovery-pair img{display:block;width:100%;aspect-ratio:1;object-fit:contain}
+.recovery-pair figcaption{font-size:.7rem;color:#555a66;background:#fff;padding:0 8px 6px}
+.recovery-cues{margin:8px 0 0;padding-left:20px;display:grid;gap:6px;font-size:.86rem;line-height:1.5;color:var(--ink)}
+@media(max-width:350px){.recipe-step{grid-template-columns:56px minmax(0,1fr);gap:10px}.recipe-step-art{width:56px;height:56px;padding:7px}.recovery-open{grid-template-columns:88px minmax(0,1fr)}.recovery-art{width:88px;height:76px}.recipe-grid .recipe-card-macros small{font-size:.62rem;gap:4px}.recipe-grid .recipe-card-macros b{font-size:.7rem}}
+@media(prefers-reduced-motion:no-preference){:root:not([data-calm]) .recipe-step,:root:not([data-calm]) .recovery-step{animation:step-in .4s cubic-bezier(.22,1,.36,1) both}:root:not([data-calm]) .recipe-step:nth-child(2),:root:not([data-calm]) .recovery-step:nth-child(2){animation-delay:.04s}:root:not([data-calm]) .recipe-step:nth-child(n+3),:root:not([data-calm]) .recovery-step:nth-child(n+3){animation-delay:.08s}}
+@keyframes step-in{from{opacity:0;transform:translateY(10px)}}
+/* Five recipe categories wrap onto a second row instead of clipping their names on narrow phones or with large text. */
+.recipe-categories.seg{display:flex;flex-wrap:wrap;gap:3px}.recipe-categories.seg button{flex:1 1 auto;min-width:max-content;padding:9px 10px;white-space:nowrap}

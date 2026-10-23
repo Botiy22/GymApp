@@ -146,3 +146,7 @@ dialog#sheet, .pdf-plan-dialog { background: var(--card); border: 1px solid var(
 .muscle-bar > .t1{background:var(--t1)}.muscle-bar > .t2{background:var(--t2)}.muscle-bar > .t3{background:var(--t3)}.muscle-bar > .t4{background:var(--t4)}.muscle-bar > .t5{background:var(--t5)}.muscle-bar > .t6{background:var(--t6)}.muscle-bar > .t7{background:var(--t7)}.muscle-bar > .t8{background:var(--t8)}
 .muscle-body { padding: 0 14px 12px 38px; display: grid; gap: 4px; font-size: .9rem; }
 .lift-milestones { margin-top: 6px; }
+/* 2.31: growth-difficulty chips on the muscle rank cards */
+.muscle-growth{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}.muscle-growth>span{width:100%;font-size:.74rem;color:var(--mut)}
+.muscle-growth>b{font-size:.72rem;font-weight:650;padding:4px 9px;border-radius:999px;background:var(--raised);border:1px solid var(--line)}
+.muscle-growth .growth-s{color:#ef4e6a}.muscle-growth .growth-a{color:#e88a3c}.muscle-growth .growth-b{color:#e8b343}.muscle-growth .growth-c{color:#3fbf8f}.muscle-growth .growth-d{color:#4a90e2}
