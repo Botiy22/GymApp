@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.29.1 — 2026-10-23 (build 20261023.1)
+
+The calendar relay now allows the exact BME Neptun host, preserving the full synchronization URL and query. Bilingual calendar help includes Neptun instructions, and unnamed Neptun connections default to BME Neptun. No private subscription URLs or timetable contents are committed. Link sync still requires deployment of the included Supabase function; .ics import remains available without it.
+
+Validation: relay host/query passthrough and simulated calendar parsing, rejected lookalike hosts/unsafe redirects, translation parity and browser connection fixtures. A read-only request to the supplied live URL was unavailable from this environment, so its calendar contents and live service operation are not verified.
+
 ## 2.29.0 — 2026-10-22 (build 20261022.1)
 
 Goals becomes Daily routine: a minimal hourly timetable with day/week views, seven-day navigation, overlapping activity columns, all-day events, editable time/title/category/notes, daily/weekday/weekly repeats and completion/undo. Tap a time or use Gym/Swimming/Focus shortcuts. Habits and Progress remain beside Schedule. Saved planner data joins private account sync and backups, with record-level merging and deletion markers; planning is separate from logged exercise calories and competition scores.

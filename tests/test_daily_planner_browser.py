@@ -14,6 +14,7 @@ class DailyPlannerBrowser(unittest.TestCase):
     def open_planner(self,page):
         page.locator('#tabbar [data-tab=goals]').click()
         page.locator('.planner-scroll').wait_for()
+        page.evaluate('()=>__gym.A["planner-day"]({dataset:{d:"2026-10-22"}})')
 
     def ics(self,title='Swim',hour='090000'):
         return f'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:fixture-event\r\nDTSTART:20261022T{hour}Z\r\nDTEND:20261022T110000Z\r\nSUMMARY:{title}\r\nEND:VEVENT\r\nEND:VCALENDAR'
@@ -90,3 +91,18 @@ class DailyPlannerBrowser(unittest.TestCase):
         page.locator('[data-a=planner-calendar]').click();url='https://calendar.google.com/calendar/ical/fixture/basic.ics';page.locator('[name=url]').fill(url)
         page.locator('#planner-calendar-form .btn').click();page.wait_for_function('()=>__gym.ui.calendarError==="plannerCalendarSetup"&&!__gym.ui.calendarBusy')
         self.assertEqual(page.locator('[name=url]').input_value(),url);self.assertEqual(page.evaluate('Store.d.planner.sources.length'),0);self.assertIn('.ics',page.locator('.planner-calendar-error').inner_text());self.assertEqual(errors,[])
+
+    def test_neptun_connection_preserves_query_and_sets_provider_name(self):
+        page,calls,errors=self.auth_page();self.open_planner(page)
+        query='https://neptun.bme.hu/hallgatoi/api/Calendar/CalendarExportFileToSyncronization?id=synthetic-fixture.ics'
+        received=[]
+        def feed(route):
+            received.append(route.request.post_data_json['url'])
+            route.fulfill(json={'ics':self.ics('Fixture university lecture')})
+        page.route('**/functions/v1/calendar-feed',feed)
+        page.locator('[data-a=planner-calendar]').click();page.locator('#sheet details').last.locator('summary').click();self.assertIn('BME Neptun',page.locator('#sheet').inner_text())
+        page.locator('[name=url]').fill(query);page.locator('#planner-calendar-form .btn').click()
+        page.wait_for_function('()=>Store.d.planner.sources.length===1&&!__gym.ui.calendarBusy')
+        self.assertEqual(received,[query]);self.assertEqual(page.evaluate('Store.d.planner.sources[0].name'),'BME Neptun')
+        self.assertEqual(page.evaluate('Store.d.planner.events[0].title'),'Fixture university lecture')
+        self.assertNotIn('synthetic-fixture.ics',page.evaluate('Store.exportJSON()'));self.assertEqual(errors,[])

@@ -1,6 +1,6 @@
 /* Authenticated, read-only calendar relay. Never stores subscription links or calendar bodies. */
 const MAX_BYTES=2*1024*1024;
-const STANDARD_HOSTS=['calendar.google.com','outlook.live.com','outlook.office365.com','outlook.office.com','caldav.icloud.com'];
+const STANDARD_HOSTS=['calendar.google.com','outlook.live.com','outlook.office365.com','outlook.office.com','caldav.icloud.com','neptun.bme.hu'];
 export function validFeedUrl(value,extraHosts=[]){
   let url;try{url=new URL(String(value).replace(/^webcal:/i,'https:'));}catch(_){return null;}
   const host=url.hostname.toLowerCase();

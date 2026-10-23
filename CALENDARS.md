@@ -21,7 +21,7 @@ supabase secrets set --project-ref YOUR_PROJECT_REF CALENDAR_ALLOWED_ORIGINS=htt
 
 For multiple app origins, use a comma-separated value, with scheme and port if applicable, no trailing slash. Supabase supplies SUPABASE_URL and SUPABASE_ANON_KEY; do not add a service-role key. Keep function JWT verification enabled. The function verifies the user through Auth, enforces exact allowed origins, HTTPS, provider host allowlisting, redirects, byte/time limits and an instance-local rate limit. It never forwards user authorization to calendar hosts and never logs or stores URLs or bodies. For high traffic, add a project-level distributed rate limit at the gateway.
 
-Default hosts: calendar.google.com, outlook.live.com, outlook.office365.com, outlook.office.com, caldav.icloud.com and pNN-caldav.icloud.com. For another provider, add its exact trusted public hostname using CALENDAR_FEED_HOSTS. Do not add internal hosts/IPs. URL credentials and non-HTTPS destinations are refused. All redirect destinations undergo the same validation.
+Default hosts: calendar.google.com, outlook.live.com, outlook.office365.com, outlook.office.com, caldav.icloud.com pNN-caldav.icloud.com and neptun.bme.hu. For another provider, add its exact trusted public hostname using CALENDAR_FEED_HOSTS. Do not add internal hosts/IPs. URL credentials and non-HTTPS destinations are refused. All redirect destinations undergo the same validation.
 
 Then open Routine → Calendars → Connect a calendar, paste the subscription link and connect. A feed is saved as connected only after a successful authenticated fetch and parse. Feed events refresh on opening Routine, returning to the visible page, or after 15 minutes with Schedule visible. “Sync now” forces refresh. Failed refresh retains old events and shows feedback. A different device requires re-entering the link; no URL is included in sync/backups. Removing a source removes its Reppsy events, never the upstream calendar. Two-way edits are not supported.
 
@@ -30,3 +30,9 @@ The function and its deployment are **not applied to a live project by this chan
 ## Data compatibility
 
 `planner` is a new field in the existing private userdata JSON. Records merge individually by update timestamp; completion flags merge by date/timestamp, including explicit undo. Source and event deletions use the existing tombstones. New helpers are included in the verified service-worker shell, with stale-shell capability checks. Other devices should update before editing or syncing this new field. Existing storage keys, workouts, food, habits and plans are unchanged.
+
+## BME Neptun timetable links (2.29.1)
+
+The BME Neptun host is included in the default allowed hosts. In Routine → Calendars → Connect a calendar, paste the full timetable synchronization URL, including its query parameter. The calendar download endpoint can put `.ics` in the query rather than the URL path; the relay checks the actual iCalendar payload, not the filename. Existing IDs/query parameters pass through unchanged. An empty calendar name defaults to BME Neptun. No individual subscription URL is embedded in the repository.
+
+Deploy or redeploy the updated `calendar-feed` function before trying link sync. If the function is not deployed, open the Neptun link in a browser, save the resulting .ics file, then use Import a calendar file. The supplied live link could not be retrieved from the cloud environment (network request unavailable); validation used invented timetable fixtures with the same endpoint shape.

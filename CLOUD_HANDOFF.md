@@ -27,6 +27,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.29.1, 2026-10-23 (Codex)
+
+User supplied a BME Neptun timetable synchronization URL. Added exact `neptun.bme.hu` host to the calendar relay (no arbitrary subdomains); full query/endpoint preserved. Calendar connection defaults its name to BME Neptun and adds EN/HU help. No personal URL/token/calendar contents in repo. The supplied live GET was unavailable (URLError), so tests use invented fixtures and do not establish live compatibility. The Edge Function is still NOT deployed; deploy/redeploy per CALENDARS.md. No SQL migration.
+
+Branch `codex/neptun-calendar-20261023`; backup `backup/main-20261023-before-neptun-calendar` preserves main 19a893432eb20f81f49ce4165e64db622d5d8767. Release 2.29.1/build 20261023.1, hashes regenerated. Relay, parser, translations and browser fixture tests run. Normal commit/push to main remains authorized.
+
+---
+
 # Update — Reppsy 2.29.0, 2026-10-22 (Codex)
 
 Owner requested a bilingual audit followed by a minimal daily-routine planner replacing the Goals landing, calendar sync, then commit/push to main for trying it. Branch `codex/daily-planner-20261022`; verified remote backup `backup/main-20261022-before-daily-planner` at actual main b4eabb3ba2421a40eb69d1007eea38de049227bd. Restore by normal commit, never force/reset. Backup is code, not private account data.
