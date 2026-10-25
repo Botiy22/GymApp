@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.32.0 — 2026-10-25 (build 20261025.1)
+
+Food analysis uses conservative local exact-name/quantity matches and explicit per-portion labels before the configured AI. Unknown meal components prevent partial local matches; volumes use documented density. Branded shakes request serving/product/milk details. AI prompts distinguish powder from milk, consumed portions from package weight and readable labels from estimates. Missing, negative, nonnumeric and impossible macro values are rejected. Similar calories alone no longer trigger database substitution; macro corrections persist alongside calorie corrections. Requests have timeouts and duplicate-submit guards. No live model accuracy benchmark was available; API routing/validation tested with controlled responses.
+
+Routine opens in a compact daily agenda with activity times, notes, editing and completion, alongside existing day/week calendar views. Narrow-screen Hungarian toolbar overflow fixed. Calendar relay deployment is unchanged.
+
 ## 2.31.1 — 2026-10-24 (build 20261024.1)
 
 Seventeen recovery movements use original black-outline exercise sketches with separate portrait start/finish views, matching the exercise library style. The seven clip recipes now have separate full-resolution food photos with consistent neutral tableware, lighting and framing. No recipe collages are used. Existing recipes, nutrition, exercise IDs, programme doses and saved data are retained. Food captions identify AI imagery. Provenance and publishing instructions accompany each asset set; legacy procedural generators are retired.

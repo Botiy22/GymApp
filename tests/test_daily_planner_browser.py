@@ -13,6 +13,7 @@ class DailyPlannerBrowser(unittest.TestCase):
 
     def open_planner(self,page):
         page.locator('#tabbar [data-tab=goals]').click()
+        page.locator('[data-a=planner-view][data-v=day]').click()
         page.locator('.planner-scroll').wait_for()
         page.evaluate('()=>__gym.A["planner-day"]({dataset:{d:"2026-10-22"}})')
 

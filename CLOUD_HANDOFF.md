@@ -29,6 +29,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.32.0, 2026-10-25 (Codex)
+
+- Remote backup `backup/main-20261025-before-food-analysis` at `864f319`.
+- `js/ai.js`: local all-or-nothing exact database/quantity matching, explicit portion-label grammar, documented volume density, brand/shaker clarification before API; strict response validation, timeout, improved label/portion/photo instructions. Complex cases still require the owner's configured API key; no external product-search service or fake BioTech nutrition added.
+- `js/app.js`, `js/store.js`: replace fuzzy calorie-only database override with identity+all-macro agreement; retain protein/carbs/fat corrections through cleaning/export/sync. Remove global portion bias. Text analysis works without key when exact, review supports description/details refinement. API responses remain estimates.
+- Default planner agenda with compact activity cards, edit/completion, day/week retained; small-phone large-Hungarian-text toolbar wraps. EN/HU strings in `js/i18n.js`, styles in `css/planner.css`.
+- Validation: 15 Node tests (food routing/labels/validation, planner, translations) and 15 browser/LF checks passed (food review and macro persistence, calorie-similarity regression, planner editing/import/overlap/layout, responsive/offline recipes, verified update preserving diary). Hungarian mobile agenda visually inspected. No live paid API, physical iOS or live database changes. Existing calendar relay deployment remains outstanding.
+
 # Update — Reppsy 2.31.1, 2026-10-24 (Codex)
 
 - Backed up current main `bc7dfd9` to remote `backup/main-20261024-before-food-recovery-art` before changes.

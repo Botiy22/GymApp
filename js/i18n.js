@@ -578,3 +578,9 @@ Object.assign(I18N.en,{growthTier:'How hard to grow (popular tier list, S hardes
 Object.assign(I18N.hu,{growthTier:'Mennyire nehéz növelni (népszerű rangsor, S a legnehezebb → D a legkönnyebb):',growthTierHint:'Egy általad mentett edzőtermi rangsor alapján; vélemény, nem kutatás.'});
 Object.assign(I18N.en,{tgFibre:'Fibre: aim for about {0} g a day (14 g per 1,000 kcal, the US dietary guideline).'});
 Object.assign(I18N.hu,{tgFibre:'Rost: napi kb. {0} g a cél (1000 kcal-onként 14 g, az amerikai táplálkozási ajánlás szerint).'});
+
+Object.assign(window.I18N.en,{aiMoreDetails:'Add details or label values',aiDetailExample:'Exact product, serving size, milk quantity…',plannerAgenda:'Agenda'});
+Object.assign(window.I18N.hu,{aiMoreDetails:'Pontosítás vagy címkeadatok',aiDetailExample:'Pontos termék, adagméret, tej mennyisége…',plannerAgenda:'Napi lista'});
+
+Object.assign(window.I18N.en,{aiLocalHelp:'Exact quantities work without AI: 100 g banana. For a label, enter portion totals: 35 g product (140 kcal, 28 g protein, 4 g carbs, 1 g fat). Separate foods with +. Complex meals use your AI key.'});
+Object.assign(window.I18N.hu,{aiLocalHelp:'Pontos mennyiségek AI nélkül: 100 g banán. Címkénél az adag tápértékeit írd be: 35 g termék (140 kcal, 28 g fehérje, 4 g szénhidrát, 1 g zsír). Az ételeket + jellel válaszd el. Összetett ételhez az AI-kulcsodat használjuk.'});

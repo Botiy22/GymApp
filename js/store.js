@@ -131,7 +131,7 @@ window.Store = (function () {
     const uniq = a => a.filter((v, i) => a.indexOf(v) === i);
     out.favEx = uniq(arr(r.favEx).filter(v => typeof v === 'string' && EXID.test(v))).slice(0, 400);
     out.favFoods = uniq(arr(r.favFoods).filter(v => typeof v === 'string' && v.length > 2 && v.length <= 220)).slice(0, 300);
-    out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
+    out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), macros:z.macros&&['p','c','f'].every(k=>typeof z.macros[k]==='number'&&Number.isFinite(z.macros[k])&&z.macros[k]>=0&&z.macros[k]<=100)?{p:z.macros.p,c:z.macros.c,f:z.macros.f}:null, x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
     Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
     out.planner = DailyPlanner.clean(r.planner);

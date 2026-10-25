@@ -106,7 +106,7 @@
   const eqp = m => (I18N[L()].eq || {})[m] || m;
 
   const newCoach = () => ({ id: '', msgs: [], busy: false, err: null, draft: '' });
-  const ui = { day: today(), tab: 'home', goals: 'planner', plannerDate:today(), plannerView:'day', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), mealOpen: {}, habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
+  const ui = { day: today(), tab: 'home', goals: 'planner', plannerDate:today(), plannerView:'agenda', workout: 'train', food: 'diary', idea: '', fs: { q: '', hits: [] }, fa: null, lib: { q: '', grp: '', mus: '', eq: '', limit: 40 }, pick: { q: '', grp: '', mus: '', eq: '', limit: 40, sel: [] }, prog: 'overview', foodDate: today(), mealOpen: {}, habitDate: today(), habitMonth: today().slice(0, 7), habitEdit: null, wOpen: false, sheets: [], ai: null, figBad: {}, coach: newCoach(), gate: { mode: 'in', email: '', busy: false, err: '', info: '' } };
 
   /* ---------- icons ---------- */
   const IC = {
@@ -987,7 +987,11 @@
     const dateLabel=new Date(d+'T12:00').toLocaleDateString(loc,{month:'long',year:'numeric'});
     let h=`<section class="daily-planner"><div class="planner-toolbar"><div><p class="planner-month">${esc(dateLabel)}</p><h2>${esc(d===today()?t('today'):new Date(d+'T12:00').toLocaleDateString(loc,{weekday:'long'}))}<span>${new Date(d+'T12:00').getDate()}</span></h2></div><div class="planner-tools"><button class="icon-btn" data-a="planner-calendar" aria-label="${esc(t('plannerCalendars'))}" title="${esc(t('plannerCalendars'))}">${IC.cal}${sourceCount?'<i class="planner-connected-dot"></i>':''}</button><button class="btn sm primary" data-a="planner-new">${IC.plus}<span>${esc(t('add'))}</span></button></div></div>`;
     h+=`<div class="planner-week-row"><button class="icon-btn" data-a="planner-shift" data-d="-7" aria-label="${esc(t('prevWeek'))}">${IC.back}</button><div class="planner-week">${Array.from({length:7},(_,i)=>{const k=Momentum.shift(week,i),e=DailyPlanner.occurrences(D().planner,k);return `<button data-a="planner-day" data-d="${k}" class="${k===d?'selected':''}" aria-pressed="${k===d}" ${k===today()?'aria-current="date"':''} aria-label="${esc(fmtDate(k+'T12:00',true))}"><small>${esc(new Date(k+'T12:00').toLocaleDateString(loc,{weekday:'short'}).replace(/\.$/,''))}</small><b>${k.slice(-2)}</b><i class="${e.length?'has-events':''}"></i></button>`;}).join('')}</div><button class="icon-btn flip" data-a="planner-shift" data-d="7" aria-label="${esc(t('nextWeek'))}">${IC.back}</button></div>`;
-    h+=`<div class="planner-view-row"><span class="planner-summary">${local.length?esc(t('plannerDayCount',completed,local.length)):esc(t('plannerOpenDay'))}</span><div class="planner-view-switch" aria-label="${esc(t('plannerView'))}">${['day','week'].map(v=>`<button class="${ui.plannerView===v?'on':''}" data-a="planner-view" data-v="${v}" aria-pressed="${ui.plannerView===v}">${esc(t(v==='day'?'plannerDay':'plannerWeek'))}</button>`).join('')}</div>${d!==today()?`<button class="link planner-today" data-a="planner-today">${esc(t('today'))}</button>`:''}</div>`;
+    h+=`<div class="planner-view-row"><span class="planner-summary">${local.length?esc(t('plannerDayCount',completed,local.length)):esc(t('plannerOpenDay'))}</span><div class="planner-view-switch" aria-label="${esc(t('plannerView'))}">${['agenda','day','week'].map(v=>`<button class="${ui.plannerView===v?'on':''}" data-a="planner-view" data-v="${v}" aria-pressed="${ui.plannerView===v}">${esc(t(v==='agenda'?'plannerAgenda':v==='day'?'plannerDay':'plannerWeek'))}</button>`).join('')}</div>${d!==today()?`<button class="link planner-today" data-a="planner-today">${esc(t('today'))}</button>`:''}</div>`;
+    if(ui.plannerView==='agenda') {
+      h+=`<div class="planner-agenda">${local.length?local.map(e=>`<article class="agenda-item${e.complete?' complete':''}"><div class="agenda-time">${e.allDay?esc(t('plannerAllDay')):plannerTime(e.start)}<small>${e.allDay?'':plannerTime(e.end)}</small></div><button class="agenda-main" data-a="planner-edit" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||d}"><span>${plannerIcon(e.category)}</span><div><b>${esc(e.title)}</b>${e.note?`<small>${esc(e.note)}</small>`:''}</div></button><button class="planner-done" data-a="planner-done" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||d}" aria-pressed="${e.complete}" aria-label="${esc(t(e.complete?'plannerMarkUndone':'plannerMarkDone')+': '+e.title)}">${e.complete?IC.check:'<span></span>'}</button></article>`).join(''):`<div class="agenda-empty">${IC.cal}<h3>${esc(t('plannerEmptyTitle'))}</h3><button class="btn primary" data-a="planner-new">${IC.plus}${esc(t('plannerFirst'))}</button></div>`}</div><div class="planner-quick">${['gym','swim','focus'].map(kind=>`<button class="chip" data-a="planner-new" data-kind="${kind}">${plannerIcon(kind)}${esc(t('plannerKind_'+kind))}</button>`).join('')}</div></section>`;
+      return h;
+    }
     const from=startHour*60,span=(endHour-startHour)*60;
     h+=`<div class="planner-scroll" data-start-hour="${startHour}" tabindex="0" role="region" aria-label="${esc(t('plannerTimetable'))}" style="--planner-days:${days.length};--planner-height:${span*1.2}px"><div class="planner-canvas${days.length>1?' planner-wide':''}"><div class="planner-grid-head"><span>${esc(t('plannerTime'))}</span>${days.map(k=>`<b>${esc(new Date(k+'T12:00').toLocaleDateString(loc,{weekday:'short',day:'numeric'}))}</b>`).join('')}</div>`;
     if(items.some(es=>es.some(e=>e.allDay)))h+=`<div class="planner-all-day"><small>${esc(t('plannerAllDay'))}</small>${items.map(es=>`<div>${es.filter(e=>e.allDay).map(e=>`<button class="planner-all-event${e.complete?' complete':''}" data-a="planner-edit" data-id="${esc(e.id)}" data-d="${e.occurrenceDay||e.day}">${esc(e.title)}</button>`).join('')}</div>`).join('')}</div>`;
@@ -1764,15 +1768,16 @@
       const s = ui.ai, st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad;
       const shots = edit => s.imgs.length ? `<div class="ai-shots${s.imgs.length < 2 ? ' one' : ''}">${s.imgs.map((x, i) => `<div class="ai-shot"><img class="ai-prev${edit ? '' : ' sm'}" src="${x.url}" alt="${esc(t('yourPhoto'))}">${edit ? `<button class="icon-btn sm" data-a="ai-rm" data-i="${i}" aria-label="${esc(t('removePhoto'))}">${IC.close}</button>` : ''}</div>`).join('')}</div>` : '';
       let h = mealPicker();
-      if (!key) h += `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'needKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`;
+      if (!key && s.mode === 'photo') h += `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'needKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`;
       if (s.res) {
         const tot = s.res.items.reduce((a, i) => a + num(i.kcal), 0), q = s.res.question && (s.qa || []).length < 2 ? s.res.question : null;
         h += `${shots(false)}<p class="lead"><span class="chip on">${esc(t('conf_' + s.res.confidence))}</span> ${esc(s.res.notes)}</p>`;
-        if (q && s.res.items.length) h += `<div class="note ask"><b>${esc(q.text)}</b><div class="chips">${q.options.map(o => `<button class="chip" data-a="ai-answer" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div><span>${esc(t('aiAskCap'))}</span></div>`;
+        if (q) h += `<div class="note ask"><b>${esc(q.text)}</b><div class="chips">${q.options.map(o => `<button class="chip" data-a="ai-answer" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div><span>${esc(t('aiAskCap'))}</span></div>`;
+        h += `${s.mode==='text'?`<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="3" data-in="ai-text">${esc(s.text)}</textarea></label>`:''}<label class="fld"><span>${esc(t('aiMoreDetails'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiDetailExample'))}"></label><button class="btn" data-a="ai-refine">${esc(t('analyze'))}</button>`;
         h += s.res.items.length ? s.res.items.map((it, i) => `<div class="ai-item"><div class="re-top"><input type="text" data-in="ai-f" data-k="name" data-i="${i}" value="${esc(it.name)}" aria-label="${esc(t('name'))}"><button class="icon-btn sm" data-a="ai-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
           <div class="grid5">${[['grams', 'g'], ['kcal', 'kcal'], ['p', t('pShort')], ['c', t('cShort')], ['f', t('fShort')]].map(([k, l]) => `<label><span>${esc(l)}</span><input type="text" inputmode="decimal" data-in="ai-f" data-k="${k}" data-i="${i}" value="${it[k]}"></label>`).join('')}</div>
           ${it.basis ? `<p class="ai-basis">${esc(it.basis)}</p>` : ''}${it.gmin && it.gmax ? `<div class="chips ai-range"><button class="chip${it.grams === it.gmin ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmin}">${esc(t('aiLess'))} · ${it.gmin} g</button><button class="chip${it.grams === it.gmax ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmax}">${esc(t('aiMore'))} · ${it.gmax} g</button></div>` : ''}
-          ${it.label ? `<i class="ai-db">${IC.check}${esc(t('aiLabel'))}</i>` : it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
+          ${it.label ? `<i class="ai-db">${IC.check}${esc(t('aiLabel'))}</i>` : it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : s.res.needsDetails ? '' : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
         h += `<p class="cap">${esc(t('aiCheck'))}${s.used ? ' ' + esc(t('aiUsedNotes', s.used)) : ''}</p>`;
         return { title: t('aiResult'), html: h, foot: (s.res.items.length ? `<button class="btn primary wide" data-a="ai-add"><span class="one">${esc(t('add'))} · <span id="ai-tot">${Math.round(tot)}</span> kcal</span></button>` : '') + `<button class="btn" data-a="ai-reset">${esc(t('again'))}</button>` };
       }
@@ -1784,9 +1789,9 @@
         const warn = s.imgs.some(x => x.warn === 'dark') ? 'aiDark' : s.imgs.some(x => x.warn === 'small') ? 'aiSmall' : '';
         h += s.imgs.length ? `${shots(true)}${warn ? `<div class="note warn"><b>${esc(t(warn))}</b></div>` : ''}${s.imgs.length < 2 ? `<label class="btn">${IC.plus}${esc(t('aiSecond'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label><p class="cap">${esc(t('aiSecondCap'))}</p>` : ''}<label class="fld"><span>${esc(t('aiHint'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiHintPh'))}" autocomplete="off"></label>${chips}`
           : `<p class="lead">${esc(t('aiPhotoLead'))}</p><div class="row2"><label class="btn primary big">${IC.cam}${esc(t('takePhoto'))}<input class="sr" type="file" accept="image/*" capture="environment" data-in="ai-file"></label><label class="btn big">${esc(t('fromGallery'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label></div><p class="cap">${esc(t('aiTips'))}</p><p class="cap">${esc(t('aiLabelTip'))}</p>`;
-      } else h += `<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="4" data-in="ai-text" placeholder="${esc(t('describePh'))}">${esc(s.text)}</textarea></label>`;
+      } else h += `<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="4" data-in="ai-text" placeholder="${esc(t('describePh'))}">${esc(s.text)}</textarea></label><p class="cap">${esc(t('aiLocalHelp'))}</p>`;
       const ready = s.mode === 'photo' ? s.imgs.length > 0 : true;
-      return { title: s.mode === 'photo' ? t('scanPhoto') : t('describe'), html: h, foot: ready ? `<button class="btn primary" data-a="ai-go" ${key ? '' : 'disabled'}>${esc(t('analyze'))}</button>${s.imgs.length ? `<button class="btn" data-a="ai-reset">${esc(t('otherPhoto'))}</button>` : ''}` : '' };
+      return { title: s.mode === 'photo' ? t('scanPhoto') : t('describe'), html: h, foot: ready ? `<button class="btn primary" data-a="ai-go" ${key || s.mode === 'text' ? '' : 'disabled'}>${esc(t('analyze'))}</button>${s.imgs.length ? `<button class="btn" data-a="ai-reset">${esc(t('otherPhoto'))}</button>` : ''}` : '' };
     };
   }
   /* The model itself never learns from use. What the app can do: remember how the user corrected earlier estimates and send that along with every new request. */
@@ -1795,28 +1800,28 @@
     const q = v => String(v).replace(/["\\\n\r]/g, ' ').trim();
     const parts = ns.map(m => {
       if (m.x) return '"' + q(m.n) + '": you listed it, but it was not part of the meal';
-      const a = []; if (m.n2) a.push('it was really "' + q(m.n2) + '"'); if (m.gu) a.push('you estimated ' + m.ga + ' g, the real amount was ' + m.gu + ' g'); if (m.ku) a.push('you gave ' + m.ka + ' kcal per 100 g, the real value was ' + m.ku);
+      const a = []; if (m.n2) a.push('it was really "' + q(m.n2) + '"'); if (m.gu) a.push('you estimated ' + m.ga + ' g, the real amount was ' + m.gu + ' g'); if(m.macros)a.push('corrected macros per 100 g: protein '+m.macros.p+' g, carbs '+m.macros.c+' g, fat '+m.macros.f+' g'); if (m.ku) a.push('you gave ' + m.ka + ' kcal per 100 g, the real value was ' + m.ku);
       return '"' + q(m.n) + '": ' + a.join('; ');
     });
-    const rs = ns.filter(m => m.ga > 0 && m.gu > 0).map(m => m.gu / m.ga); let bias = '';
-    if (rs.length >= 3) { const g = Math.exp(rs.reduce((a, r) => a + Math.log(r), 0) / rs.length); if (Math.abs(g - 1) >= 0.08) bias = ' Across these corrections the real portions were on average ' + Math.round(Math.abs(g - 1) * 100) + '% ' + (g > 1 ? 'larger' : 'smaller') + ' than your estimates, so shift your portion estimates for this user the same way.'; }
-    return ('Calibration from corrections this same user made to your earlier estimates (their plates, their usual portions). Apply them when the same or a similar food appears: ' + parts.join(' | ') + '.' + bias).slice(0, 2600);
+    return ('Prior user corrections: use ONLY when the exact same food and portion context applies. Never apply a global portion bias: ' + parts.join(' | ')).slice(0, 2600);
   }
-  /* Cross-check: when the food database has an entry under the name the model gave and its energy agrees within 15%, the measured values replace the model's. */
+  /* Cross-check only identical food identities with agreeing energy AND macros. */
   function dbCheck(it) {
-    const toks = norm(it.en || '').split(/[\s,]+/).filter(Boolean); if (toks.length < 1 || !(it.k100 > 0)) return;
-    let hits = []; for (let k = toks.length; k >= Math.min(2, toks.length) && !hits.length; k--) hits = foodSearch(toks.slice(0, k).join(' '), true).slice(0, 4);
-    let best = null;
-    if (it.label) return;                                                             // read from the product's own label: nothing to check it against
-    hits.forEach(x => { const r = FOODS.list[x.i], df = Math.abs(r[1] - it.k100) / Math.max(r[1], it.k100, 1); if (df <= 0.15 && (!best || df < best.df)) best = { r, df }; });
-    if (best) { it.k100 = best.r[1]; it.p100 = best.r[2]; it.c100 = best.r[3]; it.f100 = best.r[4]; it.db = best.r[0]; FoodAI.total(it); }
+    if (it.label || it.db || !it.en) return;
+    // Similar calories do not imply the same product or macros. Require the full identity.
+    const rows=FOODS.list.filter(r=>norm(r[0])===norm(it.en));
+    if(rows.length!==1)return;
+    const r=rows[0];
+    if (![it.k100,it.p100,it.c100,it.f100].every((v,i)=>Math.abs(v-r[i+1])<=Math.max(1,r[i+1]*.05)))return;
+    [it.k100,it.p100,it.c100,it.f100]=r.slice(1,5);it.db=r[0];FoodAI.total(it);
   }
   function aiLearn(s) {
     const d = D(), now = Date.now(), per = it => it.grams > 0 ? it.kcal / it.grams * 100 : 0; let k = 0;
     s.res.items.forEach(it => {
       const b = it._b; if (!b) return;
       const gCh = b.grams > 0 && it.grams > 0 && Math.abs(it.grams - b.grams) / b.grams >= 0.15, kCh = b.k100 > 0 && per(it) > 0 && Math.abs(per(it) - b.k100) / b.k100 >= 0.15, nCh = norm(it.name).trim() !== norm(b.name).trim() && !!it.name.trim();
-      if (gCh || kCh || nCh) { d.aiNotes.push({ n: (it.en || b.name).slice(0, 80), n2: nCh ? it.name.trim().slice(0, 80) : '', ga: gCh ? b.grams : 0, gu: gCh ? Math.round(it.grams) : 0, ka: kCh ? Math.round(b.k100) : 0, ku: kCh ? Math.round(per(it)) : 0, x: false, t: now }); k++; }
+      const macroCh=['p','c','f'].some(k=>Math.abs(it[k+'100']-(b[k+'100']??it[k+'100']))>.1);
+      if (gCh || kCh || nCh || macroCh) { d.aiNotes.push({ n: (it.en || b.name).slice(0, 80), n2: nCh ? it.name.trim().slice(0, 80) : '', ga: gCh ? b.grams : 0, gu: gCh ? Math.round(it.grams) : 0, ka: kCh ? Math.round(b.k100) : 0, ku: kCh ? Math.round(per(it)) : 0, macros:macroCh?{p:it.p100,c:it.c100,f:it.f100}:null, x: false, t: now }); k++; }
     });
     if (s.mode === 'photo') (s.gone || []).forEach(nm => { d.aiNotes.push({ n: String(nm).slice(0, 80), n2: '', ga: 0, gu: 0, ka: 0, ku: 0, x: true, t: now }); k++; });
     d.aiNotes = d.aiNotes.slice(-60); return k;
@@ -1830,14 +1835,15 @@
   }
   async function aiGo() {
     const s = ui.ai, st = D().settings;
+    if (!s || s.loading) return;
     if (s.mode === 'text' && !s.text.trim()) { toast(t('describePh')); return; }
     s.loading = true; s.err = null; refreshSheet();
     try {
       const memo = aiMemo();
       const qa = (s.qa || []).join('. '), photo = s.mode === 'photo';                 // answers given to the model's own questions go back in as extra information
-      const r = await FoodAI.analyze(st.apiKey, photo && st.photoModel ? st.photoModel : st.model, { images: photo ? s.imgs.map(x => x.b64) : [], text: s.text, lang: L(), hint: [photo ? s.hint : '', qa].filter(Boolean).join('. '), notes: memo });
-      r.items.forEach(i => { dbCheck(i); i._b = { name: i.name, grams: i.grams, k100: i.k100 }; });       // _b: what the estimate was before the user touched it
-      s.res = r; s.used = memo ? Math.min(25, D().aiNotes.length) : 0; s.gone = []; keyResult('ok');
+      const r = await FoodAI.analyze(st.apiKey, photo && st.photoModel ? st.photoModel : st.model, { images: photo ? s.imgs.map(x => x.b64) : [], text: s.text, lang: L(), hint: [s.hint, qa].filter(Boolean).join('. '), notes: memo });
+      r.items.forEach(i => { dbCheck(i); i._b = { name: i.name, grams: i.grams, k100: i.k100, p100:i.p100,c100:i.c100,f100:i.f100 }; });       // _b: what the estimate was before the user touched it
+      s.res = r; s.used = memo && !r.local ? Math.min(25, D().aiNotes.length) : 0; s.gone = []; if(!r.local)keyResult('ok');
     } catch (e) { s.err = { code: e.code || 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; if (e.code === 'auth') keyResult('bad'); }
     s.loading = false; if (ui.ai === s && ui.sheets.length) refreshSheet();
   }
@@ -2278,7 +2284,7 @@
     'planner-day'(el){if(!DailyPlanner.validDay(el.dataset.d))return;ui.plannerDate=el.dataset.d;ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
     'planner-shift'(el){ui.plannerDate=Momentum.shift(ui.plannerDate,+el.dataset.d);ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
     'planner-today'(){ui.plannerDate=today();ui.plannerScroll=null;ui.plannerScrollX=null;go('tab',render);},
-    'planner-view'(el){if(!['day','week'].includes(el.dataset.v))return;ui.plannerView=el.dataset.v;ui.plannerScrollX=null;rerender();},
+    'planner-view'(el){if(!['agenda','day','week'].includes(el.dataset.v))return;ui.plannerView=el.dataset.v;ui.plannerScrollX=null;rerender();},
     'planner-calendar'(){ui.calendarError='';openSheet(shPlannerCalendars());},
     'planner-sync-one'(el){syncCalendars(true,el.dataset.id);},
     'planner-disconnect'(el){if(!confirm(t('plannerDisconnectConfirm')))return;const id=el.dataset.id;if(plannerCommit({sources:D().planner.sources.filter(s=>s.id!==id),events:D().planner.events.filter(e=>e.source!==id)})){const links=calendarLinks();delete links[id];saveCalendarLinks(links);ui.calendarStatus='';refreshSheet();rerender();}},
@@ -2458,6 +2464,7 @@
     'hue-reset'() { clearTimeout(hueT);D().settings.hue = null;D().settings.accentTone='soft'; Store.save(); applyLook(); refreshSheet(); },
     'ai-chip'(el) { const s = ui.ai, v = String(el.dataset.v || ''), parts = s.hint.split(',').map(x => x.trim()).filter(Boolean), k = parts.indexOf(v); if (!v) return; if (k >= 0) parts.splice(k, 1); else parts.push(v); s.hint = parts.join(', ').slice(0, 300); refreshSheet(); },
     'ai-g'(el) { const it = ui.ai.res.items[+el.dataset.i], g = +el.dataset.g; if (!it || !(g > 0 && g <= 5000)) return; it.grams = g; FoodAI.total(it); refreshSheet(); },
+    'ai-refine'() { if(ui.ai.loading)return;ui.ai.res=null;aiGo(); },
     'ai-answer'(el) { const s = ui.ai, q = s.res && s.res.question; if (!q || s.loading) return; s.qa = (s.qa || []).concat([q.text + ' ' + String(el.dataset.o || '').slice(0, 40)]); s.res = null; refreshSheet(); aiGo(); },
     /* the plan: tick a meal, tick a workout */
     'pm-tick'(el) {
