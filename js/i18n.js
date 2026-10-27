@@ -256,10 +256,8 @@ Object.assign(I18N.en, {
 });
 
 Object.assign(I18N.hu, {"artPhases": "Kiindulás és véghelyzet", "artStart": "1 · Kiindulás", "artEnd": "2 · Véghelyzet", "artUnavailable": "A rajz nem tölthető be. Az útmutató alább olvasható.", "muscleNames": "Konkrét izmok", "musclePrecision": "A térkép izomcsoportokat mutat, nem mért aktivációt vagy egyes izomrostokat. A teljes nézet megtartja az edzésterv térképét.", "circuitProgress": "Körös edzés haladása", "circuitComplete": "Minden kör kész", "ideasCap": "A saját receptek tápértékei USDA-adatokból számított értékek. A beküldött videók receptjeinél a készítő közölt adatai szerepelnek; a forrás és a hiányok a részletekben olvashatók.", "videosCap": "A hivatkozások TikTokon nyílnak meg. Négy beküldött recept az étkezési ötletek között is megtalálható."});
-I18N.hu.aboutText += " További négy recept a beküldött videókból származik, nem ellenőrzött készítői tápértékekkel. A részletes WebP mozdulatrajzok AI-val készültek; nem Everkinetic-rajzok.";
 
 Object.assign(I18N.en, {"artPhases": "Start and finish positions", "artStart": "1 · Start", "artEnd": "2 · Finish", "artUnavailable": "The illustration could not load. Instructions are available below.", "muscleNames": "Specific muscles", "musclePrecision": "The map shows muscle groups, not measured activation or individual fibres. The full view preserves the workout plan’s map.", "circuitProgress": "Circuit workout progress", "circuitComplete": "All rounds complete", "ideasCap": "Original recipes use nutrition calculated from USDA data. Recipes from supplied clips use creator-reported figures; see each recipe for its source and missing values.", "videosCap": "Links open on TikTok. Four supplied recipes are also available among meal ideas."});
-I18N.en.aboutText += " Four additional recipes are transcribed from supplied clips with unverified creator-reported nutrition. Detailed WebP movement illustrations are AI-generated, separate from Everkinetic drawings.";
 Object.assign(I18N.hu, {
   tabHabits: 'Célok', momentumSub: 'Napi célok, heti és havi haladás.',
   momentumWeek: 'Heti haladás', momentumMonth: 'Havi haladás', momentum28: 'Az elmúlt 28 nap',
@@ -584,3 +582,6 @@ Object.assign(window.I18N.hu,{aiMoreDetails:'Pontosítás vagy címkeadatok',aiD
 
 Object.assign(window.I18N.en,{aiLocalHelp:'Exact quantities work without AI: 100 g banana. For a label, enter portion totals: 35 g product (140 kcal, 28 g protein, 4 g carbs, 1 g fat). Separate foods with +. Complex meals use your AI key.'});
 Object.assign(window.I18N.hu,{aiLocalHelp:'Pontos mennyiségek AI nélkül: 100 g banán. Címkénél az adag tápértékeit írd be: 35 g termék (140 kcal, 28 g fehérje, 4 g szénhidrát, 1 g zsír). Az ételeket + jellel válaszd el. Összetett ételhez az AI-kulcsodat használjuk.'});
+
+Object.assign(I18N.en,{aiHelpTitle:"Description tips",profileShared:"Choose what others can see on your profile."});
+Object.assign(I18N.hu,{aiHelpTitle:"Leírási tippek",profileShared:"Válaszd ki, mit láthatnak mások a profilodon."});

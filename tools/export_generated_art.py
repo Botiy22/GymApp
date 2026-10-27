@@ -28,6 +28,8 @@ def publish(manifest):
         image.resize((384,288),Image.Resampling.LANCZOS).save(dest.with_name(rid+'-thumb.webp'),'WEBP',quality=90,method=6)
         records.append({'id':rid,'kind':'food-photo','source':source.name,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'size':list(image.size)})
     for entry in manifest.get('recovery',[]):
+        folder=entry.get('folder','recovery')
+        if folder not in ('recovery','library'): raise ValueError('Invalid art folder')
         source=Path(entry['path']);rid=entry['id'];image=Image.open(source).convert('RGB')
         if image.size!=(1536,1024):
             raise ValueError(f'{rid}: expected a reviewed equal-half 1536x1024 movement board, got {image.size}')
@@ -40,7 +42,7 @@ def publish(manifest):
                  f'<rect width="768" height="1024" fill="#fff"/>'
                  f'<image x="{-768*phase}" y="0" width="1536" height="1024" href="data:image/webp;base64,{embedded}"/>'
                  '</svg>\n')
-            (ROOT/'img/recovery'/f'{rid}-{phase}.svg').write_text(svg,encoding='utf-8',newline='\n')
+            (ROOT/'img'/folder/f'{rid}-{phase}.svg').write_text(svg,encoding='utf-8',newline='\n')
         records.append({'id':rid,'kind':'recovery-pair','source':source.name,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'size':list(image.size),'phase_size':[768,1024]})
     return records
 
@@ -49,5 +51,5 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('manifest',type=Path);parser.add_argument('--provenance',type=Path)
     args=parser.parse_args();records=publish(json.loads(args.manifest.read_text()))
     if args.provenance:
-        args.provenance.write_text(json.dumps({'date':'2026-10-24','generator':'OpenAI image generation','records':records},indent=2)+'\n')
+        args.provenance.write_text(json.dumps({'date':json.loads(args.manifest.read_text()).get('date','2026-10-24'),'generator':'OpenAI image generation','records':records},indent=2)+'\n')
     print(f'Published {len(records)} individually generated art assets')

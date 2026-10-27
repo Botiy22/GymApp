@@ -150,3 +150,7 @@ dialog#sheet, .pdf-plan-dialog { background: var(--card); border: 1px solid var(
 .muscle-growth{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}.muscle-growth>span{width:100%;font-size:.74rem;color:var(--mut)}
 .muscle-growth>b{font-size:.72rem;font-weight:650;padding:4px 9px;border-radius:999px;background:var(--raised);border:1px solid var(--line)}
 .muscle-growth .growth-s{color:#ef4e6a}.muscle-growth .growth-a{color:#e88a3c}.muscle-growth .growth-b{color:#e8b343}.muscle-growth .growth-c{color:#3fbf8f}.muscle-growth .growth-d{color:#4a90e2}
+
+/* Opaque edge-to-edge navigation, including the iOS home-indicator area. */
+:root #tabbar,:root[data-material] #tabbar{left:0;right:0;bottom:0;width:100%;max-width:none;margin:0;height:calc(72px + var(--sb));box-sizing:border-box;padding:7px max(10px,calc((100vw - 620px)/2)) calc(9px + var(--sb));border-radius:0;border:0;border-top:1px solid var(--line);background:var(--card);box-shadow:0 -5px 20px rgba(0,0,0,.08);backdrop-filter:none;-webkit-backdrop-filter:none}
+:root #tabbar,:root[data-material] #tabbar{transform:none}

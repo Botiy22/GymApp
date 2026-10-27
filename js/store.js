@@ -17,7 +17,7 @@ window.Store = (function () {
     return {
       v: 1, contentVersion: 1,
       settings: { lang: null, restAuto: true, sound: true, vibrate: true, awake: true, autofill: false, restDefault: 90, weekGoal: 4, weekStart: 1,
-        accent: 'volt', bg: 'aurora', calm: false, solid: false, mealGroups:false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
+        sections: {}, accent: 'volt', bg: 'aurora', calm: false, solid: false, mealGroups:false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profileStyle:Profile.cleanStyle(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], planner: DailyPlanner.clean(null), chats: [],
       plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
@@ -40,13 +40,14 @@ window.Store = (function () {
     const f = fresh(), r = obj(raw), s = obj(r.settings), p = obj(s.profile), out = fresh(), tg = obj(s.targets);
     out.settings = {
       onboardingVersion: s.onboardingVersion === 1 ? 1 : 0,
+      sections:Object.fromEntries(Object.entries(obj(s.sections)).filter(([k,v])=>/^[a-zA-Z0-9-]{1,80}$/.test(k)&&typeof v==='boolean').slice(0,80)),
       mealGroups:s.mealGroups===true,
       publicProfile: Profile.clean(s.publicProfile),profileStyle:Profile.cleanStyle(s.profileStyle),
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
       restAuto: s.restAuto !== false, sound: s.sound !== false, vibrate: s.vibrate !== false, awake: s.awake !== false, autofill: s.autofill === true,
       restDefault: [60, 90, 120, 150, 180].indexOf(+s.restDefault) >= 0 ? +s.restDefault : 90, weekGoal: int(s.weekGoal, 0, 7, 4), weekStart: +s.weekStart === 0 ? 0 : 1,
       material:['glass','balanced','matte'].includes(s.material)?s.material:'glass',
-      accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: s.calm === true, solid: s.solid === true, addActive: s.addActive === true, addWorkoutCalories: s.addWorkoutCalories === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
+      accent: ACCENTS.indexOf(s.accent) >= 0 ? s.accent : 'volt', bg: BGS.indexOf(s.bg) >= 0 ? s.bg : 'aurora', calm: false, solid: s.solid === true, addActive: s.addActive === true, addWorkoutCalories: s.addWorkoutCalories === true, coach: s.coach !== false, figure: s.figure === 'photo' ? 'photo' : 'draw', syncKey: s.syncKey === true,
       hue: s.hue != null && isFinite(+s.hue) ? int(s.hue, 0, 359, 0) : (OLD_HUE[s.accent] != null ? OLD_HUE[s.accent] : null),   // accent colour as a hue on the colour scale; null = the app's mint accent
       accentTone:s.accentTone==='vivid'?'vivid':'soft',
       photoModel: MODELS.indexOf(s.photoModel) >= 0 ? s.photoModel : '',

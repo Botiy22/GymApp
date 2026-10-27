@@ -63,7 +63,7 @@
   const weekStart = d => { d = new Date(d); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 7 - (D().settings.weekStart === 0 ? 0 : 1)) % 7)); return d; };
   const e1rm = (kg, reps) => kg > 0 && reps > 0 ? (reps === 1 ? kg : kg * (1 + reps / 30)) : 0;
   const r1 = n => Math.round(n * 10) / 10;
-  const calm = () => !!D().settings.calm || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const calm = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const VERSION = GYM_RELEASE.version;
   const APP_BUILD = GYM_RELEASE.cacheId;
   const releaseText = () => VERSION + ' · ' + t('buildNumber', GYM_RELEASE.build);
@@ -630,7 +630,7 @@
       <div class="muscle-body">${best?`<p>${esc(t('bestFor'))}: <b>${esc(exName(best.ex))}</b> · ${dec(best.kg)} kg × ${best.reps}</p>`:`<p class="cap">${esc(t('muscleNoLift'))}</p>`}${g.next?`<p class="cap">${esc(t('muscleNext',tierName(g.tier+1),dec(Math.round(g.next*100)/100)))}</p>`:`<p class="cap">${esc(t('rankTop'))}</p>`}
       ${g.growth?.length?`<p class="muscle-growth"><span>${esc(t('growthTier'))}</span>${g.growth.map(([tier,en,hu])=>`<b class="growth-${tier.toLowerCase()}" title="${esc(t('growthTierHint'))}">${esc(L()==='hu'?hu:en)} · ${tier}</b>`).join('')}</p>`:''}
       <p class="cap">${esc(t('muscleCounts'))}: ${Object.keys(MuscleRanks.groups.find(x=>x.id===g.id).ex).map(exName).slice(0,6).map(esc).join(', ')}</p>${best?`<button class="link" data-a="wk-open" data-id="${esc(best.workout)}">${esc(t('viewLift'))}</button>`:''}</div></details>`;}).join('')}</div>`;
-    h+=`<details class="mini-section lift-milestones" data-section="lift-milestones" ${ui.sections?.['lift-milestones']?'open':''}><summary>${esc(t('liftMilestones'))}${IC.down}</summary><div class="section-body">${liftRanks()}</div></details>`;
+    h+=`<details class="mini-section lift-milestones" data-section="lift-milestones" ${D().settings.sections?.['lift-milestones']?'open':''}><summary>${esc(t('liftMilestones'))}${IC.down}</summary><div class="section-body">${liftRanks()}</div></details>`;
     return h+`<p class="cap rank-method">${esc(t('muscleRankMethod'))}</p>`;
   }
   // The best rank shown on Workout and Profile: muscle-group ranks when body weight is known, otherwise the barbell milestones.
@@ -657,7 +657,7 @@
     return `<div class="h2row"><h3>${esc(t('recoveryReady'))}</h3></div><div class="recovery-programs">${list.map(p=>{const added=D().routines.some(r=>r.id===p.id);return `<article class="recovery-card"><button class="recovery-open" data-a="recovery-preview" data-id="${esc(p.id)}"><span class="recovery-art" aria-hidden="true">${p.items.slice(0,3).map(i=>`<img src="${esc(thumb(i.ex))}" alt="" loading="lazy" decoding="async">`).join('')}</span><span class="recovery-copy"><b>${esc(recName(p))}</b><small>${esc(p.sub[L()]||p.sub.en)}</small><small class="recovery-meta">${p.items.length} ${esc(pl(p.items.length,'exercises'))} · ~${p.minutes} ${esc(t('min'))}</small></span></button><div class="recovery-actions">${added?`<button class="btn sm" data-a="r-open" data-id="${esc(p.id)}">${IC.check}<span>${esc(t('recoveryAdded'))}</span></button>`:`<button class="btn sm primary" data-a="recovery-add" data-id="${esc(p.id)}">${IC.plus}<span>${esc(t('recoveryAdd'))}</span></button>`}<button class="btn sm" data-a="recovery-preview" data-id="${esc(p.id)}">${esc(t('recoveryPreview'))}</button></div></article>`;}).join('')}</div>`;
   }
   function shRecovery(id){const fn=()=>{const p=REC.find(x=>x.id===id);if(!p)return {title:'',html:''};const added=D().routines.some(r=>r.id===p.id);
-    return {title:recName(p),html:`<section class="recovery-intro"><p class="recovery-lead">${esc(p.sub[L()]||p.sub.en)} · ${p.items.length} ${esc(pl(p.items.length,'exercises'))} · ~${p.minutes} ${esc(t('min'))}</p><p class="note">${esc(p.info[L()]||p.info.en)}</p><p class="cap">${esc(t('recoverySource'))}: ${esc(p.source)}</p></section><ol class="recovery-steps">${p.items.map((it,n)=>{if(!EX[it.ex])return '';const cues=exSteps(it.ex).list;return `<li class="recovery-step"><div class="recovery-step-head"><span class="recovery-num" aria-hidden="true">${n+1}</span><span class="recovery-step-name"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(doseText(it.reps))}</small></span><button class="icon-btn" data-a="ex-open" data-id="${esc(it.ex)}" aria-label="${esc(t('exerciseGuide'))}: ${esc(exName(it.ex))}">${IC.chev}</button></div><div class="recovery-pair">${recPair(it.ex).map((src,k)=>`<figure><img src="${esc(src)}" alt="${esc(exName(it.ex)+' · '+t(k?'artEnd':'artStart'))}" loading="lazy" decoding="async"><figcaption>${esc(t(k?'artEnd':'artStart'))}</figcaption></figure>`).join('')}</div><ol class="recovery-cues">${cues.map(c=>`<li>${esc(c)}</li>`).join('')}</ol></li>`;}).join('')}</ol>`,
+    return {title:recName(p),html:`<section class="recovery-intro"><p class="recovery-lead">${esc(p.sub[L()]||p.sub.en)} · ${p.items.length} ${esc(pl(p.items.length,'exercises'))} · ~${p.minutes} ${esc(t('min'))}</p><p class="note">${esc(p.info[L()]||p.info.en)}</p></section><ol class="recovery-steps">${p.items.map((it,n)=>{if(!EX[it.ex])return '';const cues=exSteps(it.ex).list;return `<li class="recovery-step"><div class="recovery-step-head"><span class="recovery-num" aria-hidden="true">${n+1}</span><span class="recovery-step-name"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(doseText(it.reps))}</small></span><button class="icon-btn" data-a="ex-open" data-id="${esc(it.ex)}" aria-label="${esc(t('exerciseGuide'))}: ${esc(exName(it.ex))}">${IC.chev}</button></div><div class="recovery-pair">${recPair(it.ex).map((src,k)=>`<figure><img src="${esc(src)}" alt="${esc(exName(it.ex)+' · '+t(k?'artEnd':'artStart'))}" loading="lazy" decoding="async"><figcaption>${esc(t(k?'artEnd':'artStart'))}</figcaption></figure>`).join('')}</div><ol class="recovery-cues">${cues.map(c=>`<li>${esc(c)}</li>`).join('')}</ol></li>`;}).join('')}</ol>`,
       foot:added?`<button class="btn primary" data-a="recovery-start" data-id="${esc(p.id)}">${IC.play}${esc(t('startWorkout'))}</button>`:`<div class="cook-nav"><button class="btn" data-a="recovery-add" data-id="${esc(p.id)}">${IC.plus}${esc(t('recoveryAdd'))}</button><button class="btn primary" data-a="recovery-start" data-id="${esc(p.id)}">${IC.play}${esc(t('recoveryAddStart'))}</button></div>`};};fn.kind='recovery';return fn;}
   function addRecovery(id){
     const p=REC.find(x=>x.id===id);if(!p)return null;const have=getR(p.id);if(have)return have;
@@ -832,8 +832,6 @@
     const cats = [['', t('all')], ['breakfast', t('cat_breakfast')], ['main', t('cat_main')], ['snack', t('cat_snack')], ['drink', t('cat_drink')]];
     let h = `<nav class="seg recipe-categories" aria-label="${esc(t('recipeCategories'))}">${cats.map(([c, n]) => `<button class="${ui.idea === c ? 'on' : ''}" data-a="idea-cat" data-c="${c}" aria-pressed="${ui.idea === c}">${esc(n)}</button>`).join('')}</nav><div class="recipe-grid">` +
       RCP.items.filter(r => !ui.idea || r.cat === ui.idea).map(r => `<button class="rcard recipe-card" data-a="idea-open" data-id="${esc(r.id)}" aria-label="${esc(r[L()]||r.en)}">${recipeReference(r)}<span class="recipe-card-copy"><b class="recipe-card-name">${esc(r[L()]||r.en)}</b><span class="recipe-card-meta"><span>${r.kcal==null?'—':dec(r.kcal)} <small>kcal</small></span><small>${r.min} ${esc(t('min'))}</small></span><span class="recipe-card-macros">${[['p','protein'],['c','carbs'],['f','fat']].map(([key,label])=>`<span class="macro-${key}"><small>${esc(t(label))}</small><b>${r[key]==null?'—':dec(r[key])}<small> g</small></b></span>`).join('')}</span></span></button>`).join('') + `</div>`;
-    const vids=RCP.videos.filter(v=>/^https:\/\/www\.tiktok\.com\//.test(v.url));
-    if(vids.length)h+=`<details class="recipe-source-clips mini-section"><summary>${esc(t('videosTitle'))}${IC.down}</summary><div class="rlist">${vids.map(v=>`<a class="rcard" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"><span class="q-ic">${IC.play}</span><span class="rc-t"><b>${esc(v.t)}</b><i>TikTok · @iamvargacsaba</i></span>${IC.chev}</a>`).join('')}</div><p class="cap">${esc(t('videosCap'))}</p></details>`;
     return h;
   }
   const stepArt = (r, n) => (r.art && r.art[n]) || CookArt.kind((r.steps.en || [])[n]);
@@ -842,13 +840,13 @@
     if(typeof value==='number')return dec(value)+' g';
     if(Array.isArray(value))return String(value[L()==='hu'?0:1]||value[1]||'');
     const pairs={
-      '400 g (a videóban 390 g / 390 g used in clip)':['400 g (a videóban 390 g)','400 g (390 g used in clip)'],
+      '400 g (a videóban 390 g / 390 g used in clip)':['400 g','400 g'],
       '1½ doboz / cartons':['1½ doboz','1½ cartons'], 'ízlés szerint / to taste':['ízlés szerint','to taste'],
       '1 db / one':['1 db','1'], '1–3 gerezd / cloves':['1–3 gerezd','1–3 cloves'], '2 db / two':['2 db','2'],
       '60 g + 15 g a tetejére / topping':['60 g + 15 g a tetejére','60 g + 15 g for topping'],
       '2 csésze / cups':['2 csésze','2 cups'], '4 db / four':['4 db','4'], '1 tk / tsp':['1 tk','1 tsp'],
       '4 ek / tbsp':['4 ek','4 tbsp'], '1¼ csésze / cups':['1¼ csésze','1¼ cups'],
-      'mennyiség nem látszik / quantity not shown':['mennyiség nem látszik','quantity not shown']
+      'mennyiség nem látszik / quantity not shown':['válassz mennyiséget','choose amount']
     };
     return pairs[value]?.[L()==='hu'?0:1]||String(value||'');
   }
@@ -867,7 +865,7 @@
       return { title: r[L()] || r.en, html: `${mealPicker()}${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
         <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
         <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li${typeof i[2]==='string'&&i[2].length>24?' class="long-quantity"':''}><span>${esc(i[k])}</span><b>${esc(recipeAmount(i[2]))}</b></li>`).join('')}</ul></section>
-        <button class="btn primary recipe-cook-launch" data-a="recipe-cook" data-id="${esc(r.id)}">${IC.play}${esc(t('cookTogether'))}</button><h3 class="recipe-method-title">${esc(t('method'))}</h3><ol class="recipe-steps">${(r.steps[L()] || r.steps.en).map((x, n) => `<li class="recipe-step"><span class="recipe-step-art">${CookArt.svg(stepArt(r, n))}<b>${n + 1}</b></span><p>${esc(x)}</p></li>`).join('')}</ol><p class="cap">${esc(r.note ? r.note[L()] || r.note.en : t('ideasCap'))}</p>${r.source ? `<p class="cap">${esc(t('recipeSource'))}: ${esc(r.source)}</p>` : ''}`,
+        <button class="btn primary recipe-cook-launch" data-a="recipe-cook" data-id="${esc(r.id)}">${IC.play}${esc(t('cookTogether'))}</button><h3 class="recipe-method-title">${esc(t('method'))}</h3><ol class="recipe-steps">${(r.steps[L()] || r.steps.en).map((x, n) => `<li class="recipe-step"><span class="recipe-step-art">${CookArt.svg(stepArt(r, n))}<b>${n + 1}</b></span><p>${esc(x)}</p></li>`).join('')}</ol>${r.note?`<p class="cap">${esc(r.note[L()]||r.note.en)}</p>`:''}`,
         foot: `<button class="btn primary" data-a="idea-add" data-id="${esc(r.id)}">${esc(t('addToDiary'))}</button>` };
     };
   }
@@ -963,7 +961,7 @@
   const profileStyle=()=>Profile.cleanStyle(D().settings.profileStyle);
   const coverPhoto=(p,s)=>s.cover==='photo'&&p.coverPhoto?`<img class="profile-cover-photo" src="${esc(p.coverPhoto)}" alt="" aria-hidden="true">`:'';
   const styleClasses=s=>`cover-${s.cover} frame-${s.frame}${s.useAccent?' profile-use-accent':''}`;
-  const sectionOpen=key=>ui.sections?.[key]!==false;
+  const sectionOpen=key=>D().settings.sections?.[key]!==false;
   function miniSection(key,title,body){return `<details class="mini-section" data-section="${key}" ${sectionOpen(key)?'open':''}><summary>${esc(title)}${IC.down}</summary><div class="section-body">${body}</div></details>`;}
   function profilePreview(p,style){return `<div class="profile-cover profile-preview theme-${p.theme} ${styleClasses(style)}"${colorStyle(p,style)}>${coverPhoto(p,style)}<div class="profile-identity">${avatar(p,false)}<div><h2>${esc(p.displayName||p.username||t('profileWelcome'))}</h2>${p.username?`<p>@${esc(p.username)}</p>`:''}</div></div>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}</div>`;}
   function avatar(p, small, view=false) {
@@ -1789,7 +1787,7 @@
         const warn = s.imgs.some(x => x.warn === 'dark') ? 'aiDark' : s.imgs.some(x => x.warn === 'small') ? 'aiSmall' : '';
         h += s.imgs.length ? `${shots(true)}${warn ? `<div class="note warn"><b>${esc(t(warn))}</b></div>` : ''}${s.imgs.length < 2 ? `<label class="btn">${IC.plus}${esc(t('aiSecond'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label><p class="cap">${esc(t('aiSecondCap'))}</p>` : ''}<label class="fld"><span>${esc(t('aiHint'))}</span><input type="text" data-in="ai-hint" value="${esc(s.hint)}" placeholder="${esc(t('aiHintPh'))}" autocomplete="off"></label>${chips}`
           : `<p class="lead">${esc(t('aiPhotoLead'))}</p><div class="row2"><label class="btn primary big">${IC.cam}${esc(t('takePhoto'))}<input class="sr" type="file" accept="image/*" capture="environment" data-in="ai-file"></label><label class="btn big">${esc(t('fromGallery'))}<input class="sr" type="file" accept="image/*" data-in="ai-file"></label></div><p class="cap">${esc(t('aiTips'))}</p><p class="cap">${esc(t('aiLabelTip'))}</p>`;
-      } else h += `<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="4" data-in="ai-text" placeholder="${esc(t('describePh'))}">${esc(s.text)}</textarea></label><p class="cap">${esc(t('aiLocalHelp'))}</p>`;
+      } else h += `<label class="fld"><span>${esc(t('describeLbl'))}</span><textarea rows="4" data-in="ai-text" placeholder="${esc(t('describePh'))}">${esc(s.text)}</textarea></label><details class="mini-section"><summary>${esc(t('aiHelpTitle'))}${IC.down}</summary><p class="cap">${esc(t('aiLocalHelp'))}</p></details>`;
       const ready = s.mode === 'photo' ? s.imgs.length > 0 : true;
       return { title: s.mode === 'photo' ? t('scanPhoto') : t('describe'), html: h, foot: ready ? `<button class="btn primary" data-a="ai-go" ${key || s.mode === 'text' ? '' : 'disabled'}>${esc(t('analyze'))}</button>${s.imgs.length ? `<button class="btn" data-a="ai-reset">${esc(t('otherPhoto'))}</button>` : ''}` : '' };
     };
@@ -1889,7 +1887,7 @@
     for(const card of [...template.content.children].filter(c=>c.matches('section.card'))){
       const heading=card.querySelector(':scope > h3');if(!heading)continue;
       const key=['account','appearance','workout','aiTitle','nutrition','planCard','data'].find(k=>t(k)===heading.textContent);if(!key)continue;
-      const details=document.createElement('details');details.className='card settings-group';details.dataset.section='settings-'+key;details.open=['aiTitle','data'].includes(key)?ui.sections?.[details.dataset.section]===true:sectionOpen(details.dataset.section);   // rarely used groups start closed
+      const details=document.createElement('details');details.className='card settings-group';details.dataset.section='settings-'+key;details.open=['aiTitle','data'].includes(key)?D().settings.sections?.[details.dataset.section]===true:sectionOpen(details.dataset.section);   // rarely used groups start closed
       const summary=document.createElement('summary');summary.innerHTML=esc(heading.textContent)+IC.down;heading.remove();
       const body=document.createElement('div');body.className='section-body';body.append(...card.childNodes);details.append(summary,body);card.replaceWith(details);
     }
@@ -1928,7 +1926,7 @@
     }
     e.dataset.bg=s.bg;e.dataset.material='matte';
     const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', light ? '#f8f5f0' : '#14151b');
-    if (s.calm) e.dataset.calm = '1'; else delete e.dataset.calm;
+    delete e.dataset.calm;
     if (s.solid) e.dataset.solid = '1'; else delete e.dataset.solid;
   }
   function shSettingsBody() {
@@ -1947,8 +1945,8 @@
           <p class="lbl">${esc(t('language'))}</p>${seg('lang', L(), [['hu', 'Magyar'], ['en', 'English']])}
           <p class="lbl">${esc(t('theme'))}</p><div class="seg">${[['deep', t('themeDark')], ['light', t('themeLight')]].map(([v, n]) => `<button class="${(v === 'light') !== dark ? 'on' : ''}" data-a="set-bg" data-v="${v}" aria-pressed="${(v === 'light') !== dark}">${esc(n)}</button>`).join('')}</div>
           <p class="lbl">${esc(t('accent'))}</p><div class="accent-swatches">${PALETTES.map(([h,key])=>{const on=s.hue===h&&s.accentTone==='vivid';return `<button class="swatch${on?' on':''}" data-a="set-palette" data-v="${h==null?'default':h}" aria-pressed="${on}" aria-label="${esc(t(key))}" title="${esc(t(key))}" style="--swatch:${'rgb('+vividFill(h).join(',')+')'}">${on?IC.check:''}</button>`;}).join('')}</div>
-          <details class="custom-accent mini-section" data-section="custom-accent" ${ui.sections?.['custom-accent']?'open':''}><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="section-body">${colorWheel(s.hue==null?DEF_HUE:s.hue)}<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></div></details>
-          ${sw('calm', t('setCalm'))}</section>
+          <details class="custom-accent mini-section" data-section="custom-accent" ${D().settings.sections?.['custom-accent']?'open':''}><summary>${esc(t('customAccent'))}${IC.down}</summary><div class="section-body">${colorWheel(s.hue==null?DEF_HUE:s.hue)}<button class="link mut" data-a="hue-reset">${esc(t('hueReset'))}</button></div></details>
+          </section>
         <section class="card"><h3>${esc(t('workout'))}</h3>${sw('restAuto', t('restAuto'), 'data-in="set-rest"')}${sw('sound', t('restSound'), 'data-in="set-sound"')}${'vibrate' in navigator ? sw('vibrate', t('setVibrate')) : ''}${sw('awake', t('setAwake'))}${sw('autofill', t('setAutofill'))}
           ${sw('stretch', t('setStretch'))}${s.stretch ? sel('hold', t('holdLbl'), [20, 30, 45].map(v => [v, v + ' ' + t('secShort')])) : ''}
           ${sel('restDefault', t('restDefault'), [60, 90, 120, 150, 180].map(v => [v, clock(v)]))}${sel('weekGoal', t('weekGoal'), [[0, t('goalOff')]].concat([2, 3, 4, 5, 6, 7].map(v => [v, v + ' ' + t('times')])))}${sel('weekStart', t('weekStartLbl'), [[1, t('monday')], [0, t('sunday')]])}</section>
@@ -1957,7 +1955,7 @@
         <section class="card"><h3>${esc(t('aiTitle'))}</h3>${aiCard(s)}${sw('coach', t('setCoach'))}</section>
         <section class="card"><h3>${esc(t('data'))}</h3><p class="cap">${esc(t(cs ? 'dataWhereCloud' : 'dataWhere'))}</p><div class="row2"><button class="btn" data-a="export">${esc(t('export'))}</button><label class="btn">${esc(t('import'))}<input class="sr" type="file" accept="application/json,.json" data-in="import"></label></div>
           <button class="btn" data-a="pdf-plan">${esc(t('addPlan'))}</button><div class="row2"><button class="btn" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodBtn'))}</button></div>
-          <details class="mini-section" data-section="data-more" ${ui.sections?.['data-more']?'open':''}><summary>${esc(t('moreOptions'))}${IC.down}</summary><div class="section-body"><button class="btn" data-a="export-plan">${esc(t('exportPlan'))}</button><button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn" data-a="reset-routines">${esc(t('resetRoutines'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></div></details></section>
+          <details class="mini-section" data-section="data-more" ${D().settings.sections?.['data-more']?'open':''}><summary>${esc(t('moreOptions'))}${IC.down}</summary><div class="section-body"><button class="btn" data-a="export-plan">${esc(t('exportPlan'))}</button><button class="btn" data-a="export-csv">${esc(t('exportCsv'))}</button><button class="btn" data-a="reset-routines">${esc(t('resetRoutines'))}</button><button class="btn danger" data-a="wipe">${esc(t('wipe'))}</button></div></details></section>
         <footer class="app-info"><p>${esc(t('appName'))} ${esc(releaseText())}</p><button class="link" data-a="release-notes">${esc(t('whatsNew'))}</button><button class="link" data-a="shortcut-help">${esc(t('shortcutTitle'))}</button></footer>` };
     };
   }
@@ -2778,7 +2776,7 @@
     'key-draft'(el) { ui.keyDraft = el.value; const b = $('[data-a="key-save"]'); if (b) b.disabled = !el.value.trim(); },
     'set-model'(el) { if (Store.MODELS.indexOf(el.value) >= 0) { D().settings.model = el.value; Store.save(); } },
     'set-rest'(el) { D().settings.restAuto = el.checked; Store.save(); }, 'set-sound'(el) { D().settings.sound = el.checked; Store.save(); },
-    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'calm', 'solid', 'addActive', 'addWorkoutCalories', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'addWorkoutCalories' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
+    'set-flag'(el) { const k = el.dataset.k; if (['vibrate', 'awake', 'autofill', 'solid', 'addActive', 'addWorkoutCalories', 'coach', 'syncKey', 'stretch'].indexOf(k) < 0) return; D().settings[k] = el.checked; Store.save(); applyLook(); if (k === 'awake' && !el.checked) unwake(); if (k === 'addActive' || k === 'addWorkoutCalories' || k === 'coach' || k === 'stretch') rerender(); if (k === 'stretch') refreshSheet(); },
     'coach-q'(el) { ui.coach.draft = el.value; },
     'friend-identifier'(el) {ui.friendValue=el.value;ui.friendError='';ui.friendNotice='';},
     'friend-kind'(el) { if(!['username','email','phone'].includes(el.value))return;ui.friendKind=el.value;ui.friendValue='';ui.friendError='';ui.friendNotice='';if(topIs('friend-search'))refreshSheet();else rerender();$('#friend-identifier')?.focus(); },
@@ -2965,8 +2963,8 @@
     if (e.target !== dlg()) return;
     e.preventDefault(); closeSheet(true);
   });      // Esc key: close with the same slide
-  document.addEventListener('click',e=>{const summary=e.target.closest?.('summary'),details=summary?.parentElement;if(details?.dataset.section){ui.sections=ui.sections||{};ui.sections[details.dataset.section]=!details.open;}});
-  /* Opening and closing a section glides to its new height instead of jumping (skipped with fewer animations). */
+  document.addEventListener('click',e=>{const summary=e.target.closest?.('summary'),details=summary?.parentElement;if(details?.dataset.section){D().settings.sections=D().settings.sections||{};D().settings.sections[details.dataset.section]=!details.open;Store.save();}});
+  /* Opening and closing a section glides to its new height instead of jumping (respects the system motion preference). */
   document.addEventListener('click', e => {
     const sum = e.target.closest && e.target.closest('summary'), d = sum && sum.parentElement, ctl = e.target.closest && e.target.closest('a,button,input,select,label,textarea');
     if (!d || d.tagName !== 'DETAILS' || sum !== d.firstElementChild || (ctl && ctl !== sum && sum.contains(ctl)) || calm() || !d.animate) return;
@@ -2982,7 +2980,7 @@
     g.onfinish = () => { if (d._glide !== g) return; d._glide = null; d.style.overflow = ''; if (closing) d.open = false; };
     g.oncancel = () => { d.style.overflow = ''; };
   }, true);
-  document.addEventListener('toggle', e => { if(e.target.isConnected&&e.target.dataset?.section){ui.sections=ui.sections||{};ui.sections[e.target.dataset.section]=e.target.open;} if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
+  document.addEventListener('toggle', e => { if(e.target.isConnected&&e.target.dataset?.section){D().settings.sections=D().settings.sections||{};if(D().settings.sections[e.target.dataset.section]!==e.target.open){D().settings.sections[e.target.dataset.section]=e.target.open;Store.save();}} if(e.target.matches?.('.profile-lifts'))ui.profileRanks=e.target.open;if(e.target.matches?.('.contact-discovery'))ui.contactOpen=e.target.open;if(e.target.matches?.('.friend-competition'))ui.friendCompetition=e.target.open;if(e.target.matches?.('.routine-group')){ui.routineGroups=ui.routineGroups||{};ui.routineGroups[e.target.dataset.program]=e.target.open;}if(e.target.matches?.('.settings-group')){ui.settingsGroups=ui.settingsGroups||{};ui.settingsGroups[e.target.dataset.group]=e.target.open;} }, true);
   // Horizontal swipes browse weeks; vertical gestures keep normal page scrolling.
   let weekGesture=null,weekSuppressUntil=0;
   document.addEventListener('touchstart',e=>{const card=e.target.closest?.('.momentum-week-browser');const touch=e.touches[0];weekGesture=card&&e.touches.length===1?{card,x:touch.clientX,y:touch.clientY,at:performance.now()}:null;},{passive:true});

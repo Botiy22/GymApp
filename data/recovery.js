@@ -71,17 +71,17 @@
   window.RECOVERY_PROGRAMS = [
     { id: 'rec_knee_bands', focus: 'knee', icon: 'legs', name: { hu: 'Szalagos térdprogram', en: 'Knee band routine' }, sub: { hu: 'Heti rendszerességgel · mini és hosszú szalag', en: 'Every week · mini band and long band' },
       source: 'Matthew Maloney · KneeHab', minutes: 30,
-      info: { hu: 'A beküldött videó tíz szalagos gyakorlata, a videón kiírt sorozatokkal és tartásokkal. Az egylábas gyakorlatokat mindkét oldalra végezd. A gyakorlatok nevei és a leírások a videó alapján készültek. Fájdalommentes tartományban dolgozz; műtét vagy sérülés után a gyógytornászod terve az irányadó.', en: 'The ten band exercises from the supplied clip, with the sets and holds printed on screen. Do single-leg moves on both sides. Names and cues are our reading of the clip. Stay in a pain-free range; after surgery or an injury, follow your physio’s plan.' },
+      info: {"hu": "Mindkét oldalra végezd. Fájdalommentesen dolgozz; sérülés után kövesd a gyógytornászod tervét.", "en": "Train both sides in a pain-free range. After an injury, follow your physiotherapist’s plan."},
       items: [item('Rehab_Banded_Squat', 3, '15'), item('Rehab_Terminal_Knee_Extension', 3, '12'), item('Rehab_Banded_Split_Squat', 2, '10'), item('Rehab_Hamstring_Curl_Hold', 3, '15 s'), item('Rehab_Single_Leg_Balance', 3, '20 s'),
         item('Rehab_Single_Leg_Squat_Hold', 3, '30 s'), item('Rehab_Quadruped_Kickback', 2, '15'), item('Rehab_Knee_Drive', 1, '10'), item('Rehab_March_Hold', 3, '10 s'), item('Rehab_Split_Stance_Hold', 3, '15 s')] },
     { id: 'rec_knee_stability', focus: 'knee', icon: 'legs', name: { hu: 'Térdstabilitási kör', en: 'Knee stability circuit' }, sub: { hu: 'Egyensúly, lelépés, kitörés', en: 'Balance, step-downs, lunges' },
       source: 'Matthew Maloney · Knee Stability', minutes: 30,
-      info: { hu: 'A beküldött „Knee Stability” videó kilenc mozdulata a kiírt sorozatszámokkal. A doboz a videóban kb. 30 cm. Az egylábas gyakorlatokat mindkét oldalra végezd. Fájdalommentes tartományban dolgozz.', en: 'The nine moves from the supplied “Knee Stability” clip with the sets shown on screen. The box in the clip is about 30 cm. Do single-leg moves on both sides. Stay in a pain-free range.' },
+      info: {"hu": "Mindkét oldalra végezd. Válassz kényelmes lépcsőmagasságot, és kontrolláltan mozogj.", "en": "Train both sides. Choose a comfortable step height and move with control."},
       items: [item('Rehab_Foot_Taps', 2, '15'), item('Rehab_Step_Down', 2, '12'), item('Rehab_Split_Squat_Hold', 3, '20 s'), item('Rehab_Plate_Balance_Swing', 3, '15'), item('Rehab_Single_Leg_RDL_Reach', 2, '15 s'),
         item('Rehab_Single_Leg_Squat_Hold', 3, '30 s'), item('Rehab_Knee_Drive', 2, '8'), item('Rehab_Ball_Reverse_Lunge', 3, '12', 60), item('Split_Squats', 4, '8', 60)] },
-    { id: 'rec_pelvic_tilt', focus: 'stability', icon: 'core', name: { hu: 'Medencebillenés-javító', en: 'Pelvic tilt reset' }, sub: { hu: '15 napos rutin · otthon, szőnyegen', en: '15-day routine · at home on a mat' },
+    { id: 'rec_pelvic_tilt', focus: 'stability', icon: 'core', name: { hu: 'Medencebillenés-javító', en: 'Pelvic tilt reset' }, sub: { hu: 'Otthon, szőnyegen', en: 'At home on a mat' },
       source: 'purple.faction', minutes: 12,
-      info: { hu: 'A beküldött videó négy mozdulata előre billent medencére: farizomhíd, csípőhajlító-nyújtás, lábemelés, térd a mellkashoz. A videó 15 napot ír, de sorozatszámot nem mutat; az itteni számok a mi kezdő javaslatunk. Állítsd a saját tempódhoz.', en: 'The four moves from the supplied clip for an anterior pelvic tilt: glute bridge, hip flexor stretch, leg raises, knee to chest. The clip says 15 days but shows no sets; the numbers here are our starting suggestion. Adjust to how you feel.' },
+      info: {"hu": "Javasolt kezdő sorozatok. A terhelést igazítsd a saját szintedhez.", "en": "Suggested starting sets. Adjust the difficulty to your level."},
       items: [item('Butt_Lift_Bridge', 3, '12'), item('Kneeling_Hip_Flexor', 2, '30 s'), item('Rehab_Lying_Leg_Raise', 3, '10'), item('One_Knee_To_Chest', 2, '30 s')] }
   ];
 })();

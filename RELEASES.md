@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.33.0 — 2026-10-27 (build 20261027.1)
+
+Settings section state is saved with the user settings and survives reload/export/sync. The in-app reduced-animation switch is removed and stale settings are normalized; system accessibility motion preferences remain respected. Navigation covers the full bottom edge and safe area with an opaque theme surface.
+
+Six original exercise variations expand the searchable library, with EN/HU cues and twelve matching black-outline start/finish images. Based on reviewed public exercise dataset base movements; provenance and adaptation details in `docs/EXERCISE_EXPANSION.md`. All new media is bundled offline.
+
+Recipe and recovery screens remove upload/screenshot history and redundant source paragraphs. Instructions retain useful portion, missing-nutrition and preparation information; unknown macros remain required before logging. Source metadata and licensing credits are retained outside everyday recipe flows. Food-analysis tips become expandable and profile privacy copy is concise.
+
 ## 2.32.0 — 2026-10-25 (build 20261025.1)
 
 Food analysis uses conservative local exact-name/quantity matches and explicit per-portion labels before the configured AI. Unknown meal components prevent partial local matches; volumes use documented density. Branded shakes request serving/product/milk details. AI prompts distinguish powder from milk, consumed portions from package weight and readable labels from estimates. Missing, negative, nonnumeric and impossible macro values are rejected. Similar calories alone no longer trigger database substitution; macro corrections persist alongside calorie corrections. Requests have timeouts and duplicate-submit guards. No live model accuracy benchmark was available; API routing/validation tested with controlled responses.

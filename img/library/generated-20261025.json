@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-25",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "suitcase-carry",
+      "kind": "recovery-pair",
+      "source": "exec-e4ca2296-62cd-4320-9593-c6ba7d3d9b29.png",
+      "source_sha256": "10aaa11484386468435085e3f1fd328ab72f2f10c76dd29c3a14f9cf46e862a2",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "heel-goblet",
+      "kind": "recovery-pair",
+      "source": "exec-b627b1c8-cc30-420f-a8b8-145d57fff17b.png",
+      "source_sha256": "f9510f2356d9ae7f825efb1d4511129fb9073f3fbafead14ce04f4048ceac8ce",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "b-stance-rdl",
+      "kind": "recovery-pair",
+      "source": "exec-0ba7ac62-9414-4703-be69-0f43a399d96e.png",
+      "source_sha256": "424f361e85fe63461cdf40198663f7ea3be33de3c147094b352f18276014b3d4",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "kneeling-landmine",
+      "kind": "recovery-pair",
+      "source": "exec-fcfe59b8-d202-442e-9439-9136a9f3439a.png",
+      "source_sha256": "23045956b8591b5fb8c45a05b807a339d212642acd82166c7e6aacf6b580cf7c",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "wall-tibialis",
+      "kind": "recovery-pair",
+      "source": "exec-47068ae3-a65f-4cf6-acec-c258039d436c.png",
+      "source_sha256": "1c3d9918f6840e72b162979b79e2e77759a3e1deea92367c17ca4a879b85cd6b",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "kneeling-pallof",
+      "kind": "recovery-pair",
+      "source": "exec-ceb1f23c-ee43-424b-867c-2ce8f37fd4b6.png",
+      "source_sha256": "96526acb9fa00310ca41af1392f72b3de8815ffa5e342240878fd0e9d18686ce",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    }
+  ]
+}

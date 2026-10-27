@@ -29,6 +29,15 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.33.0, 2026-10-27 (Codex)
+
+- Remote backup `backup/main-20261025-before-library-polish` at `822f392`.
+- Added `data/library-expansion.js` after recovery, six unique variations, bilingual cues and twelve `img/library` sketch phase assets. Source research/adaptations recorded in `docs/EXERCISE_EXPANSION.md`; public wrkout repository fetched/read, external fitness websites blocked. Original generated sketches; no copied photos. Offline CORE includes script and artwork.
+- Simplified recipe/recovery/routine prose in data files and `js/app.js`, removed source history and clip feed from recipe screens, retained unknown nutrition requirements, safety cues and licensing credits. Analysis tips collapsed, profile privacy caption shortened.
+- Export helper accepts reviewed library boards as well as recovery boards. Existing exercise IDs/routines/history unchanged.
+- Follow-up: section preferences now persist in `settings.sections` (bounded boolean map); removed calm control and normalized obsolete flag, retaining OS reduced-motion accessibility. Full-width opaque navigation covers bottom safe area; removed inherited centering transform. Build `20261027.1`.
+- Validation: 23 browser/LF checks passed across Settings persistence/animation/nav safe area, library search and phase images in both languages, recipe copy/recovery flows, responsive layouts, offline recipes and verified update. Three Node translation/routine-art tests passed. Library test now waits for sheet close/unlock before the next search. Dark Settings/safe-area screenshot inspected. No live database changes or physical-phone verification.
+
 # Update — Reppsy 2.32.0, 2026-10-25 (Codex)
 
 - Remote backup `backup/main-20261025-before-food-analysis` at `864f319`.
