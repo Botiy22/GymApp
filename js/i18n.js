@@ -585,3 +585,6 @@ Object.assign(window.I18N.hu,{aiLocalHelp:'Pontos mennyiségek AI nélkül: 100 
 
 Object.assign(I18N.en,{aiHelpTitle:"Description tips",profileShared:"Choose what others can see on your profile."});
 Object.assign(I18N.hu,{aiHelpTitle:"Leírási tippek",profileShared:"Válaszd ki, mit láthatnak mások a profilodon."});
+
+Object.assign(I18N.en,{coachWelcome:'Need a recipe idea? Ask me!'});
+Object.assign(I18N.hu,{coachWelcome:'Receptötlet kell? Kérdezz bátran!'});

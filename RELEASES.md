@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.33.1 — 2026-10-27 (build 20261027.2)
+
+A one-time, bilingual recipe invitation appears beside the AI chat button, with a gentle icon wave and a short fade. It waits until the app is visible and no dialog is open, remembers being shown on this browser, and opens chat when tapped. No AI request is made by the invitation. Settings gently glows in the selected accent when a newer release is detected; the indicator clears when no update is pending. System motion preferences remain respected.
+
 ## 2.33.0 — 2026-10-27 (build 20261027.1)
 
 Settings section state is saved with the user settings and survives reload/export/sync. The in-app reduced-animation switch is removed and stale settings are normalized; system accessibility motion preferences remain respected. Navigation covers the full bottom edge and safe area with an opaque theme surface.

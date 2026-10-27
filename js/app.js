@@ -212,6 +212,25 @@
     toastT = setTimeout(() => { el.classList.remove('on'); setTimeout(() => { if (el.hidePopover && !el.classList.contains('on')) { try { el.hidePopover(); } catch (e) {} } }, 300); }, 2600);
   }
 
+  // One quiet invitation per browser. Never shown over onboarding, a workout or a dialog.
+  function initCoachWelcome(){
+    const button=$('#coach'),key='gym-coach-welcome-v1';
+    let seen=false,hideTimer;
+    try{seen=localStorage.getItem(key)==='1';}catch(e){}
+    const remember=()=>{seen=true;try{localStorage.setItem(key,'1');}catch(e){}};
+    const dismiss=()=>{clearTimeout(hideTimer);button.classList.remove('welcoming');const bubble=$('.coach-welcome',button);if(bubble){bubble.classList.add('leaving');setTimeout(()=>bubble.remove(),300);}};
+    button.addEventListener('click',()=>{remember();dismiss();});
+    const show=()=>{
+      if(seen)return;
+      if(document.hidden||!button.getClientRects().length||document.querySelector('dialog[open]')){setTimeout(show,2500);return;}
+      remember();
+      const bubble=document.createElement('span');bubble.className='coach-welcome';bubble.textContent=t('coachWelcome');bubble.setAttribute('aria-hidden','true');
+      button.append(bubble);button.classList.add('welcoming');
+      hideTimer=setTimeout(dismiss,7000);
+    };
+    setTimeout(show,2500);
+  }
+
   /* ================= VIEWS ================= */
   const head = (title, sub, cal, update=false) => (sub === title ? (sub = '') : 0, `<header class="top"><div><span class="app-wordmark" aria-hidden="true"><img src="icons/reppsy-192-v2.png" width="20" height="20" alt="">${esc(t('appName').toUpperCase())}</span><h1>${esc(title)}</h1>${sub ? (cal ? `<button class="datebtn" data-a="cal" aria-label="${esc(t('openCal'))}">${esc(sub)}${IC.down}</button>` : `<p>${esc(sub)}</p>`) : ''}</div><div class="top-actions">${update?updateButton():''}<button class="icon-btn upload-plan" data-a="pdf-plan" aria-label="${esc(t('uploadPlan'))}" title="${esc(t('uploadPlan'))}">${IC.upload}</button>${profileShortcut()}</div></header>`);
   function popFav(on) { const b = $('#sheet .favbtn'); if (b && on) b.classList.add('pop'); }
@@ -219,6 +238,8 @@
   const bi = (s, rid) => { if (!BI_RIDS.has(rid)) return s; const p = String(s).split(' / '); return p.length === 2 && p[0] && p[1] ? p[L() === 'hu' ? 0 : 1] : s; };
   function updateButton(){return ui.updateAvailable||ui.updateBusy?`<button class="icon-btn update-app${ui.updateBusy?' busy':''}" data-a="settings-update" aria-label="${esc(t(ui.updateBusy?'updating':'updateNow'))}" title="${esc(t('updateAvailable'))}" ${ui.updateBusy?'disabled':''}>${IC.refresh}<span class="update-dot" aria-hidden="true"></span></button>`:'';}
   function syncUpdateButton(){
+    const settings=$('#tabbar [data-tab="settings"]'),available=!!ui.updateAvailable&&!ui.updateBusy;
+    if(settings){settings.classList.toggle('has-update',available);settings.setAttribute('aria-label',t('settings')+(available?' · '+t('updateAvailable'):''));if(available)settings.title=t('updateAvailable');else settings.removeAttribute('title');}
     const actions=$('#view > .top .top-actions');if(!actions||ui.tab!=='settings')return;
     const existing=$('.update-app',actions),html=updateButton();
     if(existing){if(html)existing.outerHTML=html;else existing.remove();}else if(html)actions.insertAdjacentHTML('afterbegin',html);
@@ -1334,8 +1355,9 @@
     if(ui.tab==='goals'&&ui.goals==='planner')queueMicrotask(()=>syncCalendars(false));
     $$('#tabbar button[data-tab]').forEach(b => { b.classList.toggle('on', b.dataset.tab === ui.tab); const label=t(b.dataset.tab==='settings'?'settings':'tab'+b.dataset.tab[0].toUpperCase()+b.dataset.tab.slice(1));b.setAttribute('aria-label',label);b.querySelector('span').innerHTML=b.dataset.tab==='settings'?`<span class="nav-caption-full">${esc(label)}</span><span class="nav-caption-short" aria-hidden="true">${esc(t('settingsNavShort'))}</span>`:esc(label); b.setAttribute('aria-current', b.dataset.tab === ui.tab ? 'page' : 'false'); });
     const settingsLabel = $('#tabbar [data-a="settings"] span'); if (settingsLabel) { settingsLabel.parentElement.setAttribute('aria-label', t('settings')); }
+    syncUpdateButton();
     window.scrollTo(0, y);
-    const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); }
+    const cb = $('#coach'); if (cb) { cb.hidden = !D().settings.coach; cb.setAttribute('aria-label', t('coachTitle')); const hint=$('.coach-welcome',cb);if(hint)hint.textContent=t('coachWelcome'); }
     renderWorkout();
   }
   const rerender = () => { ui.keepScroll = true; render(); };
@@ -2997,6 +3019,7 @@
   if(!CL)upgradeStarterSessions();
   render(); $('#rb-skip').textContent = t('skip');
   renderGate();
+  initCoachWelcome();
   try {
     const result = JSON.parse(sessionStorage.getItem('gym-update-result') || 'null');
     sessionStorage.removeItem('gym-update-result');

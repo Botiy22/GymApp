@@ -154,3 +154,15 @@ dialog#sheet, .pdf-plan-dialog { background: var(--card); border: 1px solid var(
 /* Opaque edge-to-edge navigation, including the iOS home-indicator area. */
 :root #tabbar,:root[data-material] #tabbar{left:0;right:0;bottom:0;width:100%;max-width:none;margin:0;height:calc(72px + var(--sb));box-sizing:border-box;padding:7px max(10px,calc((100vw - 620px)/2)) calc(9px + var(--sb));border-radius:0;border:0;border-top:1px solid var(--line);background:var(--card);box-shadow:0 -5px 20px rgba(0,0,0,.08);backdrop-filter:none;-webkit-backdrop-filter:none}
 :root #tabbar,:root[data-material] #tabbar{transform:none}
+
+/* A single coach invitation, positioned relative to the existing floating button. */
+#coach .coach-welcome{position:absolute;right:calc(100% + 12px);bottom:4px;width:max-content;max-width:min(220px,calc(100vw - 98px));padding:12px 15px;border:1px solid var(--line);border-radius:17px 17px 5px 17px;background:var(--card);color:var(--ink);box-shadow:0 6px 22px #0002;font-size:.82rem;font-weight:500;line-height:1.4;text-align:left;white-space:normal;pointer-events:auto;animation:coach-in .45s cubic-bezier(.2,.8,.2,1) both;transition:opacity .25s,translate .25s}
+#coach .coach-welcome.leaving{animation:none;opacity:0;translate:0 5px;pointer-events:none}
+body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:none}
+#coach.welcoming > svg{animation:coach-wave .8s ease-in-out}
+#tabbar button.has-update{position:relative;box-shadow:inset 0 0 0 1px rgba(var(--acc-rgb),.38);background:rgba(var(--acc-rgb),.1);animation:settings-update-glow 3s ease-in-out infinite}
+#tabbar button.has-update::before{content:"";position:absolute;top:7px;right:calc(50% - 18px);width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px rgba(var(--acc-rgb),.5)}
+@keyframes coach-in{from{opacity:0;transform:translate(8px,4px) scale(.96)}to{opacity:1;transform:translate(0,0) scale(1)}}
+@keyframes coach-wave{0%,100%{transform:rotate(0)}30%{transform:rotate(-10deg)}65%{transform:rotate(8deg)}}
+@keyframes settings-update-glow{0%,100%{box-shadow:inset 0 0 0 1px rgba(var(--acc-rgb),.28),0 0 4px rgba(var(--acc-rgb),.06)}50%{box-shadow:inset 0 0 0 1px rgba(var(--acc-rgb),.5),0 0 14px rgba(var(--acc-rgb),.18)}}
+@media(prefers-reduced-motion:reduce){#coach .coach-welcome,#coach.welcoming > svg,#tabbar button.has-update{animation:none;transition:none}}

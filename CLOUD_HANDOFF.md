@@ -29,6 +29,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.33.1, 2026-10-27 (Codex)
+
+- Backup `backup/main-20261027-before-chat-nudge` preserves `1a4eb28`. Build `20261027.2`.
+- `js/app.js`, `js/i18n.js`, `css/clean.css`: one-time EN/HU recipe invitation next to coach button, gentle icon wave, tap-to-open and automatic fade. Per-browser local flag; waits for visible/unobstructed app. Opening chat first suppresses it. No AI call from the hint.
+- Settings navigation gently pulses in the chosen accent only when a newer release is detected, with a status dot and accessible update label; clears when current or installing. OS reduced-motion remains respected.
+- Validation: focused mobile Chromium checks cover first appearance, bounds, chat tap, persistence across reload, early chat suppression, HU/light theme, reduced motion, auto-dismiss and update indicator detection/clearing across tab changes. Existing settings/navigation and release-LF checks passed (3). Translation checks passed (2). Mobile dark/light screenshots inspected. No live account, paid AI or physical iPhone tests.
+
 # Update — Reppsy 2.33.0, 2026-10-27 (Codex)
 
 - Remote backup `backup/main-20261025-before-library-polish` at `822f392`.
