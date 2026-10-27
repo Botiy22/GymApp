@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.36.0 — 2026-10-27 (build 20261027.6)
+
+Overnight oats. `js/overnight-oats.js` holds a builder catalogue of 40 ingredients in seven groups (base, liquid in ml, yogurt/curd, protein, fruit, seeds and nuts, flavour and sweetener), each mapped to a row of the offline food database. One `compute()` gives the totals for recipe cards, the builder and the diary. Five new breakfast recipes (chocolate peanut butter protein, apple cinnamon, curd cheese and mixed berries, mango coconut, tiramisu) sit after the strawberry overnight oats, whose values are now calculated the same way. Amounts are our suggestions; pictures are original illustrations drawn by `tools/oats_art.py` and captioned as illustrations.
+
+Recipes → "Build your own overnight oats" (and Customise on every oats recipe) opens the builder: presets, ingredient chips, −/+ steppers and typed amounts, a sticky calorie/macro summary. Adding logs one diary entry with its ingredient breakdown (diary entries from the database may now keep `items`); Save as my food opens the My food form with per-100 g values and the jar weight. The lexicon adds frozen mixed berries (USDA frozen blueberry/raspberry/strawberry average) and erythritol (0 kcal, not counted as carbohydrate).
+
 ## 2.35.1 — 2026-10-27 (build 20261027.5)
 
 AI replies no longer break off or fail as "unreadable". Claude Sonnet 5.5 and Opus 5.5 think before answering by default, and thinking tokens count toward `max_tokens`; the old limits (900 for chat, 2000 for food analysis) could be used up by thinking, leaving a truncated reply or no text at all. Requests now allow 8000 (chat) / 16000 (food) tokens, set `output_config.effort` to `medium` on models that support it (not Haiku 4.5), and retry once at `low` effort with more room when a reply stops at `max_tokens` or cannot be parsed. A refusal or a second cut-off shows its own message. Timeouts are 90/120 s.

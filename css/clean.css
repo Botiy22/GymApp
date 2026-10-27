@@ -195,3 +195,28 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .cal .macros>div.fuel[style] .meter i,.cal .macros>div.fuel[style] .meter.over i{background:var(--fuel)}
 .profile-nutrition .profile-macros>div.fuel[style] i span{background:var(--fuel)}
 .energy-equation.fuel[style] b{color:var(--fuel-tx)}
+
+/* overnight oats: builder entry, builder sheet */
+.oats-cta{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 14px;padding:12px 14px;text-align:left;border-radius:18px;background:var(--glass);border:1px solid var(--edge);box-shadow:var(--shine-s);color:inherit}
+.oats-cta>svg{width:44px;height:44px;flex:none;fill:rgba(var(--acc-rgb),.14);stroke:var(--acc-tx,var(--acc));stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.oats-cta>span{flex:1;min-width:0;display:grid;gap:2px}.oats-cta b{font-weight:650}.oats-cta small{color:var(--mut);font-size:.82rem}
+.oats-cta>svg:last-child{width:18px;height:18px;fill:none;stroke:var(--mut)}
+.recipe-oats-custom{width:100%;margin-top:8px}
+.oats-summary{position:sticky;top:-1px;z-index:2;margin:0 0 12px;padding:10px 12px;border-radius:16px;background:var(--panel,var(--card));border:1px solid var(--edge)}
+.oats-total{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.oats-total b{display:block;font-size:1.05rem;font-variant-numeric:tabular-nums}.oats-total div:first-child b{font-size:1.3rem;color:var(--acc-tx,var(--acc))}
+.oats-total i{display:block;font-style:normal;color:var(--mut);font-size:.72rem}
+.oats-weight{margin:6px 0 0;text-align:center}
+.oats-presets,.oats-group .chips{margin-bottom:12px}
+.oats-mine-title{margin:14px 0 8px}
+.oats-rows{display:grid;gap:8px;margin-bottom:14px}
+.oats-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:8px 10px;border-radius:14px;background:var(--glass);border:1px solid var(--edge)}
+.oats-row-name{flex:1 1 140px;min-width:0}.oats-row-name b{display:block;font-weight:600;overflow-wrap:anywhere}.oats-row-name small{color:var(--mut);font-size:.78rem}
+.oats-stepper{display:flex;align-items:center;gap:4px}
+.oats-stepper input{width:58px;text-align:center;padding:6px 4px;font-variant-numeric:tabular-nums}
+.oats-u{color:var(--mut);font-size:.8rem;min-width:18px}
+.oats-group h3{font-size:.86rem;margin:4px 0 6px;color:var(--mut);font-weight:650}
+.oats-group .chip svg{width:14px;height:14px;margin-right:2px;vertical-align:-2px}
+.oats-group .chip svg{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.oats-summary{padding:8px 10px}.oats-total b{font-size:.98rem}.oats-total div:first-child b{font-size:1.15rem}.oats-weight{margin-top:2px;font-size:.76rem}
+.oats-stepper .icon-btn{width:38px;height:38px;min-width:38px}

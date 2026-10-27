@@ -113,7 +113,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         html=(responsive.ROOT/'index.html').read_text()
-        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','exercise-search']:
+        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
         for script in ['exercise-aliases','library-expansion','food-lexicon']:
             html=html.replace(f'<script src="data/{script}.js"></script>','')
@@ -130,7 +130,8 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.wait_for_function('()=>!!window.__gym')
         self.assertEqual(len(calls),2)
         self.assertTrue(page.evaluate('!!AppUpdates&&!!AccentTheme&&!!HueWheel&&!!FoodVolume&&!!ExerciseSearch&&!!EXERCISE_ALIASES&&EXERCISE_LIBRARY_VERSION===2'))
-        self.assertEqual(page.evaluate("FoodQuery.answer('1 zsemle','hu').items[0].kcal"),167)   # 2.35: the offline food helpers load into a cached shell too
+        self.assertEqual(page.evaluate("FoodQuery.answer('1 zsemle','hu').items[0].kcal"),167)
+        self.assertEqual(page.evaluate("RECIPES.items.filter(r=>r.oats).length"),6)   # 2.35: the offline food helpers load into a cached shell too
         self.assertEqual(page.evaluate('Store.d.settings.profileStyle.cover'),'glow')
         self.assertEqual(errors,[])
 
