@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.34.0 — 2026-10-27 (build 20261027.3)
+
+Exercise search indexes English/Hungarian names, curated gym aliases, primary muscles and equipment. Exact matches rank above partial matches and favourites. Accent/punctuation/compound-word normalization handles phone input; a bounded one-edit fallback appears only when no direct match exists. Active filters remain respected, with a clear-filters shortcut when they hide results. Selected exercise order is retained. The My exercises filter and name-prefill/save behavior now work inside Workout → Exercises. Search gets more room on narrow phones.
+
+Added machine hip thrust, machine lateral raise, belt squat machine and dumbbell Romanian deadlift, each with original EN/HU setup and movement cues. Eight individually generated sketch boards (sixteen phases) cover these additions plus single-leg extension, pec deck, reverse pec deck and plate-loaded chest press. Leg-extension setup instructions replace the legacy knee-over-toes warning with controlled, adjustable technique. Existing IDs, routines and logged weights stay in place. Search and new sketches are included in the verified offline release.
+
 ## 2.33.1 — 2026-10-27 (build 20261027.2)
 
 A one-time, bilingual recipe invitation appears beside the AI chat button, with a gentle icon wave and a short fade. It waits until the app is visible and no dialog is open, remembers being shown on this browser, and opens chat when tapped. No AI request is made by the invitation. Settings gently glows in the selected accent when a newer release is detected; the indicator clears when no update is pending. System motion preferences remain respected.

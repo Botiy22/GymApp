@@ -15,8 +15,8 @@
   if(!document.querySelector('link[href="css/recipes-stability.css"]')){const style=document.createElement('link');style.rel='stylesheet';style.href='css/recipes-stability.css';document.head.append(style);}
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
-    const src = !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.ExerciseSearch || !window.EXERCISE_ALIASES || window.EXERCISE_LIBRARY_VERSION !== 2 || !window.I18N?.en?.exClearFilters || !window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.ExerciseSearch ? 'js/exercise-search.js' : !window.EXERCISE_ALIASES ? 'data/exercise-aliases.js' : window.EXERCISE_LIBRARY_VERSION !== 2 ? 'data/library-expansion.js' : !window.I18N?.en?.exClearFilters ? 'js/i18n.js' : !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -97,8 +97,8 @@
     my.forEach(e => { if (EX[e.id]) return; const x = { id: e.id, n: e.n, p: e.p, s: e.s, eq: e.eq, c: 'strength', lv: '', m: '', f: '', i: e.steps, k: 0, own: true, img: e.img, vid: e.vid }; window.EXERCISES.push(x); EX[x.id] = x; });
     exIdx = null;
   }
-  let exIdx = null;                                                                    // search text per exercise: both names, without accents
-  const exKey = id => { if (!exIdx) { exIdx = {}; window.EXERCISES.forEach(e => { exIdx[e.id] = norm(e.n + ' ' + (HU_NAME[e.id] || '') + ' ' + ((EXHU[e.id] || [])[0] || '')); }); } return exIdx[id]; };
+  let exIdx = null;
+  const exerciseIndex = () => exIdx || (exIdx = ExerciseSearch.create(window.EXERCISES,{translations:EXHU,aliases:window.EXERCISE_ALIASES,planNames:HU_NAME,vocabulary:I18N}));
   const isFav = id => D().favEx.indexOf(id) >= 0;
   const itemName = it => (it.label && it.label[L()]) || exName(it.ex);
   const rName = r => typeof r.name === 'string' ? r.name : (r.name[L()] || r.name.en || r.name.hu);
@@ -718,18 +718,20 @@
     return h;
   }
 
-  function libFilter(st) {
-    const q = norm(st.q).split(/\s+/).filter(Boolean), g = st.grp || '';
-    if (g === 'sel') return (st.sel || []).map(id => EX[id]).filter(Boolean);     // "selected": what is ticked, in the order it was ticked
-    const ms = st.mus ? [st.mus] : GROUPS[g], fav = D().favEx;
-    const list = window.EXERCISES.filter(e => (g !== 'fav' || fav.indexOf(e.id) >= 0) && (g !== 'own' || e.own) && (!ms || e.p.some(m => ms.indexOf(m) >= 0)) && (!st.eq || e.eq === st.eq) && q.every(w => exKey(e.id).indexOf(w) >= 0));
-    const rank = e => (e.own ? 4 : 0) + (fav.indexOf(e.id) >= 0 ? 2 : 0) + (PLAN_BY_EX[e.id] ? 1 : 0);                 // favourites first, then the exercises of the built-in plan
-    return list.sort((a, b) => rank(b) - rank(a) || exName(a.id).localeCompare(exName(b.id), L()));
+  function libSearch(st) {
+    const g=st.grp||'',ms=st.mus?[st.mus]:GROUPS[g],fav=D().favEx;
+    const pool=g==='sel'?(st.sel||[]).map(id=>EX[id]).filter(Boolean):window.EXERCISES;
+    const found=exerciseIndex().find(pool,st.q);
+    const matches=found.matches.filter(({exercise:e})=>g==='sel'||((g!=='fav'||fav.includes(e.id))&&(g!=='own'||e.own)&&(!ms||e.p.some(m=>ms.includes(m)))&&(!st.eq||e.eq===st.eq)));
+    const rank=e=>(e.own?4:0)+(fav.includes(e.id)?2:0)+(PLAN_BY_EX[e.id]?1:0);
+    if(g!=='sel')matches.sort((a,b)=>b.score-a.score||rank(b.exercise)-rank(a.exercise)||exName(a.exercise.id).localeCompare(exName(b.exercise.id),L()));
+    return {list:matches.map(m=>m.exercise),fuzzy:found.fuzzy,hidden:found.matches.length-matches.length};
   }
   function libRows(pick) {
-    const st = pick ? ui.pick : ui.lib, list = libFilter(st);
-    if (!list.length) return `<p class="empty">${esc(t(st.grp === 'fav' && !st.q.trim() && !st.eq ? 'favEmpty' : 'noResults'))}</p>`;
-    return list.slice(0, st.limit).map(e => {
+    const st=pick?ui.pick:ui.lib,{list,fuzzy,hidden}=libSearch(st);
+    if(!list.length)return `<div class="exercise-empty"><p class="empty">${esc(t(hidden&&st.q.trim()?'exHiddenByFilters':st.grp==='fav'&&!st.q.trim()&&!st.eq?'favEmpty':'noResults'))}</p>${st.grp||st.mus||st.eq?`<button class="btn ghost" data-a="lib-clear-filters">${esc(t('exClearFilters'))}</button>`:''}</div>`;
+    const hint=fuzzy?`<p class="cap exercise-search-hint">${esc(t('exCloseMatches'))}</p>`:'';
+    return hint + list.slice(0, st.limit).map(e => {
       const k = pick ? st.sel.indexOf(e.id) : -1, sub = `<span><b>${esc(exName(e.id))}${isFav(e.id) ? ' <em class="fv" aria-hidden="true">★</em>' : ''}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i></span>`;
       return pick                                                                     // picker: the photo opens the details, the rest of the row ticks it
         ? `<div class="exrow pickrow${k >= 0 ? ' on' : ''}" data-id="${esc(e.id)}"><button class="pk-img" data-a="ex-open" data-id="${esc(e.id)}" aria-label="${esc(t('details'))}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async"></button><button class="pk-main" data-a="pick" data-id="${esc(e.id)}" aria-pressed="${k >= 0}">${sub}<em class="pk-n">${k >= 0 ? k + 1 : ''}</em></button></div>`
@@ -742,7 +744,7 @@
   function libControls(pick) {
     const st = pick ? ui.pick : ui.lib, g = st.grp || '';
     const segs = [['', t('all')], ['fav', '★'], ['upper', t('grpUpper')], ['core', t('grpCore')], ['lower', t('grpLower')]].concat(D().myEx.length ? [['own', t('grpOwn')]] : []);
-    return `<div class="search with-sel"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
+    return `<div class="search with-sel exercise-search"><input type="search" data-in="lib-q" value="${esc(st.q)}" placeholder="${esc(t('searchEx'))}" maxlength="160" autocomplete="off" autocapitalize="off" enterkeyhint="search" aria-label="${esc(t('searchEx'))}"><select data-in="lib-eq" aria-label="${esc(t('equipment'))}"><option value="">${esc(t('eqAll'))}</option>${EQS.map(q => `<option value="${q}" ${st.eq === q ? 'selected' : ''}>${esc(eqp(q))}</option>`).join('')}</select></div>
       <div class="seg grp">${segs.map(([v, n]) => `<button class="${g === v ? 'on' : ''}" data-a="lib-grp" data-g="${v}" ${v === 'fav' ? `aria-label="${esc(t('favs'))}"` : ''} aria-pressed="${g === v}">${esc(n)}</button>`).join('')}</div>
       ${pick ? `<div class="chips selrow" id="pk-selrow" ${st.sel.length ? '' : 'hidden'}><button class="chip sel${g === 'sel' ? ' on' : ''}" id="pk-selchip" data-a="lib-grp" data-g="sel">${esc(t('selected'))} (<span>${st.sel.length}</span>)</button></div>` : ''}
       ${GROUPS[g] ? `<div class="chips mus"><button class="chip${!st.mus ? ' on' : ''}" data-a="lib-mus" data-m="">${esc(t('all'))}</button>${GROUPS[g].map(m => `<button class="chip${st.mus === m ? ' on' : ''}" data-a="lib-mus" data-m="${m}">${esc(mus(m))}</button>`).join('')}</div>` : ''}`;
@@ -2502,7 +2504,7 @@
     },
     'w-untick'(el) { const d = D(); d.workouts = d.workouts.filter(w => !(w.id === el.dataset.id && w.tick)); Store.save(); rerender(); },
     /* own exercises */
-    'mx-new'() { ui.myex = newMyEx(null); if (ui.tab === 'lib' && ui.lib.q.trim()) ui.myex.n = ui.lib.q.trim(); openSheet(shMyEx()); },
+    'mx-new'() { ui.myex = newMyEx(null); if ((ui.tab === 'lib' || ui.tab === 'home' && ui.workout === 'exercises') && ui.lib.q.trim()) ui.myex.n = ui.lib.q.trim(); openSheet(shMyEx()); },
     'mx-edit'(el) { const e = D().myEx.find(x => x.id === el.dataset.id); if (!e) return; ui.myex = newMyEx(e); openSheet(shMyEx()); },
     'mx-mus'(el) { const x = ui.myex, l = x[el.dataset.k === 's' ? 's' : 'p'], m = el.dataset.m, i = l.indexOf(m); if (i >= 0) l.splice(i, 1); else if (l.length < 6) { l.push(m); const o = x[el.dataset.k === 's' ? 'p' : 's'], j = o.indexOf(m); if (j >= 0) o.splice(j, 1); } refreshSheet(); },
     'mx-nopic'() { ui.myex.img = ''; refreshSheet(); },
@@ -2513,7 +2515,7 @@
       if (!old && d.myEx.length >= 300) { toast(t('picLimit')); return; }
       const e = { id: x.id || 'my_' + uid(), n: n.slice(0, 80), p: x.p.slice(0, 6), s: x.s.filter(m => x.p.indexOf(m) < 0).slice(0, 6), eq: x.eq, steps: x.steps.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 12), img: x.img, vid, t: Date.now() };
       d.myEx = old ? d.myEx.map(o => o.id === e.id ? e : o) : d.myEx.concat([e]);
-      Store.save(); ownSync(); closeSheet(); if (!ui.sheets.length) { if (ui.tab === 'lib' && !old) { ui.lib.q = ''; ui.lib.grp = 'own'; ui.lib.mus = ''; ui.lib.eq = ''; } rerender(); } toast(t('saved'));
+      Store.save(); ownSync(); closeSheet(); if (!ui.sheets.length) { if ((ui.tab === 'lib' || ui.tab === 'home' && ui.workout === 'exercises') && !old) { ui.lib.q = ''; ui.lib.grp = 'own'; ui.lib.mus = ''; ui.lib.eq = ''; } rerender(); } toast(t('saved'));
     },
     'mx-del'() {
       const x = ui.myex, d = D(); if (!x.id || !confirm(t('myExDelConfirm'))) return;
@@ -2674,8 +2676,9 @@
     'ex-to-routine'(el) { openSheet(shPickRoutine(el.dataset.id)); },
     'ex-routine-add'(el) { getR(el.dataset.id).items.push({ ex: el.dataset.ex, sets: 3, reps: '8–12', rest: 90 }); Store.save(); closeSheet(); toast(t('added')); if (ui.tab === 'home') rerender(); },
     anim(el) { el.classList.toggle('paused'); },
+    'lib-clear-filters'(el) { const pk=!!el.closest('#sheet'),st=pk?ui.pick:ui.lib;st.grp='';st.mus='';st.eq='';st.limit=40;if(pk)refreshSheet();else rerender(); },
     'lib-mus'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib; st.mus = MUS_ORDER.indexOf(el.dataset.m) >= 0 ? el.dataset.m : ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
-    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
+    'lib-grp'(el) { const pk = !!el.closest('#sheet'), st = pk ? ui.pick : ui.lib, g = el.dataset.g; st.grp = GROUPS[g] || g === 'fav' || g === 'own' || (pk && g === 'sel') ? g : ''; st.mus = ''; st.limit = 40; if (pk) refreshSheet(); else rerender(); },
     'lib-more'(el) { const pk = !!el.closest('#sheet'); (pk ? ui.pick : ui.lib).limit += 60; if (pk) refreshSheet(); else rerender(); },
     /* progress */
     prog(el) { const v = el.dataset.v === 'history' ? 'history' : 'overview'; ui.histLimit = 60; if (ui.prog !== v) go('tab', () => { ui.prog = v; render(); }); else render(); },

@@ -588,3 +588,6 @@ Object.assign(I18N.hu,{aiHelpTitle:"Leírási tippek",profileShared:"Válaszd ki
 
 Object.assign(I18N.en,{coachWelcome:'Need a recipe idea? Ask me!'});
 Object.assign(I18N.hu,{coachWelcome:'Receptötlet kell? Kérdezz bátran!'});
+
+Object.assign(I18N.en,{exHiddenByFilters:'Matching exercises are hidden by your filters.',exClearFilters:'Clear filters',exCloseMatches:'Close matches'});
+Object.assign(I18N.hu,{exHiddenByFilters:'A szűrők elrejtik a találatokat.',exClearFilters:'Szűrők törlése',exCloseMatches:'Hasonló találatok'});

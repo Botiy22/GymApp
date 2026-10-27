@@ -29,6 +29,15 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.34.0, 2026-10-27 (Codex)
+
+- Backup `backup/main-20261027-before-exercise-search` at `ad43c50`; build `20261027.3`.
+- Audit: exact unaccented `ulo labnyujto gep` already worked without extra filters. Reproduced missing common synonyms/typos; fixed ranked bilingual retrieval with `data/exercise-aliases.js` (253 aliases / 72 exercise IDs) and `js/exercise-search.js`. Hungarian compounds, accents, punctuation, gym synonyms, primary-muscle/equipment vocabulary and conservative one-edit fallback; no automatic exercise substitution. Exact matches outrank favourites.
+- `js/app.js`: same search in library/picker; filters remain active, empty filtered matches offer Clear filters without discarding query/selections. Selected order remains stable. Fixed `own` filter and custom-name prefill/save paths after the library moved into Workout. Mobile input wraps separately from equipment. Added missing-helper/data-version bootstrap for stale HTML.
+- `data/library-expansion.js`: machine hip thrust, machine lateral raise, belt squat machine, dumbbell RDL, with original EN/HU instructions. Eight new generated boards / sixteen `img/library` phase assets include four existing machine movements. Visually reviewed; belt-squat chain/lever corrected. Existing exercise IDs/history unchanged. Leg-extension cues replace legacy knee-over-toes warning with controlled adjustable setup. Research/provenance notes in `docs/EXERCISE_EXPANSION.md` and `img/library/generated-20261027.json`. This update does not claim new website research or complete sketch coverage.
+- Release metadata/history and SW CORE updated with search modules and all new phases.
+- Validation: 4 search Node tests (including every EN/HU library name, common queries, typo/opposite-movement boundaries, aliases and custom vocabulary) and 2 translation tests passed. 7 browser/LF checks passed: actual 320px HU add-to-Alsótest/save/reload, filter recovery, custom filter, all 14 library-art pairs in both languages, recipe copy, cached-helper upgrade, verified update preserving diary, LF. Additional isolated browser check passed for verified offline alias search + new sketches and custom exercise creation/save/reload. Picker and machine detail screenshots inspected. No live Supabase/AI or physical iPhone verification.
+
 # Update — Reppsy 2.33.1, 2026-10-27 (Codex)
 
 - Backup `backup/main-20261027-before-chat-nudge` preserves `1a4eb28`. Build `20261027.2`.

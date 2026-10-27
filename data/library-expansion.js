@@ -171,6 +171,118 @@ const additions = [
       "Nyújtsd előre a karod, miközben mellkasod és medencéd előre néz. Tarts ellen az oldalirányú húzásnak.",
       "Rövid megtartás után lassan húzd vissza a kezed. Fordulj meg, és dolgozz a másik oldalon is."
     ]
+  },
+  {
+    "id": "Machine_Hip_Thrust",
+    "art": "hip-thrust-machine",
+    "n": "Machine hip thrust",
+    "hu": "Csípőtolás gépen",
+    "p": [
+      "glutes"
+    ],
+    "s": [
+      "hamstrings"
+    ],
+    "eq": "machine",
+    "c": "strength",
+    "lv": "beginner",
+    "m": "compound",
+    "f": "push",
+    "k": 0,
+    "i": [
+      "Adjust the back support and secure the padded belt across your hip crease. Plant both feet on the platform and choose a light starting load.",
+      "Brace your abdomen and push through your feet to raise your hips until your thighs and torso line up. Keep your ribs down without arching your lower back.",
+      "Lower your hips under control while keeping your upper back supported. Re-engage the machine safety before releasing the belt."
+    ],
+    "hi": [
+      "Állítsd be a háttámaszt, és rögzítsd a párnázott övet a csípőhajlaton. Mindkét talpad legyen a platformon; kezdj könnyű súllyal.",
+      "Feszítsd a hasad, és a talpadon keresztül nyomva emeld a csípőd a törzs és comb vonaláig. Ne homoríts túl derékból.",
+      "Kontrolláltan engedd le a csípőd; a felső hátad maradjon megtámasztva. Az öv kioldása előtt rögzítsd a gép biztosítóját."
+    ]
+  },
+  {
+    "id": "Machine_Lateral_Raise",
+    "art": "machine-lateral-raise",
+    "n": "Seated machine lateral raise",
+    "hu": "Ülő oldalemelés gépen",
+    "p": [
+      "shoulders"
+    ],
+    "s": [],
+    "eq": "machine",
+    "c": "strength",
+    "lv": "beginner",
+    "m": "isolation",
+    "f": "push",
+    "k": 0,
+    "i": [
+      "Adjust the seat so the shoulder pivots line up with your shoulders. Place your upper arms against the pads above your elbows and hold the handles.",
+      "With your torso against the backrest, raise your upper arms out to the sides to around shoulder height. Keep your elbows bent and avoid shrugging.",
+      "Lower slowly without letting the weight stack slam. Use a comfortable range you can control."
+    ],
+    "hi": [
+      "Állítsd az ülést úgy, hogy a gép forgástengelyei a vállad magasságában legyenek. A párnák a felkarod külső részén, a könyököd felett támaszkodjanak.",
+      "A háttámlának támaszkodva emeld oldalra a felkarod körülbelül vállmagasságig. Könyököd maradjon hajlított, ne húzd fel a vállad.",
+      "Lassan engedd vissza, a súlylapok ne csapódjanak össze. Csak kontrollálható, kényelmes tartományban dolgozz."
+    ]
+  },
+  {
+    "id": "Belt_Squat_Machine",
+    "art": "belt-squat-machine",
+    "n": "Belt squat machine",
+    "hu": "Öves guggolás gépen",
+    "p": [
+      "quadriceps"
+    ],
+    "s": [
+      "glutes",
+      "adductors"
+    ],
+    "eq": "machine",
+    "c": "strength",
+    "lv": "beginner",
+    "m": "compound",
+    "f": "push",
+    "k": 0,
+    "i": [
+      "Fasten the squat belt around your hips and attach it to the machine as instructed. Stand on the platform with feet about shoulder-width apart and hold the support handles lightly.",
+      "Release the safety with the load supported, then bend your knees and hips to squat to a comfortable depth. Keep your heels down and knees following your toes.",
+      "Push through your feet to stand without leaning back. At the end of the set, re-engage the safety before detaching the belt."
+    ],
+    "hi": [
+      "Rögzítsd a guggolóövet a csípődön, és csatlakoztasd a gép előírása szerint. Állj a platformon vállszéles terpeszben, a kapaszkodót csak könnyedén fogd.",
+      "A súlyt megtartva oldd a biztosítót, majd térd- és csípőhajlítással guggolj kényelmes mélységig. A sarkad maradjon lent, térded kövesse a lábujjak irányát.",
+      "A talpadon keresztül nyomva állj fel, hátradőlés nélkül. A sorozat végén rögzítsd a biztosítót, és csak utána csatold le az övet."
+    ]
+  },
+  {
+    "id": "Dumbbell_Romanian_Deadlift",
+    "art": "dumbbell-rdl",
+    "n": "Dumbbell Romanian deadlift",
+    "hu": "Román felhúzás kézisúlyzóval",
+    "p": [
+      "hamstrings"
+    ],
+    "s": [
+      "glutes",
+      "lower back"
+    ],
+    "eq": "dumbbell",
+    "c": "strength",
+    "lv": "beginner",
+    "m": "compound",
+    "f": "pull",
+    "k": 0,
+    "i": [
+      "Stand with feet about hip-width apart and a dumbbell in each hand in front of your thighs. Soften your knees and brace your abdomen.",
+      "Push your hips back, keeping the weights close to your legs and your back neutral. Keep the knee bend small and lower only until you feel a comfortable hamstring stretch.",
+      "Press through your feet and bring your hips forward to stand tall. Keep your arms long and avoid leaning back at the top."
+    ],
+    "hi": [
+      "Állj csípőszéles terpeszben, a kézisúlyzókat a combod előtt tartva. Enyhén hajlítsd a térded, és feszítsd a hasad.",
+      "Told hátra a csípőd, a súlyokat tartsd a lábad közelében, a hátad természetes helyzetben. A térdhajlítás maradjon kicsi; csak a combhajlító kényelmes feszüléséig ereszkedj.",
+      "A talpadon keresztül nyomva hozd előre a csípőd, és állj egyenesre. A karod maradjon nyújtott, felül ne dőlj hátra."
+    ]
   }
 ];
 for(const {art,hu,hi,...exercise} of additions){
@@ -180,4 +292,28 @@ for(const {art,hu,hi,...exercise} of additions){
  const pair=[0,1].map(n=>'img/library/'+art+'-'+n+'.svg');
  window.ROUTINE_ART[exercise.id]={pair,thumb:pair[0],source:'Reppsy'};
 }
+
+// Fill drawing gaps without changing exercise IDs, routines or logged weights.
+for(const [id,art] of Object.entries({
+ 'Single-Leg_Leg_Extension':'single-leg-extension',
+ Reverse_Machine_Flyes:'reverse-pec-deck',
+ Butterfly:'pec-deck',
+ Leverage_Chest_Press:'machine-chest-press'
+})){
+ const pair=[0,1].map(n=>'img/library/'+art+'-'+n+'.svg');
+ window.ROUTINE_ART[id]={pair,thumb:pair[0],source:'Reppsy'};
+}
+// Replace the legacy knee-over-toes warning with adjustable, controlled machine setup.
+const legExtension=window.EXERCISES.find(e=>e.id==='Leg_Extensions');
+if(legExtension){
+ legExtension.i=['Adjust the seat so your knees line up with the machine pivot. Place the roller against your lower shins just above the ankles and keep your back against the pad.',
+ 'Hold the side handles and straighten your knees smoothly through a comfortable range. Keep your hips on the seat and avoid snapping into lockout.',
+ 'Lower slowly without letting the stack slam. Adjust the load and range if the movement is uncomfortable.'];
+ window.EX_HU.Leg_Extensions=['Ülő lábnyújtó gép',[
+ 'Állítsd az ülést úgy, hogy a térded a gép forgástengelyéhez igazodjon. A henger a lábszárad elülső részén, közvetlenül a bokád felett támaszkodjon; hátad legyen a támlán.',
+ 'Fogd az oldalsó kapaszkodókat, és kontrolláltan nyújtsd a térded kényelmes tartományban. A csípőd maradjon az ülésen, ne csapd ki a térded.',
+ 'Lassan engedd vissza, a súlylapok ne csapódjanak össze. Kellemetlen érzésnél csökkentsd a terhelést vagy a mozgástartományt.'
+ ]];
+}
+window.EXERCISE_LIBRARY_VERSION=2;
 })();

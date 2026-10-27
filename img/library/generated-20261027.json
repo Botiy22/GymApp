@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-27",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "hip-thrust-machine",
+      "kind": "recovery-pair",
+      "source": "exec-218517a8-fa87-4508-8e2b-fd137264af02.png",
+      "source_sha256": "94b5352643c3c8d8707c90f9aa2d62b5f1d2c36708e57d4a9170723678e0f213",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "machine-lateral-raise",
+      "kind": "recovery-pair",
+      "source": "exec-efdebfa1-78ed-4d6a-a5e6-05312dad4788.png",
+      "source_sha256": "61175fa2e77c093c017ddee8f9e27c1f664c5c57b60cc7261d1a83fd05fbf34e",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "single-leg-extension",
+      "kind": "recovery-pair",
+      "source": "exec-12189651-befc-439a-b66b-2fff4ae21ba7.png",
+      "source_sha256": "e64985d2921533c268a0bd26c04884276d4e4d0939c04c332bed42b73236aa1e",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "belt-squat-machine",
+      "kind": "recovery-pair",
+      "source": "exec-622b4842-71d8-4395-8ae2-d52a45a8b79b.png",
+      "source_sha256": "12297e6205c2d33e74fafb8bba439dd67c76946c0a4b2fb8e989921433667760",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "reverse-pec-deck",
+      "kind": "recovery-pair",
+      "source": "exec-01b2a532-2309-4bfc-8ab8-ad3278401629.png",
+      "source_sha256": "d8819e9783b2c258410de4d2d3862012a60c22e1e6b201290aab8918af0e3f0d",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "pec-deck",
+      "kind": "recovery-pair",
+      "source": "exec-a34ca1b1-aa4d-4ffd-ae07-8020f0119846.png",
+      "source_sha256": "aa0fcb19db22254e073067e8442af369f3580e7573abd2770cea09ff832ec974",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "dumbbell-rdl",
+      "kind": "recovery-pair",
+      "source": "exec-236b8e47-ef77-453f-94f0-da2ddecbd227.png",
+      "source_sha256": "f62f4e7bc7309a64191ee896615c5345a9cd40986ea39abfc4f6b95b16a242b2",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "machine-chest-press",
+      "kind": "recovery-pair",
+      "source": "exec-50cae008-4052-4c49-82e1-7521448254de.png",
+      "source_sha256": "59d0f349a77588dab80c368cceb8f432ec7d5af59c0a7c06b83e6821d906d92c",
+      "size": [
+        1536,
+        1024
+      ],
+      "phase_size": [
+        768,
+        1024
+      ]
+    }
+  ]
+}
