@@ -31,6 +31,11 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.35.1, 2026-10-27 (Claude)
+
+- Owner report: coach (and describe/photo) often ended with "Az AI válasza nem volt értelmezhető" after a cut-off reply. Cause (platform.claude.com docs, Thinking + Effort): Sonnet 5.5/Opus 5.5 think by default and thinking counts toward `max_tokens`; 900/2000 were too small. `js/ai.js`: `post()` returns `{text, stop}`, refusal → code `refusal`; `call()` 16000 tokens at effort `medium`, one retry at `low`/32000 when unparseable; chat 8000 → retry `low`/16000 when empty or `max_tokens`; `output_config` only for models that support effort (regex `EFFORT`, Haiku 4.5 excluded). New i18n `err_cut`, `err_refusal`. Tests: `tests/test_ai_requests.cjs`.
+- Owner request: remaining-budget colours. `js/app.js` `fuelHue/fuelStyle` (hue 130→0 between 50% and 100% of target) on the calorie dial, `.calorie-remaining`, energy equation, Food `.macros` meters and Profile macro bars; `css/clean.css` rules (light theme `--fuel-l:36%`).
+
 # Update — Reppsy 2.35.0, 2026-10-27 (Claude)
 
 Owner: the offline (no-AI) food understanding must be the foundation — e.g. "how many calories / grams is one zsemle" answered from the database — with a wider database and better logic.

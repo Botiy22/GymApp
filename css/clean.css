@@ -187,3 +187,11 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .fq-actions{display:flex;flex-wrap:wrap;gap:8px}.fq-actions .btn{flex:1 1 140px}
 .fq-alts{align-items:center}
 .sheet-foot>.btn.wide{flex:2.2 1 11rem}                                                       /* "Hozzáadás · 644 kcal" stays readable; wraps under the second button on narrow phones */
+
+/* remaining-budget colour (green → yellow → red as the day's calories and macros are used up) */
+:root[data-bg="light"]{--fuel-l:36%}
+.dial-wrap.fuel[style] .dial-tick.filled{stroke:var(--fuel)}
+.calorie-remaining.fuel[style]{color:var(--fuel-tx);font-weight:650}
+.cal .macros>div.fuel[style] .meter i,.cal .macros>div.fuel[style] .meter.over i{background:var(--fuel)}
+.profile-nutrition .profile-macros>div.fuel[style] i span{background:var(--fuel)}
+.energy-equation.fuel[style] b{color:var(--fuel-tx)}

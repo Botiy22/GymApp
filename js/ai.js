@@ -102,8 +102,14 @@ window.FoodAI = (function () {
   /* portion totals from grams and per-100 g values */
   function total(it) { const k = it.grams / 100; it.kcal = Math.round(it.k100 * k); it.p = Math.round(it.p100 * k * 10) / 10; it.c = Math.round(it.c100 * k * 10) / 10; it.f = Math.round(it.f100 * k * 10) / 10; return it; }
   /* one request to the API; errors come back with a short code the app can translate */
-  async function post(apiKey, payload) {
-    let res; const controller = new AbortController(), timer = setTimeout(()=>controller.abort(),45000);
+  /* Newer models think before answering by default, and that thinking counts toward max_tokens (platform.claude.com
+     docs: Thinking, Effort). A small max_tokens let the thinking use up the budget: replies were cut off or arrived with
+     no text at all ("the AI reply could not be read"). So: generous max_tokens, an explicit effort where the model supports
+     it, and one retry at low effort when a reply stops at max_tokens or cannot be read. */
+  const EFFORT = /claude-opus-(5|4-[5-9])|claude-sonnet-(5|4-[6-9])|claude-haiku-5|claude-(fable|mythos)/;
+  const request = (model, base, effort) => EFFORT.test(String(model)) ? { model, ...base, output_config: { effort } } : { model, ...base };
+  async function post(apiKey, payload, wait = 120000) {
+    let res; const controller = new AbortController(), timer = setTimeout(()=>controller.abort(),wait);
     try {
       res = await fetch(URL, {
         method: 'POST', signal: controller.signal,
@@ -120,11 +126,16 @@ window.FoodAI = (function () {
       er.code = res.status === 401 ? 'auth' : res.status === 429 ? 'rate' : res.status === 404 ? 'model' : 'api';
       throw er;
     }
-    return ((body && body.content) || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+    const text = ((body && body.content) || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+    if (body && body.stop_reason === 'refusal') { const er = new Error('refusal'); er.code = 'refusal'; throw er; }
+    return { text, stop: body && body.stop_reason || '' };
   }
   async function call(apiKey, model, content) {
-    const txt = await post(apiKey, { model, max_tokens: 2000, messages: [{ role: 'user', content }] });
-    try { return parse(txt); } catch (e) { const er = new Error('bad-json'); er.code = 'parse'; throw er; }
+    const ask = (effort, max) => post(apiKey, request(model, { max_tokens: max, messages: [{ role: 'user', content }] }, effort));
+    let r = await ask('medium', 16000);
+    try { return parse(r.text); } catch (e) {}
+    r = await ask('low', 32000);                                                         // cut off or unreadable once: one more try with less thinking and more room
+    try { return parse(r.text); } catch (e) { const er = new Error('bad-json'); er.code = r.stop === 'max_tokens' ? 'cut' : 'parse'; throw er; }
   }
   /* Downscale on the phone before sending: smaller upload, lower cost, and well inside the API's image limits. */
   function shrink(file, max) {
@@ -163,9 +174,12 @@ window.FoodAI = (function () {
     /* coach chat: system = who the coach is plus the user's data, msgs = [{ role: 'user' | 'assistant', content }] */
     chat: async (key, model, system, msgs) => {
       const m = msgs.slice(-12); while (m.length && m[0].role === 'assistant') m.shift();                 // a conversation always starts with the user
-      const txt = (await post(key, { model, max_tokens: 900, system: String(system).slice(0, 12000), messages: m.map(x => ({ role: x.role === 'assistant' ? 'assistant' : 'user', content: String(x.content).slice(0, 4000) })) })).trim();
-      if (!txt) { const er = new Error('empty'); er.code = 'parse'; throw er; }
-      return txt.slice(0, 6000);
+      const base = { system: String(system).slice(0, 12000), messages: m.map(x => ({ role: x.role === 'assistant' ? 'assistant' : 'user', content: String(x.content).slice(0, 4000) })) };
+      let r = await post(key, request(model, { ...base, max_tokens: 8000 }, 'medium'), 90000);
+      if (!r.text.trim() || r.stop === 'max_tokens') r = await post(key, request(model, { ...base, max_tokens: 16000 }, 'low'), 90000);
+      const txt = r.text.trim();
+      if (!txt) { const er = new Error('empty'); er.code = r.stop === 'max_tokens' ? 'cut' : 'parse'; throw er; }
+      return (txt + (r.stop === 'max_tokens' ? ' …' : '')).slice(0, 8000);
     },
     /* o: { images: [base64 jpeg…], text, lang, hint, notes } */
     analyze: async (key, model, o) => {

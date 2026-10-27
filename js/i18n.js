@@ -602,3 +602,6 @@ Object.assign(I18N.hu,{fqTitle:'Az adatbázis szerint',fqAddAll:'Mind hozzáadá
   coachOfflineOnly:'AI-kulcs nélkül csak ételekről tudok válaszolni az adatbázisból, pl. „2 tojás és 1 szelet kenyér hány kalória?”. Más kérdéshez adj meg AI-kulcsot a Beállításokban.',
   coachFoodQ1:'1 zsemle hány kalória?',coachFoodQ2:'2 tojás és 1 szelet kenyér',coachFoodQ3:'Mennyi fehérje van 200 g görög joghurtban?',
   aiLocalHelp:'AI nélkül is megy: írd le az ételt és a mennyiséget, pl. 2 zsemle, 10 dkg sonka, 1 pohár tej, fél liter tej. Darabnál tipikus súllyal számolunk (≈), ezt átírhatod. Címkénél az adag tápértékeit írd be: 35 g termék (140 kcal, 28 g fehérje, 4 g szénhidrát, 1 g zsír). Összetett ételhez és fotóhoz az AI-kulcsodat használjuk.'});
+
+Object.assign(I18N.en,{err_cut:'The AI reply was too long and got cut off, even after a retry. Try a shorter question or fewer items at once.',err_refusal:'The AI declined to answer this request.'});
+Object.assign(I18N.hu,{err_cut:'Az AI válasza túl hosszú lett és újrapróbálás után is megszakadt. Kérdezz rövidebben, vagy kevesebb ételt egyszerre.',err_refusal:'Az AI erre a kérésre nem válaszolt.'});

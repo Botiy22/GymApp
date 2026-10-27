@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.35.1 — 2026-10-27 (build 20261027.5)
+
+AI replies no longer break off or fail as "unreadable". Claude Sonnet 5.5 and Opus 5.5 think before answering by default, and thinking tokens count toward `max_tokens`; the old limits (900 for chat, 2000 for food analysis) could be used up by thinking, leaving a truncated reply or no text at all. Requests now allow 8000 (chat) / 16000 (food) tokens, set `output_config.effort` to `medium` on models that support it (not Haiku 4.5), and retry once at `low` effort with more room when a reply stops at `max_tokens` or cannot be parsed. A refusal or a second cut-off shows its own message. Timeouts are 90/120 s.
+
+Remaining-budget colours: the calorie dial ticks, the "kcal left" line, the budget equation and the protein/carb/fat bars (Food card and Profile) go from green while at most half is used, through yellow and orange, to red as the target is reached or passed. Light theme uses a darker text tone.
+
 ## 2.35.0 — 2026-10-27 (build 20261027.4)
 
 The offline food foundation. A new `js/food-query.js` understands food questions and amounts without AI or network: Hungarian and English number words, decimal commas, fractions and ranges, units (g, dkg, kg, ml, dl, l, evőkanál, teáskanál, pohár, bögre, szelet, db, adag, tányér, marék, gerezd, tábla, kocka, korsó, feles, pár…), question words (hány kalória, hány gramm, mennyi fehérje…), Hungarian case endings (zsemlében, tojást, vajjal), accents and small typos. "1 zsemle hány kalória?" answers 1 db ≈ 57 g, 167 kcal with the macros and the per-100 g values. Several foods in one sentence are listed with a total.
