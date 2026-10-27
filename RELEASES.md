@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.35.0 — 2026-10-27 (build 20261027.4)
+
+The offline food foundation. A new `js/food-query.js` understands food questions and amounts without AI or network: Hungarian and English number words, decimal commas, fractions and ranges, units (g, dkg, kg, ml, dl, l, evőkanál, teáskanál, pohár, bögre, szelet, db, adag, tányér, marék, gerezd, tábla, kocka, korsó, feles, pár…), question words (hány kalória, hány gramm, mennyi fehérje…), Hungarian case endings (zsemlében, tojást, vajjal), accents and small typos. "1 zsemle hány kalória?" answers 1 db ≈ 57 g, 167 kcal with the macros and the per-100 g values. Several foods in one sentence are listed with a total.
+
+`data/food-lexicon.js` widens the database for everyday Hungarian eating: aliases for the existing entries, typical piece and portion weights (always shown with ≈ and the usual range), label values for kifli, kakaós csiga, sajtos pogácsa, Túró Rudi and low-fat túró, 2.8% and 1.5% milk interpolated from USDA milks, and Hungarian dishes calculated from typical home recipes written in the file (gulyásleves, húsleves, pörkölt, csirkepaprikás, rakott krumpli, töltött káposzta/paprika, lecsó, főzelékek, túrós csusza, rántott hús/csirke/sajt, fasírt, palacsinta, lángos, nokedli, tarhonya, rizibizi, gyros, szendvicsek, fröccsök, coffee drinks). Recipe and proxy values are estimates and are labelled as such.
+
+Add food shows the database answer above the results with Add and Other amount. The describe box calculates understood amounts locally; without a key it returns what it understood and names what it could not. The coach answers food questions from the database instantly, with or without a key; other questions still go to the AI. Amount chips use the new portions. The narrow-phone footer no longer clips "Add · 644 kcal".
+
 ## 2.34.0 — 2026-10-27 (build 20261027.3)
 
 Exercise search indexes English/Hungarian names, curated gym aliases, primary muscles and equipment. Exact matches rank above partial matches and favourites. Accent/punctuation/compound-word normalization handles phone input; a bounded one-edit fallback appears only when no direct match exists. Active filters remain respected, with a clear-filters shortcut when they hide results. Selected exercise order is retained. The My exercises filter and name-prefill/save behavior now work inside Workout → Exercises. Search gets more room on narrow phones.

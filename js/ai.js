@@ -24,8 +24,21 @@ window.FoodAI = (function () {
   const normalize = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
   // Deliberately conservative: every component must have an explicit quantity and an exact identity.
   // Unknown ingredients never disappear from a partially matched meal.
+  /* The offline foundation (js/food-query.js): "2 zsemle, 10 dkg sonka, 1 pohár tej" is calculated from the database.
+     Strict: every part must be understood with an amount (a typical piece weight counts, a guessed serving does not). */
+  function fromQuery(i, lang) {
+    const FQ = window.FoodQuery, v = FQ.view(i, lang), hu = lang === 'hu';
+    return total({ name: v.name, en: i.label ? '' : v.usda, grams: Math.round(i.grams * 10) / 10, k100: i.k100, p100: i.p100, c100: i.c100, f100: i.f100, label: !!i.label, db: i.label ? undefined : v.usda,
+      basis: i.label ? String(i.text || '') : v.qty + (v.typ ? ' ≈ ' : ' = ') + Math.round(i.grams * 10) / 10 + ' g' + (v.typ ? (hu ? ' (tipikus' : ' (typical') + (v.note && hu ? ': ' + v.note : '') + ')' : ''), gmin: 0, gmax: 0 });
+  }
+  const localNote = (lang, typ) => (lang === 'hu' ? 'Adatbázisból számolva a megadott mennyiséggel.' : 'Calculated from the food database using your quantities.') + (typ ? (lang === 'hu' ? ' A ≈ darabsúly tipikus érték: ha lemérted, írd át a grammot.' : ' A ≈ piece weight is typical: if you weighed it, change the grams.') : '');
   function local(o) {
     if ((o.images || []).length || o.hint) return null;
+    if (window.FoodQuery && window.FOODS) {
+      const r = window.FoodQuery.parse(String(o.text || ''), { strict: true });
+      if (!r.items.length || r.items.length > 20 || r.items.some(i => i.status !== 'ok')) return null;
+      return { items: r.items.map(i => fromQuery(i, o.lang)), confidence: 'high', notes: localNote(o.lang, r.items.some(i => i.typ)), scene: '', question: null, local: true };
+    }
     const text = String(o.text || '').trim().replace(/^(?:I (?:had|ate|drank)|ettem|ittam)\s+/i,''), db = window.FOODS;
     if (!text || !db) return null;
     const aliases = {banana:'Bananas, raw',banan:'Bananas, raw'};
@@ -158,7 +171,13 @@ window.FoodAI = (function () {
     analyze: async (key, model, o) => {
       const exact=local(o); if(exact)return exact;
       if (!(o.images||[]).length && !o.hint && /biotech|protein.*shake|feherje|fehérje|whey|shaker/i.test(o.text||'')) return clarification(o);
-      if (!key) return {...clarification(o),notes:o.lang==='hu'?'Pontos ételnév és mennyiség szükséges (pl. 100 g banán). Összetett leíráshoz vagy fotóhoz állíts be AI-kulcsot a Beállításokban.':'Use an exact food name and quantity (e.g. 100 g banana). For complex descriptions or photos, configure an AI key in Settings.'};
+      if (!key) {
+        const hu = o.lang === 'hu', r = window.FoodQuery && !(o.images || []).length ? window.FoodQuery.parse([o.text, o.hint].filter(Boolean).join(', '), { strict: true }) : null;
+        const ok = r ? r.items.filter(i => i.status === 'ok') : [], rest = r ? r.items.filter(i => i.status !== 'ok') : [];
+        if (ok.length) return { items: ok.map(i => fromQuery(i, o.lang)), confidence: rest.length ? 'low' : 'high', local: true, scene: '', question: null,   // what was understood, and plainly what was not
+          notes: localNote(o.lang, ok.some(i => i.typ)) + (rest.length ? (hu ? ' Ezt nem tudtam AI nélkül kiszámolni, add hozzá külön: ' : ' Not calculated without AI, add it separately: ') + rest.map(i => '„' + (i.text || i.entry && window.FoodQuery.nameOf(i.entry, o.lang) || '?') + '”').join(', ') + '.' : '') };
+        return {...clarification(o),notes:hu?'Ezt nem találtam az adatbázisban. Írd így: „2 zsemle, 10 dkg sonka, 1 pohár tej”, vagy keresd meg az ételt a Keresésben. Összetett ételhez vagy fotóhoz AI-kulcs kell (Beállítások).':'I could not find this in the food database. Try "2 bread rolls, 100 g ham, 1 glass of milk" or use Search. Complex meals and photos need an AI key (Settings).'};
+      }
       const imgs = (o.images || []).slice(0, 2);
       return call(key, model, imgs.map(b => ({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b } }))
         .concat([{ type: 'text', text: prompt({ lang: o.lang, hint: o.hint, notes: o.notes, images: imgs.length }) + (imgs.length ? '' : '\n\nMeal: ' + String(o.text || '').slice(0, 1500)) }]));

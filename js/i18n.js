@@ -591,3 +591,14 @@ Object.assign(I18N.hu,{coachWelcome:'Receptötlet kell? Kérdezz bátran!'});
 
 Object.assign(I18N.en,{exHiddenByFilters:'Matching exercises are hidden by your filters.',exClearFilters:'Clear filters',exCloseMatches:'Close matches'});
 Object.assign(I18N.hu,{exHiddenByFilters:'A szűrők elrejtik a találatokat.',exClearFilters:'Szűrők törlése',exCloseMatches:'Hasonló találatok'});
+
+Object.assign(I18N.en,{fqTitle:'From the food database',fqAddAll:'Add all to diary',fqEdit:'Other amount',fqAlso:'Something else?',fqNotFound:'Not in the database: {0}',fqNeedGrams:'{0}: enter the amount in grams',fqTypical:'Typical weight',fqIgnored:'Ignored: {0}',fqTotal:'Total',
+  foodSearchPh:'e.g. 2 bread rolls, 100 g ham, chicken breast',coachNeedKey:'Food questions work without an AI key',coachOffline:'Ask e.g. "calories in 1 bread roll": the answer comes from the food database. Everything else needs an AI key in Settings.',
+  coachOfflineOnly:'Without an AI key I can only answer food questions from the database, e.g. "2 eggs and a slice of bread, how many calories?". For anything else add an AI key in Settings.',
+  coachFoodQ1:'How many calories in 1 bread roll?',coachFoodQ2:'2 eggs and a slice of white bread',coachFoodQ3:'How much protein is in 200 g Greek yogurt?',
+  aiLocalHelp:'Works without AI: name the food and the amount, e.g. 2 bread rolls, 100 g ham, 1 glass of milk, half a litre of milk. Pieces use a typical weight (≈) you can correct. For a label, enter portion totals: 35 g product (140 kcal, 28 g protein, 4 g carbs, 1 g fat). Complex meals and photos use your AI key.'});
+Object.assign(I18N.hu,{fqTitle:'Az adatbázis szerint',fqAddAll:'Mind hozzáadása',fqEdit:'Más mennyiség',fqAlso:'Másik étel?',fqNotFound:'Nincs az adatbázisban: {0}',fqNeedGrams:'{0}: add meg grammban',fqTypical:'Tipikus súly',fqIgnored:'Figyelmen kívül: {0}',fqTotal:'Összesen',
+  foodSearchPh:'pl. 2 zsemle, 10 dkg sonka, csirkemell',coachNeedKey:'Ételekről AI-kulcs nélkül is kérdezhetsz',coachOffline:'Kérdezd pl.: „1 zsemle hány kalória?” – a választ az étel-adatbázisból adom. Minden máshoz AI-kulcs kell a Beállításokban.',
+  coachOfflineOnly:'AI-kulcs nélkül csak ételekről tudok válaszolni az adatbázisból, pl. „2 tojás és 1 szelet kenyér hány kalória?”. Más kérdéshez adj meg AI-kulcsot a Beállításokban.',
+  coachFoodQ1:'1 zsemle hány kalória?',coachFoodQ2:'2 tojás és 1 szelet kenyér',coachFoodQ3:'Mennyi fehérje van 200 g görög joghurtban?',
+  aiLocalHelp:'AI nélkül is megy: írd le az ételt és a mennyiséget, pl. 2 zsemle, 10 dkg sonka, 1 pohár tej, fél liter tej. Darabnál tipikus súllyal számolunk (≈), ezt átírhatod. Címkénél az adag tápértékeit írd be: 35 g termék (140 kcal, 28 g fehérje, 4 g szénhidrát, 1 g zsír). Összetett ételhez és fotóhoz az AI-kulcsodat használjuk.'});

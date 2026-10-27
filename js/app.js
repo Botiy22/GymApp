@@ -15,8 +15,8 @@
   if(!document.querySelector('link[href="css/recipes-stability.css"]')){const style=document.createElement('link');style.rel='stylesheet';style.href='css/recipes-stability.css';document.head.append(style);}
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.ExerciseSearch || !window.EXERCISE_ALIASES || window.EXERCISE_LIBRARY_VERSION !== 2 || !window.I18N?.en?.exClearFilters || !window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
-    const src = !window.ExerciseSearch ? 'js/exercise-search.js' : !window.EXERCISE_ALIASES ? 'data/exercise-aliases.js' : window.EXERCISE_LIBRARY_VERSION !== 2 ? 'data/library-expansion.js' : !window.I18N?.en?.exClearFilters ? 'js/i18n.js' : !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.FOOD_LEXICON || !window.FoodQuery || !window.ExerciseSearch || !window.EXERCISE_ALIASES || window.EXERCISE_LIBRARY_VERSION !== 2 || !window.I18N?.en?.exClearFilters || !window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsPlanner || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.FOOD_LEXICON ? 'data/food-lexicon.js' : !window.FoodQuery ? 'js/food-query.js' : !window.ExerciseSearch ? 'js/exercise-search.js' : !window.EXERCISE_ALIASES ? 'data/exercise-aliases.js' : window.EXERCISE_LIBRARY_VERSION !== 2 ? 'data/library-expansion.js' : !window.I18N?.en?.exClearFilters ? 'js/i18n.js' : !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsPlanner ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -897,12 +897,15 @@
   const FOODS = window.FOODS || { hu: [], list: [] };
   let fIdx = null;
   function foodSearch(q, enOnly) {
-    const toks = norm(q).split(/[\s,]+/).filter(Boolean); if (!toks.length) return [];
+    const FQ = window.FoodQuery; if (FQ) FQ.install();
+    const words = FQ && !enOnly ? FQ.foodWords(q) : '';                                // "1 zsemle hány kalória" searches for "zsemle"
+    const toks = norm(words || q).split(/[\s,]+/).filter(Boolean); if (!toks.length) return [];
     if (!fIdx) fIdx = { hu: FOODS.hu.map(h => norm(h[0])), en: FOODS.list.map(r => norm(r[0])) };      // built on first use
     const out = [], seen = {};
     const score = (str, base) => { let sc = base - str.length / 8; if (str.indexOf(toks[0]) === 0) sc += 40; toks.forEach(tk => { const i = str.indexOf(tk); if (i === 0 || /[\s,(]/.test(str[i - 1])) sc += 12; }); return sc; };
     if (L() === 'hu' && !enOnly) fIdx.hu.forEach((str, i) => { if (toks.every(tk => str.indexOf(tk) >= 0)) out.push({ h: i, i: FOODS.hu[i][1], sc: score(str, 200) }); });
     fIdx.en.forEach((str, i) => { if (toks.every(tk => str.indexOf(tk) >= 0)) out.push({ h: -1, i, sc: score(str, 0) }); });
+    if (FQ && !enOnly) FQ.hits(q).forEach((x, k) => out.push({ h: L() === 'hu' ? x.h : -1, i: x.i, sc: 1000 - k }));   // aliases, word endings and typos first
     if (!enOnly) { const fv = D().favFoods; if (fv.length) out.forEach(x => { if (fv.indexOf(x.h >= 0 ? 'hu:' + FOODS.hu[x.h][0] : 'en:' + FOODS.list[x.i][0]) >= 0) x.sc += 30; }); }
     return out.sort((a, b) => b.sc - a.sc).filter(x => { const k = x.h >= 0 ? 'h' + x.h : 'e' + x.i; if (seen[k] || (x.h < 0 && seen['i' + x.i])) return false; seen[k] = 1; if (x.h >= 0) seen['i' + x.i] = 1; return true; }).slice(0, 40);
   }
@@ -922,9 +925,11 @@
   const portName = dsc => L() === 'hu' ? PORT_HU.reduce((x, [re, to]) => x.replace(re, to), dsc) : dsc;
   function foodOf(i, h) {
     const r = FOODS.list[i], hu = h >= 0 ? FOODS.hu[h] : null, ports = [];
-    if (hu && hu[3]) ports.push([hu[4], hu[3]]);
+    const named = h >= 0 && window.FoodQuery ? FoodQuery.units(h, i) : [];
+    if (named.length) named.forEach(u => ports.push([u.g, '1 ' + FoodQuery.unitLabel(u.u, L()), u.u, u.typ]));
+    else if (hu && hu[3]) ports.push([hu[4], hu[3]]);
     else for (let k = 5; k + 1 < r.length; k += 2) ports.push([r[k], portName(r[k + 1]), r[k + 1]]);
-    return { key: (hu ? 'hu:' + hu[0] : 'en:' + r[0]), own: !!(hu && hu[3]), name: hu ? hu[0] : r[0], usda: hu ? r[0] : '', approx: !!(hu && hu[2]), kcal: r[1], p: r[2], c: r[3], f: r[4], ports,volume:FoodVolume.describe(r,hu) };
+    return { key: (hu ? 'hu:' + hu[0] : 'en:' + r[0]), own: !!(hu && hu[3]) || named.length > 0, name: hu ? hu[0] : r[0], usda: hu ? r[0] : '', approx: !!(hu && hu[2]), kcal: r[1], p: r[2], c: r[3], f: r[4], ports,volume:FoodVolume.describe(r,hu) };
   }
   const dec = v => L() === 'hu' ? String(v).replace('.', ',') : String(v);                                 // Hungarian writes 22,5
   const macroLine = f => `${esc(t('pShort'))} ${dec(f.p)} · ${esc(t('cShort'))} ${dec(f.c)} · ${esc(t('fShort'))} ${dec(f.f)}`;
@@ -938,7 +943,7 @@
   function foodRows() {
     const st = ui.fs, q = st.q.trim(), rc = D().recentFoods;
     const more = `<div class="fs-more"><p class="cap">${esc(t(q ? 'foodNotFound' : 'foodOwnLead'))}</p>${q ? `<button class="btn" data-a="fs-ai">${IC.bolt}${esc(t('foodAskAI'))}</button>` : ''}<button class="btn" data-a="fs-own">${IC.pen}${esc(t('foodOwn'))}</button><button class="btn" data-a="mf-new">${IC.plus}${esc(t('myFoodNew'))}</button></div>`;
-    const toks = norm(q).split(/[\s,]+/).filter(Boolean), mine = D().myFoods.filter(z => { const s = norm(z.name); return toks.every(tk => s.indexOf(tk) >= 0); });
+    const toks = norm((window.FoodQuery && FoodQuery.foodWords(q)) || q).split(/[\s,]+/).filter(Boolean), mine = D().myFoods.filter(z => { const s = norm(z.name); return toks.every(tk => s.indexOf(tk) >= 0); });
     const myBlock = mine.length ? `<p class="cap">${esc(t('myFoods'))}</p><div class="flist">${mine.map(z => `<div class="frow myf"><button class="myf-main" data-a="fs-my" data-id="${esc(z.id)}"><b>${esc(z.name)}</b><i>${dec(z.kcal)} kcal / ${z.basis==='ml'?'1 dl':'100 g'} · ${macroLine(z)}</i></button><button class="icon-btn sm" data-a="mf-edit" data-id="${esc(z.id)}" aria-label="${esc(t('edit'))}">${IC.pen}</button></div>`).join('')}</div>` : '';
     if (!q) {
       st.favs = favFoodHits();
@@ -947,7 +952,19 @@
         `<p class="cap">${esc(t('brands'))}</p><div class="chips">${BRANDS.map(b => `<button class="chip" data-a="fs-brand" data-q="${esc(b)}">${esc(b)}</button>`).join('')}</div><p class="lead">${esc(t('foodSearchLead', FOODS.list.length))}</p>` + more;
     }
     st.hits = foodSearch(q);
-    return myBlock + (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => foodHit(x, k, 'fs-pick')).join('')}</div>` : mine.length ? '' : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
+    const ans = window.FoodQuery ? FoodQuery.answer(q, L()) : null, one = ans && ans.items.length === 1 ? ans.items[0] : null;
+    st.ans = ans && (ans.intent.length || ans.items.length > 1 || (one && !one.per100 && (!one.implicit || one.full))) ? ans : null;   // an amount, a question or a clear name
+    return (st.ans ? fqCard(st.ans) : '') + myBlock + (st.hits.length ? `<div class="flist">${st.hits.map((x, k) => foodHit(x, k, 'fs-pick')).join('')}</div>` : mine.length || st.ans ? '' : `<p class="empty">${esc(t('foodNone'))}</p>`) + more;
+  }
+  /* the database's own answer to "1 zsemle", "hány kalória van 2 tojásban", "10 dkg sonka" (no AI) */
+  function fqCard(a) {
+    const one = a.items.length === 1, v0 = a.items[0];
+    const row = v => `<div class="fq-row"><div class="fq-head"><b>${esc(v.qty)} · ${esc(v.name)}${v.approx ? ' ≈' : ''}</b><span>${v.label ? '' : (v.typ ? '≈ ' : '') + dec(v.grams) + ' g'}</span></div><div class="fq-val"><b>${v.kcal} kcal</b><i>${macroLine(v)}</i></div>${v.typ && v.note && L() === 'hu' ? `<p class="cap">${esc(t('fqTypical'))}: ${esc(v.note)}</p>` : ''}${v.ignored.length ? `<p class="cap">${esc(t('fqIgnored', v.ignored.join(', ')))}</p>` : ''}</div>`;
+    return `<section class="food-answer" aria-label="${esc(t('fqTitle'))}"><p class="fq-title">${IC.check}<span>${esc(t('fqTitle'))}</span></p>${a.items.map(row).join('')}`
+      + (one ? '' : `<div class="fq-total"><span>${esc(t('fqTotal'))}</span><b>${Math.round(a.total.kcal)} kcal</b><i>${macroLine(a.total)}</i></div>`)
+      + a.unknown.map(u => `<p class="note warn">${esc(t('fqNotFound', u))}</p>`).join('') + a.need.map(u => `<p class="note warn">${esc(t('fqNeedGrams', u))}</p>`).join('')
+      + `<div class="fq-actions"><button class="btn primary" data-a="fq-add">${IC.plus}<span>${esc(t(one ? 'addToDiary' : 'fqAddAll'))}</span></button>${one && v0.i >= 0 && !v0.label ? `<button class="btn" data-a="fq-edit">${esc(t('fqEdit'))}</button>` : ''}</div>`
+      + (one && v0.alts.length ? `<div class="chips fq-alts"><span class="cap">${esc(t('fqAlso'))}</span>${v0.alts.map(x => `<button class="chip" data-a="fq-alt" data-h="${x.h}" data-i="${x.i}">${esc(x.name)}</button>`).join('')}</div>` : '') + `</section>`;
   }
   function shFoodFind() {
     const fn = () => ({ title: t('addFoodTitle'), html: `${mealPicker()}<div class="search"><input type="search" data-in="fs-q" value="${esc(ui.fs.q)}" placeholder="${esc(t('foodSearchPh'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="${esc(t('addFoodTitle'))}"></div><div id="fs-list">${foodRows()}</div>` });
@@ -960,7 +977,7 @@
   function shFoodAmount() {
     return () => {
       const f = ui.fa.food,dl=ui.fa.unit==='dl',canDl=f.basis==='ml'||f.volume?.gramsPerDl>0;
-      const chips=dl?[[1,'1 dl'],[2,'2 dl'],[2.5,'2.5 dl'],[3.3,'3.3 dl'],[5,'5 dl']]:[[100,'100 g']].concat(f.ports.map(p=>[p[0],p[1]+' ('+p[0]+' g)']));
+      const chips=dl?[[1,'1 dl'],[2,'2 dl'],[2.5,'2.5 dl'],[3.3,'3.3 dl'],[5,'5 dl']]:[[100,'100 g']].concat(f.ports.map(p=>[p[0],p[1]+' ('+(p[3]?'≈':'')+String(p[0]).replace('.',L()==='hu'?',':'.')+' g)']));
       const k100=f.basis==='ml'?1:canDl?f.volume.gramsPerDl/100:1;
       const fav = D().favFoods.indexOf(f.key) >= 0;
       return { title: t('addFoodTitle'), html: `<div class="exmeta top"><p class="fa-name">${esc(f.name)}</p>${f.my ? '' : `<button class="favbtn${fav ? ' on' : ''}" data-a="fav-food" aria-pressed="${fav}">${IC.star}${esc(t(fav ? 'favOn' : 'favAdd'))}</button>`}</div>${f.usda ? `<p class="en">${esc(f.usda)}</p>` : ''}<p class="cap">${f.basis==='ml'||canDl?'1 dl':esc(t('per100'))}: ${Math.round(f.kcal*k100)} kcal · ${macroLine({p:r1(f.p*k100),c:r1(f.c*k100),f:r1(f.f*k100)})}</p>
@@ -2090,18 +2107,18 @@
     'You are not a doctor: for pain, injury, illness, medication, pregnancy or signs of an eating disorder give only general information and recommend seeing a professional. Never recommend crash diets, dehydration or drugs. If something is not in the data, say so instead of guessing.\n\nUser data from the app:\n' + coachContext();
   const COACH_Q = ['coachQ1', 'coachQ2', 'coachQ3', 'coachQ4'];
   function coachList() {
-    const c = ui.coach;
+    const c = ui.coach, st = D().settings, key = st.apiKey && st.keyState !== 'bad', asks = key ? COACH_Q : ['coachFoodQ1', 'coachFoodQ2', 'coachFoodQ3'];
     return (c.msgs.length || c.busy ? c.msgs.map(m => `<div class="msg ${m.role === 'user' ? 'me' : 'ai'}">${m.role === 'user' ? esc(m.content).replace(/\n/g, '<br>') : rich(m.content)}</div>`).join('') + (c.busy ? `<div class="msg ai wait" aria-label="${esc(t('analyzing'))}"><i></i><i></i><i></i></div>` : '')
-      : `<p class="lead">${esc(t('coachLead'))}</p><div class="asks">${COACH_Q.map(k => `<button class="chip ask" data-a="coach-ask" data-q="${esc(t(k))}">${esc(t(k))}</button>`).join('')}</div><p class="cap">${esc(t('coachCap'))}</p>`) +
+      : `<p class="lead">${esc(t('coachLead'))}</p><div class="asks">${asks.map(k => `<button class="chip ask" data-a="coach-ask" data-q="${esc(t(k))}">${esc(t(k))}</button>`).join('')}</div><p class="cap">${esc(t('coachCap'))}</p>`) +
       (c.err ? `<div class="note warn"><b>${esc(t('err_' + c.err.code))}</b>${c.err.msg ? `<span>${esc(c.err.msg)}</span>` : ''}</div>` : '');
   }
   function shCoach() {
     const fn = () => {
       const st = D().settings, bad = st.keyState === 'bad', key = st.apiKey && !bad, c = ui.coach;
       const nh = D().chats.length;
-      return { title: t('coachTitle'), html: (key ? '' : `<button class="note warn" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'coachNeedKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'needKeySub'))}</span></button>`) +
+      return { title: t('coachTitle'), html: (key ? '' : `<button class="note${bad ? ' warn' : ''}" data-a="settings"><b>${esc(t(bad ? 'keyBad' : 'coachNeedKey'))}</b><span>${esc(t(bad ? 'keyBadSub' : 'coachOffline'))}</span></button>`) +
         `<div class="chat-top"><button class="pill" data-a="coach-hist">${IC.cal}${esc(t('coachHist'))}${nh ? ' (' + nh + ')' : ''}</button></div><div id="chat" class="chat" aria-live="polite">${coachList()}</div>`,
-        foot: `<form class="chatbar" data-f="coach"><label class="sr" for="coach-in">${esc(t('coachPh'))}</label><input id="coach-in" type="text" name="q" data-in="coach-q" value="${esc(c.draft)}" placeholder="${esc(t('coachPh'))}" autocomplete="off" enterkeyhint="send" maxlength="600" ${key ? '' : 'disabled'}><button class="btn primary" id="coach-send" ${key && !c.busy ? '' : 'disabled'} aria-label="${esc(t('send'))}">${IC.send}</button>${c.msgs.length ? `<button type="button" class="icon-btn" data-a="coach-clear" aria-label="${esc(t('coachNew'))}">${IC.plus}</button>` : ''}</form>` };
+        foot: `<form class="chatbar" data-f="coach"><label class="sr" for="coach-in">${esc(t('coachPh'))}</label><input id="coach-in" type="text" name="q" data-in="coach-q" value="${esc(c.draft)}" placeholder="${esc(t('coachPh'))}" autocomplete="off" enterkeyhint="send" maxlength="600"><button class="btn primary" id="coach-send" ${!c.busy ? '' : 'disabled'} aria-label="${esc(t('send'))}">${IC.send}</button>${c.msgs.length ? `<button type="button" class="icon-btn" data-a="coach-clear" aria-label="${esc(t('coachNew'))}">${IC.plus}</button>` : ''}</form>` };
     };
     fn.kind = 'coach'; return fn;
   }
@@ -2127,7 +2144,12 @@
     const b = $('#sheet .sheet-body'); if (b) b.scrollTop = b.scrollHeight;
   }
   async function coachSend(q) {
-    const c = ui.coach, st = D().settings; q = String(q || '').trim().slice(0, 600); if (!q || c.busy || !st.apiKey || st.keyState === 'bad') return;
+    const c = ui.coach, st = D().settings; q = String(q || '').trim().slice(0, 600); if (!q || c.busy) return;
+    const key = st.apiKey && st.keyState !== 'bad', local = window.FoodQuery ? FoodQuery.answer(q, L()) : null;
+    if ((local && local.chat) || !key) {                                              // food facts come from the database first, instantly and offline
+      c.msgs.push({ role: 'user', content: q }, { role: 'assistant', content: local ? local.text : t('coachOfflineOnly') }); c.draft = ''; c.err = null;
+      const inp = $('#coach-in'); if (inp) inp.value = ''; c.msgs = c.msgs.slice(-60); saveChat(); coachDraw(c.msgs.length <= 2); return;
+    }
     c.msgs.push({ role: 'user', content: q }); c.draft = ''; c.busy = true; c.err = null; const inp = $('#coach-in'); if (inp) inp.value = '';
     coachDraw(c.msgs.length === 1);                                                    // first message: the "clear" button appears too
     try { const a = await FoodAI.chat(st.apiKey, st.model, coachSystem(), c.msgs); c.msgs.push({ role: 'assistant', content: a }); c.msgs = c.msgs.slice(-60); saveChat(); keyResult('ok'); }
@@ -2721,6 +2743,9 @@
     'food-manual'() { ui.fs = { q: '', hits: [] }; openSheet(shFoodFind()); },
     'food-recent'(el) { ui.manual = Object.assign({}, D().recentFoods[+el.dataset.i]); if (topIs('foodfind')) openSheet(shFoodManual()); else refreshSheet(); },
     'fs-pick'(el) { const x = ui.fs.hits[+el.dataset.n]; if (x) pickFood(x); },
+    'fq-add'() { const a = ui.fs.ans; if (!a || !a.items.length) return; if (!addFood(a.items.map(v => ({ name: v.name, g: v.grams, vml: v.ml || 0, kcal: v.kcal, p: v.p, c: v.c, f: v.f })), 'db')) { toast(t('saveFailed')); return; } closeSheet(true); rerender(); toast(t('added')); },
+    'fq-edit'() { const v = ui.fs.ans?.items[0]; if (!v || v.i < 0) return; ui.fa = { food: foodOf(v.i, L() === 'hu' ? v.h : -1), unit: 'g', g: String(v.grams) }; openSheet(shFoodAmount()); },
+    'fq-alt'(el) { const i = +el.dataset.i, h = +el.dataset.h; if (!(i >= 0)) return; pickFood({ i, h: L() === 'hu' ? h : -1 }); },
     'fs-own'() { ui.manual = { name: ui.fs.q.trim() }; openSheet(shFoodManual()); },
     'fs-ai'() { ui.ai = aiNew('text', ui.fs.q.trim()); openSheet(shFoodAI()); const st = D().settings; if (st.apiKey && st.keyState !== 'bad') aiGo(); },
     'fa-unit'(el){

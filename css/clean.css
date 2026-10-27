@@ -170,3 +170,20 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .exercise-empty,.exercise-search-hint{grid-column:1 / -1}.exercise-empty .empty{padding:24px 12px 12px}.exercise-empty .btn{margin:0 auto 16px;max-width:260px}
 
 .search.exercise-search{flex-wrap:wrap}.search.exercise-search input{flex:1 1 220px;width:100%}.search.exercise-search select{flex:1 1 160px;width:100%;max-width:none}
+
+/* offline food answer in Add food: "1 zsemle", "10 dkg sonka", "hány kalória van 2 tojásban" */
+.food-answer{display:grid;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:16px;background:var(--glass);border:1px solid var(--edge);box-shadow:var(--shine-s)}
+.food-answer .cap,.food-answer .note{margin:0}
+.fq-title{display:flex;align-items:center;gap:6px;margin:0;color:var(--acc-tx,var(--acc));font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.fq-title svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4}
+.fq-row{display:grid;gap:4px;padding-bottom:10px;border-bottom:1px solid var(--line,var(--edge))}
+.fq-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 10px}
+.fq-head b{min-width:0;font-weight:650;overflow-wrap:anywhere}
+.fq-head span{color:var(--mut);font-size:.86rem;white-space:nowrap}
+.fq-val,.fq-total{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.fq-val b{font-size:1.3rem;font-variant-numeric:tabular-nums}
+.fq-val i,.fq-total i{color:var(--mut);font-size:.82rem;font-style:normal}
+.fq-total b{font-size:1.15rem;font-variant-numeric:tabular-nums}.fq-total i{flex-basis:100%}
+.fq-actions{display:flex;flex-wrap:wrap;gap:8px}.fq-actions .btn{flex:1 1 140px}
+.fq-alts{align-items:center}
+.sheet-foot>.btn.wide{flex:2.2 1 11rem}                                                       /* "Hozzáadás · 644 kcal" stays readable; wraps under the second button on narrow phones */
