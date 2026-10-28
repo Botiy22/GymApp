@@ -14,7 +14,7 @@ test('builder totals are the sum of the parts, liquids convert ml to grams',()=>
 test('ready recipes are breakfast items whose card values come from the same calculation',()=>{
  const oats=RECIPES.items.filter(r=>r.oats);assert.deepEqual(oats.map(r=>r.id),['overnight-oats','oats-choco-pb','oats-apple-cinnamon','oats-berry-turo','oats-mango-coconut','oats-tiramisu']);
  for(const r of oats){const v=O.compute(r.oats);assert.deepEqual([r.kcal,r.p,r.c,r.f,r.g],[v.kcal,v.p,v.c,v.f,v.g],r.id);assert.equal(r.cat,'breakfast');assert.ok(r.steps.hu.length===r.steps.en.length&&r.ing.length===Object.keys(r.oats).length,r.id);
-  if(r.id!=='overnight-oats'){assert.ok(r.hu&&r.en&&r.illustration,r.id);assert.ok(require('fs').existsSync(__dirname+'/../img/recipes/'+r.id+'.webp')&&require('fs').existsSync(__dirname+'/../img/recipes/'+r.id+'-thumb.webp'),r.id);}}
+  if(r.id!=='overnight-oats'){assert.ok(r.hu&&r.en,r.id);assert.equal(r.illustration,r.id!=='oats-berry-turo',r.id);assert.ok(require('fs').existsSync(__dirname+'/../img/recipes/'+r.id+'.webp')&&require('fs').existsSync(__dirname+'/../img/recipes/'+r.id+'-thumb.webp'),r.id);}}
  const ids=RECIPES.items.map(r=>r.id);assert.equal(new Set(ids).size,ids.length);
 });
 test('the user breakfast phrase is now understood offline',()=>{

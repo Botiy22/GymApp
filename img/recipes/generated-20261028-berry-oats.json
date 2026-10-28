@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-28",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "oats-berry-turo",
+      "kind": "food-photo",
+      "source": "exec-925159fe-f91f-41b8-a093-93822a0820e5.png",
+      "source_sha256": "6dc77b084a3a8c8c61181dc0bbaf396eeccbad84362ad1379c838bec4d3701ef",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    }
+  ]
+}

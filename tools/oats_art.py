@@ -114,6 +114,8 @@ SPECS = {
 
 def main():
     for i, (rid, spec) in enumerate(SPECS.items()):
+        if rid == 'oats-berry-turo':  # Replaced by a reviewed generated photo; preserve it.
+            continue
         im = jar(stone(i + 7), spec, i + 3).resize((W, H), Image.LANCZOS)
         im.save(OUT / f'{rid}.webp', 'WEBP', quality=92, method=6)
         im.resize((384, 288), Image.LANCZOS).save(OUT / f'{rid}-thumb.webp', 'WEBP', quality=90, method=6)

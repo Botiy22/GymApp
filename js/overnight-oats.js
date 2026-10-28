@@ -80,7 +80,7 @@ window.OvernightOats = (() => {
       steps: { hu: ['Egy üvegben keverd csomómentesre a fehérjeport és a kakaót a tejjel.', 'Add hozzá a zabot, keverd át, és fedd le.', 'Tedd a hűtőbe legalább 4 órára vagy éjszakára.', 'Reggel tedd a tetejére a felkarikázott banánt és a mogyoróvajat.'], en: ['In a jar, whisk the protein powder and cocoa into the milk until smooth.', 'Stir in the oats and cover.', 'Chill for at least 4 hours or overnight.', 'In the morning top with sliced banana and the peanut butter.'] }, art: ['mix', 'pour', 'chill', 'knife'] },
     { id: 'oats-apple-cinnamon', hu: 'Almás-fahéjas zab dióval', en: 'Apple cinnamon oats with walnuts', sel: { oats: 50, milk15: 120, yogurt: 100, apple: 100, cinnamon: 2, walnut: 10, honey: 10 },
       steps: { hu: ['Reszeld le az almát, és keverd össze a zabbal, a fahéjjal, a joghurttal és a tejjel.', 'Fedd le, és tedd a hűtőbe éjszakára.', 'Reggel csorgasd rá a mézet, és szórd meg durvára vágott dióval.'], en: ['Grate the apple and mix it with the oats, cinnamon, yogurt and milk.', 'Cover and chill overnight.', 'In the morning drizzle with honey and scatter the roughly chopped walnuts on top.'] }, art: ['knife', 'chill', 'serve'] },
-    { id: 'oats-berry-turo', hu: 'Túrós-erdei gyümölcsös zab', en: 'Curd cheese and mixed berry oats', sel: { oats: 50, turo: 100, milk15: 120, berries: 80, chia: 5, honey: 10 },
+    { id: 'oats-berry-turo', photo: true, hu: 'Túrós-erdei gyümölcsös zab', en: 'Curd cheese and mixed berry oats', sel: { oats: 50, turo: 100, milk15: 120, berries: 80, chia: 5, honey: 10 },
       steps: { hu: ['Keverd simára a túrót a tejjel és a mézzel.', 'Forgasd bele a zabot és a chia magot.', 'Rétegezd üvegbe a fagyasztott gyümölccsel, és tedd a hűtőbe éjszakára: reggelre kiolvad és megfesti a krémet.'], en: ['Mix the curd cheese with the milk and honey until smooth.', 'Fold in the oats and chia seeds.', 'Layer in a jar with the frozen berries and chill overnight: by morning they thaw and colour the cream.'] }, art: ['mix', 'mix', 'chill'] },
     { id: 'oats-mango-coconut', hu: 'Mangós-kókuszos zab', en: 'Mango coconut oats', sel: { oats: 50, almond: 150, greek0: 100, mango: 80, coconut: 8, chia: 8 },
       steps: { hu: ['Keverd össze a zabot, a chia magot, a kókuszreszeléket, a joghurtot és a mandulaitalt.', 'Fedd le, és tedd a hűtőbe éjszakára.', 'Reggel tedd a tetejére a felkockázott mangót.'], en: ['Mix the oats, chia seeds, coconut, yogurt and almond drink.', 'Cover and chill overnight.', 'In the morning top with diced mango.'] }, art: ['mix', 'chill', 'knife'] },
@@ -100,7 +100,7 @@ window.OvernightOats = (() => {
       const v = compute(p.sel);
       const old = R.items.find(r => r.id === p.id);
       if (old) { Object.assign(old, { oats: p.sel, kcal: v.kcal, p: v.p, c: v.c, f: v.f, g: v.g, ing: ingredientsOf(p.sel) }); return; }
-      made.push({ id: p.id, cat: 'breakfast', min: 5, servings: 1, hu: p.hu, en: p.en, illustration: true, oats: p.sel, ing: ingredientsOf(p.sel), steps: p.steps, art: p.art, note: INTRO, kcal: v.kcal, p: v.p, c: v.c, f: v.f, g: v.g });
+      made.push({ id: p.id, cat: 'breakfast', min: 5, servings: 1, hu: p.hu, en: p.en, illustration: !p.photo, oats: p.sel, ing: ingredientsOf(p.sel), steps: p.steps, art: p.art, note: INTRO, kcal: v.kcal, p: v.p, c: v.c, f: v.f, g: v.g });
     });
     R.items.splice(at + 1, 0, ...made);
   }

@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.38.1 — 2026-10-28 (build 20261028.4)
+
+Replaced the flat túrós–erdei gyümölcsös oats illustration with an individually generated food photograph and full-frame thumbnail. Recipe and nutrition stay the same. Photo caption metadata updated; the legacy drawing exporter now preserves this replacement.
+
 ## 2.38.0 — 2026-10-28 (build 20261028.3)
 
 Swimming as a cardio type. The form takes pool length (25, 33.3 or 50 m), lengths per stroke (freestyle, breaststroke, backstroke, butterfly, mixed), duration, body weight and pace level, and shows distance, pace per 100 m and estimated active energy while typing. Energy uses the 2024 Compendium of Physical Activities swimming METs (recreational / training: freestyle 5.8 / 9.8, breaststroke 5.3 / 10.3, backstroke 4.8 / 9.5, butterfly 13.8), weighted by lengths, above resting energy like the other cardio types. Impossible combinations (faster than about 130 m/min, fractional lengths) are rejected.

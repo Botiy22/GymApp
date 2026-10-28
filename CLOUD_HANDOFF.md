@@ -33,6 +33,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.38.1, 2026-10-28 (Codex)
+
+- Replaced only `oats-berry-turo` full image and thumbnail with a reviewed, separately generated food photo matching the newer oats collection. Provenance: `img/recipes/generated-20261028-berry-oats.json`; whole-frame export, 1448×1086 / 384×288. Recipe quantities/macros unchanged.
+- `js/overnight-oats.js` photo metadata selects the generated-photo caption. Existing Node assertion updated; `tools/oats_art.py` skips this recipe to avoid restoring its old drawing.
+- Main advanced during image generation; fast-forwarded to Claude's `7f54532` and preserved 2.38.0 swimming/wearable work. Backups: `backup/main-20261028-before-berry-oats-image` at `a8ea413`, `backup/main-20261028-before-berry-photo-2380` at `7f54532`. Published as 2.38.1/build 20261028.4, not the earlier unpublished 2.37.2 draft.
+- Passed existing oats Node tests (4), verified-update/diary and LF tests (2), plus isolated real-browser check of card/hero loading, photo caption and 390px HU bounds. Reviewed the generated source and in-app screenshot. Thumbnail DOM natural size is density-corrected by srcset; exported file remains 384×288. No physical-phone check. Release history and manifest rebuilt.
+
 # Update — Reppsy 2.38.0, 2026-10-28 (Claude)
 
 - Owner request: log swimming (lengths, mixed breast/back/free) and prepare smartwatch data for the future iOS/Android apps, also for rides; sauna answered as not counted (no app change).
