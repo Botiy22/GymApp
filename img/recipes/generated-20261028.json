@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-28",
+  "generator": "OpenAI image generation",
+  "records": [
+    {
+      "id": "oats-lean-blueberry",
+      "kind": "food-photo",
+      "source": "exec-757b981b-4a82-4ec4-beae-4a96eab0a9e6.png",
+      "source_sha256": "d6fa005fdf38c7296c1e699e573b5f5a760f31f7ef8155e9673b087af2bc3bdd",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "oats-lean-raspberry",
+      "kind": "food-photo",
+      "source": "exec-833ca424-9594-46ba-8587-41caca3c904f.png",
+      "source_sha256": "2a2aa0a06d644aa01fd7472459ff98054f4440f7c43f29aa5a09df6f738ffe8b",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "oats-lean-cherry",
+      "kind": "food-photo",
+      "source": "exec-f49ecc8c-b8d4-4f31-b842-1286b89447fd.png",
+      "source_sha256": "7aff7fcbdbdfcd9d8c3a81e0c29d6a0bb4c8f27ace21d3cdf18d5bf3584b3204",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "oats-lean-mango",
+      "kind": "food-photo",
+      "source": "exec-5d22abe2-b3cb-4360-a6c6-0102684aab18.png",
+      "source_sha256": "9f5432a17001786592f8d2a3e643cfdacad3151fbea6efce561963d06264cb91",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "oats-lean-apple",
+      "kind": "food-photo",
+      "source": "exec-0950713a-2e77-4281-b203-65684d486e29.png",
+      "source_sha256": "694c4fdaa881b6792335a0a0b2b9722d8ad90653ad0efaf780c6e3dabb2d275a",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "grilled-chicken-bulgur",
+      "kind": "food-photo",
+      "source": "exec-24b9e9e7-22a3-4630-93fc-a5e482e07266.png",
+      "source_sha256": "2c0af9f6c68ef00b8c4b53b841dcffe155aa1abd50f8223fb801b3dd987c4423",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1447,
+        1087
+      ]
+    },
+    {
+      "id": "grilled-chicken-potato",
+      "kind": "food-photo",
+      "source": "exec-870e7d8b-4784-45d4-b76e-9320b107c3d9.png",
+      "source_sha256": "871ffca180e847c8317267f732bd7a1248cd02e921362b79648445a3b6ede18a",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "grilled-chicken-brown-rice",
+      "kind": "food-photo",
+      "source": "exec-632c4996-bc43-4820-9e4a-0bd8709edaee.png",
+      "source_sha256": "40068751a9c4d8464868b7f662a080891117a63732ab001e7ee192a307ef7909",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "grilled-chicken-couscous",
+      "kind": "food-photo",
+      "source": "exec-6bc19d77-d2a4-4906-9109-3d3115c36414.png",
+      "source_sha256": "7b981aaaf4a0d355f02eb20f767bc88622219cb99e28288c166cbe9623ff731a",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "id": "grilled-chicken-sweet-potato",
+      "kind": "food-photo",
+      "source": "exec-01da8f6e-344d-4bba-8ae8-0853e43a3886.png",
+      "source_sha256": "a0b8eb149f728311eab26f340d8d73ac1ac74321ff9eb72cb3aa805aa707e765",
+      "size": [
+        1448,
+        1086
+      ],
+      "source_size": [
+        1448,
+        1086
+      ]
+    }
+  ]
+}

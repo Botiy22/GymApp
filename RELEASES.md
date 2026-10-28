@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.37.0 — 2026-10-28 (build 20261028.1)
+
+Ten original, protein-rich lower-fat recipes: five overnight oats (blueberry, raspberry cocoa, chocolate cherry, mango yogurt, apple cinnamon) and five grilled chicken meals (bulgur salad, potato/green beans, brown rice/broccoli, couscous/zucchini, sweet potato/yogurt slaw). Individually generated whole-frame photos, bilingual cooking instructions, explicit cooked weights, and USDA ingredient calculations. New oats also work in the existing builder.
+
+Four clickable goal filters combine with meal categories. An optional guide distinguishes established nutrition principles from our transparent portion-based browsing rules; categories overlap, incomplete nutrition stays in All, and no meal promises maximum muscle growth. References and nutrition provenance are linked; external research retrieval was blocked in this environment, as documented in `docs/RECIPE_NUTRITION.md`.
+
 ## 2.36.0 — 2026-10-27 (build 20261027.6)
 
 Overnight oats. `js/overnight-oats.js` holds a builder catalogue of 40 ingredients in seven groups (base, liquid in ml, yogurt/curd, protein, fruit, seeds and nuts, flavour and sweetener), each mapped to a row of the offline food database. One `compute()` gives the totals for recipe cards, the builder and the diary. Five new breakfast recipes (chocolate peanut butter protein, apple cinnamon, curd cheese and mixed berries, mango coconut, tiramisu) sit after the strawberry overnight oats, whose values are now calculated the same way. Amounts are our suggestions; pictures are original illustrations drawn by `tools/oats_art.py` and captioned as illustrations.

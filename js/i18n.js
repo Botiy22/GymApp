@@ -608,3 +608,36 @@ Object.assign(I18N.hu,{err_cut:'Az AI válasza túl hosszú lett és újraprób�
 
 Object.assign(I18N.en,{oatsCta:'Build your own overnight oats',oatsCtaSub:'Choose what goes in the jar; the macros update as you go.',oatsCustomize:'Customise',oatsTitle:'Overnight oats builder',oatsWeight:'In the jar: about {0} g',oatsLess:'Less {0}',oatsMore:'More {0}',oatsStart:'Start from',oatsBlank:'Oats and milk only',oatsMine:'Your jar',oatsEmpty:'Nothing in the jar yet. Add ingredients below.',oatsAddMore:'Add ingredients',oatsSource:'Calculated from the app’s food database (USDA and Hungarian additions). The protein powder is a generic whey; your own label is more exact.',oatsSave:'Save as my food',oatsDiaryName:'Overnight oats'});
 Object.assign(I18N.hu,{oatsCta:'Állítsd össze a saját overnight oats-odat',oatsCtaSub:'Válaszd ki, mi kerüljön az üvegbe; a makrókat azonnal számoljuk.',oatsCustomize:'Testreszabás',oatsTitle:'Overnight oats összeállító',oatsWeight:'Az üvegben: kb. {0} g',oatsLess:'Kevesebb {0}',oatsMore:'Több {0}',oatsStart:'Kiindulás',oatsBlank:'Csak zab és tej',oatsMine:'A te üveged',oatsEmpty:'Még üres az üveg. Adj hozzá alapanyagot lent.',oatsAddMore:'Alapanyagok hozzáadása',oatsSource:'Az alkalmazás étel-adatbázisából számolva (USDA és magyar kiegészítés). A fehérjepor általános tejsavófehérje; a saját porod címkéje pontosabb.',oatsSave:'Mentés saját ételként',oatsDiaryName:'Overnight oats'});
+
+Object.assign(I18N.en,{
+ recipeGoalTitle:'Recipe goals',recipeGoal_loss:'Weight loss',recipeGoal_maintain:'Maintenance',recipeGoal_bulk:'Bulking',recipeGoal_muscle:'Muscle growth',
+ recipeGoalHow:'How these fit your goal',recipeGoalEmpty:'No recipes match both filters.',recipeShowAll:'Show all recipes',recipeEvidence:'Evidence & sources',
+ recipeGoalHint_loss:'Lighter portions with plenty of protein.',recipeGoalHint_maintain:'Moderate portions for your daily budget.',recipeGoalHint_bulk:'Larger-energy portions with protein.',recipeGoalHint_muscle:'Protein-rich portions to support your training.',
+ recipeGoalPrinciple:'Your whole day matters. Weight loss needs an energy deficit; maintenance needs energy balance. Muscle growth also needs progressive resistance training and enough protein.',
+ recipeGoalRulesNote:'These filters describe one listed portion. The calorie and protein cutoffs are practical browsing rules; the research supports the underlying principles. Categories can overlap. Changing portions or ingredients changes the fit.',
+ recipeGoalScience_loss:'An energy deficit drives weight loss. Protein and resistance training help preserve muscle; a food does not burn fat by itself. Low fat is one way to reduce calories, not a requirement for every meal.',
+ recipeGoalScience_maintain:'Maintenance means matching your total energy needs over time. A recipe has no universal maintenance calorie value; fit the portion to your own daily target.',
+ recipeGoalScience_bulk:'A sustained energy surplus supports gaining weight. Larger surpluses can add more fat without proportionally more muscle. Keep training and protein in place; no single ideal surplus is established for everyone.',
+ recipeGoalScience_muscle:'ISSN guidance suggests about 1.4–2.0 g protein/kg/day for most exercising adults, often distributed in roughly 20–40 g servings. Resistance training is essential. Extra protein or calories do not guarantee maximum growth.',
+ recipeGoalRule_loss:'Our filter: meals 250–500 kcal with at least 25 g protein; snacks/drinks 80–250 kcal with at least 15 g.',
+ recipeGoalRule_maintain:'Our filter: meals 300–650 kcal with at least 20 g protein; snacks/drinks 100–300 kcal with at least 10 g.',
+ recipeGoalRule_bulk:'Our filter: meals at least 550 kcal and 25 g protein; snacks/drinks at least 300 kcal and 15 g protein.',
+ recipeGoalRule_muscle:'Our filter: at least 25 g protein per portion and at least 20% of energy from protein. This is a protein-focused browsing rule, not a promise of faster growth.',
+ recipeNutritionBasis:'New recipe estimates use the app’s USDA SR28 ingredient values. Raw/cooked weights are stated; brand labels and cooking losses vary. Recipes with missing macros remain under All. The new lean recipes meet the high-protein (≥20% of energy) and low-fat (≤3 g/100 g) composition criteria at the listed amounts.'
+});
+Object.assign(I18N.hu,{
+ recipeGoalTitle:'Receptcélok',recipeGoal_loss:'Fogyás',recipeGoal_maintain:'Súlytartás',recipeGoal_bulk:'Tömegelés',recipeGoal_muscle:'Izomépítés',
+ recipeGoalHow:'Hogyan illenek a célodhoz?',recipeGoalEmpty:'Nincs mindkét szűrőnek megfelelő recept.',recipeShowAll:'Összes recept',recipeEvidence:'Szakirodalom és források',
+ recipeGoalHint_loss:'Könnyebb adagok, sok fehérjével.',recipeGoalHint_maintain:'Mérsékelt adagok a napi keretedhez.',recipeGoalHint_bulk:'Energiadúsabb adagok fehérjével.',recipeGoalHint_muscle:'Fehérjedús adagok az edzésedhez.',
+ recipeGoalPrinciple:'A teljes napod számít. Fogyáshoz energiadeficit, súlytartáshoz energiaegyensúly kell. Izomépítéshez fokozatosan nehezedő erősítő edzés és elegendő fehérje is szükséges.',
+ recipeGoalRulesNote:'A szűrők egy feltüntetett adagra vonatkoznak. A kalória- és fehérjehatárok gyakorlati válogatási szabályok; a kutatások az alapelveket támasztják alá. A kategóriák átfedhetnek. Az adag vagy az összetevők módosítása megváltoztatja az illeszkedést.',
+ recipeGoalScience_loss:'A fogyást az energiadeficit határozza meg. A fehérje és az erősítő edzés segít az izomtömeg megtartásában; egy étel önmagában nem éget zsírt. A kisebb zsírtartalom csökkentheti a kalóriát, de nem kötelező minden étkezésnél.',
+ recipeGoalScience_maintain:'Súlytartásnál a teljes energiabeviteled hosszabb távon fedezi a szükségletedet. Nincs mindenkire érvényes súlytartó kalóriaérték egy recepthez; az adagot a saját napi célodhoz igazítsd.',
+ recipeGoalScience_bulk:'A tartós energiatöbblet támogatja a testsúlynövelést. Nagyobb többlettel több zsír is feljöhet anélkül, hogy arányosan több izom épülne. Az edzés és a fehérje továbbra is fontos; nincs mindenkire érvényes ideális többlet.',
+ recipeGoalScience_muscle:'Az ISSN a legtöbb sportoló felnőttnek kb. 1,4–2,0 g/ttkg napi fehérjét javasol, gyakran kb. 20–40 g-os adagokra elosztva. Az erősítő edzés elengedhetetlen. Több fehérje vagy kalória önmagában nem garantál maximális izomnövekedést.',
+ recipeGoalRule_loss:'Szűrőnk: főétkezés 250–500 kcal és legalább 25 g fehérje; kisétkezés/ital 80–250 kcal és legalább 15 g.',
+ recipeGoalRule_maintain:'Szűrőnk: főétkezés 300–650 kcal és legalább 20 g fehérje; kisétkezés/ital 100–300 kcal és legalább 10 g.',
+ recipeGoalRule_bulk:'Szűrőnk: főétkezés legalább 550 kcal és 25 g fehérje; kisétkezés/ital legalább 300 kcal és 15 g fehérje.',
+ recipeGoalRule_muscle:'Szűrőnk: adagonként legalább 25 g fehérje, és az energia legalább 20%-a fehérjéből származik. Ez fehérjeközpontú válogatási szabály, nem gyorsabb izomnövekedés ígérete.',
+ recipeNutritionBasis:'Az új receptek becslése az alkalmazás USDA SR28 összetevőadataiból készül. A nyers/főtt súlyokat jelezzük; a márkák és a sütési veszteségek eltérhetnek. A hiányos tápértékű receptek az Összes nézetben maradnak. Az új könnyű receptek a megadott mennyiségekkel teljesítik a magas fehérjetartalom (az energia ≥20%-a) és alacsony zsírtartalom (≤3 g/100 g) összetételi feltételeit.'
+});

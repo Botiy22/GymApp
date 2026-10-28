@@ -220,3 +220,14 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .oats-group .chip svg{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .oats-summary{padding:8px 10px}.oats-total b{font-size:.98rem}.oats-total div:first-child b{font-size:1.15rem}.oats-weight{margin-top:2px;font-size:.76rem}
 .oats-stepper .icon-btn{width:38px;height:38px;min-width:38px}
+
+/* Goal filters wrap for thumbs and larger phone text; meal types remain independent. */
+.recipe-goals{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px}
+.recipe-goals .chip{min-height:44px;padding:10px 14px;white-space:normal;line-height:1.25;max-width:100%;transition:background .2s,color .2s,border-color .2s}
+.recipe-goals .chip.on{background:rgba(var(--acc-rgb),.16);border-color:var(--acc);color:var(--acc-tx)}
+.recipe-goal-help{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 16px}
+.recipe-goal-help .link{display:flex;align-items:center;gap:6px;min-height:36px;font-size:.8rem}
+.recipe-goal-help svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+.recipe-goal-rule h3{margin:0 0 8px}.recipe-goal-rule p+p{margin-top:10px}
+.recipe-evidence{margin-top:20px}.recipe-evidence summary{min-height:44px;padding:10px 0;cursor:pointer}.recipe-evidence li{margin:12px 0}.recipe-evidence a{color:var(--acc-tx);overflow-wrap:anywhere}
+@media(prefers-reduced-motion:reduce){.recipe-goals .chip{transition:none}}

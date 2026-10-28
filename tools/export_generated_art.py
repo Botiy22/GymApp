@@ -21,12 +21,16 @@ def publish(manifest):
     records=[]
     for entry in manifest.get('foods',[]):
         source=Path(entry['path']);rid=entry['id'];image=Image.open(source).convert('RGB')
+        source_size=image.size
         if image.size!=(1448,1086):
-            raise ValueError(f'{rid}: expected native 1448x1086 reference-matched image, got {image.size}')
+            # Generation can differ by a pixel. Normalize the whole frame, never crop.
+            if max(abs(image.width-1448),abs(image.height-1086))>2:
+                raise ValueError(f'{rid}: expected near-native 1448x1086 image, got {image.size}')
+            image=image.resize((1448,1086),Image.Resampling.LANCZOS)
         dest=ROOT/'img/recipes'/f'{rid}.webp'
         image.save(dest,'WEBP',quality=92,method=6)
         image.resize((384,288),Image.Resampling.LANCZOS).save(dest.with_name(rid+'-thumb.webp'),'WEBP',quality=90,method=6)
-        records.append({'id':rid,'kind':'food-photo','source':source.name,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'size':list(image.size)})
+        records.append({'id':rid,'kind':'food-photo','source':source.name,'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'size':list(image.size),'source_size':list(source_size)})
     for entry in manifest.get('recovery',[]):
         folder=entry.get('folder','recovery')
         if folder not in ('recovery','library'): raise ValueError('Invalid art folder')

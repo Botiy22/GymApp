@@ -32,6 +32,15 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.37.0, 2026-10-28 (Codex)
+
+- Backup `backup/main-20261028-before-recipe-goals` at `14c92ba`; build `20261028.1`. Preserves Claude 2.35–2.36 changes and the oats builder.
+- `data/goal-recipes.js`: five high-protein lower-fat oats and five grilled chicken meals with sides, complete EN/HU methods, dl milk, explicit cooked weights and ingredient-calculated estimates. Oats use the existing builder calculation and appear as presets; chicken retains source rows/unrounded components for audit. Ten separately generated/reviewed photos plus thumbnails and provenance. `tools/export_generated_art.py` now tolerates a two-pixel size discrepancy by whole-frame resize (no cropping).
+- `js/recipe-goals.js`, `js/app.js`, `js/i18n.js`, `css/clean.css`: Weight loss / Maintenance / Bulking / Muscle growth chips combine with meal categories, with an optional guide and references. Exact numeric cutoffs are disclosed product heuristics, not clinical thresholds; incomplete macros stay in All. No guaranteed or maximum muscle growth claim. `docs/RECIPE_NUTRITION.md` records source data, rationale, exact cutoffs and limitations.
+- Research retrieval limitation: publisher/PMC/PubMed/Europe PMC/Crossref/NIH/EU/food-safety requests returned environment proxy 403. Established references are linked from existing knowledge, not claimed as freshly read. USDA SR28 ingredient rows were directly inspected/calculated locally. No actual product-specific/laboratory verification.
+- Loader/index and SW CORE include both helpers and all 20 media files. Release metadata/history and 459-file manifest updated.
+- Validation passed: eight Node tests (new nutrition/goal rules 2, existing oats 4, translations 2); eight distinct browser/LF checks (goal filters/EN-HU 320px enlarged-text layout, all ten photos/builder/scaled diary, verified offline recipe/photo use, existing oats browser 2, stale-shell helper loading, verified update retaining diary, LF). Initial diary assertion corrected for existing integer kcal storage; offline fixture now overrides Cloud via init script so cached real config cannot show auth gating. Phone screenshot visually reviewed. No live Supabase/AI calls or physical phone checks.
+
 # Update — Reppsy 2.36.0, 2026-10-27 (Claude)
 
 - Owner request: overnight oats recipes plus a builder with live macros. New `js/overnight-oats.js` (catalogue → database refs, `compute`, presets inserted into `RECIPES` after `overnight-oats`; existing recipe values recomputed: 430→438 kcal). `js/app.js`: `oatsCta`, `shOats`, `oatsName`, actions `oats-open/preset/toggle/step/add/save`, input `oats-amt`; customise button in `shRecipe`; `addFood` keeps `items`. `js/store.js`: `items` kept for `src:'db'` entries too (older clients drop them harmlessly). Lexicon: frozen mixed berries, erythritol. `tools/oats_art.py` + 10 `img/recipes/oats-*.webp` (illustrations). Loader/index/SW CORE updated.
