@@ -895,20 +895,64 @@
     const v = OvernightOats.compute(ui.oats.sel, L());
     return `<div class="oats-total"><div><b>${v.kcal}</b><i>kcal</i></div><div><b>${dec(v.p)} g</b><i>${esc(t('protein'))}</i></div><div><b>${dec(v.c)} g</b><i>${esc(t('carbs'))}</i></div><div><b>${dec(v.f)} g</b><i>${esc(t('fat'))}</i></div></div><p class="cap oats-weight">${esc(t('oatsWeight', compact(v.g)))}</p>`;
   }
+  function oatsRow(id) {
+    const O=OvernightOats, it=O.ITEMS[id], a=ui.oats.sel[id], k=L(), part=O.compute({[id]:a},k).parts[0];
+    return `<div class="oats-row" data-id="${id}"><div class="oats-row-name"><b>${esc(it[k])}</b><small><span data-oats-kcal="${id}">${part ? Math.round(part.kcal) + ' kcal' : ''}</span>${it.note ? ' · ' + esc(it.note[k]) : ''}</small></div><div class="oats-stepper"><button class="icon-btn sm" data-a="oats-step" data-id="${id}" data-d="-1" aria-label="${esc(t('oatsLess', it[k]))}">−</button><label><span class="sr">${esc(it[k])} (${oatsUnit(it)})</span><input type="text" inputmode="decimal" data-in="oats-amt" data-id="${id}" value="${esc(String(a))}" autocomplete="off"></label><span class="oats-u">${oatsUnit(it)}</span><button class="icon-btn sm" data-a="oats-step" data-id="${id}" data-d="1" aria-label="${esc(t('oatsMore', it[k]))}">+</button></div><button class="icon-btn sm oats-remove" data-a="oats-toggle" data-id="${id}" aria-label="${esc(t('remove'))}">${IC.close}</button></div>`;
+  }
   function shOats() {
     const fn = () => {
       const O = OvernightOats, st = ui.oats, k = L() === 'hu' ? 'hu' : 'en', chosen = Object.keys(st.sel).filter(id => O.ITEMS[id]);
-      const row = id => { const it = O.ITEMS[id], a = st.sel[id], part = O.compute({ [id]: a }, L()).parts[0];
-        return `<div class="oats-row" data-id="${id}"><div class="oats-row-name"><b>${esc(it[k])}</b><small><span data-oats-kcal="${id}">${part ? Math.round(part.kcal) + ' kcal' : ''}</span>${it.note ? ' · ' + esc(it.note[k]) : ''}</small></div><div class="oats-stepper"><button class="icon-btn sm" data-a="oats-step" data-id="${id}" data-d="-1" aria-label="${esc(t('oatsLess', it[k]))}">−</button><label><span class="sr">${esc(it[k])} (${oatsUnit(it)})</span><input type="text" inputmode="decimal" data-in="oats-amt" data-id="${id}" value="${esc(String(a))}" autocomplete="off"></label><span class="oats-u">${oatsUnit(it)}</span><button class="icon-btn sm" data-a="oats-step" data-id="${id}" data-d="1" aria-label="${esc(t('oatsMore', it[k]))}">+</button></div><button class="icon-btn sm oats-remove" data-a="oats-toggle" data-id="${id}" aria-label="${esc(t('remove'))}">${IC.close}</button></div>`; };
+
       const presets = O.PRESETS.map(p => { const r = RCP.items.find(x => x.id === p.id); return r ? `<button class="chip${st.from === p.id ? ' on' : ''}" data-a="oats-preset" data-id="${esc(p.id)}" aria-pressed="${st.from === p.id}">${esc(r[L()] || r.en)}</button>` : ''; }).join('');
       const groups = O.GROUPS.map(g => `<section class="oats-group"><h3>${esc(g[k])}</h3><div class="chips">${g.items.map(it => { const on = st.sel[it.id] != null; return `<button class="chip${on ? ' on' : ''}" data-a="oats-toggle" data-id="${it.id}" aria-pressed="${on}">${on ? IC.check : IC.plus}${esc(it[k])}</button>`; }).join('')}</div></section>`).join('');
       return { title: t('oatsTitle'), html: `${mealPicker()}<div class="oats-summary" id="oats-sum" aria-live="polite">${oatsSummary()}</div>
         <p class="lbl">${esc(t('oatsStart'))}</p><div class="chips oats-presets">${presets}<button class="chip" data-a="oats-preset" data-id="">${esc(t('oatsBlank'))}</button></div>
-        <h3 class="oats-mine-title">${esc(t('oatsMine'))}</h3>${chosen.length ? `<div class="oats-rows">${chosen.map(row).join('')}</div>` : `<p class="empty">${esc(t('oatsEmpty'))}</p>`}
+        <h3 class="oats-mine-title">${esc(t('oatsMine'))}</h3><div class="oats-rows">${chosen.map(oatsRow).join('')}</div><p class="empty oats-empty" ${chosen.length?'hidden':''}>${esc(t('oatsEmpty'))}</p>
         <p class="lbl">${esc(t('oatsAddMore'))}</p>${groups}<p class="cap">${esc(t('oatsSource'))}</p>`,
         foot: chosen.length ? `<button class="btn primary wide" data-a="oats-add">${esc(t('addToDiary'))}</button><button class="btn" data-a="oats-save">${esc(t('oatsSave'))}</button>` : '' };
     };
     fn.kind = 'oats'; return fn;
+  }
+  // Keep the tapped ingredient under the finger as rows above it grow or shrink.
+  // Updating in place also keeps keyboard focus and the dialog's scroll container.
+  function refreshOats(trigger) {
+    const d=dlg(), body=$('.sheet-body',d), rows=$('.oats-rows',d), st=ui.oats, O=OvernightOats;
+    if(!body||!rows||!st)return;
+    const removed=trigger?.closest('.oats-row'), anchor=removed&&st.sel[removed.dataset.id]==null
+      ? removed.nextElementSibling||removed.previousElementSibling||$('.oats-mine-title',d)
+      : trigger;
+    const y=anchor?.getBoundingClientRect().top, hadFocus=trigger===document.activeElement;
+    // Browser scroll anchoring must not compete with our explicit visual anchor.
+    const anchoring=body.style.overflowAnchor;body.style.overflowAnchor='none';
+    $('#oats-sum',d).innerHTML=oatsSummary();
+    $$('.oats-row',rows).forEach(row=>{if(st.sel[row.dataset.id]==null)row.remove();});
+    Object.keys(st.sel).filter(id=>O.ITEMS[id]).forEach(id=>{
+      let row=$(`.oats-row[data-id="${id}"]`,rows);
+      if(!row){rows.insertAdjacentHTML('beforeend',oatsRow(id));return;}
+      const input=$('input',row), part=O.compute({[id]:st.sel[id]},L()).parts[0];
+      if(input!==document.activeElement)input.value=String(st.sel[id]);
+      $('[data-oats-kcal]',row).textContent=part?Math.round(part.kcal)+' kcal':'';
+    });
+    $$('.oats-group [data-a="oats-toggle"]',d).forEach(chip=>{
+      const on=st.sel[chip.dataset.id]!=null;
+      if(chip.getAttribute('aria-pressed')!==String(on)){
+        chip.classList.toggle('on',on);chip.setAttribute('aria-pressed',String(on));
+        chip.innerHTML=(on?IC.check:IC.plus)+esc(O.ITEMS[chip.dataset.id][L()]);
+      }
+    });
+    $$('.oats-presets [data-a="oats-preset"]',d).forEach(chip=>{
+      const on=chip.dataset.id===st.from;chip.classList.toggle('on',on);chip.setAttribute('aria-pressed',String(on));
+    });
+    const chosen=rows.children.length>0;$('.oats-empty',d).hidden=chosen;
+    const foot=$('.sheet-foot',d);
+    if(!chosen)foot?.remove();
+    else if(!foot)d.insertAdjacentHTML('beforeend',`<div class="sheet-foot">${shOats()().foot}</div>`);
+    if(hadFocus&&!trigger.isConnected){
+      const next=anchor?.querySelector('button')||$('.oats-group [data-a="oats-toggle"]',d);
+      next?.focus({preventScroll:true});
+    }
+    if(anchor?.isConnected&&Number.isFinite(y))body.scrollTop+=anchor.getBoundingClientRect().top-y;
+    body.style.overflowAnchor=anchoring;
   }
   function oatsName() {
     const O = OvernightOats, k = L() === 'hu' ? 'hu' : 'en', names = Object.keys(ui.oats.sel).filter(id => O.ITEMS[id] && id !== 'oats' && O.ITEMS[id].group !== 'liquid').map(id => O.ITEMS[id][k].toLowerCase());
@@ -2777,9 +2821,9 @@
     'cook-next'(el){const r=RCP.items.find(r=>r.id===el.dataset.id);if(!r)return;const state=recipeCookState(r),length=(r.steps[L()]||r.steps.en).length;if(state.step>=length){state.step=0;closeSheet();}else{state.step++;refreshSheet();}},
     'idea-open'(el) { ui.recipeQty = 1; openSheet(shRecipe(el.dataset.id)); },
     'oats-open'(el) { if (!window.OvernightOats) return; const r = el.dataset.id && RCP.items.find(x => x.id === el.dataset.id && x.oats); if (r) ui.oats = { sel: { ...r.oats }, from: r.id }; else if (!ui.oats) ui.oats = { sel: OvernightOats.defaults(), from: '' }; openSheet(shOats()); },
-    'oats-preset'(el) { const r = el.dataset.id && RCP.items.find(x => x.id === el.dataset.id && x.oats); ui.oats = r ? { sel: { ...r.oats }, from: r.id } : { sel: OvernightOats.defaults(), from: '' }; refreshSheet(); },
-    'oats-toggle'(el) { const it = OvernightOats.ITEMS[el.dataset.id]; if (!it) return; const s = ui.oats.sel; if (s[it.id] != null) delete s[it.id]; else s[it.id] = it.def; refreshSheet(); },
-    'oats-step'(el) { const it = OvernightOats.ITEMS[el.dataset.id], s = ui.oats.sel; if (!it || s[it.id] == null) return; const v = Math.round((num(s[it.id]) + it.step * +el.dataset.d) * 10) / 10; if (v <= 0) delete s[it.id]; else s[it.id] = Math.min(1000, v); refreshSheet(); },
+    'oats-preset'(el) { const r = el.dataset.id && RCP.items.find(x => x.id === el.dataset.id && x.oats); ui.oats = r ? { sel: { ...r.oats }, from: r.id } : { sel: OvernightOats.defaults(), from: '' }; refreshOats(el); },
+    'oats-toggle'(el) { const it = OvernightOats.ITEMS[el.dataset.id]; if (!it) return; const s = ui.oats.sel; if (s[it.id] != null) delete s[it.id]; else s[it.id] = it.def; refreshOats(el); },
+    'oats-step'(el) { const it = OvernightOats.ITEMS[el.dataset.id], s = ui.oats.sel; if (!it || s[it.id] == null) return; const v = Math.round((num(s[it.id]) + it.step * +el.dataset.d) * 10) / 10; if (v <= 0) delete s[it.id]; else s[it.id] = Math.min(1000, v); refreshOats(el); },
     'oats-add'() { const v = OvernightOats.compute(ui.oats.sel, L()); if (!v.parts.length) return; const items = v.parts.map(p => ({ n: p.name, g: p.g, kcal: Math.round(p.kcal) }));
       if (!addFood([{ name: oatsName(), g: v.g, kcal: v.kcal, p: v.p, c: v.c, f: v.f, items }], 'db')) { toast(t('saveFailed')); return; } closeSheet(true); rerender(); toast(t('added')); },
     'oats-save'() { const v = OvernightOats.compute(ui.oats.sel, L()); if (!(v.g > 0)) return; const k = 100 / v.g, r = x => Math.round(x * k * 10) / 10;

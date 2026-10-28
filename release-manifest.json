@@ -1,6 +1,6 @@
 {
-  "version": "2.37.0",
-  "build": "20261028.1",
+  "version": "2.37.1",
+  "build": "20261028.2",
   "assets": {
     "data/goal-recipes.js": "75064af54feaa196279f8555c63f479b5ea6051d5a6123edd13c1b1272571999",
     "js/recipe-goals.js": "8b89d3b8961fbd584e80d2b04e2a3b50b73a975a1a56413b4e04a2a9b0e9a914",
@@ -344,7 +344,7 @@
     "vendor/leaflet/leaflet.js": "dc71f8a6880bc3ca1bd9fa8dc5f1af48c702dc510b0a78240a07c5feed7ce935",
     "vendor/leaflet/leaflet.css": "337bfca5cabd03b39815b2700febe2b3b7edf55921c59cd49f88ecb328212303",
     "./": "8bd3e4c5d3f34d528f3fcf9e0f19f4e11c35e85a261433fdb72fd0232d3e1b41",
-    "js/release.js": "cd91f2701fdc01567575f47cc58d3b6b7873eff894a28eb787ef706e16c270a7",
+    "js/release.js": "24d6feb0a6bd123831dc68664869cc2f230364bb2ca7e3d6a1d28dac72d870eb",
     "index.html": "8bd3e4c5d3f34d528f3fcf9e0f19f4e11c35e85a261433fdb72fd0232d3e1b41",
     "css/app.css": "f964ccd96e1719d65e9f79c434be23090a93786459b1ab4e496e0711983d080a",
     "manifest.webmanifest": "2be0fe0aabcc9ff83f8ca188c347227e71d84eb963cc213955a68bff932d5140",
@@ -365,7 +365,7 @@
     "js/charts.js": "5d65e0571f9a9714bd1bdeed19de095089de1b9c663d0f0b9450bad1d4644dce",
     "js/ai.js": "1685a943d8806ed178ce70a78c07680077ba1982b4be430b704740e2c93b5f26",
     "js/cloud.js": "18fbf7cf1f574c828bc7d6f2a6bde0d327d4d5e9351e700d5b0d00ade1bc3690",
-    "js/app.js": "170806874f2681295caf4bed0e1f1ab1198e663e495db6744b396d1f0e1d1b4f",
+    "js/app.js": "a577a944755dbfb25b38228b4683d4b1ab835a2eede1f6102da3334e547d0e3b",
     "js/strength-ranks.js": "e7c2507be2b1b3864fc2c67bc4facfc52ee9c952efa9285b7044c7923d21f4bd",
     "js/muscle-ranks.js": "5bb6e91ab565c2801c090cb6ced3dd4c89a001553832aa41111169558828eeee",
     "data/recovery.js": "126278aac56164a0fbe4f6f94a1847cc15b50e1f070c3b329191e4b362c4464a",

@@ -32,6 +32,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.37.1, 2026-10-28 (Codex)
+
+- Backup `backup/main-20261028-before-oats-scroll` at `fd166ed`; build `20261028.2`.
+- Reproduced ingredient-add jump: the whole sheet was replaced and its numeric scrollTop restored, but inserted selected-ingredient rows above the fruit chips moved the tapped control by ~128 px on a 320 px HU phone.
+- `js/app.js`: shared `oatsRow` renderer and targeted `refreshOats` retain the sheet, chips and existing rows. Update macros, quantities, selected states and footer in place; compensate for geometry changes at the tapped control. Removed-row focus moves to a remaining control without scrolling. Applies to ingredient toggles, amount steps and presets, without changing other dialogs.
+- Tests: new browser regression failed before the fix and passes after. All 7 focused browser/LF checks passed (4 oats cases including EN/HU enlarged-text, animations enabled, repeated fruit changes, focus and empty/last removal; recipe/builder/scaled diary integration; verified update with saved diary; LF). Six Node oats/translation tests passed. Physical iPhone not verified.
+- Release metadata/history and 459-asset manifest rebuilt. No new assets or database changes.
+
 # Update — Reppsy 2.37.0, 2026-10-28 (Codex)
 
 - Backup `backup/main-20261028-before-recipe-goals` at `14c92ba`; build `20261028.1`. Preserves Claude 2.35–2.36 changes and the oats builder.

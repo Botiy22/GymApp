@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.37.1 — 2026-10-28 (build 20261028.2)
+
+Fixed the overnight oats builder jumping when adding fruit or other ingredients. Ingredient controls and the dialog stay mounted; selected rows and nutrition update in place, compensating for changed content above the tapped control. Amount buttons retain focus, and empty-to-populated transitions restore the diary actions.
+
 ## 2.37.0 — 2026-10-28 (build 20261028.1)
 
 Ten original, protein-rich lower-fat recipes: five overnight oats (blueberry, raspberry cocoa, chocolate cherry, mango yogurt, apple cinnamon) and five grilled chicken meals (bulgur salad, potato/green beans, brown rice/broccoli, couscous/zucchini, sweet potato/yogurt slaw). Individually generated whole-frame photos, bilingual cooking instructions, explicit cooked weights, and USDA ingredient calculations. New oats also work in the existing builder.

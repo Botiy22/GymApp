@@ -15,6 +15,47 @@ class OvernightOatsBrowser(unittest.TestCase):
     def kcal(self, page):
         return int(page.locator('#oats-sum .oats-total div').first.locator('b').inner_text())
 
+    def test_ingredient_changes_keep_the_tapped_control_in_place(self):
+        for width,lang,text in [(320,'hu',20),(390,'en',16)]:
+            page,errors=self.page(width,844,lang,text)
+            self.open_builder(page)
+            page.emulate_media(reduced_motion='no-preference')
+            for fruit in ['blueberry','mango','raspberry','blueberry']:
+                chip=page.locator(f'#sheet .oats-group [data-a=oats-toggle][data-id={fruit}]')
+                chip.scroll_into_view_if_needed()
+                before=chip.bounding_box()['y']
+                chosen=chip.get_attribute('aria-pressed')=='true'
+                chip.click()
+                page.wait_for_timeout(200)
+                self.assertAlmostEqual(chip.bounding_box()['y'],before,delta=2,msg=f'{lang}/{fruit}')
+                self.assertEqual(chip.get_attribute('aria-pressed'),str(not chosen).lower())
+                self.assertEqual(self.kcal(page),page.evaluate('OvernightOats.compute(__gym.ui.oats.sel).kcal'))
+            step=page.locator('#sheet .oats-row[data-id=mango] [data-a=oats-step][data-d="1"]')
+            step.scroll_into_view_if_needed();before=step.bounding_box()['y'];step.click()
+            self.assertAlmostEqual(step.bounding_box()['y'],before,delta=2)
+            self.assertTrue(step.evaluate('(e)=>document.activeElement===e'))
+            self.bounds(page,'oats stable scroll '+lang)
+            self.assertEqual(errors,[])
+
+    def test_remove_last_ingredient_then_add_again(self):
+        page,errors=self.page(390,844,'en')
+        self.open_builder(page)
+        for ingredient in ['oats','milk15']:
+            page.locator(f'.oats-row[data-id={ingredient}] .oats-remove').click()
+        self.assertTrue(page.locator('.oats-empty').is_visible())
+        self.assertEqual(page.locator('#sheet .sheet-foot').count(),0)
+        chip=page.locator('.oats-group [data-a=oats-toggle][data-id=mango]')
+        chip.scroll_into_view_if_needed();before=chip.bounding_box()['y'];chip.click()
+        self.assertAlmostEqual(chip.bounding_box()['y'],before,delta=2)
+        self.assertFalse(page.locator('.oats-empty').is_visible())
+        self.assertEqual(page.locator('#sheet [data-a=oats-add]').count(),1)
+        page.locator('.oats-row[data-id=mango] input').fill('10')
+        page.locator('.oats-row[data-id=mango] [data-a=oats-step][data-d="-1"]').click()
+        self.assertEqual(page.locator('.oats-row').count(),0)
+        self.assertTrue(page.locator('.oats-empty').is_visible())
+        self.assertTrue(page.evaluate('document.activeElement.isConnected&&document.querySelector("#sheet").contains(document.activeElement)'))
+        self.assertEqual(errors,[])
+
     def test_builder_updates_macros_and_logs_breakdown(self):
         for width, lang, text in [(320, 'hu', 20), (390, 'en', 16)]:
             with self.subTest(lang=lang):
