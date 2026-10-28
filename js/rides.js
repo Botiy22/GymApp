@@ -168,7 +168,7 @@ globalThis.Rides = (() => {
   function clean(v) {
     if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
     const n = (x, lo, hi) => { x = typeof x === 'number' ? x : parseFloat(x); return Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : 0; };
-    const o = { v: 1, src: ['gps', 'gpx', 'tcx'].includes(v.src) ? v.src : 'gps', dist: Math.round(n(v.dist, 0, 2e6)), moving: Math.round(n(v.moving, 0, 4e5)), elapsed: Math.round(n(v.elapsed, 0, 4e5)), gain: Math.round(n(v.gain, 0, 30000)), maxSpd: Math.round(n(v.maxSpd, 0, 150) * 10) / 10 };
+    const o = { v: 1, src: ['gps', 'gpx', 'tcx', 'watch'].includes(v.src) ? v.src : 'gps', dist: Math.round(n(v.dist, 0, 2e6)), moving: Math.round(n(v.moving, 0, 4e5)), elapsed: Math.round(n(v.elapsed, 0, 4e5)), gain: Math.round(n(v.gain, 0, 30000)), maxSpd: Math.round(n(v.maxSpd, 0, 150) * 10) / 10 };
     if (o.elapsed < o.moving) o.elapsed = o.moving;
     const text = (x, max) => typeof x === 'string' && x.length <= max && POLY.test(x) ? x : '';
     const path = text(v.path, 120000);

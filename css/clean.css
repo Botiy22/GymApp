@@ -231,3 +231,17 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .recipe-goal-rule h3{margin:0 0 8px}.recipe-goal-rule p+p{margin-top:10px}
 .recipe-evidence{margin-top:20px}.recipe-evidence summary{min-height:44px;padding:10px 0;cursor:pointer}.recipe-evidence li{margin:12px 0}.recipe-evidence a{color:var(--acc-tx);overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){.recipe-goals .chip{transition:none}}
+
+/* swimming and smartwatch */
+.swim-strokes{border:0;padding:0;margin:0 0 4px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px}
+.swim-strokes legend{font-size:.82rem;color:var(--mut);margin-bottom:6px;padding:0}
+.swim-strokes .fld:last-child{grid-column:1 / -1}
+.swim-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:4px 0 10px;padding:10px;border-radius:14px;background:var(--glass);border:1px solid var(--edge);text-align:center}
+.swim-out b{display:block;font-variant-numeric:tabular-nums}.swim-out i{display:block;font-style:normal;color:var(--mut);font-size:.72rem}
+.wear-card{margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--glass);border:1px dashed var(--edge)}
+.wear-card h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:.95rem}.wear-card h3 small{color:var(--mut);font-weight:500}
+.wear-card h3 svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wear-card .cap{margin:0}
+.wear-live{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:6px;margin-top:10px;text-align:center}
+.wear-live b{display:block;font-size:1.05rem;font-variant-numeric:tabular-nums}.wear-live small{font-size:.7rem;color:var(--mut)}.wear-live i{display:block;font-style:normal;color:var(--mut);font-size:.72rem}
+.wear-note{display:flex;gap:8px;align-items:center}.wear-note svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4}

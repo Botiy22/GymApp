@@ -11,6 +11,7 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For ChatGPT — 2.38.0 swimming and smartwatch bridge (Claude):** `js/wearable.js` contract and `docs/WEARABLES.md` (is anything missing for a native WKWebView/Health Connect implementation?), swim MET weighting in `js/workout-energy.js`, the swim form in `js/app.js`.
 - **For ChatGPT — 2.36.0 overnight oats (Claude):** `js/overnight-oats.js` catalogue refs and default amounts, `shOats` in `js/app.js`. If you can generate photos in the existing recipe style, the five `img/recipes/oats-*.webp` illustrations could be replaced (keep ids and sizes, drop `illustration: true`).
 - **For ChatGPT — 2.35.0 offline food foundation (Claude):** `js/food-query.js` (parser: numbers/units/question words/Hungarian endings, `resolve` scoring and its exact/close rules, `unitGrams` portion order, strict mode used by the diary) and `data/food-lexicon.js` (aliases that pick the wrong default, piece weights that look off for Hungarian shops, recipe amounts and yields). Please try real phrasing that still fails or picks a wrong food and add it to `tests/test_food_query.cjs`. Recipe and proxy values are labelled estimates; label values cite their product page.
 - **For ChatGPT — 2.31.0 recovery programmes and clip recipes (Claude):** `data/recovery.js` (do the 17 `Rehab_*` names/cues match what the KneeHab clips show? sets/reps are as printed), `tools/recovery_art.py` drawings, the recovery block in `js/app.js` (`recoveryCards`, `shRecovery`, `addRecovery`), `data/clip-recipes.js` (suggested amounts and computed macros), `js/cook-art.js` keyword rules, `css/recipes-stability.css` additions. Report clearly wrong exercise readings or nutrition maths; leave wording/design to the owner.
@@ -31,6 +32,12 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.38.0, 2026-10-28 (Claude)
+
+- Owner request: log swimming (lengths, mixed breast/back/free) and prepare smartwatch data for the future iOS/Android apps, also for rides; sauna answered as not counted (no app change).
+- `js/workout-energy.js`: `swim` type (`pool`, `laps` per stroke, Compendium 2024 METs, `swim()` stats), `wear` (watch data; `wear.kcal` replaces the estimate). `js/wearable.js`: bridge contract v1, cleaning, `toSwim`/`toRide`. `js/app.js`: swim form with live preview, `wearPanel` (swim form + Ride screen), `wear-import/live/use-last`, live ride samples into `rideLive`/`Rides.sensor`, cardio rows show distance/lengths. `js/rides.js`: `src:'watch'`. `docs/WEARABLES.md` native guide (platform API names marked to verify). Loader/index/SW CORE.
+- Tests: `tests/test_wearable.cjs` (4), `tests/test_swim_wearable_browser.py` (3, fake iOS handler), cached-shell test extended. Not verified: any real watch or native build (none exists).
 
 # Update — Reppsy 2.37.1, 2026-10-28 (Codex)
 

@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.38.0 — 2026-10-28 (build 20261028.3)
+
+Swimming as a cardio type. The form takes pool length (25, 33.3 or 50 m), lengths per stroke (freestyle, breaststroke, backstroke, butterfly, mixed), duration, body weight and pace level, and shows distance, pace per 100 m and estimated active energy while typing. Energy uses the 2024 Compendium of Physical Activities swimming METs (recreational / training: freestyle 5.8 / 9.8, breaststroke 5.3 / 10.3, backstroke 4.8 / 9.5, butterfly 13.8), weighted by lengths, above resting energy like the other cardio types. Impossible combinations (faster than about 130 m/min, fractional lengths) are rejected.
+
+Smartwatch bridge for the coming native apps: `js/wearable.js` defines a versioned message contract (iOS WKWebView handler, Android JavaScript interface or Capacitor plugin), cleans every live sample and finished workout, and maps them to swim entries and rides. Measured active energy is stored with the entry (`wear`) and replaces the estimate. The swim form and the Ride screen have a Smartwatch panel: import the last workout, live data (feeds the running ride's heart rate, cadence, power and speed like Bluetooth sensors). On the web the panel explains it is for the iOS/Android apps. Native implementation guide: `docs/WEARABLES.md`.
+
 ## 2.37.1 — 2026-10-28 (build 20261028.2)
 
 Fixed the overnight oats builder jumping when adding fruit or other ingredients. Ingredient controls and the dialog stay mounted; selected rows and nutrition update in place, compensating for changed content above the tapped control. Amount buttons retain focus, and empty-to-populated transitions restore the diary actions.
