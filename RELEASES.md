@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.40.0 — 2026-10-29 (build 20261029.3)
+
+Daily steps and that day's training are now independent calorie additions, as requested. The top switch adds only the entered step calories; the training switch adds only logged training energy. Both remain enabled and retain their own checked state. The equation shows both additions separately. Removed the full-day-total selector and override/locking behavior; the entry form and shortcut guidance now request steps only, not a watch's whole-day active energy. Existing numeric values remain unchanged and are treated as step calories; previously entered whole-day totals should be corrected in the entry form. Base nutrition targets are unchanged.
+
+Workout navigation has three main destinations: Train (training overview, cycling), Library (plans, exercises, stability), and History. Native disclosure menus use full-width touch rows, selected-state feedback, outside/Escape dismissal and focus restoration. Menus stay within the viewport; all existing workout flows and ongoing sessions remain available.
+
 ## 2.39.1 — 2026-10-29 (build 20261029.2)
 
 Fixed step calories suppressing the workout-calorie switch. Activity entries now distinguish steps-only calories (excluding workouts) from full daily active-energy totals. Steps and workouts can be included independently; full daily totals still replace workouts to prevent double counting. The food/profile budget shows both controls and explains when workouts are already included. Tap the activity amount to correct an existing entry. Step estimates select steps-only; pasted health-app totals select full-day. Legacy entries retain their previous full-day meaning until edited. The type persists through storage cleaning, backup and cloud documents; base targets stay unchanged.

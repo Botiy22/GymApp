@@ -61,3 +61,19 @@
 @keyframes step-in{from{opacity:0;transform:translateY(10px)}}
 /* Five recipe categories wrap onto a second row instead of clipping their names on narrow phones or with large text. */
 .recipe-categories.seg{display:flex;flex-wrap:wrap;gap:3px}.recipe-categories.seg button{flex:1 1 auto;min-width:max-content;padding:9px 10px;white-space:nowrap}
+
+/* Three compact workout destinations; dropdowns stay within the phone viewport. */
+.workout-tabs.workout-menu-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:5px;border:1px solid var(--edge);border-radius:16px;isolation:isolate}
+.workout-menu-nav .workout-menu{margin:0;min-width:0;border:0;padding:0;background:none}
+.workout-menu-nav summary,.workout-menu-nav .workout-menu-history{list-style:none;display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-height:48px;padding:10px 4px;border:0;border-radius:11px;background:transparent;color:var(--mut);font-size:.76rem;font-weight:650;cursor:pointer;line-height:1.2}
+.workout-menu-nav summary::-webkit-details-marker{display:none}
+.workout-menu-nav summary>svg,.workout-menu-history>svg{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8}
+.workout-menu-nav summary>svg:last-child{width:12px;height:12px;transition:transform .2s}
+.workout-menu-nav details[open] summary>svg:last-child{transform:rotate(180deg)}
+.workout-menu-nav .on>summary,.workout-menu-nav .workout-menu-history.on,.workout-menu-nav details[open]>summary{background:var(--raised);color:var(--acc-tx)}
+.workout-menu-nav .workout-menu-items{position:absolute;top:calc(100% + 6px);left:0;right:0;padding:6px;border:1px solid var(--edge);border-radius:16px;background:var(--card);box-shadow:0 12px 30px #0003;animation:step-in .18s ease-out}
+.workout-menu-nav .workout-menu-items button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:12px;border:0;border-radius:10px;background:transparent;text-align:left;font-size:.88rem;color:var(--ink)}
+.workout-menu-items button[aria-current=page]{background:var(--raised);color:var(--acc-tx)}
+.workout-menu-items button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.workout-menu-nav summary:focus-visible,.workout-menu-nav button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:1px}
+@media(max-width:360px){.workout-menu-nav summary>svg:first-child,.workout-menu-history>svg{display:none}.workout-menu-nav summary,.workout-menu-nav .workout-menu-history{font-size:.72rem}}

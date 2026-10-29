@@ -674,3 +674,32 @@ Object.assign(window.I18N.hu,{
   stepEnergyHint:'Csak olyan edzés kalóriáját add hozzá külön, amelyet ezek a lépések még nem tartalmaznak.',
   manualEnergyPriority:'Az edzés már benne van ebben az összegben. Ha csak lépéskalóriát adtál meg, fent módosítsd az aktivitás típusát.'
 });
+
+Object.assign(window.I18N.en,{workoutMenu_training:'Train',workoutMenu_library:'Library'});
+Object.assign(window.I18N.hu,{workoutMenu_training:'Edzés',workoutMenu_library:'Tár'});
+
+Object.assign(window.I18N.en,{
+ budgetDailySteps:'Daily steps',setAddActive:'Include daily step calories',includeWorkoutEnergy:'Include training calories',
+ stepEnergyTotal:'Daily steps: {0} kcal',actTitle:'Daily steps',burnLbl:'Calories from steps (kcal)',
+ stepsOnlyHint:'Enter calories from steps only, not your watch’s full active-energy total. Training is added separately; exclude steps already counted in a logged workout.',
+ actImportLead:'Paste your step count and step calories. Full-day active energy includes training and should not go here.',
+ actHowCap:'Import steps only. Enter step calories separately or use the rough estimate; do not import full-day active energy here.'
+});
+Object.assign(window.I18N.hu,{
+ budgetDailySteps:'Napi lépések',setAddActive:'Lépéskalóriák beszámítása',includeWorkoutEnergy:'Edzéskalóriák beszámítása',
+ stepEnergyTotal:'Napi lépések: {0} kcal',actTitle:'Napi lépések',burnLbl:'Lépésekből elégetett kalória (kcal)',
+ stepsOnlyHint:'Csak lépéskalóriát adj meg, ne az órád teljes aktív energiáját. Az edzést külön számoljuk; a naplózott edzésben már szereplő lépéseket ne add hozzá újra.',
+ actImportLead:'Illeszd be a lépésszámot és a lépéskalóriát. A teljes napi aktív energia az edzést is tartalmazza, ezért nem ide való.',
+ actHowCap:'Csak a lépéseket importáld. A lépéskalóriát külön add meg vagy használd a becslést; a teljes napi aktív energiát ne importáld ide.'
+});
+
+Object.assign(window.I18N.en,{
+ actHow4:'Add a “Text” action: steps=[the sum].',actHow5:'Add “Copy to Clipboard” after that text.',actHow6:'Run the shortcut and paste here. Enter step calories separately or use Estimate.',
+ actAdd:'Add daily steps',actAddSub:'Step count and calories from walking',
+ energyBudgetHint:'Steps and training are separate additions. Leave them off if your base calorie target already includes that activity.'
+});
+Object.assign(window.I18N.hu,{
+ actHow4:'Adj hozzá egy „Szöveg” műveletet: steps=[az összeg].',actHow5:'A szöveg után add hozzá a „Másolás a vágólapra” műveletet.',actHow6:'Futtasd a parancsot, és illeszd be ide. A lépéskalóriát külön add meg vagy kérj becslést.',
+ actAdd:'Napi lépések megadása',actAddSub:'Lépésszám és a sétából elégetett kalória',
+ energyBudgetHint:'A lépések és az edzés külön adhatók hozzá. Hagyd kikapcsolva, ha az alap kalóriacélod már tartalmazza az adott aktivitást.'
+});

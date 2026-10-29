@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Original routine retirement/import and social interactions on synthetic accounts."""
 import base64
 from io import BytesIO
@@ -79,7 +80,7 @@ class RoutineReviewPolish(unittest.TestCase):
         expected=json.loads((responsive.ROOT/'exports/reppsy-original-five-day.json').read_text())['routines']
         self.assertEqual(page.evaluate('Store.d.routines.filter(r=>r.id.startsWith("personal_")).map(r=>r.items)'),[r['items'] for r in expected])
         page.reload();page.wait_for_function('()=>!!window.__gym');self.assertEqual(page.evaluate('Store.d.routines.filter(r=>r.id.startsWith("personal_")).length'),5)
-        page.locator('#tabbar [data-tab=home]').click();page.locator('[data-a=workout-view][data-v=plans]').first.click();self.bounds(page,'imported personal split');self.assertEqual(errors,[])
+        page.locator('#tabbar [data-tab=home]').click();select_workout(page,'plans');self.bounds(page,'imported personal split');self.assertEqual(errors,[])
 
     def test_achievements_close_and_remain_closed_after_redraw(self):
         page,errors=self.page(320,844,'hu',20);page.locator('.profile-shortcut').click()

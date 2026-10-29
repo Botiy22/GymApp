@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Real-browser regression for bike rides: recording, resume after reload, saving, GPX export/import, sensors and layout."""
 import functools
 import http.server
@@ -47,7 +48,7 @@ class RideBrowser(unittest.TestCase):
         page.on('pageerror', lambda e: errors.append(str(e))); page.on('dialog', lambda d: d.accept())
         page.goto(f'http://127.0.0.1:{self.server.server_port}/'); page.wait_for_function('()=>!!window.__gym')
         page.evaluate('(l)=>{Store.d.settings.lang=l;Store.d.settings.calm=true;Store.d.settings.profile.weight="75";Store.save();__gym.render()}', lang)
-        page.locator('[data-a="workout-view"][data-v="ride"]').click()
+        select_workout(page,'ride')
         return page, errors
 
     def feed(self, page, seconds=300, metres=7):
@@ -101,7 +102,7 @@ class RideBrowser(unittest.TestCase):
             self.assertIn('Lake loop', page.locator('#sheet-title').inner_text())
         page.locator('#sheet [data-a="sheet-close"]').click()
         self.assertEqual(page.locator('.ride-row').count(), 2)
-        page.locator('[data-a="workout-view"][data-v="history"]').click()
+        select_workout(page,'history')
         self.assertIn('2.09 km', page.locator('.history-title small').first.inner_text())
         page.locator('.history-title').first.click()
         page.locator('#sheet .ride-kpis').wait_for()
@@ -131,7 +132,7 @@ class RideBrowser(unittest.TestCase):
         for lang in ['en', 'hu']:
             with self.subTest(lang=lang):
                 page, errors = self.page(320, lang)
-                self.assertEqual(len({round(b['y']) for b in page.locator('.workout-tabs button').evaluate_all('(bs)=>bs.map(b=>b.getBoundingClientRect())')}), 1)
+                self.assertEqual(len({round(b['y']) for b in page.locator('.workout-tabs summary,.workout-menu-history').evaluate_all('(bs)=>bs.map(b=>b.getBoundingClientRect())')}), 1)
                 self.assertTrue(page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
                 page.locator('[data-a="ride-start"]').click(); self.feed(page, 60)
                 over = page.evaluate('()=>[...document.querySelectorAll("#ride-live .ride-head *,#ride-live .ride-panel *")].filter(e=>e.getBoundingClientRect().right>innerWidth+1).length')

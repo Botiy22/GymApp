@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Equal recipe cards, guided cooking, and private stability/knee sections."""
 import unittest
 import test_responsive_polish as responsive
@@ -52,21 +53,21 @@ class RecipesStability(unittest.TestCase):
     def test_stability_and_knee_routing_preserves_ids_data_sync_and_history(self):
         p,errors=self.page(320,844,'hu',20)
         p.evaluate('()=>{Store.d.routines.push({id:"sequence-fixture",name:"My sequence",builtin:false,items:[{ex:"Standing_Calf_Raises",sets:2,reps:"8",rest:45}]});Store.save();__gym.render()}')
-        p.locator('[data-a=workout-view][data-v=stability]').click();self.bounds(p,'stability page')
+        select_workout(p,'stability');self.bounds(p,'stability page')
         p.locator('[data-a=stability-view][data-v=knee]').click();self.bounds(p,'knee recovery page')
         p.locator('[data-a=stability-organise]').click();p.locator('[data-a=stability-move][data-id=sequence-fixture]').click()
         self.assertEqual(p.locator('.stability-routines [data-id=sequence-fixture]').count(),1)
         self.assertEqual(p.evaluate('Store.d.routines.find(r=>r.id==="sequence-fixture").items[0].sets'),2)
-        p.locator('[data-a=workout-view][data-v=plans]').click();self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),0)
+        select_workout(p,'plans');self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),0)
         self.assertEqual(p.evaluate('JSON.parse(Store.exportJSON()).data.routines.find(r=>r.id==="sequence-fixture").focus'),'knee')
         p.evaluate('()=>Store.adopt(Cloud.merge(Store.cloudDoc(),Store.cloudDoc()))');p.reload();p.wait_for_function('()=>!!window.__gym')
-        p.locator('[data-a=workout-view][data-v=stability]').click();p.locator('[data-a=stability-view][data-v=knee]').click()
+        select_workout(p,'stability');p.locator('[data-a=stability-view][data-v=knee]').click()
         p.locator('[data-a=r-open][data-id=sequence-fixture]').click();p.locator('[data-a=r-edit]').click();self.bounds(p,'routine section editor')
         p.locator('[data-in=re-focus]').select_option('strength');p.locator('[data-a=re-save]').click()
-        p.locator('[data-a=workout-view][data-v=plans]').click();self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),1);self.assertEqual(errors,[])
+        select_workout(p,'plans');self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),1);self.assertEqual(errors,[])
 
     def test_new_knee_sequence_keeps_area_through_picker_save(self):
-        p,errors=self.page();p.locator('[data-a=workout-view][data-v=stability]').click();p.locator('[data-a=stability-view][data-v=knee]').click()
+        p,errors=self.page();select_workout(p,'stability');p.locator('[data-a=stability-view][data-v=knee]').click()
         p.locator('[data-a=r-new]').click();p.locator('[data-a=pick]').first.click();p.locator('[data-a=pick-done]').click()
         self.assertEqual(p.locator('[data-in=re-focus]').input_value(),'knee');p.locator('[data-in=re-name]').fill('User sequence');p.locator('[data-a=re-save]').click()
         self.assertEqual(p.locator('.stability-routines .rcard').count(),1);self.assertEqual(p.evaluate('Store.d.routines.find(r=>r.name==="User sequence").focus'),'knee');self.assertEqual(errors,[])

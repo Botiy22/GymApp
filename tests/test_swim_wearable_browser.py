@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """2.38: swim logging, and the smartwatch bridge driven by a fake native iOS handler (swim form, live ride data, ride import)."""
 import unittest
 import test_rides_browser as rides
@@ -63,7 +64,7 @@ class SwimWearable(unittest.TestCase):
 
     def test_live_watch_data_during_a_ride_and_ride_import(self):
         page, errors = self.page(390, 'en', True)
-        page.locator('[data-a="workout-view"][data-v="ride"]').click()
+        select_workout(page,'ride')
         self.assertEqual(page.locator('.wear-card[data-wear=ride] [data-a=wear-live]').count(), 1)
         page.locator('[data-a="ride-start"]').click(); page.locator('#ride-live').wait_for()
         self.feed(page, 120)

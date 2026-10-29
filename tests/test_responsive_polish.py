@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Focused real-browser regression for adaptive actions, recipe media and avatar viewing."""
 import functools
 import http.server
@@ -64,7 +65,7 @@ class ResponsivePolish(unittest.TestCase):
                                 page.locator('[data-a=sheet-close]').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
                         if tab=='home':
                             for v in ['plans','exercises','stability','history','train']:
-                                page.locator(f'.workout-tabs [data-v={v}]').click();self.bounds(page,f'{width}/{lang}/workout/{v}')
+                                select_workout(page,v);self.bounds(page,f'{width}/{lang}/workout/{v}')
                             page.locator('[data-a=w-start]').first.click();self.bounds(page,'active workout')
                             page.evaluate('()=>{Store.d.active=null;__gym.ui.wOpen=false;Store.save();__gym.render()}')
 

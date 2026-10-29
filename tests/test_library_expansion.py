@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 import unittest
 import test_responsive_polish as responsive
 class LibraryExpansion(unittest.TestCase):
@@ -10,7 +11,7 @@ class LibraryExpansion(unittest.TestCase):
             p,errors=self.page(390,844,lang)
             ids=p.evaluate("Object.keys(ROUTINE_ART).filter(id=>ROUTINE_ART[id].thumb.startsWith('img/library/'))")
             self.assertGreaterEqual(len(ids),6)
-            p.locator('[data-a=workout-view][data-v=exercises]').click()
+            select_workout(p,'exercises')
             for id in ids:
                 name=p.evaluate('(id)=>'+('EX_HU[id][0]' if lang=='hu' else 'EXERCISES.find(e=>e.id===id).n'),id)
                 p.locator('[data-in=lib-q]').fill(name)

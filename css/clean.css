@@ -250,3 +250,5 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .ai-pending .card{padding:14px;margin:12px 0}.ai-pending b{overflow-wrap:anywhere}.ai-pending .chips{display:flex;flex-wrap:wrap;gap:8px}.ai-pending .btn{flex:1 1 120px;min-width:0;width:auto;white-space:normal}.ai-pending .link{min-height:40px}.ai-pending .cap{margin:8px 0}
 
 .shop-launch{width:100%;margin:8px 0 14px;min-height:44px}
+
+.budget-switches{display:grid;gap:4px;margin:12px 0}.budget-switches .sw{margin:0;min-height:56px}.budget-switches .sw>span{min-width:0}.budget-switches small{display:block;font-size:.76rem;color:var(--mut);font-variant-numeric:tabular-nums;margin-top:3px}

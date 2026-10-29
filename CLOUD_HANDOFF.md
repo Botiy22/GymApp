@@ -33,6 +33,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.40.0, 2026-10-29 (Codex)
+
+- Backup `backup/main-20261029-before-budget-navigation` at `db3367c`; build `20261029.3`.
+- Owner clarified: keep daily steps and same-day training as two separate additions. This supersedes 2.39.1's total/steps override. `WorkoutEnergy.budget` now independently adds step calories (`addActive`) and logged training (`addWorkoutCalories`). Neither switch overrides, checks or disables the other. Food/Profile show each amount and both terms in the equation. `js/app.js` removes the activity-type selector, labels entry/paste/shortcut instructions as steps-only, and keeps numeric history untouched. Legacy full-day totals must be corrected by the owner if they are not step-only calories; no automatic guessed subtraction. Base targets are unchanged, no SQL migration.
+- Workout menu: Train (overview/cycling), Library (plans/exercises/stability), History. Native details dropdowns, touch-sized rows spanning the nav width, selected states, exclusive open group, outside/Escape dismissal and focus restoration. Existing actions and ongoing workout state preserved. CSS in `recipes-stability.css`; separate budget amount labels in `clean.css`; EN/HU translations and helper capability bootstrap updated.
+- Tests: 8 distinct Node checks (independent budget combinations including legacy records, translations, swim/wearable calculations). 19 browser checks across activity budget, workout navigation, exercise search, recipes/stability, rides and swimming; cached-shell/update reload and LF release checks also pass. Updated existing navigation tests to use the visible menus through `tests/workout_navigation.py`. Tested 320px HU enlarged text, EN/mobile and wide layouts, dropdown hit testing/keyboard/outside click, persistence, Food/Profile agreement and all four switch combinations. Inspected the settled dropdown screenshot. No physical-phone or live-account check.
+
 # Update — Reppsy 2.39.1, 2026-10-29 (Codex)
 
 - Backup `backup/main-20261029-before-activity-budget` at `d6a105f`; build `20261029.2`.

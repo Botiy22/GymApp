@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Real browser regression checks; fixtures contain invented test data, never user plans."""
 import functools
 import http.server
@@ -523,7 +524,7 @@ class AppBrowserTests(unittest.TestCase):
         self.page.reload(wait_until='networkidle')
         self.page.locator('[data-tab="profile"]').click();self.page.locator('[data-a="profile-ranks"]').click()
         expect(self.page.locator('[data-rank="bench"] .rank-heading b')).to_have_text('Titan')
-        self.page.locator('[data-tab="home"]').click();self.page.locator('.workout-tabs [data-a="workout-view"][data-v="history"]').click()
+        self.page.locator('[data-tab="home"]').click();select_workout(self.page,'history')
         self.page.locator('.workout-history .workout-volume > summary').click()
         expect(self.page.locator('.volume-breakdown')).to_contain_text('100 kg × 5')
         self.page.locator('.history-title').click();self.page.locator('[data-a="wk-del"]').click()
@@ -553,9 +554,9 @@ class AppBrowserTests(unittest.TestCase):
                 for theme in ['deep','light']:
                     self.page.evaluate('(theme) => {__gym.A["set-bg"]({dataset:{v:theme}});}',theme)
                     for tab in ['train','plans','exercises','history']:
-                        self.page.locator('[data-a="workout-view"][data-v="'+tab+'"]').first.click()
+                        select_workout(self.page,tab)
                         self.assertFalse(self.page.evaluate('() => document.documentElement.scrollWidth>innerWidth+1'),(width,lang,theme,tab))
-                        expect(self.page.locator('.workout-tabs [data-v="'+tab+'"]')).to_have_attribute('aria-pressed','true')
+                        expect(self.page.locator('.workout-tabs [data-v="'+tab+'"]')).to_have_attribute('aria-current','page')
 
     def test_import_preview_has_space_and_owns_scroll(self):
         # Begin with a scrolled page; closing must restore this exact position.
@@ -701,7 +702,7 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('.drawing-zoom img')).to_have_attribute('src','img/ex/Barbell_Curl/1.jpg')
 
     def test_custom_workout_symbols_and_lower_icon_persist(self):
-        self.page.locator('[data-a="workout-view"][data-v="plans"]').first.click()
+        select_workout(self.page,'plans')
         symbols=[]
         for name in ['push','pull','legs','upper','lower']:
             icon=self.page.locator('.rtile[data-id="'+name+'"] .routine-symbol')
@@ -714,14 +715,14 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('[data-a="re-icon"][data-v="lower"]')).to_have_attribute('aria-pressed','true')
         self.page.locator('[data-a="re-save"]').click()
         self.page.reload(wait_until='networkidle')
-        self.page.locator('[data-a="workout-view"][data-v="plans"]').first.click()
+        select_workout(self.page,'plans')
         self.assertEqual('lower',next(r for r in self.data()['routines'] if r['id']=='upper')['icon'])
         expect(self.page.locator('.rtile[data-id="upper"]')).to_have_class(__import__('re').compile('.*ic-lower.*'))
 
     def test_new_bottom_navigation_and_nested_exercise_library(self):
         self.assertEqual(['Workout','Food','Settings','Goals','Profile'],self.page.locator('#tabbar button').all_text_contents())
         expect(self.page.locator('#tabbar [data-tab="lib"]')).to_have_count(0)
-        self.page.locator('[data-a="workout-view"][data-v="exercises"]').click()
+        select_workout(self.page,'exercises')
         self.page.locator('[data-in="lib-q"]').fill('Romanian Deadlift')
         expect(self.page.locator('#lib-list')).to_contain_text('Romanian Deadlift')
         self.page.locator('#lib-list [data-a="ex-open"]').first.click()

@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """Exercise search must work in both the library and the real routine picker."""
 import unittest
 import test_responsive_polish as responsive
@@ -12,7 +13,7 @@ class ExerciseSearchBrowser(unittest.TestCase):
     def test_add_seated_extension_to_lower_routine_and_reload(self):
         p,errors=self.page(320,740,lang='hu')
         p.evaluate("()=>{Store.d.routines.push({id:'search-lower',name:'Alsótest',icon:'lower',items:[]});Store.save();__gym.render()}")
-        p.locator('.workout-tabs [data-a=workout-view][data-v=plans]').click()
+        select_workout(p,'plans')
         p.locator('[data-a=r-open][data-id=search-lower]').click()
         p.locator('[data-a=r-edit][data-id=search-lower]').click()
         p.locator('[data-a=re-add]').click()
@@ -38,7 +39,7 @@ class ExerciseSearchBrowser(unittest.TestCase):
 
     def test_library_aliases_typo_filters_and_custom_exercises(self):
         p,errors=self.page(390,844,lang='en')
-        p.locator('[data-a=workout-view][data-v=exercises]').click()
+        select_workout(p,'exercises')
         for q,id in [('láb nyújtó gép','Leg_Extensions'),('pec deck','Butterfly'),('fekvo labhajlito','Lying_Leg_Curls'),('hip thrust machine','Machine_Hip_Thrust')]:
             p.locator('[data-in=lib-q]').fill(q)
             self.assertEqual(p.locator('#lib-list [data-a=ex-open]').first.get_attribute('data-id'),id,q)

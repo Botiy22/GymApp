@@ -1,3 +1,4 @@
+from workout_navigation import select_workout
 """2.31: knee/stability programmes from the owner's clips, the clip recipes with guide drawings, and the planner editor fix."""
 import unittest
 import test_responsive_polish as responsive
@@ -35,7 +36,7 @@ class RecoveryRecipes(unittest.TestCase):
         for width, lang in [(320, 'hu'), (390, 'en')]:
             with self.subTest(width=width, lang=lang):
                 page, errors = self.page(width, 844, lang)
-                page.locator('[data-a=workout-view][data-v=stability]').click(); page.locator('[data-a=stability-view][data-v=knee]').click()
+                select_workout(page,'stability'); page.locator('[data-a=stability-view][data-v=knee]').click()
                 self.assertEqual(page.locator('.recovery-card').count(), 2); self.bounds(page, f'knee page {lang}')
                 page.locator('[data-a=recovery-preview][data-id=rec_knee_bands]').first.click()
                 self.assertEqual(page.locator('#sheet .recovery-step').count(), 10)
@@ -54,7 +55,7 @@ class RecoveryRecipes(unittest.TestCase):
 
     def test_pelvic_tilt_on_stability_page(self):
         page, errors = self.page(390, 844, 'en')
-        page.locator('[data-a=workout-view][data-v=stability]').click()
+        select_workout(page,'stability')
         self.assertEqual(page.locator('.recovery-card').count(), 1)
         self.assertIn('Pelvic tilt reset', page.locator('.recovery-card').inner_text())
         page.locator('.recovery-card [data-a=recovery-add]').click()
