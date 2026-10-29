@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.39.0 — 2026-10-29 (build 20261029.1)
+
+Text analysis preserves product nutrient claims (20 g protein) and fat percentages (1,5%) instead of making extra ingredients. Explicit labels, saved product variants and documented food values calculate locally. Only unresolved ordinary foods use AI; unknown branded nutrition stays pending. Users resolve missing labels/amounts or explicitly remove them before logging. Saved label aliases survive reload/account data cleaning; per-100-ml labels remain volumes, with dl controls. Pure erythritol uses EU total-carbohydrate/polyol conventions while keeping 0 kcal.
+
+Food search adds an opt-in Lidl/Tesco/SPAR product and barcode lookup via Open Food Facts. Complete returned nutrition is reviewed before saving to My foods; offline and unavailable-service cases offer manual labels. This is a lookup/import workflow, not a verified bulk retailer catalogue: cloud retrieval of retailer/OFF data was blocked (HTTP 403). No synthetic brand nutrition is shipped.
+
+Photo instructions now separate labels from meal views, avoid duplicate meals/invented scale or invisible fat, distinguish kJ/kcal, total carbohydrate/sugars/polyols and per-serving/per-100 bases, and preserve incomplete items. Confidence is capped for visual estimates. See `docs/FOOD_ANALYSIS.md` for limits and storage.
+
 ## 2.38.1 — 2026-10-28 (build 20261028.4)
 
 Replaced the flat túrós–erdei gyümölcsös oats illustration with an individually generated food photograph and full-frame thumbnail. Recipe and nutrition stay the same. Photo caption metadata updated; the legacy drawing exporter now preserves this replacement.

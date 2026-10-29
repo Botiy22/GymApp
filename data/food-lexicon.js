@@ -9,6 +9,7 @@
       with ≈; w gives the usual range. Portions taken from the USDA row itself are not repeated here.
    approx: 1 when the values come from a close but not identical food (the name says which). */
 window.FOOD_LEXICON = { version: 1, items: [
+  { hu: 'Fahéj, őrölt', en: 'Ground cinnamon', usda: 'Spices, cinnamon, ground', a: 'fahéj|fahej|fahéj por|fahej por|őrölt fahéj|ground cinnamon|cinnamon powder|cinnamon', u: { tk: 2.6 }, w: { tk: 'USDA teáskanál' } },
   /* ---------- bread and bakery ---------- */
   { hu: 'Zsemle (kaiser)', en: 'Bread roll (zsemle)', a: 'zsemle|zsömle|zsemlye|zsemli|vizes zsemle|semmel|kaiser|kaiser zsemle|bread roll|roll|white roll|kaiser roll', u: { db: 57 }, w: { db: 'boltonként kb. 50–60 g' } },
   { hu: 'Kifli', en: 'Kifli (Hungarian crescent roll)', own: [288, 9.5, 56, 2.6], ref: 'pékségi tejes kifli címkéje (kifli.hu, 2026)', a: 'kifli|kiflit|vizes kifli|tejes kifli|sós kifli|sos kifli|crescent roll|hungarian crescent roll', u: { db: 46 }, w: { db: 'pékségenként kb. 40–60 g, a nagy sós kifli 75 g is lehet' } },
@@ -161,7 +162,7 @@ window.FOOD_LEXICON = { version: 1, items: [
   { hu: 'Áfonya', en: 'Blueberries', a: 'áfonya|afonya|kék áfonya|blueberry|blueberries', u: { marek: 50 } },
   { hu: 'Málna', en: 'Raspberries', a: 'málna|malna|raspberry|raspberries', u: { marek: 50 } },
   { hu: 'Szeder', en: 'Blackberries', usda: 'Blackberries, raw', a: 'szeder|szedret|blackberry|blackberries', u: { marek: 50 } },
-  { hu: 'Fagyasztott erdei gyümölcs', en: 'Frozen mixed berries', mix: [['Blueberries, frozen, unsweetened', 34], ['Raspberries, frozen, unsweetened', 33], ['Strawberries, frozen, unsweetened', 33]], yield: 100, ref: 'az USDA fagyasztott áfonya, málna és eper átlaga (cukrozatlan)', a: 'erdei gyümölcs|fagyasztott erdei gyümölcs|bogyós gyümölcs|fagyasztott bogyós gyümölcs|fagyasztott gyümölcs|bogyos gyumolcs|vegyes bogyós|frozen berries|mixed berries|frozen mixed berries|forest fruits', u: { marek: 60 } },
+  { hu: 'Fagyasztott erdei gyümölcs', en: 'Frozen mixed berries', mix: [['Blueberries, frozen, unsweetened', 34], ['Raspberries, frozen, unsweetened', 33], ['Strawberries, frozen, unsweetened', 33]], yield: 100, ref: 'az USDA fagyasztott áfonya, málna és eper átlaga (cukrozatlan)', a: 'fagyasztott gyümi|fagyasztott gyumi|fagyott gyümi|fagyasztott erdei gyümi|fagyasztott erdei gyümölcs|bogyós gyümölcs|fagyasztott bogyós gyümölcs|fagyasztott gyümölcs|bogyos gyumolcs|vegyes bogyós|frozen berries|mixed berries|frozen mixed berries|forest fruits', u: { marek: 60 } },
   { hu: 'Ribizli', en: 'Red currants', usda: 'Currants, red and white, raw', a: 'ribizli|ribiszke|piros ribizli|red currants|currants' },
   { hu: 'Egres', en: 'Gooseberries', usda: 'Gooseberries, raw', a: 'egres|köszméte|gooseberries|gooseberry' },
   { hu: 'Őszibarack', en: 'Peach', a: 'őszibarack|oszibarack|barack|barackot|peach|peaches', u: { db: 150 }, w: { db: 'egy közepes, kb. 120–180 g' } },
@@ -255,7 +256,7 @@ window.FOOD_LEXICON = { version: 1, items: [
   { hu: 'Majonéz', en: 'Mayonnaise', a: 'majonéz|majonez|majonézt|mayo|mayonnaise' },
   { hu: 'Ketchup', en: 'Ketchup', a: 'ketchup|kecsap|ketchupot|catsup' },
   { hu: 'Mustár', en: 'Mustard', a: 'mustár|mustar|mustard' },
-  { hu: 'Eritrit (édesítő)', en: 'Erythritol (sweetener)', own: [0, 0, 0, 0], ref: 'az EU-címkéken 0 kcal/g; poliol, ezért itt nem számoljuk szénhidrátnak', a: 'eritrit|eritritol|erythritol|erythrytol|eritrites édesítő|erythritol sweetener', u: { tk: 4, ek: 12 } },
+  { hu: 'Eritrit (édesítő)', en: 'Erythritol (sweetener)', own: [0, 0, 100, 0], ref: 'tiszta eritrit: 0 kcal/g; az EU-címkék szénhidrátértéke tartalmazza a poliolokat, ezek nem cukrok', a: 'eritrit|eritritol|erythritol|erythrytol|eritrites édesítő|erythritol sweetener', u: { tk: 4, ek: 12 } },
   { hu: 'Cukor', en: 'Sugar', a: 'cukor|cukrot|kristálycukor|sugar', u: { ek: 12.5 }, w: { ek: 'csapott evőkanál' } },
   { hu: 'Méz', en: 'Honey', a: 'méz|mez|mézet|honey', u: { tk: 7 } },
   { hu: 'Lekvár', en: 'Jam', a: 'lekvár|lekvar|lekvárt|dzsem|baracklekvár|eperlekvár|szilvalekvár|jam|jelly|preserves', u: { tk: 7 } },

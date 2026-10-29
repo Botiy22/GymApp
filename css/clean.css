@@ -245,3 +245,8 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .wear-live{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:6px;margin-top:10px;text-align:center}
 .wear-live b{display:block;font-size:1.05rem;font-variant-numeric:tabular-nums}.wear-live small{font-size:.7rem;color:var(--mut)}.wear-live i{display:block;font-style:normal;color:var(--mut);font-size:.72rem}
 .wear-note{display:flex;gap:8px;align-items:center}.wear-note svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4}
+
+/* Missing labels stay separate from calculated nutrition. */
+.ai-pending .card{padding:14px;margin:12px 0}.ai-pending b{overflow-wrap:anywhere}.ai-pending .chips{display:flex;flex-wrap:wrap;gap:8px}.ai-pending .btn{flex:1 1 120px;min-width:0;width:auto;white-space:normal}.ai-pending .link{min-height:40px}.ai-pending .cap{margin:8px 0}
+
+.shop-launch{width:100%;margin:8px 0 14px;min-height:44px}

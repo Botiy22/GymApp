@@ -160,7 +160,7 @@ window.Store = (function () {
     out.myFoods = arr(r.myFoods).slice(0, 500).map(z => {
       z = obj(z); const id = idStr(z.id), name = str(z.name, 80).trim(), kcal = Math.round(num(z.kcal, 0, 950, 0) * 10) / 10; if (!id || !name) return null;
       const g = v => Math.round(num(v, 0, 100, 0) * 10) / 10;
-      return {id,name,kcal,p:g(z.p),c:g(z.c),f:g(z.f),port:int(z.port,0,5000,0),t:num(z.t,0,4e12,0),...(z.basis==='ml'?{basis:'ml'}:{})};
+      return {id,name,kcal,p:g(z.p),c:g(z.c),f:g(z.f),aliases:arr(z.aliases).slice(0,4).map(a=>str(a,160).trim()).filter(Boolean),...(typeof z.source==='string'&&/^https:\/\/world\.openfoodfacts\.org\/product\/\d{8,14}$/.test(z.source)?{source:z.source}:{}),port:int(z.port,0,5000,0),t:num(z.t,0,4e12,0),...(z.basis==='ml'?{basis:'ml'}:{})};
     }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
     out.recentFoods = arr(r.recentFoods).slice(0, 12).map(food).filter(Boolean).map(z => ({ name: z.name, g: z.g, kcal: z.kcal, p: z.p, c: z.c, f: z.f,...(z.vml?{vml:z.vml}:{}) }));
     // Retire only the exact automatically seeded personal split, never edited/imported routines.
@@ -249,7 +249,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

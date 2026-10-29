@@ -38,7 +38,7 @@ window.FoodQuery = (() => {
     'the of in is are there how many much what whats does do i had ate eat drank my for about approx approximately around roughly typical average please tell me can could you give show contain contains has have per info information value values total').split(' '));
   const SIZE = { nagy: 'large', nagyobb: 'large', large: 'large', big: 'large', kozepes: 'medium', medium: 'medium', kicsi: 'small', kis: 'small', kisebb: 'small', small: 'small' };
   const SIZE_K = { large: 1.3, medium: 1, small: .75 };
-  const SPLIT = /\n|;|\+|\s+(?:és|es|meg|plusz|valamint|and|plus)\s+/i;
+  const SPLIT = /\n|;|\+|,(?![^()]*\))(?=\s*\d+(?:[.,]\d+)?\s*(?:kg|dkg|g|ml|dl|l)\b)|\s+(?:és|es|meg|plusz|valamint|and|plus)\s+/i;
   // Hungarian case/possessive endings and English plurals, longest first
   const SUFFIX = ['javal', 'jevel', 'aban', 'eben', 'jaban', 'jeben', 'ban', 'ben', 'bol', 'rol', 'tol', 'nak', 'nek', 'hoz', 'hez', 'val', 'vel', 'nal', 'nel', 'jat', 'jet', 'jal', 'jel', 'nyi', 'ot', 'et', 'at', 'ok', 'ek', 'ak', 'ja', 'je', 'ba', 'be', 'ra', 're', 't', 'k', 'es', 's'];
   const canon = w => w.length > 3 && /s$/.test(w) && !/(ss|us|is|zs|ys)$/.test(w) ? (/ies$/.test(w) ? w.slice(0, -3) + 'y' : /oes$/.test(w) ? w.slice(0, -2) : w.slice(0, -1)) : w;
@@ -307,21 +307,27 @@ window.FoodQuery = (() => {
     return { text: m[3], label: true, status: 'ok', grams, kcal: Math.round(v[0]), p: v[1], c: v[2], f: v[3], k100: v[0] * 100 / grams, p100: v[1] * 100 / grams, c100: v[2] * 100 / grams, f100: v[3] * 100 / grams };
   }
   function parsePiece(piece, opts) {
+    if(/^\s*-\s*\d/.test(piece))return {items:[{text:piece,status:'bad'}],intent:new Set()};
     const lab = labelItem(piece); if (lab) return { items: [lab], intent: new Set(), stray: 0 };
-    const sc = scan(piece);
-    return { items: sc.segs.map(s => itemFromSeg(s, opts)), intent: sc.intent };
+    const products=window.FoodProducts, d=products?.read(piece), saved=products?.saved(piece,opts.foods||window.Store?.d?.myFoods);
+    if(saved)return {items:[saved],intent:new Set()};
+    if(d?.packaged)return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
+    if(/^(?:\d+(?:[.,]\d+)?\s*g\s+)?fagyi gyumi$/i.test(strip(piece).trim()))return {items:[{text:piece,status:'needIdentity'}],intent:new Set()};
+    const sc = scan(d ? (d.amount!=null?d.amount+' '+d.unit+' ':'')+d.name : piece);
+    return { items: sc.segs.map(s => ({...itemFromSeg(s, opts),original:sc.segs.length===1?piece:undefined})), intent: sc.intent };
   }
   const grade = r => r.items.reduce((s, i) => s + (i.status === 'ok' ? (i.exact ? 10 : 4) : i.status === 'unknown' && !i.text ? 0 : i.status === 'unknown' ? -15 : -5), 0);
   function parse(text, opts = {}) {
-    text = String(text || '').trim().slice(0, 600);
+    text = String(text || '').trim();
+    if(text.length>4000)return {items:[{text:'…',status:'tooLong'}],intent:new Set()};
     const out = { items: [], intent: new Set() };
     if (!text) return out;
-    const parts = text.replace(/^(?:I (?:had|ate|drank)|ettem|ittam|megettem)\s+/i, '').split(SPLIT).map(x => x.trim()).filter(Boolean);
-    if (parts.length > 20) return out;
+    const parts = text.replace(/^(?:I (?:had|ate|drank)|ettem|ittam|megettem)\s+/i, '').replace(/(\d),(?=\d)/g,'$1\uE000').split(SPLIT).map(x => x.replace(/\uE000/g,',').trim()).filter(Boolean);
+    if (parts.length > 30)return {items:[{text:'…',status:'tooLong'}],intent:new Set()};
     for (const part of parts) {
       let best = parsePiece(part, opts);
       const pieces = part.split(/,(?![^()]*\))|\s+(?:with|with a|with some)\s+/i).map(x => x.trim()).filter(Boolean);
-      if (pieces.length > 1) {
+      if (pieces.length > 1 && !best.items.some(i=>['needLabel','needIdentity'].includes(i.status))) {
         const alt = pieces.map(p => parsePiece(p, opts)), merged = { items: alt.flatMap(a => a.items), intent: new Set(alt.flatMap(a => [...a.intent])) };
         if (!best.items.every(i => i.status === 'ok' && i.exact) && grade(merged) > grade(best)) best = merged;
       }
@@ -354,7 +360,7 @@ window.FoodQuery = (() => {
     return meta?.en || X.F.list[en.i][0];
   }
   function qtyText(it, lang) {
-    if (it.label) return fmt(it.grams, lang) + ' g';
+    if (it.label) return it.basisUnit==='ml'?fmt(it.ml/100,lang)+' dl':fmt(it.grams, lang) + ' g';
     const q = it.qty ?? 1, qs = q === .5 && lang === 'hu' ? 'fél' : fmt(q, lang);
     if (it.unit && it.unit[0] === 'g') return fmt(q, lang) + ' ' + (it.unit[1] === 10 ? 'dkg' : it.unit[1] === 1000 ? 'kg' : it.unit[1] === 1 ? 'g' : (it.unit[1] > 400 ? 'lb' : 'oz'));
     if (it.unit && it.unit[0] === 'ml') return fmt(q, lang) + ' ' + ({ 1: 'ml', 10: 'cl', 100: 'dl', 1000: 'l' }[it.unit[1]] || 'ml');
@@ -364,14 +370,14 @@ window.FoodQuery = (() => {
   }
   function view(it, lang) {                                       // plain data for the app's own cards
     const X = index(), en = it.entry, meta = en && en.h >= 0 ? X.F.meta?.[en.h] : null, hu = en && en.h >= 0 ? X.F.hu[en.h] : null;
-    return { name: it.label ? it.text : nameOf(en, lang), qty: qtyText(it, lang), grams: it.grams != null ? r1(it.grams) : null, kcal: it.kcal, p: it.p, c: it.c, f: it.f, k100: it.k100, p100: it.p100, c100: it.c100, f100: it.f100,
+    return { basisUnit:it.basisUnit||'g', name: it.label ? it.text : nameOf(en, lang), qty: qtyText(it, lang), grams: it.grams != null ? r1(it.grams) : null, kcal: it.kcal, p: it.p, c: it.c, f: it.f, k100: it.k100, p100: it.p100, c100: it.c100, f100: it.f100,
       typ: !!it.typ, note: it.unitG?.note || '', approx: !!(hu && hu[2]) || !!meta?.mixed, mixed: !!meta?.mixed, ref: meta?.ref || '', usda: en ? X.F.list[en.i][0] : '', key: en ? (en.h >= 0 ? 'hu:' + hu[0] : 'en:' + X.F.list[en.i][0]) : '',
       h: en ? en.h : -1, i: en ? en.i : -1, ml: it.ml || 0, alts: (it.alts || []).map(a => ({ name: nameOf(a, lang), h: a.h, i: a.i })), implicit: !!it.implicit, per100: !!it.per100, exact: !!it.exact, full: !!it.full, ignored: it.ignored || [], u: it.u || '', label: !!it.label, typos: it.typos || [] };
   }
   function answer(text, lang = 'hu', opts = {}) {
     const L = TXT[lang === 'hu' ? 'hu' : 'en'], r = parse(text, opts), ok = r.items.filter(i => i.status === 'ok');
     if (!ok.length) return null;
-    const unknown = r.items.filter(i => i.status === 'unknown' && i.text), need = r.items.filter(i => i.status === 'needGrams' || i.status === 'needAmount');
+    const unknown = r.items.filter(i => ['unknown','needLabel','needIdentity','tooLong'].includes(i.status) && i.text), need = r.items.filter(i => i.status === 'needGrams' || i.status === 'needAmount');
     const hasQty = r.items.some(i => i.qty != null || i.unit), intent = r.intent;
     // a chat message is answered here only when every word is accounted for
     const strayWords = ok.reduce((s, i) => s + (i.ignored || []).length, 0);
@@ -416,5 +422,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { productLabels:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();
