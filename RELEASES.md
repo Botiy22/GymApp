@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.39.1 — 2026-10-29 (build 20261029.2)
+
+Fixed step calories suppressing the workout-calorie switch. Activity entries now distinguish steps-only calories (excluding workouts) from full daily active-energy totals. Steps and workouts can be included independently; full daily totals still replace workouts to prevent double counting. The food/profile budget shows both controls and explains when workouts are already included. Tap the activity amount to correct an existing entry. Step estimates select steps-only; pasted health-app totals select full-day. Legacy entries retain their previous full-day meaning until edited. The type persists through storage cleaning, backup and cloud documents; base targets stay unchanged.
+
 ## 2.39.0 — 2026-10-29 (build 20261029.1)
 
 Text analysis preserves product nutrient claims (20 g protein) and fat percentages (1,5%) instead of making extra ingredients. Explicit labels, saved product variants and documented food values calculate locally. Only unresolved ordinary foods use AI; unknown branded nutrition stays pending. Users resolve missing labels/amounts or explicitly remove them before logging. Saved label aliases survive reload/account data cleaning; per-100-ml labels remain volumes, with dl controls. Pure erythritol uses EU total-carbohydrate/polyol conventions while keeping 0 kcal.

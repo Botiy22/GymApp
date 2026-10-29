@@ -33,6 +33,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.39.1, 2026-10-29 (Codex)
+
+- Backup `backup/main-20261029-before-activity-budget` at `d6a105f`; build `20261029.2`.
+- Fixed step-calorie entries always taking priority over the workout-calorie switch. `js/workout-energy.js` accepts an activity kind: steps-only calories and workout energy are independently included; full daily active-energy totals still replace workouts to avoid double counting. Base targets stay unchanged.
+- `js/app.js` offers steps-only/full-day selection in the activity sheet; step estimates select steps-only and pasted health totals select full-day. Budget panel exposes activity inclusion and the editable amount; when a full daily total is included, the workout switch clearly says it is already included and is disabled instead of appearing ineffective. Legacy records retain total semantics until explicitly edited. A short overlap hint warns against adding walking workouts already counted in steps.
+- `js/store.js` preserves the bounded kind through cleaning/backup/cloud documents. EN/HU strings, cached-helper capability checks, release metadata and manifest updated. No SQL migration.
+- Validation: 9 Node tests (activity budget, translations, wearable), 5 browser tests (two new activity-budget regressions plus three existing swimming/wearable flows), cached-shell/update reload and LF release checks. Covered all inclusion combinations, legacy totals, step estimation, paste, 320px HU at enlarged text, selected-day isolation, persistence and matching Food/Profile calorie targets. No physical-phone or live-account check.
+
 # Update — Reppsy 2.39.0, 2026-10-29 (Codex)
 
 - Backup `backup/main-20261029-before-food-analysis` at `4535b5b`; build `20261029.1`.

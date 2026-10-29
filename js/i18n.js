@@ -661,3 +661,16 @@ Object.assign(I18N.hu,{
  aiUnitsNeeded:'A mentett címke szerinti mértékegységet használd, vagy adj meg megfelelő mértékegységű címkét.',shopProducts:'Lidl · Tesco · SPAR',shopLead:'Keress névvel vagy vonalkóddal. Mentés előtt ellenőrizd a pontos változatot és a címkét.',shopQuery:'Terméknév vagy vonalkód',shopSearch:'Termék keresése',shopFind:'Termék keresése',shopReview:'Mentés előtt vesd össze a közösségi adatbázis értékeit a csomagolásoddal.',shopUnavailable:'A termékkeresés most nem érhető el. A címkét kézzel is megadhatod.',shopEmpty:'Nem találtam teljes címkeadatot. Próbáld vonalkóddal, vagy add meg a címkét.',shopFull:'A Saját ételekben 500 bejegyzés fér el. Új mentése előtt törölj egy nem használt ételt.',
  aiPartial:'Pontosítandó',aiCompleteFirst:'Hozzáadás előtt egészítsd ki vagy távolítsd el a hiányos tételeket.',aiLabelNeeded:'Ehhez a termékhez a pontos címke szükséges.',aiAmountNeeded:'Mennyit használtál?',aiKnownProtein:'Az általad megadott fehérje: {0} g',aiEnterLabel:'Címke megadása',aiSetAmount:'Mennyiség megadása',aiFruitMeaning:'Fagyasztott gyümölcs vagy gyümölcsfagyi?',aiFrozenFruit:'Fagyasztott erdei gyümölcs',aiFruitIce:'Gyümölcsfagyi',aiEditDescription:'Írd be a mennyiséget vagy a javítást a leírásba, majd elemezd újra.'
 });
+
+Object.assign(window.I18N.en,{
+  actEnergyKind:'These calories cover',actStepsOnly:'Steps only · excludes workouts',actDailyTotal:'Full day · includes workouts',
+  stepEnergyTotal:'Steps only: {0} kcal',workoutsInDailyTotal:'Workouts included in daily total',
+  stepEnergyHint:'Add workout calories separately only if those workouts are not already counted in these steps.',
+  manualEnergyPriority:'Workouts are already in this total. If you entered steps only, change the activity type above.'
+});
+Object.assign(window.I18N.hu,{
+  actEnergyKind:'Mire vonatkozik ez a kalória?',actStepsOnly:'Csak lépések · edzések nélkül',actDailyTotal:'Teljes nap · edzésekkel együtt',
+  stepEnergyTotal:'Csak lépések: {0} kcal',workoutsInDailyTotal:'Az edzés már benne van a napi összegben',
+  stepEnergyHint:'Csak olyan edzés kalóriáját add hozzá külön, amelyet ezek a lépések még nem tartalmaznak.',
+  manualEnergyPriority:'Az edzés már benne van ebben az összegben. Ha csak lépéskalóriát adtál meg, fent módosítsd az aktivitás típusát.'
+});

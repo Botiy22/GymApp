@@ -134,7 +134,7 @@ window.Store = (function () {
     out.favFoods = uniq(arr(r.favFoods).filter(v => typeof v === 'string' && v.length > 2 && v.length <= 220)).slice(0, 300);
     out.aiNotes = arr(r.aiNotes).slice(-60).map(z => { z = obj(z); const nm = str(z.n, 80).trim(); return nm ? { n: nm, n2: str(z.n2, 80).trim(), ga: int(z.ga, 0, 100000, 0), gu: int(z.gu, 0, 100000, 0), ka: int(z.ka, 0, 1000, 0), ku: int(z.ku, 0, 1000, 0), macros:z.macros&&['p','c','f'].every(k=>typeof z.macros[k]==='number'&&Number.isFinite(z.macros[k])&&z.macros[k]>=0&&z.macros[k]<=100)?{p:z.macros.p,c:z.macros.c,f:z.macros.f}:null, x: z.x === true, t: num(z.t, 0, 4e12, 0) } : null; }).filter(Boolean);
     out.act = {};
-    Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc }; });
+    Object.keys(obj(r.act)).slice(-3000).forEach(d => { if (!DAY.test(d)) return; const z = obj(r.act[d]), st = int(z.steps, 0, 200000, 0), kc = int(z.kcal, 0, 20000, 0); if (st || kc) out.act[d] = { steps: st, kcal: kc, kind: z.kind === 'steps' ? 'steps' : 'total' }; });
     out.planner = DailyPlanner.clean(r.planner);
     out.habits = arr(r.habits).slice(0, 100).map(Momentum.clean).filter(Boolean).filter((h, i, list) => list.findIndex(x => x.id === h.id) === i);
     /* coach conversations: newest 40, and never more than about 400 000 characters in all */
@@ -249,7 +249,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

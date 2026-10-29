@@ -79,11 +79,12 @@ globalThis.WorkoutEnergy = (() => {
       const e=workout(w);sum.strength+=e.strength;sum.cardio+=e.cardio;sum.missing+=e.missing?1:0;sum.total=sum.strength+sum.cardio;return sum;
     },{strength:0,cardio:0,total:0,missing:0});
   }
-  function budget(base,eaten,estimated,manual,settings) {
-    // A supplied daily activity total includes workouts: use one source, never both.
+  function budget(base,eaten,estimated,manual,settings,kind='total') {
+    // Daily totals already include workouts; steps-only calories can be added separately.
     const useManual=settings.addActive&&manual>0;
-    const included=useManual?manual:settings.addWorkoutCalories?estimated:0;
-    return {base:base||0,included,total:(base||0)+included,remaining:(base||0)+included-eaten,source:useManual?'manual':included?'workouts':'none'};
+    const wholeDay=useManual&&kind!=='steps';
+    const included=(useManual?manual:0)+(!wholeDay&&settings.addWorkoutCalories?estimated:0);
+    return {base:base||0,included,total:(base||0)+included,remaining:(base||0)+included-eaten,source:wholeDay?'manual':useManual?'steps':included?'workouts':'none'};
   }
-  return {types,STROKES,SWIM_MET,cleanStrength,cleanCardio,cleanWear,swim,strength,cardio,workout,daily,budget};
+  return {activityKinds:true,types,STROKES,SWIM_MET,cleanStrength,cleanCardio,cleanWear,swim,strength,cardio,workout,daily,budget};
 })();
