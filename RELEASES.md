@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.42.0 — 2026-10-30 (build 20261030.2)
+
+Reviewed photo foods can now be remembered when added to the diary, with a personal short name or an optional name for the entire meal. A Frequent foods dropdown ranks saved portions by recency and frequency; serving adjustment, search, aliases and removal are available. Describe and food search resolve saved names locally, retaining the saved nutrition and estimate status. Ambiguous names require a choice, and unknown mass is never invented for liquids or serving-only foods.
+
+The private food-memory collection is included in account sync and backup/export, with transactional diary writes, deletion markers and a 200-record capacity message. Source photos are not retained. Existing saved label products with a default serving also appear. No SQL migration is needed. See `docs/FOOD_MEMORY.md` for ranking and storage details.
+
 ## 2.41.0 — 2026-10-30 (build 20261030.1)
 
 Workout dropdown headings reflect the active page. The former Library / Tár section is now Exercises / Gyakorlatok. Swimming appears below Cycling / Bringa, opens a dedicated swim page, and uses the existing pool-length, stroke, duration and energy logger. Swim history shows distance, time and calories and opens the original workout record.

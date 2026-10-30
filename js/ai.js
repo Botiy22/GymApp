@@ -29,6 +29,7 @@ window.FoodAI = (function () {
   /* The offline foundation (js/food-query.js): "2 zsemle, 10 dkg sonka, 1 pohár tej" is calculated from the database.
      Strict: every part must be understood with an amount (a typical piece weight counts, a guessed serving does not). */
   function fromQuery(i, lang) {
+    if(i.memoryId)return total({...i,name:i.text,en:'',approx:i.estimated,basis:lang==='hu'?'Mentett saját adag':'Saved personal portion',gmin:0,gmax:0});
     const FQ = window.FoodQuery, v = FQ.view(i, lang), hu = lang === 'hu';
     return total({ basisUnit:i.basisUnit||'g', ml:i.ml||0, name: v.name, en: i.label ? '' : v.usda, grams: Math.round(i.grams * 10) / 10, k100: i.k100, p100: i.p100, c100: i.c100, f100: i.f100, label: !!i.label, db: i.label ? undefined : v.usda,
       basis: i.label ? String(i.text || '') : (/erythritol|eritrit/i.test(v.name)?(hu?'A szénhidrát poliol, nem cukor; 0 kcal. ':'Carbohydrate is polyol, not sugar; 0 kcal. '):'')+v.qty + (v.typ ? ' ≈ ' : ' = ') + Math.round(i.grams * 10) / 10 + ' g' + (v.typ ? (hu ? ' (tipikus' : ' (typical') + (v.note && hu ? ': ' + v.note : '') + ')' : ''), gmin: 0, gmax: 0,approx:v.approx||v.typ });
@@ -104,7 +105,7 @@ window.FoodAI = (function () {
     };
   }
   /* portion totals from grams and per-100 g values */
-  function total(it) { const k = (it.basisUnit==='ml'?it.ml:it.grams) / 100; it.kcal = Math.round(it.k100 * k); it.p = Math.round(it.p100 * k * 10) / 10; it.c = Math.round(it.c100 * k * 10) / 10; it.f = Math.round(it.f100 * k * 10) / 10; return it; }
+  function total(it) { const k = it.basisUnit==='portion'?it.servings:(it.basisUnit==='ml'?it.ml:it.grams) / 100; it.kcal = Math.round(it.k100 * k); it.p = Math.round(it.p100 * k * 10) / 10; it.c = Math.round(it.c100 * k * 10) / 10; it.f = Math.round(it.f100 * k * 10) / 10; return it; }
   /* one request to the API; errors come back with a short code the app can translate */
   /* Newer models think before answering by default, and that thinking counts toward max_tokens (platform.claude.com
      docs: Thinking, Effort). A small max_tokens let the thinking use up the budget: replies were cut off or arrived with
@@ -173,7 +174,7 @@ window.FoodAI = (function () {
     } catch (e) { return 'offline'; } finally { clearTimeout(timer); }
   }
   return {
-    productLabels:true,shrink, parse, check, local, fromQuery,
+    foodMemory:true,productLabels:true,shrink, parse, check, local, fromQuery,
     total,
     /* coach chat: system = who the coach is plus the user's data, msgs = [{ role: 'user' | 'assistant', content }] */
     chat: async (key, model, system, msgs) => {

@@ -114,7 +114,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         html=(responsive.ROOT/'index.html').read_text()
-        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','workout-energy','choice-menus']:
+        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','food-memory','workout-energy','choice-menus']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
         for script in ['exercise-aliases','library-expansion','food-lexicon','goal-recipes']:
             html=html.replace(f'<script src="data/{script}.js"></script>','')

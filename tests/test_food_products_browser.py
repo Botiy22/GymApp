@@ -1,5 +1,6 @@
 """Real UI: resolve the user's meal, persist retailer labels, use dl and block partial logs."""
 import unittest
+from choice_navigation import choose
 import test_responsive_polish as responsive
 TEXT='''50g choco-oat musli
 71g banan
@@ -78,7 +79,7 @@ class FoodProductsBrowser(unittest.TestCase):
         p,errors=self.page(390,844,'en')
         p.route('https://world.openfoodfacts.org/**',lambda r:r.fulfill(json={'products':[{'code':'1234567890123','product_name':'Test high protein coconut yogurt','brands':'Pilos','nutrition_data_per':'100g','nutriments':{'energy-kcal_100g':70,'proteins_100g':10,'carbohydrates_100g':5,'fat_100g':1}}]}))
         p.locator('#tabbar [data-tab=food]').click();p.locator('[data-a=food-manual]').click();p.locator('[data-a=shop-open]').click()
-        for shop in ['Lidl','Tesco','SPAR']:p.locator(f'[data-a=shop-filter][data-shop={shop}]').click()
+        for shop in ['Lidl','Tesco','SPAR']:choose(p,f'[data-a=shop-filter][data-shop={shop}]')
         p.locator('[data-in=shop-query]').fill('Pilos coconut');p.locator('[data-a=shop-search]').click();p.locator('[data-a=shop-select]').click()
         self.assertIn('community',p.locator('#sheet').inner_text());p.locator('[form=fmf]').click()
         self.assertEqual(p.evaluate('Store.d.myFoods[0].source'),'https://world.openfoodfacts.org/product/1234567890123')

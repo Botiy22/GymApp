@@ -709,3 +709,13 @@ Object.assign(window.I18N.hu,{workoutMenu_library:'Gyakorlatok',workout_swim:'Ú
 
 Object.assign(window.I18N.en,{chooseOption:'Choose an option'});
 Object.assign(window.I18N.hu,{chooseOption:'Válassz egy lehetőséget'});
+
+Object.assign(window.I18N.hu,{
+ foodMemoryTitle:'Gyakori ételek',memoryChoose:'Ugyanazt ettem…',memoryAll:'Összes mentett étel',memoryRemember:'Jegyezd meg legközelebbre',memoryName:'Név a későbbi hivatkozáshoz',memoryBundleName:'Az egész étkezés neve (opcionális)',memoryNameExample:'pl. Reggeli shake',memoryEatAgain:'Ugyanezt ettem',memoryEstimate:'A mentett tápérték fotó alapján becsült. A kiválasztott adagra arányosan számoljuk.',memoryRename:'Név és rövid nevek',memoryAliases:'Rövid nevek',memoryAliasHint:'Legfeljebb 4 név, soronként egy. Ezeket a Leírás mezőben is használhatod.',memoryForget:'Törlés a mentett ételek közül',memoryForgetConfirm:'Törlöd ezt a mentett ételt? A korábbi naplóbejegyzések megmaradnak.',memorySaved:'Hozzáadva és megjegyezve',memoryFull:'Naplózva. A 200 mentett étel helye megtelt; új étel megjegyzéséhez törölj egy régit.',memoryAmbiguous:'Több mentett étel is ilyen nevű. Melyikre gondoltál?',memoryUseServings:'Add meg a mentett étel nevét és az adagot, például: „2 adag reggeli shake”.'
+});
+Object.assign(window.I18N.en,{
+ foodMemoryTitle:'Frequent foods',memoryChoose:'I had the same…',memoryAll:'All saved foods',memoryRemember:'Remember for next time',memoryName:'Name to use next time',memoryBundleName:'Name for the whole meal (optional)',memoryNameExample:'e.g. Morning shake',memoryEatAgain:'I ate this again',memoryEstimate:'These saved values were estimated from a photo. They scale to your selected serving.',memoryRename:'Name and shortcuts',memoryAliases:'Short names',memoryAliasHint:'Up to 4 names, one per line. You can use these in Describe too.',memoryForget:'Remove from saved foods',memoryForgetConfirm:'Remove this saved food? Previous diary entries will stay.',memorySaved:'Added and remembered',memoryFull:'Logged. Your 200 saved-food slots are full; remove an old food to remember a new one.',memoryAmbiguous:'More than one saved food has this name. Which one did you mean?',memoryUseServings:'Use the saved name and a serving amount, for example “2 servings morning shake”.'
+});
+
+Object.assign(window.I18N.hu,{memorySearch:'Mentett étel keresése',memoryPortion:'Mentett saját adag'});
+Object.assign(window.I18N.en,{memorySearch:'Search saved foods',memoryPortion:'Saved personal portion'});

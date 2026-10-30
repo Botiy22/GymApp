@@ -33,6 +33,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.42.0, 2026-10-30 (Codex)
+
+- Backup `backup/main-20261030-before-food-memory` at `82bda45`; build `20261030.2`.
+- New private `js/food-memory.js`: reviewed photo items are remembered only when added to the diary, with an opt-out switch, personal names/aliases and optional multi-component meal names. Saved portions resolve in Describe/search locally; explicit gram/ml quantities and serving multipliers scale the saved nutrition. Estimated photos remain estimated; conflicting claims, incompatible units and ambiguous names require clarification. No raw photos persisted.
+- Food diary now has a Frequent foods dropdown (top twelve, weighted by actual consumption in the last 90 days with a 30-day half-life), full searchable library, portion preview, alias editing and forgetting without deleting past meals. Existing personal label products with default servings also appear. Diary batch IDs count multi-component meals once. Memory and diary save in one transaction; 200-record limit reports capacity instead of silently evicting saved foods.
+- Store cleaning/export/reset and Cloud merge support the collection and deletion tombstones. Missing fields from older clients preserve memories; matching unchanged diary records also retain memory metadata. Existing private `userdata` JSON is used; **no SQL migration**. Added EN/HU copy, offline CORE/index, cached-shell loader, release history and 464-asset manifest. Details in `docs/FOOD_MEMORY.md`.
+- Validation: 29 focused Node checks passed (memory, products, food query/analysis and translations). 17 distinct browser/release checks passed across personal food memory (photo review, reload, offline aliases/search, servings, ambiguity, deletion, opt-out, quota rollback, export/reset and account merge), existing food query/product flows, independent steps/training budget, cached-shell bootstrap, verified update and LF assets. Inspected 320px HU screenshot and removed an oversized link icon. Updated the retailer test to open its visible dropdown. Initial test harness issues (hidden native select, absent Add when all items pending, stale unreconstructed service-worker manifest) were resolved before targeted reruns. No full legacy-suite claim, paid model requests, live Supabase or physical-phone verification.
+
 # Update — Reppsy 2.41.0, 2026-10-30 (Codex)
 
 - Backup `backup/main-20261029-before-choice-menus` at `1c24bcd`; build `20261030.1`.

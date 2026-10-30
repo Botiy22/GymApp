@@ -311,6 +311,7 @@ window.FoodQuery = (() => {
     const lab = labelItem(piece); if (lab) return { items: [lab], intent: new Set(), stray: 0 };
     const products=window.FoodProducts, d=products?.read(piece), saved=products?.saved(piece,opts.foods||window.Store?.d?.myFoods);
     if(saved)return {items:[saved],intent:new Set()};
+    const memories=window.FoodMemory?.resolve(piece,opts.doc||window.Store?.d);if(memories)return {items:memories,intent:new Set()};
     if(d?.packaged)return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
     if(/^(?:\d+(?:[.,]\d+)?\s*g\s+)?fagyi gyumi$/i.test(strip(piece).trim()))return {items:[{text:piece,status:'needIdentity'}],intent:new Set()};
     const sc = scan(d ? (d.amount!=null?d.amount+' '+d.unit+' ':'')+d.name : piece);
@@ -327,7 +328,7 @@ window.FoodQuery = (() => {
     for (const part of parts) {
       let best = parsePiece(part, opts);
       const pieces = part.split(/,(?![^()]*\))|\s+(?:with|with a|with some)\s+/i).map(x => x.trim()).filter(Boolean);
-      if (pieces.length > 1 && !best.items.some(i=>['needLabel','needIdentity'].includes(i.status))) {
+      if (pieces.length > 1 && !best.items.some(i=>i.memoryId||['needLabel','needIdentity','needMemory','needMemoryAmount'].includes(i.status))) {
         const alt = pieces.map(p => parsePiece(p, opts)), merged = { items: alt.flatMap(a => a.items), intent: new Set(alt.flatMap(a => [...a.intent])) };
         if (!best.items.every(i => i.status === 'ok' && i.exact) && grade(merged) > grade(best)) best = merged;
       }
@@ -369,6 +370,7 @@ window.FoodQuery = (() => {
     const l = UL[lang === 'hu' ? 'hu' : 'en'][it.u]; return qs + ' ' + (Array.isArray(l) ? l[q === 1 ? 0 : 1] : l);
   }
   function view(it, lang) {                                       // plain data for the app's own cards
+    if(it.memoryId)return {name:it.text,qty:it.basisUnit==='ml'?fmt(it.ml/100,lang)+' dl':it.basisUnit==='portion'?fmt(it.servings,lang)+(lang==='hu'?' adag':' servings'):fmt(it.grams,lang)+' g',...it,approx:it.estimated,typ:false,usda:'',alts:[],ignored:[],typos:[],per100:false,implicit:false,full:true,i:-1,h:-1,label:!!it.label};
     const X = index(), en = it.entry, meta = en && en.h >= 0 ? X.F.meta?.[en.h] : null, hu = en && en.h >= 0 ? X.F.hu[en.h] : null;
     return { basisUnit:it.basisUnit||'g', name: it.label ? it.text : nameOf(en, lang), qty: qtyText(it, lang), grams: it.grams != null ? r1(it.grams) : null, kcal: it.kcal, p: it.p, c: it.c, f: it.f, k100: it.k100, p100: it.p100, c100: it.c100, f100: it.f100,
       typ: !!it.typ, note: it.unitG?.note || '', approx: !!(hu && hu[2]) || !!meta?.mixed, mixed: !!meta?.mixed, ref: meta?.ref || '', usda: en ? X.F.list[en.i][0] : '', key: en ? (en.h >= 0 ? 'hu:' + hu[0] : 'en:' + X.F.list[en.i][0]) : '',
@@ -377,7 +379,7 @@ window.FoodQuery = (() => {
   function answer(text, lang = 'hu', opts = {}) {
     const L = TXT[lang === 'hu' ? 'hu' : 'en'], r = parse(text, opts), ok = r.items.filter(i => i.status === 'ok');
     if (!ok.length) return null;
-    const unknown = r.items.filter(i => ['unknown','needLabel','needIdentity','tooLong'].includes(i.status) && i.text), need = r.items.filter(i => i.status === 'needGrams' || i.status === 'needAmount');
+    const unknown = r.items.filter(i => ['unknown','needLabel','needIdentity','needMemory','needMemoryAmount','tooLong'].includes(i.status) && i.text), need = r.items.filter(i => i.status === 'needGrams' || i.status === 'needAmount');
     const hasQty = r.items.some(i => i.qty != null || i.unit), intent = r.intent;
     // a chat message is answered here only when every word is accounted for
     const strayWords = ok.reduce((s, i) => s + (i.ignored || []).length, 0);
@@ -388,13 +390,13 @@ window.FoodQuery = (() => {
     const macroLine = v => `${L.p} ${fmt(v.p, lang)} g · ${L.c} ${fmt(v.c, lang)} g · ${L.f} ${fmt(v.f, lang)} g`;
     const focus = v => ['p', 'c', 'f'].filter(k => intent.has(k)).map(k => `${L[k]}: **${fmt(v[k], lang)} g**`).join(' · ');
     views.forEach((v, k) => {
-      const g = v.label ? '' : ` ${v.typ ? '≈' : '='} ${fmt(v.grams, lang)} g`;
+      const g = v.label || v.memoryId ? '' : ` ${v.typ ? '≈' : '='} ${fmt(v.grams, lang)} g`;
       if (views.length === 1) {
         lines.push(gramsOnly ? `**${v.qty} ${v.name}${g}**` : `**${v.qty} ${v.name}**${g}: **${v.kcal} kcal**`);
         const fx = focus(v);
         if (gramsOnly) lines.push(`${v.kcal} kcal · ${macroLine(v)}`); else lines.push(fx || macroLine(v));
         if (v.typ) lines.push(`${L.typ}${v.note && lang === 'hu' ? ': ' + v.note : ''}.`);
-        if (!v.label && !v.per100 && Math.round(v.grams) !== 100) lines.push(`${L.per100}: ${Math.round(v.k100)} kcal · ${macroLine({ p: v.p100, c: v.c100, f: v.f100 })}`);
+        if (!v.memoryId && !v.label && !v.per100 && Math.round(v.grams) !== 100) lines.push(`${L.per100}: ${Math.round(v.k100)} kcal · ${macroLine({ p: v.p100, c: v.c100, f: v.f100 })}`);
         if (v.alts.length && !ok[k].exact) lines.push(fill(L.alts, v.alts.map(a => a.name).join(', ')));
       } else lines.push(`• ${v.qty} ${v.name}${g}: ${v.kcal} kcal · ${macroLine(v)}`);
       if (v.ref) lines.push(`${v.name}: ${lang === 'hu' ? v.ref : v.mixed ? L.calc : L.label + ' ' + L.vals}.`); else if (v.mixed) lines.push(`${v.name}: ${L.recipe}.`); else if (v.approx) lines.push(`${v.name}: ${L.approx}.`);
@@ -403,7 +405,7 @@ window.FoodQuery = (() => {
     if (views.length > 1) lines.push(`**${L.total}: ${Math.round(tot.kcal)} kcal** · ${fmt(tot.g, lang)} g · ${macroLine(tot)}`);
     unknown.forEach(i => lines.push(fill(L.nf, '„' + i.text + '”')));
     need.forEach(i => lines.push(fill(i.why === 'volume' ? L.needVol : L.need, i.entry ? nameOf(i.entry, lang) : i.text)));
-    const srcs = new Set(ok.map(i => { const m = i.entry && i.entry.h >= 0 ? index().F.meta?.[i.entry.h] : null; return i.label ? L.label : m && (m.ref || m.mixed) ? L.srcLex : L.srcUsda; }));
+    const srcs = new Set(ok.map(i => { const m = i.entry && i.entry.h >= 0 ? index().F.meta?.[i.entry.h] : null; return i.memoryId ? (lang==='hu'?'Mentett saját adag':'Saved personal portion') : i.label ? L.label : m && (m.ref || m.mixed) ? L.srcLex : L.srcUsda; }));
     lines.push(fill(L.src, [...srcs].join(', ')));
     return { chat, items: views, total: { ...tot, g: r1(tot.g), p: r1(tot.p), c: r1(tot.c), f: r1(tot.f) }, unknown: unknown.map(i => i.text), need: need.map(i => i.entry ? nameOf(i.entry, lang) : i.text), intent: [...intent], text: lines.join('\n') };
   }
@@ -422,5 +424,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { productLabels:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { foodMemory:true,productLabels:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();

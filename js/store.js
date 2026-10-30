@@ -20,7 +20,7 @@ window.Store = (function () {
         sections: {}, accent: 'volt', bg: 'aurora', calm: false, solid: false, mealGroups:false, addActive: false, addWorkoutCalories: false, coach: true, figure: 'draw', syncKey: false, hue: null, accentTone:'soft', photoModel: '',material:'glass', stretch: true, hold: 30, apiKey: '', keyState: '', model: MODELS[0],
         onboardingVersion: 0, publicProfile: Profile.clean(null), profileStyle:Profile.cleanStyle(null), profile: { sex: 'm', age: '', height: '', weight: '', activity: 1.55, goal: 'maintain' }, targets: null },
       routines: seedRoutines(), workouts: [], active: null, body: [], food: {}, recentFoods: [], favEx: [], favFoods: [], aiNotes: [], act: {}, habits: [], planner: DailyPlanner.clean(null), chats: [],
-      plan: null, myEx: [], myFoods: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
+      plan: null, myEx: [], myFoods: [], foodMemories: [], exMedia: {},      // a loaded plan (meals per weekday, rules) and the user's own exercises, foods, pictures and video links
       mt: {}, del: {}, owner: '', epoch: 0      // for syncing with an account: when each part last changed, what was deleted, whose data this is
     };
   }
@@ -121,6 +121,7 @@ window.Store = (function () {
       z = obj(z); const name = str(z.name, 80).trim(); if (!name) return null;
       const r1 = v => Math.round(num(v, 0, 10000, 0) * 10) / 10;
       const o = { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' || z.src === 'plan' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
+      if(Array.isArray(z.memoryIds))o.memoryIds=z.memoryIds.filter(x=>typeof x==='string'&&/^(?:product:)?[A-Za-z0-9_-]{1,80}$/.test(x)).slice(0,2);if(idStr(z.memoryBatch))o.memoryBatch=idStr(z.memoryBatch);if(z.estimated===true)o.estimated=true;
       const vml=num(z.vml,0,5000,0);if(vml>0)o.vml=Math.round(vml*100)/100;
       if(['breakfast','lunch','dinner','snack','other'].includes(z.meal)){o.meal=z.meal;const at=num(z.mealAt,0,4e12,0);if(at)o.mealAt=at;}
       if((z.src==='plan'||z.src==='db')&&Array.isArray(z.items))o.items=z.items.slice(0,20).map(i=>{i=obj(i);const n=str(i.n,80).trim();return n?{n,g:num(i.g,0,100000,0),kcal:i.kcal==null?null:int(i.kcal,0,20000,0)}:null;}).filter(Boolean);
@@ -157,6 +158,7 @@ window.Store = (function () {
     }).filter(Boolean).filter((e, i, a) => a.findIndex(x => x.id === e.id) === i);
     out.exMedia = {};
     Object.keys(obj(r.exMedia)).slice(0, 200).forEach(k => { if (!EXID.test(k)) return; const m = obj(r.exMedia[k]), o = { img: pic(m.img), vid: link(m.vid) }; if (o.img || o.vid) out.exMedia[k] = o; });
+    out.foodMemories = globalThis.FoodMemory ? FoodMemory.clean(r.foodMemories) : [];
     out.myFoods = arr(r.myFoods).slice(0, 500).map(z => {
       z = obj(z); const id = idStr(z.id), name = str(z.name, 80).trim(), kcal = Math.round(num(z.kcal, 0, 950, 0) * 10) / 10; if (!id || !name) return null;
       const g = v => Math.round(num(v, 0, 100, 0) * 10) / 10;
@@ -200,7 +202,7 @@ window.Store = (function () {
   /* What changed since the last save? Each part gets a "last changed" time and every removed workout, meal or routine leaves a marker,
      so that two devices signed in to the same account can be merged without one overwriting the other. */
   const SECTS = ['settings', 'routines', 'favs', 'notes', 'body', 'act', 'habits', 'own', 'plan', 'planner'];
-  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, habits: d => d.habits, own: d => [d.myEx, d.myFoods, d.exMedia], plan: d => d.plan, planner: d => d.planner };
+  const PART = { settings: d => { const c = Object.assign({}, d.settings); delete c.apiKey; delete c.keyState; return c; }, routines: d => d.routines, favs: d => [d.favEx, d.favFoods], notes: d => d.aiNotes, body: d => d.body, act: d => d.act, habits: d => d.habits, own: d => [d.myEx, d.myFoods, d.exMedia, d.foodMemories], plan: d => d.plan, planner: d => d.planner };
   function shot(d) {
     const o = { ids: {} }; SECTS.forEach(k => { o[k] = JSON.stringify(PART[k](d)); });
     d.planner.events.concat(d.planner.sources).forEach(e => { o.ids[e.id] = 1; }); d.workouts.forEach(w => { o.ids[w.id] = 1; }); d.routines.forEach(r => { o.ids[r.id] = 1; }); d.habits.forEach(h => { o.ids[h.id] = 1; }); d.chats.forEach(c => { o.ids[c.id] = 1; }); Object.keys(d.food).forEach(day => d.food[day].forEach(f => { o.ids[f.id] = 1; }));
@@ -249,7 +251,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

@@ -73,7 +73,7 @@ window.Cloud = (function () {
     });        // workouts and meals: everything from both sides, minus what was deleted
     out.workouts = Object.keys(w).filter(id => !del[id]).map(id => w[id]).sort((x, y) => (x.start || 0) - (y.start || 0));
     out.food = {}; const fa = map(a.food), fb = map(b.food), days = {}; Object.keys(fa).concat(Object.keys(fb)).forEach(d => { days[d] = 1; });
-    Object.keys(days).sort().forEach(d => { const m = {}; list(fb[d]).forEach(f => { if (f && f.id) m[f.id] = f; }); list(fa[d]).forEach(f => { if (!f || !f.id) return; const remote=m[f.id],valid=x=>x&&['breakfast','lunch','dinner','snack','other'].includes(x.meal),chosen=valid(remote)&&(!valid(f)||(+remote.mealAt||0)>(+f.mealAt||0))?remote:valid(f)?f:null; m[f.id]=chosen?{...f,meal:chosen.meal,...(chosen.mealAt?{mealAt:chosen.mealAt}:{})}:f; }); const l = Object.keys(m).filter(id => !del[id]).map(id => m[id]).sort((x, y) => (x.t || 0) - (y.t || 0)); if (l.length) out.food[d] = l; });
+    Object.keys(days).sort().forEach(d => { const m = {}; list(fb[d]).forEach(f => { if (f && f.id) m[f.id] = f; }); list(fa[d]).forEach(f => { if (!f || !f.id) return; const remote=m[f.id],valid=x=>x&&['breakfast','lunch','dinner','snack','other'].includes(x.meal),chosen=valid(remote)&&(!valid(f)||(+remote.mealAt||0)>(+f.mealAt||0))?remote:valid(f)?f:null; const same=remote&&['name','g','vml','kcal','p','c','f'].every(k=>(remote[k]||0)===(f[k]||0)),base=same?{...f,...(!f.memoryIds?.length&&remote.memoryIds?.length?{memoryIds:remote.memoryIds,memoryBatch:remote.memoryBatch}:{}),...(remote.estimated?{estimated:true}:{})}:f;m[f.id]=chosen?{...base,meal:chosen.meal,...(chosen.mealAt?{mealAt:chosen.mealAt}:{})}:base; }); const l = Object.keys(m).filter(id => !del[id]).map(id => m[id]).sort((x, y) => (x.t || 0) - (y.t || 0)); if (l.length) out.food[d] = l; });
     const bd = {}; (newer('body') ? [a.body, b.body] : [b.body, a.body]).forEach(l => list(l).forEach(x => { if (x && x.d) bd[x.d] = x; })); out.body = Object.keys(bd).sort().map(k => bd[k]);   // per day; on a clash the newer side wins
     out.act = newer('act') ? Object.assign({}, map(a.act), map(b.act)) : Object.assign({}, map(b.act), map(a.act));
     const seen = {}; out.routines = (newer('routines') ? list(b.routines).concat(list(a.routines)) : list(a.routines).concat(list(b.routines))).filter(r => r && r.id && !del[r.id] && !seen[r.id] && (seen[r.id] = 1));
@@ -82,6 +82,7 @@ window.Cloud = (function () {
     if (newer('favs')) { out.favEx = list(b.favEx); out.favFoods = list(b.favFoods); }
     if (newer('notes')) out.aiNotes = list(b.aiNotes);
     if (newer('own')) { out.myEx = list(b.myEx); out.myFoods = list(b.myFoods); out.exMedia = map(b.exMedia); }                     // own exercises, foods and pictures: the side that changed them last
+    const memories=new Map();list(a.foodMemories).concat(list(b.foodMemories)).forEach(m=>{if(m?.id&&!del[m.id]&&(!memories.has(m.id)||(m.updatedAt||0)>(memories.get(m.id).updatedAt||0)))memories.set(m.id,m);});out.foodMemories=[...memories.values()].sort((x,y)=>(y.updatedAt||0)-(x.updatedAt||0)).slice(0,200);
     out.planner = DailyPlanner.merge(a.planner,b.planner,del);
     out.habits = Momentum.merge(a.habits, b.habits, del);
     if (newer('plan')) out.plan = b.plan && typeof b.plan === 'object' ? b.plan : null;
@@ -122,7 +123,7 @@ window.Cloud = (function () {
   }
 
   return {
-    supportsPlanner:true,
+    supportsFoodMemory:true,supportsPlanner:true,
     async calendarFeed(url) {
       if(!on)throw fail('plannerCalendarSetup');
       const run=tk=>call('/functions/v1/calendar-feed',{method:'POST',auth:tk,body:{url}});
