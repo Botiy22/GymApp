@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.43.0 — 2026-10-30 (build 20261030.3)
+
+New `data/restaurant-foods.js`: the full Burger King Hungary menu (105 items: burgers, chicken, nuggets by the piece, fries sizes, buckets, salads and toppings, desserts, shakes, drinks, coffees, dips and dressings) from the chain's nutrition and allergen table of 2024-12-16, stored per portion as sold and exact (no "typical" marker). The US-based "Whopper", "Sült krumpli" and "Hagymakarika (Burger King)" rows now carry the Hungarian values. Piece items answer to a bare number as pieces ("9 spicy nuggets") and to no number as the usual box. Two source problems are kept visible: Crispy Chicken prints 46.9 g fat, which does not fit its 413 kcal, so fat is derived from energy (≈23.7 g); the coffee rows are kept as printed with a note because their calories do not match their macros.
+
+`js/food-query.js`: chain items match their bare names only when typed in full or by a unique alias; "bk …"/"burger king …" selects the chain; one chain in a message also picks that chain's sides and drinks; names containing "és"/"-val" (e.g. "Whopper sajttal") stay one food; decimal commas after a comma ("…, 0,4 l kóla") are no longer split. Answers name the chain's table as the source. Bellozzo is not included yet (its table is an image that could not be read here).
+
 ## 2.42.0 — 2026-10-30 (build 20261030.2)
 
 Reviewed photo foods can now be remembered when added to the diary, with a personal short name or an optional name for the entire meal. A Frequent foods dropdown ranks saved portions by recency and frequency; serving adjustment, search, aliases and removal are available. Describe and food search resolve saved names locally, retaining the saved nutrition and estimate status. Ambiguous names require a choice, and unknown mass is never invented for liquids or serving-only foods.
