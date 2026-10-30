@@ -121,6 +121,7 @@ window.Store = (function () {
       z = obj(z); const name = str(z.name, 80).trim(); if (!name) return null;
       const r1 = v => Math.round(num(v, 0, 10000, 0) * 10) / 10;
       const o = { id: idStr(z.id) || newId(), name, g: int(z.g, 0, 100000, 0), kcal: int(z.kcal, 0, 100000, 0), p: r1(z.p), c: r1(z.c), f: r1(z.f), src: z.src === 'ai' || z.src === 'db' || z.src === 'plan' ? z.src : 'manual', t: num(z.t, 0, 4e12, 0) };
+      if(z.servings>0&&z.servings<=20)o.servings=Math.round(z.servings*1000)/1000;
       if(Array.isArray(z.memoryIds))o.memoryIds=z.memoryIds.filter(x=>typeof x==='string'&&/^(?:product:)?[A-Za-z0-9_-]{1,80}$/.test(x)).slice(0,2);if(idStr(z.memoryBatch))o.memoryBatch=idStr(z.memoryBatch);if(z.estimated===true)o.estimated=true;
       const vml=num(z.vml,0,5000,0);if(vml>0)o.vml=Math.round(vml*100)/100;
       if(['breakfast','lunch','dinner','snack','other'].includes(z.meal)){o.meal=z.meal;const at=num(z.mealAt,0,4e12,0);if(at)o.mealAt=at;}
@@ -251,7 +252,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsBellozzo:true,supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

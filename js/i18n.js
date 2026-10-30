@@ -719,3 +719,6 @@ Object.assign(window.I18N.en,{
 
 Object.assign(window.I18N.hu,{memorySearch:'Mentett étel keresése',memoryPortion:'Mentett saját adag'});
 Object.assign(window.I18N.en,{memorySearch:'Search saved foods',memoryPortion:'Saved personal portion'});
+
+Object.assign(I18N.hu,{restaurantMeal:'Éttermi étel',restaurantChoose:'Válassz adagot',restaurantDetail:'Pontosítsd az ételt és a menü szerinti méretet. Az extrákat külön sorban add meg. A táblázat nem közöl grammot; adaggal számolunk.',restaurantPortion:'Bellozzo · közölt adag'});
+Object.assign(I18N.en,{restaurantMeal:'Restaurant meal',restaurantChoose:'Choose your serving',restaurantDetail:'Specify the dish and menu size. Enter extras on a separate line. The table does not publish weights; use servings.',restaurantPortion:'Bellozzo · published serving'});

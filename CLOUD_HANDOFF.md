@@ -34,6 +34,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.44.0, 2026-10-30 (Codex)
+
+- Fast-forwarded to Claude's BK release `ca2c04e` before work; preserved its catalogue/parser changes. Backup `backup/main-20261030-before-bellozzo` at that commit. Build `20261030.4`.
+- Owner supplied the Bellozzo table screenshot. New `data/bellozzo-foods.js`: 12 sauces × Classico/Grande × 5 pasta bases, 11 pizzas × 24/32 cm, 5 salads, 6 desserts, 23 extras (176 complete serving variants). Raw tuples retain printed kcal/F/C/P order; pasta sauce-with-toppings and base are explicitly added. “primavera grande” asks for a base; full names and fractional servings resolve offline. Generic food names retain their previous meaning unless a restaurant/menu size is specified (Primavera is a distinctive exception).
+- Food search/Describe share the new catalogue and dropdown clarification; restaurant-only review is compact. No invented grams: portion-based nutrition and persisted diary `servings`, including quarters. No invented full ingredients or drink macros. Printed Carbonara inconsistencies remain unchanged with a warning. Source is the undated, owner-supplied screenshot; live URL remains inaccessible here. `docs/BELLOZZO_DATA.md` records provenance, arithmetic and limits.
+- Updated food query, AI local conversion, app search/review/diary, EN/HU strings, Store cleaning, cached-shell capability loader, offline CORE/index and release history/466-asset manifest. No SQL migration or paid API request.
+- Validation: 39 focused Node tests passed (Bellozzo, BK, memory, food analysis/products/query and translations). Final 14 browser/release checks passed: 3 Bellozzo flows (320px HU selection, quarter-serving log/reload, pizza sizes, missing-size/customization refusal, existing BK search), 4 food-memory, 4 food-query, stale-shell loader, verified update/reload and LF. Inspected the compact mobile review screenshot. No live-account or physical-phone verification.
+
 # Update — Reppsy 2.43.0, 2026-10-30 (Claude)
 
 - Owner asked for every Burger King and Bellozzo item with exact macros, resolvable by name alone. Built on main 1712cb0 (Codex 2.42.0); Node suite on that base had only the 5 known legacy failures.

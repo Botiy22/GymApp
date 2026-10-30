@@ -116,7 +116,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         html=(responsive.ROOT/'index.html').read_text()
         for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','food-memory','workout-energy','choice-menus']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
-        for script in ['exercise-aliases','library-expansion','food-lexicon','goal-recipes']:
+        for script in ['exercise-aliases','library-expansion','food-lexicon','goal-recipes','bellozzo-foods']:
             html=html.replace(f'<script src="data/{script}.js"></script>','')
         profile=(responsive.ROOT/'js/profile.js').read_text()
         old_profile=profile.replace('clean,cleanStyle,symbol','clean,symbol')

@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.44.0 — 2026-10-30 (build 20261030.4)
+
+Added Bellozzo nutrition from the owner-supplied screenshot of the official table: 12 pasta sauces with two sizes and five bases, 11 pizzas with two diameters, five salads, six desserts and 23 extra toppings. Sauce-with-toppings and pasta-base rows are added, not confused with whole-dish totals. “Primavera grande” asks for a base; complete names resolve locally. Search and Describe use the same catalogue, with compact restaurant review and fractional servings retained in the diary.
+
+No serving weights, complete ingredient lists or complete drink macros appear in the screenshot, so none are invented. Printed inconsistencies (Carbonara) remain visible without changing the source values. Existing Burger King Hungary entries are preserved. See `docs/BELLOZZO_DATA.md` for provenance and limitations.
+
 ## 2.43.0 — 2026-10-30 (build 20261030.3)
 
 New `data/restaurant-foods.js`: the full Burger King Hungary menu (105 items: burgers, chicken, nuggets by the piece, fries sizes, buckets, salads and toppings, desserts, shakes, drinks, coffees, dips and dressings) from the chain's nutrition and allergen table of 2024-12-16, stored per portion as sold and exact (no "typical" marker). The US-based "Whopper", "Sült krumpli" and "Hagymakarika (Burger King)" rows now carry the Hungarian values. Piece items answer to a bare number as pieces ("9 spicy nuggets") and to no number as the usual box. Two source problems are kept visible: Crispy Chicken prints 46.9 g fat, which does not fit its 413 kcal, so fat is derived from energy (≈23.7 g); the coffee rows are kept as printed with a note because their calories do not match their macros.
