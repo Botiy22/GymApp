@@ -1,3 +1,4 @@
+from choice_navigation import choose
 import unittest
 import test_responsive_polish as responsive
 class FoodRoutine(unittest.TestCase):
@@ -35,6 +36,6 @@ class FoodRoutine(unittest.TestCase):
             p.locator('button[form=planner-event-form]').click();p.locator('.agenda-item').wait_for()
             p.locator('.agenda-item .planner-done').click();self.assertEqual(p.locator('.agenda-item.complete').count(),1)
             self.bounds(p,'agenda '+lang)
-            p.locator('[data-a=planner-view][data-v=day]').click();self.assertEqual(p.locator('.planner-event.complete').count(),1)
+            choose(p,'[data-a=planner-view][data-v=day]');self.assertEqual(p.locator('.planner-event.complete').count(),1)
             self.assertEqual(errors,[])
 if __name__=='__main__':unittest.main()

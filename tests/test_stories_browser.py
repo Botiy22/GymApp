@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """2.28 stories, photo posts, highlights and likes in a real browser against an in-memory backend (tests/stories_fixture.py)."""
 import tempfile
 import unittest
@@ -27,7 +28,7 @@ class StoriesBrowser(unittest.TestCase):
         return page, backend, errors
 
     def friends(self, page):
-        page.locator('[data-a=profile-view][data-v=friends]').click()
+        choose(page,'[data-a=profile-view][data-v=friends]')
         page.wait_for_function('()=>Stories.state.posts!==null&&document.querySelectorAll(".post-card:not(.ghost)").length>0')
 
     def photo(self, color=(30, 140, 180), size=(3000, 4000)):
@@ -81,7 +82,7 @@ class StoriesBrowser(unittest.TestCase):
         page.locator('[data-in=compose-file]').set_input_files(self.photo())
         page.wait_for_function('()=>__gym.ui.compose&&__gym.ui.compose.image')
         page.locator('[data-in=compose-caption]').fill('Chest day')
-        page.locator('[data-a=compose-audience][data-v=me]').click()
+        choose(page,'[data-a=compose-audience][data-v=me]')
         self.assertIn('only you', page.locator('.audience-hint').inner_text())
         page.locator('[data-a=compose-share]').click(); page.wait_for_function('()=>!document.querySelector("#sheet").open')
         made = [b for n, b in backend.calls if n == 'social_post_create'][-1]
@@ -92,7 +93,7 @@ class StoriesBrowser(unittest.TestCase):
         # A post never has a duration, and a chosen duration is sent for stories.
         page.locator('.feed-head [data-a=compose]').click()
         self.assertEqual(page.locator('.duration-chips').count(), 0)
-        page.locator('[data-a=compose-kind][data-v=story]').click(); page.locator('[data-a=compose-hours][data-v="6"]').click()
+        choose(page,'[data-a=compose-kind][data-v=story]'); page.locator('[data-a=compose-hours][data-v="6"]').click()
         page.locator('[data-in=compose-file]').set_input_files(self.photo((200, 60, 60), (800, 600)))
         page.wait_for_function('()=>__gym.ui.compose&&__gym.ui.compose.image')
         page.locator('[data-a=compose-share]').click(); page.wait_for_function('()=>!document.querySelector("#sheet").open')
@@ -161,7 +162,7 @@ class StoriesBrowser(unittest.TestCase):
         self.assertEqual(page.locator('.story-bubble.hl:not(.new) .story-name').all_inner_texts(), ['Push day'])
         # Post sheet: edit the caption and who can see it, then delete with a second tap.
         page.locator('.post-tile').first.click(); page.locator('#sheet .post-edit summary').click()
-        page.locator('[data-in=post-caption]').fill('Week 4'); page.locator('[data-a=post-audience][data-v=friends]').click()
+        page.locator('[data-in=post-caption]').fill('Week 4'); choose(page,'[data-a=post-audience][data-v=friends]')
         page.locator('[data-a=post-save]').click(); page.wait_for_function('()=>!__gym.ui.postBusy&&Stories.find(__gym.ui.postId).caption==="Week 4"')
         self.assertEqual([b['p_audience'] for n, b in backend.calls if n == 'social_post_update'], ['friends'])
         page.locator('[data-a=post-delete]').click(); self.assertEqual(len([1 for n, b in backend.calls if n == 'social_post_delete']), 0)
@@ -195,7 +196,7 @@ class StoriesBrowser(unittest.TestCase):
         self.assertEqual(errors, [])
 
     def friends_without_posts(self, page):
-        page.locator('[data-a=profile-view][data-v=friends]').click()
+        choose(page,'[data-a=profile-view][data-v=friends]')
         page.wait_for_function('()=>!!Stories.state.error')
 
 if __name__ == '__main__':

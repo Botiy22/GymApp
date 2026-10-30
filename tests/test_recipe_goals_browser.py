@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """Goal chips, bilingual phone layout, real images, recipe portions and offline release."""
 import unittest
 import test_responsive_polish as responsive
@@ -10,21 +11,21 @@ class RecipeGoalsBrowser(unittest.TestCase):
 
     def recipes(self,page):
         page.locator('#tabbar [data-tab=food]').click()
-        page.locator('[data-a=food-view][data-v=ideas]').click()
+        choose(page,'[data-a=food-view][data-v=ideas]')
 
     def test_filters_combine_and_sources_fit_small_phones(self):
         for width,lang,text in [(320,'hu',20),(390,'en',16)]:
             page,errors=self.page(width,844,lang,text)
             self.recipes(page)
             for goal in ['loss','maintain','bulk','muscle']:
-                page.locator(f'[data-a=recipe-goal][data-goal={goal}]').click()
+                choose(page,f'[data-a=recipe-goal][data-goal={goal}]')
                 self.assertEqual(page.locator(f'[data-goal={goal}]').get_attribute('aria-pressed'),'true')
                 actual=page.locator('.recipe-card').evaluate_all('(xs)=>xs.map(x=>x.dataset.id)')
                 expected=page.evaluate('(g)=>RECIPES.items.filter(r=>RecipeGoals.matches(r,g)).map(r=>r.id)',goal)
                 self.assertEqual(actual,expected)
                 self.bounds(page,f'{lang}/{goal}')
-            page.locator('[data-a=recipe-goal][data-goal=loss]').click()
-            page.locator('[data-a=idea-cat][data-c=breakfast]').click()
+            choose(page,'[data-a=recipe-goal][data-goal=loss]')
+            choose(page,'[data-a=idea-cat][data-c=breakfast]')
             self.assertEqual(page.locator('.recipe-card').count(),page.evaluate("RECIPES.items.filter(r=>r.cat==='breakfast'&&RecipeGoals.matches(r,'loss')).length"))
             geometry=page.locator('.recipe-card').evaluate_all('(xs)=>xs.slice(0,2).map(x=>{const r=x.getBoundingClientRect();return {y:r.y,h:r.height,w:r.width}})')
             self.assertEqual(geometry[0],geometry[1])
@@ -48,7 +49,7 @@ class RecipeGoalsBrowser(unittest.TestCase):
         page.locator('#sheet [data-a=oats-add]').click()
         food=page.evaluate('Object.values(Store.d.food).flat()[0]')
         self.assertEqual([food['kcal'],food['p'],len(food['items'])],[385,37.6,5])
-        page.locator('[data-a=food-view][data-v=ideas]').click()
+        choose(page,'[data-a=food-view][data-v=ideas]')
         page.locator('[data-a=idea-open][data-id=grilled-chicken-bulgur]').click()
         page.locator('#sheet [data-a=recipe-qty][data-n="0.5"]').click()
         self.assertEqual(page.locator('.recipe-portions b').inner_text(),'1.5')
@@ -70,7 +71,7 @@ class RecipeGoalsBrowser(unittest.TestCase):
         page.wait_for_function('()=>navigator.serviceWorker.controller!==null',timeout=120000)
         context.set_offline(True);page.reload();page.wait_for_function('()=>!!window.__gym')
         self.recipes(page)
-        page.locator('[data-a=recipe-goal][data-goal=loss]').click()
+        choose(page,'[data-a=recipe-goal][data-goal=loss]')
         self.assertEqual(page.locator('[data-a=idea-open][data-id^=grilled-chicken-]').count(),5)
         result=page.evaluate('''async()=>Promise.all(RECIPES.items.filter(r=>r.leanProtein).map(async r=>{const i=new Image();i.src='img/recipes/'+r.id+'.webp';await i.decode();return i.naturalWidth}))''')
         self.assertEqual(result,[1448]*10)

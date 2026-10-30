@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """Fixture-only phone regressions for the hue wheel and volume-based nutrition."""
 import unittest
 import test_responsive_polish as responsive
@@ -45,9 +46,9 @@ class ColorVolume(unittest.TestCase):
             page.reload();page.wait_for_function('()=>!!window.__gym')
             self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
             page.locator('#tabbar [data-tab=settings]').click();page.locator('[data-section=custom-accent]>summary').click()
-            page.locator('[data-a=set-palette]').first.click()
+            choose(page,'[data-a=set-palette]')
             self.assertTrue(wheel.is_visible())   # stays open while colours change
-            page.locator('[data-a=set-bg]').first.click()
+            choose(page,'[data-a=set-bg]')
             self.assertTrue(wheel.is_visible());self.bounds(page,'settings wheel')
             self.assertEqual(errors,[])
 
@@ -60,9 +61,9 @@ class ColorVolume(unittest.TestCase):
         self.assertEqual(page.evaluate('__gym.ui.fa.unit'),'dl')
         expected=page.evaluate('Math.round(__gym.ui.fa.food.kcal*2.58)')
         self.assertEqual(page.locator('#fa-out b').first.inner_text(),str(expected))
-        page.locator('[data-a=fa-unit][data-v=g]').click()
+        choose(page,'[data-a=fa-unit][data-v=g]')
         self.assertEqual(page.locator('[data-in=fa-g]').input_value(),'258')
-        page.locator('[data-a=fa-unit][data-v=dl]').click()
+        choose(page,'[data-a=fa-unit][data-v=dl]')
         page.locator('[data-in=fa-g]').fill('2,5');self.bounds(page,'milk amount')
         page.locator('[data-a=fa-add]').click()
         item=page.evaluate('Store.d.food[__gym.ui.foodDate][0]')
@@ -78,7 +79,7 @@ class ColorVolume(unittest.TestCase):
         page.locator('#tabbar [data-tab=food]').click()
         page.locator('[data-a=food-manual]').click();page.locator('[data-a=mf-new]').click()
         page.locator('#fmf [name=name]').fill('Fixture drink')
-        page.locator('[name=basis]').select_option('ml')
+        choose(page,'[name=basis]','ml')
         for key,value in {'kcal':'42','p':'1','c':'8','f':'0.2','port':'250'}.items():
             page.locator(f'#fmf [name={key}]').fill(value)
         page.locator('button[form=fmf]').click()
@@ -105,7 +106,7 @@ class ColorVolume(unittest.TestCase):
         page.locator('#tabbar [data-tab=food]').click()
         page.locator('[data-a=food-manual]').click();page.locator('[data-a=fs-own]').click()
         page.locator('#fm [name=name]').fill('Manual drink')
-        page.locator('#fm [name=unit]').select_option('dl')
+        choose(page,'#fm [name=unit]','dl')
         for key,value in {'g':'3','kcal':'150','p':'6','c':'21','f':'3'}.items():
             page.locator(f'#fm [name={key}]').fill(value)
         page.locator('#fm [name=keep]').check();page.locator('button[form=fm]').click()

@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """Real browser regression checks; fixtures contain invented test data, never user plans."""
 import functools
@@ -184,7 +185,7 @@ class AppBrowserTests(unittest.TestCase):
 
     def test_replace_meal_plan_requires_confirmation_and_keeps_diary(self):
         self.upload(self.hu_file);self.add();self.page.locator('[data-pdf="close"]').click()
-        self.upload(self.en_file);self.page.locator('[data-pdf="meal-mode"]').select_option('replace')
+        self.upload(self.en_file);choose(self.page,'[data-pdf="meal-mode"]','replace')
         def dismiss(dialog): dialog.dismiss()
         self.page.on('dialog',dismiss);self.page.locator('[data-pdf="apply"]').click()
         self.assertEqual(1,len(self.data()['plan']['days'][0]['meals']))
@@ -213,7 +214,7 @@ class AppBrowserTests(unittest.TestCase):
         path=xlsx(self.files/'no-day.xlsx',[('Diet',[['Meal','Food','Grams','kcal','Protein','Carbs','Fat'],['Lunch','Test food',100,200,20,20,4]])])
         raw=self.upload(path);self.assertEqual(1,len(raw['unassignedMeals']))
         expect(self.page.locator('[data-pdf="apply"]')).to_be_disabled()
-        self.page.locator('[data-assign]').select_option('5');self.add()
+        choose(self.page,'[data-assign]','5');self.add()
         self.assertEqual(1,len(self.data()['plan']['days'][5]['meals']))
 
     def test_manual_column_mapping(self):
@@ -536,7 +537,7 @@ class AppBrowserTests(unittest.TestCase):
         jump=self.page.locator('.workout-jump')
         self.assertGreaterEqual(jump.bounding_box()['y'],self.page.locator('.w-head').bounding_box()['y']+self.page.locator('.w-head').bounding_box()['height']-1)
         self.assertTrue(self.page.locator('[data-in="w-jump"]').evaluate('(el) => {const box=el.getBoundingClientRect();return el.contains(document.elementFromPoint(box.x+box.width/2,box.y+box.height/2));}'))
-        self.page.locator('[data-in="w-jump"]').select_option('5')
+        choose(self.page,'[data-in="w-jump"]','5')
         self.page.wait_for_timeout(500)
         row=self.page.locator('[data-ex-index="5"]')
         self.assertGreater(self.page.locator('.w-body').evaluate('(el) => el.scrollTop'),0)
@@ -731,7 +732,7 @@ class AppBrowserTests(unittest.TestCase):
         expect(self.page.locator('#sheet')).not_to_be_visible()
         self.page.locator('[data-tab="goals"]').click()
         expect(self.page.locator('.habit-card')).to_be_visible()
-        self.page.locator('[data-a="goals-view"][data-v="progress"]').click()
+        choose(self.page,'[data-a="goals-view"][data-v="progress"]')
         expect(self.page.locator('[data-f="bw"]')).to_be_visible()
         self.page.locator('#tabbar [data-a="settings"]').click()
         expect(self.page.locator('#sheet')).to_contain_text('Appearance')

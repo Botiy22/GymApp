@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 import unittest
 import test_responsive_polish as responsive
@@ -23,7 +24,7 @@ class LibraryExpansion(unittest.TestCase):
     def test_recipe_copy_is_user_facing(self):
         for lang in ['hu','en']:
             p,errors=self.page(320,844,lang)
-            p.locator('#tabbar [data-tab=food]').click();p.locator('[data-a=food-view][data-v=ideas]').click()
+            p.locator('#tabbar [data-tab=food]').click();choose(p,'[data-a=food-view][data-v=ideas]')
             self.assertEqual(p.locator('.recipe-source-clips').count(),0)
             for id in ['clip-protein-banana-muffins','clip-pizza-meat-roll','clip-blueberry-pancakes','clip-juice-carrot-orange']:
                 p.locator('[data-a=idea-open][data-id="'+id+'"]').click()

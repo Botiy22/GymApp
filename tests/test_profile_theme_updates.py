@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """Local phone and verified two-release update checks. No accounts or user data."""
 import functools
 import hashlib
@@ -42,15 +43,15 @@ class ProfileThemeUpdates(unittest.TestCase):
             self.assertEqual(page.locator('[data-a=update-now]').count(),0)
             self.assertEqual(page.locator('.update-app').count(),0)
             self.assertEqual(page.locator('[data-a=set-palette][data-v="350"]').count(),1)
-            page.locator('[data-a=set-palette][data-v="270"]').click()
+            choose(page,'[data-a=set-palette][data-v="270"]')
             self.assertEqual(page.evaluate('getComputedStyle(document.documentElement).getPropertyValue("--acc").trim()'),'rgb(53,88,244)')
-            page.locator('[data-a=set-palette][data-v="350"]').click()
+            choose(page,'[data-a=set-palette][data-v="350"]')
             self.assertEqual(page.evaluate('Store.d.settings.accentTone'),'vivid')
             custom=page.locator('[data-section=custom-accent]')
             custom.locator('summary').click();self.assertTrue(custom.evaluate('(d)=>d.open'))
             self.assertIn('Reppsy',page.locator('.hue-wheel-preview').inner_text())
             custom.locator('summary').click();self.assertFalse(custom.evaluate('(d)=>d.open'))
-            page.locator('[data-a=set-bg]').first.click()
+            choose(page,'[data-a=set-bg]')
             self.assertFalse(custom.evaluate('(d)=>d.open'))
             workout=page.locator('[data-section=settings-workout]')
             workout.locator('summary').click();self.assertFalse(workout.evaluate('(d)=>d.open'))
@@ -70,8 +71,8 @@ class ProfileThemeUpdates(unittest.TestCase):
         page.locator('[name=displayName]').fill('Live preview')
         self.assertIn('Live preview',page.locator('.profile-preview h2').inner_text())
         page.locator('.profile-color-wheel .hue-wheel').focus();page.locator('.profile-color-wheel .hue-wheel').press('End')
-        page.locator('[data-a=profile-style-choice][data-v=mesh]').click()
-        page.locator('[data-a=profile-style-choice][data-v=ring]').click()
+        choose(page,'[data-a=profile-style-choice][data-v=mesh]')
+        choose(page,'[data-a=profile-style-choice][data-v=ring]')
         page.locator('[data-in=profile-style]').check()
         self.assertEqual(page.locator('.profile-preview.cover-mesh.frame-ring.profile-use-accent').count(),1)
         self.bounds(page,'profile editing')
@@ -113,7 +114,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         html=(responsive.ROOT/'index.html').read_text()
-        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','workout-energy']:
+        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','workout-energy','choice-menus']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
         for script in ['exercise-aliases','library-expansion','food-lexicon','goal-recipes']:
             html=html.replace(f'<script src="data/{script}.js"></script>','')

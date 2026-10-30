@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """Private planner editing/import/sync and bilingual page checks in real Chromium."""
 import json
 import unittest
@@ -13,7 +14,7 @@ class DailyPlannerBrowser(unittest.TestCase):
 
     def open_planner(self,page):
         page.locator('#tabbar [data-tab=goals]').click()
-        page.locator('[data-a=planner-view][data-v=day]').click()
+        choose(page,'[data-a=planner-view][data-v=day]')
         page.locator('.planner-scroll').wait_for()
         page.evaluate('()=>__gym.A["planner-day"]({dataset:{d:"2026-10-22"}})')
 
@@ -24,7 +25,7 @@ class DailyPlannerBrowser(unittest.TestCase):
         page,errors=self.page(320,844,'hu',20);self.open_planner(page)
         page.locator('[data-a=planner-new][data-kind=gym]').click()
         page.locator('[name=title]').fill('My gym session');page.locator('[name=date]').fill('2026-10-22')
-        page.locator('[name=start]').fill('09:00');page.locator('[name=end]').fill('10:30');page.locator('[name=repeat]').select_option('weekly');page.locator('[name=note]').fill('Upper body')
+        page.locator('[name=start]').fill('09:00');page.locator('[name=end]').fill('10:30');choose(page,'[name=repeat]','weekly');page.locator('[name=note]').fill('Upper body')
         self.bounds(page,'activity form 320 HU larger text')
         page.locator('button[form=planner-event-form]').click();self.assertEqual(page.locator('.planner-event').count(),1)
         page.locator('.planner-done').click();self.assertTrue(page.locator('.planner-event').evaluate('(e)=>e.classList.contains("complete")'))
@@ -55,10 +56,10 @@ class DailyPlannerBrowser(unittest.TestCase):
             page,errors=self.page(width,844,lang,size,light=lang=='hu');self.open_planner(page)
             page.evaluate('()=>{const start=+new Date(__gym.ui.plannerDate+"T09:00");Store.d.planner.events=Array.from({length:3},(_,i)=>({id:"pe_"+i,title:"A very long activity title that must fit",start:start+i*600000,end:start+5400000,category:"swim",repeat:"none",updatedAt:Date.now()}));Store.save();__gym.render()}')
             self.bounds(page,'overlapping day timetable');self.assertEqual(page.locator('.planner-event').count(),3)
-            page.locator('[data-a=planner-view][data-v=week]').click()
+            choose(page,'[data-a=planner-view][data-v=week]')
             self.assertTrue(page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
             self.assertGreater(page.locator('.planner-scroll').evaluate('(e)=>e.scrollWidth'),800)
-            page.locator('.planner-scroll').evaluate('(e)=>e.scrollLeft=300');page.locator('[data-a=planner-view][data-v=day]').click();self.bounds(page,'return to day')
+            page.locator('.planner-scroll').evaluate('(e)=>e.scrollLeft=300');choose(page,'[data-a=planner-view][data-v=day]');self.bounds(page,'return to day')
             page.screenshot(path=f'/tmp/reppsy-planner-{width}-{lang}.png');self.assertEqual(errors,[])
 
     def test_live_calendar_connection_refresh_failure_and_private_url(self):

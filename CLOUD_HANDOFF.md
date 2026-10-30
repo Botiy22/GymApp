@@ -33,6 +33,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.41.0, 2026-10-30 (Codex)
+
+- Backup `backup/main-20261029-before-choice-menus` at `1c24bcd`; build `20261030.1`.
+- Workout menu headings now display the selected page. Renamed Library / Tár to Exercises / Gyakorlatok. Added Swimming / Úszás directly below Cycling / Bringa, with its own page, existing swim logger preselected, and swim-only history (distance, minutes, calories, original record detail). Rebalanced header widths for Hungarian at 320px/enlarged text.
+- New `js/choice-menus.js` / `css/choice-menus.css`: shared native-details dropdown presentation for standard single-choice tabs, filters, settings/profile appearance, native selects and registration/calculator choices. Original buttons/events and select form values retained; keyboard arrows/Home/End/type-ahead, Escape/outside dismissal, disabled options, required-field focus, dynamic option lists, selected-state labels and focus after redraw. Mutation enhancement handles partial updates; main/sheet/workout rendering also enhances before restoring scroll. Oat editor is explicitly excluded, including its meal picker; multi-select controls and ordinary actions stay direct. Registration choices start blank rather than silently choosing defaults.
+- EN/HU strings, new-helper cached-shell bootstrap, offline CORE, index and release metadata/manifest updated. No SQL or account migration.
+- Tests: 10 focused Node checks (translations, swimming/wearable, oats). Final 16-check browser/release run passed: choice menus + registration/swim history, recipe goal/filter/offline assets, daily planner/import flows, stale-shell helpers, verified update reload and LF files. Earlier focused runs also passed oats (including tap/scroll stability), independent calorie controls, workout navigation and swimming/wearable flows. Updated old UI test interactions to open the visible dropdown through `tests/choice_navigation.py`; no full legacy-suite claim. Inspected recipe/settings/swimming screenshots and fixed a wrapping Hungarian menu label. No physical-device/live-account check.
+
 # Update — Reppsy 2.40.0, 2026-10-29 (Codex)
 
 - Backup `backup/main-20261029-before-budget-navigation` at `db3367c`; build `20261029.3`.

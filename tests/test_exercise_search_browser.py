@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """Exercise search must work in both the library and the real routine picker."""
 import unittest
@@ -17,13 +18,13 @@ class ExerciseSearchBrowser(unittest.TestCase):
         p.locator('[data-a=r-open][data-id=search-lower]').click()
         p.locator('[data-a=r-edit][data-id=search-lower]').click()
         p.locator('[data-a=re-add]').click()
-        p.locator('#sheet [data-a=lib-grp][data-g=lower]').click()
+        choose(p,'#sheet [data-a=lib-grp][data-g=lower]')
         p.locator('#sheet [data-in=lib-q]').fill('ulo labnyujto gep')
         row=p.locator('#pick-list [data-a=pick]').first
         self.assertEqual(row.get_attribute('data-id'),'Leg_Extensions')
         row.click()
         # Filters can hide a real match. Clear them without losing query/selection.
-        p.locator('#sheet [data-in=lib-eq]').select_option('dumbbell')
+        choose(p,'#sheet [data-in=lib-eq]','dumbbell')
         expect(p.locator('[data-a=lib-clear-filters]')).to_be_visible()
         p.locator('[data-a=lib-clear-filters]').click()
         self.assertEqual(p.locator('#sheet [data-in=lib-q]').input_value(),'ulo labnyujto gep')
@@ -46,14 +47,14 @@ class ExerciseSearchBrowser(unittest.TestCase):
         p.locator('[data-in=lib-q]').fill('labnyujtto')
         expect(p.locator('.exercise-search-hint')).to_be_visible()
         expect(p.locator('#lib-list [data-id=Leg_Extensions]')).to_be_visible()
-        p.locator('[data-a=lib-grp][data-g=upper]').click()
+        choose(p,'[data-a=lib-grp][data-g=upper]')
         expect(p.locator('[data-a=lib-clear-filters]')).to_be_visible()
         p.locator('[data-a=lib-clear-filters]').click()
         expect(p.locator('#lib-list [data-id=Leg_Extensions]')).to_be_visible()
         p.evaluate("()=>{Store.d.myEx=[{id:'my_search_test',n:'My special shoulder press',p:['shoulders'],s:[],eq:'machine',steps:['Sit down.']}];Store.save();__gym.render()}")
         p.locator('[data-in=lib-q]').fill('special shoulder')
         expect(p.locator('#lib-list [data-id=my_search_test]')).to_be_visible()
-        p.locator('[data-a=lib-grp][data-g=own]').click()
+        choose(p,'[data-a=lib-grp][data-g=own]')
         expect(p.locator('[data-a=lib-grp][data-g=own]')).to_have_attribute('aria-pressed','true')
         self.assertEqual(p.locator('#lib-list [data-a=ex-open]').count(),1)
         self.assertEqual(errors,[])

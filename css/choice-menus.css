@@ -1,0 +1,25 @@
+/* The same dropdown treatment for page choices, filters and form fields. */
+.choice-menu{position:relative;min-width:0;width:100%;margin:10px 0;border:1px solid var(--edge);border-radius:14px;background:var(--card)}
+.choice-menu>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;min-height:48px;padding:12px 14px;cursor:pointer;color:var(--ink);font-size:.9rem;line-height:1.35;font-weight:600}
+.choice-menu>summary::-webkit-details-marker{display:none}.choice-value{min-width:0;overflow-wrap:anywhere}
+.choice-menu>summary>svg{width:17px;height:17px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;transition:transform .2s}
+.choice-menu[open]>summary{color:var(--acc-tx)}.choice-menu[open]>summary>svg{transform:rotate(180deg)}
+.choice-menu>summary[aria-disabled=true]{opacity:.5;cursor:default}
+.choice-menu .choice-options{position:static;display:flex;flex-direction:column;flex-wrap:nowrap;gap:3px;max-height:min(340px,50dvh);overflow:auto;overscroll-behavior:contain;margin:0;padding:6px;border:0;border-top:1px solid var(--edge);border-radius:0 0 14px 14px;background:var(--card);box-shadow:none;animation:choice-enter .16s ease-out}
+.choice-menu .choice-options>button{position:relative;display:flex;align-items:center;justify-content:flex-start;gap:10px;flex:0 0 auto;width:100%;min-width:0;min-height:46px;height:auto;padding:12px 38px 12px 12px;margin:0;border:0;border-radius:10px;background:transparent;color:var(--ink);font-size:.85rem;line-height:1.35;text-align:left;white-space:normal;overflow-wrap:anywhere;box-shadow:none}
+.choice-menu .choice-options>button.on,.choice-menu .choice-options>button[aria-pressed=true]{background:var(--raised);color:var(--acc-tx)}
+.choice-menu .choice-options>button.on:after,.choice-menu .choice-options>button[aria-pressed=true]:after{content:'✓';position:absolute;right:14px;top:50%;transform:translateY(-50%)}
+.choice-menu .choice-options>button>svg{width:18px;height:18px;flex-shrink:0}
+.choice-menu .choice-options.accent-swatches>button:before{content:'';width:22px;height:22px;border-radius:50%;background:var(--swatch);flex-shrink:0}
+.choice-menu .choice-options.accent-swatches>button>svg{display:none}
+.choice-menu .choice-options.cover-choices>button>span{width:48px;height:32px;flex-shrink:0}
+.choice-menu:has(>select.choice-native){margin:0}.choice-menu select.choice-native{position:absolute!important;top:0!important;left:0!important;width:1px!important;height:1px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;opacity:0;pointer-events:none}
+.choice-menu summary:focus-visible,.choice-menu button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:-2px}
+.fld.row>.choice-menu{flex:1;min-width:0}.swim-page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0}.swim-page-head h2{margin:0}.swim-page-head .btn{width:auto;flex-shrink:0}
+@keyframes choice-enter{from{transform:translateY(-3px)}}
+
+.choice-options>button:has(small){flex-direction:column;align-items:flex-start}.choice-options>button>small{color:var(--mut);font-size:.76rem;font-weight:400}.exercise-search>.choice-menu{flex:0 1 42%;margin:0}
+
+.planner-view-row>.choice-menu{flex:1 1 160px;max-width:240px;margin:0}.planner-view-row{flex-wrap:wrap}
+
+.choice-caption{display:grid;gap:3px;min-width:0}.choice-context{font-size:.65rem;color:var(--mut);font-weight:500}

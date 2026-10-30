@@ -1,5 +1,6 @@
 """2.36: overnight oats builder on a small phone: presets, toggles, steps, typed amounts, diary breakdown, save as my food."""
 import unittest
+from choice_navigation import choose
 import test_responsive_polish as responsive
 
 class OvernightOatsBrowser(unittest.TestCase):
@@ -9,7 +10,7 @@ class OvernightOatsBrowser(unittest.TestCase):
     bounds = responsive.ResponsivePolish.bounds
 
     def open_builder(self, page):
-        page.locator('#tabbar [data-tab=food]').click(); page.locator('[data-a=food-view][data-v=ideas]').click()
+        page.locator('#tabbar [data-tab=food]').click(); choose(page,'[data-a=food-view][data-v=ideas]')
         page.locator('.oats-cta').click(); page.locator('#oats-sum').wait_for()
 
     def kcal(self, page):
@@ -79,8 +80,8 @@ class OvernightOatsBrowser(unittest.TestCase):
 
     def test_recipe_customise_and_save_as_my_food(self):
         page, errors = self.page(390, 844, 'hu')
-        page.locator('#tabbar [data-tab=food]').click(); page.locator('[data-a=food-view][data-v=ideas]').click()
-        page.locator('[data-a=idea-cat][data-c=breakfast]').click()
+        page.locator('#tabbar [data-tab=food]').click(); choose(page,'[data-a=food-view][data-v=ideas]')
+        choose(page,'[data-a=idea-cat][data-c=breakfast]')
         for rid in ['overnight-oats', 'oats-choco-pb', 'oats-apple-cinnamon', 'oats-berry-turo', 'oats-mango-coconut', 'oats-tiramisu']:
             self.assertEqual(page.locator(f'[data-a=idea-open][data-id={rid}]').count(), 1, rid)
         page.locator('[data-a=idea-open][data-id=oats-tiramisu]').click()

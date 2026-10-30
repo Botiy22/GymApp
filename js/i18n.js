@@ -703,3 +703,9 @@ Object.assign(window.I18N.hu,{
  actAdd:'Napi lépések megadása',actAddSub:'Lépésszám és a sétából elégetett kalória',
  energyBudgetHint:'A lépések és az edzés külön adhatók hozzá. Hagyd kikapcsolva, ha az alap kalóriacélod már tartalmazza az adott aktivitást.'
 });
+
+Object.assign(window.I18N.en,{workoutMenu_library:'Exercises',workout_swim:'Swimming',logSwim:'Log swim',noSwims:'No swims logged yet.'});
+Object.assign(window.I18N.hu,{workoutMenu_library:'Gyakorlatok',workout_swim:'Úszás',logSwim:'Úszás naplózása',noSwims:'Még nincs naplózott úszás.'});
+
+Object.assign(window.I18N.en,{chooseOption:'Choose an option'});
+Object.assign(window.I18N.hu,{chooseOption:'Válassz egy lehetőséget'});

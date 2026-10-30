@@ -77,3 +77,5 @@
 .workout-menu-items button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
 .workout-menu-nav summary:focus-visible,.workout-menu-nav button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:1px}
 @media(max-width:360px){.workout-menu-nav summary>svg:first-child,.workout-menu-history>svg{display:none}.workout-menu-nav summary,.workout-menu-nav .workout-menu-history{font-size:.72rem}}
+
+.workout-tabs.workout-menu-nav{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) minmax(0,1fr)}.workout-menu-nav summary>span,.workout-menu-history>span{min-width:0;overflow-wrap:normal}@media(max-width:440px){.workout-menu-nav summary>svg:first-child,.workout-menu-history>svg{display:none}}

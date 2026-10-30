@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """Equal recipe cards, guided cooking, and private stability/knee sections."""
 import unittest
@@ -10,7 +11,7 @@ class RecipesStability(unittest.TestCase):
     bounds=responsive.ResponsivePolish.bounds
 
     def recipes(self,p):
-        p.locator('#tabbar [data-tab=food]').click();p.locator('[data-a=food-view][data-v=ideas]').click()
+        p.locator('#tabbar [data-tab=food]').click();choose(p,'[data-a=food-view][data-v=ideas]')
 
     def test_two_equal_columns_all_macros_and_phone_layout(self):
         for width,lang,text in [(320,'hu',20),(390,'en',16),(844,'hu',16)]:
@@ -21,7 +22,7 @@ class RecipesStability(unittest.TestCase):
             self.assertLess(max(m['h'] for m in metrics)-min(m['h'] for m in metrics),1)
             self.assertEqual(p.locator('.recipe-card-macros>span').count(),3*len(metrics))
             gnocchi=p.locator('[data-a=idea-open][data-id=clip-chicken-gnocchi]');self.assertIn('—',gnocchi.inner_text());self.assertEqual(gnocchi.locator('img').get_attribute('src'),'img/recipes/clip-chicken-gnocchi-thumb.webp')
-            p.locator('[data-a=idea-cat][data-c=breakfast]').click();self.assertEqual(p.locator('.recipe-card').count(),len(p.evaluate('RECIPES.items.filter(r=>r.cat==="breakfast")')))
+            choose(p,'[data-a=idea-cat][data-c=breakfast]');self.assertEqual(p.locator('.recipe-card').count(),len(p.evaluate('RECIPES.items.filter(r=>r.cat==="breakfast")')))
             p.screenshot(path=f'/tmp/reppsy-recipes-{width}-{lang}.png');self.assertEqual(errors,[])
 
     def test_high_density_phone_uses_the_whole_sharp_image(self):
@@ -54,20 +55,20 @@ class RecipesStability(unittest.TestCase):
         p,errors=self.page(320,844,'hu',20)
         p.evaluate('()=>{Store.d.routines.push({id:"sequence-fixture",name:"My sequence",builtin:false,items:[{ex:"Standing_Calf_Raises",sets:2,reps:"8",rest:45}]});Store.save();__gym.render()}')
         select_workout(p,'stability');self.bounds(p,'stability page')
-        p.locator('[data-a=stability-view][data-v=knee]').click();self.bounds(p,'knee recovery page')
+        choose(p,'[data-a=stability-view][data-v=knee]');self.bounds(p,'knee recovery page')
         p.locator('[data-a=stability-organise]').click();p.locator('[data-a=stability-move][data-id=sequence-fixture]').click()
         self.assertEqual(p.locator('.stability-routines [data-id=sequence-fixture]').count(),1)
         self.assertEqual(p.evaluate('Store.d.routines.find(r=>r.id==="sequence-fixture").items[0].sets'),2)
         select_workout(p,'plans');self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),0)
         self.assertEqual(p.evaluate('JSON.parse(Store.exportJSON()).data.routines.find(r=>r.id==="sequence-fixture").focus'),'knee')
         p.evaluate('()=>Store.adopt(Cloud.merge(Store.cloudDoc(),Store.cloudDoc()))');p.reload();p.wait_for_function('()=>!!window.__gym')
-        select_workout(p,'stability');p.locator('[data-a=stability-view][data-v=knee]').click()
+        select_workout(p,'stability');choose(p,'[data-a=stability-view][data-v=knee]')
         p.locator('[data-a=r-open][data-id=sequence-fixture]').click();p.locator('[data-a=r-edit]').click();self.bounds(p,'routine section editor')
-        p.locator('[data-in=re-focus]').select_option('strength');p.locator('[data-a=re-save]').click()
+        choose(p,'[data-in=re-focus]','strength');p.locator('[data-a=re-save]').click()
         select_workout(p,'plans');self.assertEqual(p.locator('#view [data-a=r-open][data-id=sequence-fixture]').count(),1);self.assertEqual(errors,[])
 
     def test_new_knee_sequence_keeps_area_through_picker_save(self):
-        p,errors=self.page();select_workout(p,'stability');p.locator('[data-a=stability-view][data-v=knee]').click()
+        p,errors=self.page();select_workout(p,'stability');choose(p,'[data-a=stability-view][data-v=knee]')
         p.locator('[data-a=r-new]').click();p.locator('[data-a=pick]').first.click();p.locator('[data-a=pick-done]').click()
         self.assertEqual(p.locator('[data-in=re-focus]').input_value(),'knee');p.locator('[data-in=re-name]').fill('User sequence');p.locator('[data-a=re-save]').click()
         self.assertEqual(p.locator('.stability-routines .rcard').count(),1);self.assertEqual(p.evaluate('Store.d.routines.find(r=>r.name==="User sequence").focus'),'knee');self.assertEqual(errors,[])

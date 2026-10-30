@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.41.0 — 2026-10-30 (build 20261030.1)
+
+Workout dropdown headings reflect the active page. The former Library / Tár section is now Exercises / Gyakorlatok. Swimming appears below Cycling / Bringa, opens a dedicated swim page, and uses the existing pool-length, stroke, duration and energy logger. Swim history shows distance, time and calories and opens the original workout record.
+
+A shared dropdown now handles standard single-choice page tabs, filters, profile appearance, settings, registration and form selects. It preserves source form values and existing handlers, adds keyboard navigation, disabled-option handling, required-field focus and selected labels, and closes on selection, outside click or Escape. Oat customization is explicitly excluded; multi-selection controls and ordinary action buttons remain direct controls. Added choice menus to the offline shell and stale-shell helper loader.
+
 ## 2.40.0 — 2026-10-29 (build 20261029.3)
 
 Daily steps and that day's training are now independent calorie additions, as requested. The top switch adds only the entered step calories; the training switch adds only logged training energy. Both remain enabled and retain their own checked state. The equation shows both additions separately. Removed the full-day-total selector and override/locking behavior; the entry form and shortcut guidance now request steps only, not a watch's whole-day active energy. Existing numeric values remain unchanged and are treated as step calories; previously entered whole-day totals should be corrected in the entry form. Base nutrition targets are unchanged.

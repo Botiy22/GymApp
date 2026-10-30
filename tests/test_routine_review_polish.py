@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """Original routine retirement/import and social interactions on synthetic accounts."""
 import base64
@@ -24,7 +25,7 @@ class RoutineReviewPolish(unittest.TestCase):
         page,errors=self.page(320,844,'en',20)
         page.locator('.profile-shortcut').click();page.locator('[data-a=profile-edit]').click()
         page.locator('[name=displayName]').fill('Draft stays here')
-        page.locator('[data-a=profile-style-choice][data-v=orbit]').click()
+        choose(page,'[data-a=profile-style-choice][data-v=orbit]')
         for kind in ['profile-cover-photo','profile-photo']:
             # Same bubbling event fired by native file inputs on picker cancellation.
             page.locator('[data-in='+kind+']').evaluate("e=>e.dispatchEvent(new Event('cancel',{bubbles:true}))")

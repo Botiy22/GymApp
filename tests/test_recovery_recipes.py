@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """2.31: knee/stability programmes from the owner's clips, the clip recipes with guide drawings, and the planner editor fix."""
 import unittest
@@ -36,7 +37,7 @@ class RecoveryRecipes(unittest.TestCase):
         for width, lang in [(320, 'hu'), (390, 'en')]:
             with self.subTest(width=width, lang=lang):
                 page, errors = self.page(width, 844, lang)
-                select_workout(page,'stability'); page.locator('[data-a=stability-view][data-v=knee]').click()
+                select_workout(page,'stability'); choose(page,'[data-a=stability-view][data-v=knee]')
                 self.assertEqual(page.locator('.recovery-card').count(), 2); self.bounds(page, f'knee page {lang}')
                 page.locator('[data-a=recovery-preview][data-id=rec_knee_bands]').first.click()
                 self.assertEqual(page.locator('#sheet .recovery-step').count(), 10)
@@ -64,11 +65,11 @@ class RecoveryRecipes(unittest.TestCase):
 
     def test_clip_recipes_cards_steps_and_amounts(self):
         page, errors = self.page(320, 844, 'hu', 20)
-        page.locator('#tabbar [data-tab=food]').click(); page.locator('[data-a=food-view][data-v=ideas]').click()
+        page.locator('#tabbar [data-tab=food]').click(); choose(page,'[data-a=food-view][data-v=ideas]')
         card = page.locator('[data-a=idea-open][data-id=clip-protein-banana-muffins]')
         self.assertIn('Fehérje', card.inner_text()); self.assertIn('Szénhidrát', card.inner_text()); self.assertIn('Zsír', card.inner_text())
-        page.locator('[data-a=idea-cat][data-c=drink]').click(); self.assertEqual(page.locator('.recipe-card').count(), 5); self.bounds(page, 'juices')
-        page.locator('[data-a=idea-cat][data-c=""]').click(); card.click()
+        choose(page,'[data-a=idea-cat][data-c=drink]'); self.assertEqual(page.locator('.recipe-card').count(), 5); self.bounds(page, 'juices')
+        choose(page,'[data-a=idea-cat][data-c=""]'); card.click()
         steps = page.evaluate('RECIPES.items.find(r=>r.id==="clip-protein-banana-muffins").steps.hu.length')
         self.assertEqual(page.locator('#sheet .recipe-step').count(), steps)
         self.assertEqual(page.locator('#sheet .recipe-step svg').count(), steps)
@@ -84,7 +85,7 @@ class RecoveryRecipes(unittest.TestCase):
         page, errors = self.page()
         r = page.evaluate('RECIPES.items.find(r=>r.id==="clip-pizza-meat-roll")')
         self.assertEqual((r['kcal'], r['p'], r['c'], r['f']), (550, 66, None, None))
-        page.locator('#tabbar [data-tab=food]').click(); page.locator('[data-a=food-view][data-v=ideas]').click()
+        page.locator('#tabbar [data-tab=food]').click(); choose(page,'[data-a=food-view][data-v=ideas]')
         page.locator('[data-a=idea-open][data-id=clip-pizza-meat-roll]').click(); page.locator('[data-a=idea-add]').click()
         self.assertEqual(page.evaluate('Object.values(Store.d.food).flat().length'), 0)        # needs the missing macros first
         self.assertEqual(errors, [])

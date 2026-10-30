@@ -1,3 +1,4 @@
+from choice_navigation import choose
 from workout_navigation import select_workout
 """Focused real-browser regression for adaptive actions, recipe media and avatar viewing."""
 import functools
@@ -73,13 +74,13 @@ class ResponsivePolish(unittest.TestCase):
                             for v in ['ranks','friends','overview']:
                                 page.locator(f'.profile-tabs [data-v={v}]').click();self.bounds(page,f'{width}/{lang}/profile/{v}')
                         if tab=='goals':
-                            page.locator('[data-a=goals-view][data-v=progress]').click();self.bounds(page,'progress')
+                            choose(page,'[data-a=goals-view][data-v=progress]');self.bounds(page,'progress')
                     self.assertEqual(errors,[])
                     page.context.close()
 
     def test_each_recipe_has_its_own_sharp_image(self):
         page,errors=self.page()
-        page.locator('#tabbar [data-tab=food]').click();page.locator('[data-a=food-view][data-v=ideas]').click()
+        page.locator('#tabbar [data-tab=food]').click();choose(page,'[data-a=food-view][data-v=ideas]')
         cards=page.locator('.recipe-card');self.assertEqual(cards.count(),page.evaluate('RECIPES.items.length'))
         sources=cards.locator('img').evaluate_all('(imgs)=>imgs.map(i=>i.getAttribute("src"))')
         self.assertEqual(len(set(sources)),cards.count())
@@ -106,7 +107,7 @@ class ResponsivePolish(unittest.TestCase):
         page.reload();page.wait_for_function('()=>!!window.__gym')
         context.set_offline(True)
         page.reload();page.wait_for_function('()=>!!window.__gym')
-        page.locator('#tabbar [data-tab=food]').click();page.locator('[data-a=food-view][data-v=ideas]').click()
+        page.locator('#tabbar [data-tab=food]').click();choose(page,'[data-a=food-view][data-v=ideas]')
         cards=page.locator('.recipe-card');self.assertEqual(cards.count(),page.evaluate('RECIPES.items.length'))
         for index in range(cards.count()):
             card=cards.nth(index);card.scroll_into_view_if_needed()

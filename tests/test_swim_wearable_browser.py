@@ -1,6 +1,7 @@
 from workout_navigation import select_workout
 """2.38: swim logging, and the smartwatch bridge driven by a fake native iOS handler (swim form, live ride data, ride import)."""
 import unittest
+from choice_navigation import choose
 import test_rides_browser as rides
 import test_responsive_polish as responsive
 
@@ -28,7 +29,7 @@ class SwimWearable(unittest.TestCase):
         return page, errors
 
     def open_swim(self, page):
-        page.evaluate("__gym.A['cardio-add']({dataset:{target:''}})"); page.select_option('[data-in=cardio-type]', 'swim')
+        page.evaluate("__gym.A['cardio-add']({dataset:{target:''}})"); choose(page,'[data-in=cardio-type]','swim')
 
     def test_log_mixed_swim_by_hand_on_a_small_phone(self):
         page, errors = self.page(320)

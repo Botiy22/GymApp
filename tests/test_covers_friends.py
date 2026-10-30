@@ -1,3 +1,4 @@
+from choice_navigation import choose
 """Photo covers, uncluttered friend panels, check-in updates and phone layouts using fixtures."""
 import unittest
 from pathlib import Path
@@ -46,9 +47,9 @@ class CoversFriends(unittest.TestCase):
             self.assertEqual(page.locator('.board-place').all_inner_texts(),['1','1']);self.bounds(page,'friend list')
             page.screenshot(path=f'/tmp/reppsy-friends-{width}-{lang}.png')
             page.locator('[data-a=friend-search-open]').click();self.bounds(page,'add friend')
-            page.locator('#friend-identifier').fill('friend_name');page.locator('[data-in=friend-kind]').select_option('email')
+            page.locator('#friend-identifier').fill('friend_name');choose(page,'[data-in=friend-kind]','email')
             self.assertEqual(page.locator('#friend-identifier').get_attribute('type'),'email');self.assertEqual(page.locator('#friend-identifier').input_value(),'')
-            page.locator('[data-in=friend-kind]').select_option('username');page.locator('#friend-identifier').fill('new_friend');page.locator('form[data-f=friend-add] button').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
+            choose(page,'[data-in=friend-kind]','username');page.locator('#friend-identifier').fill('new_friend');page.locator('form[data-f=friend-add] button').click();page.wait_for_function('()=>!document.querySelector("#sheet").open')
             self.assertTrue(any(n=='social_request_friend' and b['p_username']=='new_friend' for n,b in calls));self.assertEqual(errors,[])
 
     def test_workout_and_meal_ticks_refresh_competition_and_undo(self):
@@ -58,7 +59,7 @@ class CoversFriends(unittest.TestCase):
             route.fulfill(json={'competition_version':2,'profile':{'username':'owner','stats':points},'incoming':[],'outgoing':[],'friends':[],'leaderboard':[{'user_id':'owner-fixture','username':'owner','score':points['score']}]})
         page.route('**/rest/v1/rpc/social_dashboard_v2',dashboard)
         page.evaluate('()=>{__gym.A["w-tick"]({dataset:{id:Store.d.routines[0].id}});const day=__gym.ui.foodDate,index=(new Date(day+"T12:00").getDay()+6)%7;const meal={id:"meal1",name:"Breakfast",kcal:400,p:25,c:45,f:13,items:[{n:"Breakfast",g:200}]};Store.d.plan={name:"Fixture",days:{[index]:{meals:[meal]}},notes:[],train:[]};Store.save();__gym.A["pm-tick"]({dataset:{d:day,m:"meal1"}});__gym.A["profile-home"]();}')
-        page.locator('[data-a=profile-view][data-v=friends]').click();page.wait_for_function('()=>Social.state.data?.profile.stats.score===120&&!Social.state.busy')
+        choose(page,'[data-a=profile-view][data-v=friends]');page.wait_for_function('()=>Social.state.data?.profile.stats.score===120&&!Social.state.busy')
         self.assertEqual(page.locator('.weekly-total b').inner_text(),'120');self.assertEqual(page.evaluate('WorkoutEnergy.workout(Store.d.workouts[0]).strength'),0)
         page.evaluate('()=>{__gym.A["pm-tick"]({dataset:{d:__gym.ui.foodDate,m:"meal1"}});__gym.A["w-untick"]({dataset:{id:Store.d.workouts[0].id}});__gym.A["social-refresh"]()}')
         page.wait_for_function('()=>Social.state.data?.profile.stats.score===0&&!Social.state.busy');self.assertEqual(page.locator('.weekly-total b').inner_text(),'0');self.assertEqual(errors,[])
@@ -66,16 +67,16 @@ class CoversFriends(unittest.TestCase):
     def test_weekly_challenges_complete_and_recalculate_after_undo(self):
         page,errors=self.page(320,844,'hu',20)
         page.evaluate("""()=>{const now=Date.now(),day=new Date().toISOString().slice(0,10);Store.d.workouts=[{id:'challenge',start:now,end:now,entries:[{ex:'Barbell_Bench_Press_-_Medium_Grip',sets:Array.from({length:10},()=>({kg:5,reps:8}))}]}];Store.d.food={[day]:[{id:'meal',kcal:400}]};Store.save();}""")
-        page.locator('#tabbar [data-tab=goals]').click();page.locator('[data-a=goals-view][data-v=habits]').click();self.bounds(page,'weekly challenges')
+        page.locator('#tabbar [data-tab=goals]').click();choose(page,'[data-a=goals-view][data-v=habits]');self.bounds(page,'weekly challenges')
         values=page.locator('.weekly-challenges progress').evaluate_all('(els)=>els.map(e=>[e.value,e.max])');self.assertEqual(values,[[1,3],[10,10],[1,5]])
         page.locator('.weekly-challenges summary').click();self.assertFalse(page.locator('.weekly-challenges').evaluate('(e)=>e.open'))
-        page.locator('.profile-shortcut').click();page.locator('[data-a=profile-view][data-v=ranks]').click();page.locator('[data-section=lift-milestones] > summary').click();self.assertIn('Alapozó',page.locator('[data-rank=bench]').inner_text())   # 2.28: barbell milestones sit in a closed section under the muscle ranks
-        page.evaluate("()=>{Store.d.workouts=[];Store.save()}");page.locator('#tabbar [data-tab=goals]').click();page.locator('[data-a=goals-view][data-v=habits]').click();self.assertEqual(page.locator('.weekly-challenges progress').first.evaluate('(e)=>e.value'),0);self.assertEqual(errors,[])
+        page.locator('.profile-shortcut').click();choose(page,'[data-a=profile-view][data-v=ranks]');page.locator('[data-section=lift-milestones] > summary').click();self.assertIn('Alapozó',page.locator('[data-rank=bench]').inner_text())   # 2.28: barbell milestones sit in a closed section under the muscle ranks
+        page.evaluate("()=>{Store.d.workouts=[];Store.save()}");page.locator('#tabbar [data-tab=goals]').click();choose(page,'[data-a=goals-view][data-v=habits]');self.assertEqual(page.locator('.weekly-challenges progress').first.evaluate('(e)=>e.value'),0);self.assertEqual(errors,[])
 
     def test_missing_new_migration_keeps_friends_and_explains_scoring(self):
         page,calls,errors=self.auth_page()
         page.route('**/rest/v1/rpc/social_dashboard_v2',lambda r:r.fulfill(status=404,json={'code':'PGRST202','message':'missing function'}))
-        page.locator('.profile-shortcut').click();page.locator('[data-a=profile-view][data-v=friends]').click()
+        page.locator('.profile-shortcut').click();choose(page,'[data-a=profile-view][data-v=friends]')
         page.wait_for_function('()=>!!Social.state.data?.profile&&!Social.state.busy')
         self.assertFalse(page.evaluate('Social.state.competitionReady'));self.assertEqual(page.locator('.weekly-card .clean-board').count(),0)
         self.assertIn('Supabase',page.locator('.weekly-card').inner_text());self.assertEqual(page.locator('[data-a=friend-search-open]').count(),2);self.assertEqual(errors,[])
