@@ -30,9 +30,9 @@ window.BellozzoFoods=(()=>{
     ['penne','Penne','Penne','penne|pennével|pennevel',[352,1,70,14],[548,2,105,21]]
   ];
   const pizzas=[
-    ['margherita','Margherita',[727,19,87,46],[1050,28,126,67]],
+    ['margherita','Margherita',[727,19,87,46],[1060,28,126,67]],
     ['quattro-formaggi','Quattro formaggi',[874,32,85,56],[1328,51,123,86]],
-    ['salame','Salame',[819,27,88,53],[1198,41,123,77]],
+    ['salame','Salame',[819,27,86,53],[1198,41,123,77]],
     ['prosciutto-cotto','Prosciutto Cotto',[780,21,88,54],[1139,32,127,79]],
     ['prosciutto-funghi','Prosciutto e Funghi',[767,21,86,53],[1120,31,124,77]],
     ['prosciutto-crudo','Prosciutto Crudo',[864,28,88,60],[1305,44,127,92]],

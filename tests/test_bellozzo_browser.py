@@ -32,7 +32,7 @@ class BellozzoBrowser(unittest.TestCase):
         p.locator('[data-in=fs-q]').fill('bellozzo margherita');p.locator('[data-a=bellozzo-open]').click()
         p.locator('[data-in=restaurant-resolve]').wait_for(state='attached')
         choose(p,'[data-in=restaurant-resolve]','pizza-margherita-32')
-        self.assertEqual(p.locator('[data-in=ai-f][data-k=kcal]').input_value(),'1050')
+        self.assertEqual(p.locator('[data-in=ai-f][data-k=kcal]').input_value(),'1060')
         p.locator('[data-a=ai-add]').click()
         p.locator('[data-a=food-ai][data-m=text]').click()
         p.locator('[data-in=ai-text]').fill('bellozzo margherita 40cm');p.locator('[data-a=ai-go]').click()

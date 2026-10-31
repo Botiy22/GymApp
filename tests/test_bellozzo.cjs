@@ -14,7 +14,7 @@ test('Primavera grande asks for pasta base, then sums the two printed rows witho
 });
 test('pizza diameters are distinct choices; typed quantities and canonical names survive',()=>{
  assert.equal(parse('bellozzo margherita')[0].candidates.length,2);
- for(const [q,kcal] of [['bellozzo margherita 24cm',727],['32 cm bellozzo margherita',1050],['2 adag bellozzo tiramisu',406],['bellozzo extra csirke',90]])assert.equal(parse(q)[0].kcal,kcal,q);
+ for(const [q,kcal] of [['bellozzo margherita 24cm',727],['32 cm bellozzo margherita',1060],['bellozzo salame 24 cm',819],['2 adag bellozzo tiramisu',406],['bellozzo extra csirke',90]])assert.equal(parse(q)[0].kcal,kcal,q);
  for(const r of B.records){const a=parse(r.hu+' (Bellozzo)');assert.ok(a,r.hu);assert.equal(a[0].status,'ok',r.hu);assert.equal(a[0].restaurantId,r.id,r.hu);assert.equal(a[0].kcal,r.kcal,r.hu);}
 });
 test('unknown changes, mass, ingredients and menu sizes never become a guessed whole meal',()=>{

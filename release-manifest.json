@@ -1,6 +1,6 @@
 {
-  "version": "2.44.0",
-  "build": "20261030.4",
+  "version": "2.44.1",
+  "build": "20261031.1",
   "assets": {
     "js/food-memory.js": "074b4323fe7a040221a5ba906a127d6d735556984dbaa29eb252ce9b2c907b25",
     "js/choice-menus.js": "18f8d8cdb0336e6f79ceaad23b2fc05e5185bb4333c537606172188c86d7aaac",
@@ -279,7 +279,7 @@
     "js/hue-wheel.js": "434c1f8b96f328adc6870000cfaba896d06a31283b7ec5ab558d513e6161f6de",
     "js/food-volume.js": "22300376cbc26102a4cdc2e9a2af0eb749d982ebf81d89ba5a79a99fb11e1d65",
     "data/food-lexicon.js": "e907e0a3ee00fdd4e9f94445abb3d38e369d22740e148b6dd0d5bb382a412a5e",
-    "data/bellozzo-foods.js": "f2600f2c1611925822717323f1b999c3e6e3728366599e98477a6e67bb43f930",
+    "data/bellozzo-foods.js": "ffda0e9154613ce06555c8e6c4faf3da1958f6dfdb7e62f2f5975cc80b55255f",
     "data/restaurant-foods.js": "ae1a90bcf9cebee0a0435e7f682af73103daeb7cd71c25b471d0515a33147808",
     "js/food-query.js": "fec14af13fffead25a40a0c739e345db966823f45ef3b3a350ee148a0ee2197e",
     "js/overnight-oats.js": "0a2927ae20afaf0d70eca89c97f07a368d3842e23f8431509de9b3973caad04b",
@@ -351,7 +351,7 @@
     "vendor/leaflet/leaflet.js": "dc71f8a6880bc3ca1bd9fa8dc5f1af48c702dc510b0a78240a07c5feed7ce935",
     "vendor/leaflet/leaflet.css": "337bfca5cabd03b39815b2700febe2b3b7edf55921c59cd49f88ecb328212303",
     "./": "e73f51d275ca94c4600415a6455d43a91af53321a462f2a109c4967a51a985d2",
-    "js/release.js": "9871a60d79f696278c91e83e7b1430bf47485b0e22a1e9f204a7eb1bcae090f6",
+    "js/release.js": "58d0b734c55628570c32a0b80442a0c2e24bb5563f65bf3df277a43a004373f7",
     "index.html": "e73f51d275ca94c4600415a6455d43a91af53321a462f2a109c4967a51a985d2",
     "css/app.css": "f964ccd96e1719d65e9f79c434be23090a93786459b1ab4e496e0711983d080a",
     "manifest.webmanifest": "2be0fe0aabcc9ff83f8ca188c347227e71d84eb963cc213955a68bff932d5140",

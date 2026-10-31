@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.44.1 — 2026-10-31 (build 20261031.1)
+
+Two Bellozzo transcription fixes, checked against the owner's screenshot of the table: Margherita 32 cm 1050 → 1060 kcal; Salame 24 cm carbohydrate 88 → 86 g. All other rows of `data/bellozzo-foods.js` match the image.
+
 ## 2.44.0 — 2026-10-30 (build 20261030.4)
 
 Added Bellozzo nutrition from the owner-supplied screenshot of the official table: 12 pasta sauces with two sizes and five bases, 11 pizzas with two diameters, five salads, six desserts and 23 extra toppings. Sauce-with-toppings and pasta-base rows are added, not confused with whole-dish totals. “Primavera grande” asks for a base; complete names resolve locally. Search and Describe use the same catalogue, with compact restaurant review and fractional servings retained in the diary.
