@@ -34,12 +34,14 @@ class ExerciseSearchBrowser(unittest.TestCase):
         p.locator('[data-a=pick-done]').click()
         p.locator('[data-a=re-save]').click()
         self.assertTrue(p.evaluate("Store.d.routines.find(r=>r.id==='search-lower').items.some(i=>i.ex==='Leg_Extensions')"))
-        p.reload();p.wait_for_function('!!window.__gym')
+        p.reload();p.wait_for_function('()=>!!window.__gym')
         self.assertEqual(p.evaluate("Store.d.routines.find(r=>r.id==='search-lower').items.map(i=>i.ex)"),['Leg_Extensions'])
         self.assertEqual(errors,[])
 
     def test_library_aliases_typo_filters_and_custom_exercises(self):
         p,errors=self.page(390,844,lang='en')
+        # Archived exercises become searchable when referenced by this account's plan.
+        p.evaluate("()=>{Store.d.routines.push({id:'legacy-search',name:'Existing plan',items:['Butterfly','Machine_Hip_Thrust'].map(ex=>({ex,sets:3,reps:'10',rest:60}))});Store.save();__gym.render()}")
         select_workout(p,'exercises')
         for q,id in [('láb nyújtó gép','Leg_Extensions'),('pec deck','Butterfly'),('fekvo labhajlito','Lying_Leg_Curls'),('hip thrust machine','Machine_Hip_Thrust')]:
             p.locator('[data-in=lib-q]').fill(q)

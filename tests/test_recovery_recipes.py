@@ -12,7 +12,7 @@ class RecoveryRecipes(unittest.TestCase):
 
     def test_programme_data_is_complete(self):
         page, errors = self.page()
-        bad = page.evaluate('''async()=>{const out=[];for(const p of RECOVERY_PROGRAMS){for(const i of p.items){if(!EXERCISES.some(e=>e.id===i.ex))out.push('missing '+i.ex);
+        bad = page.evaluate('''async()=>{const out=[];for(const p of RECOVERY_PROGRAMS){for(const i of p.items){if(!ExerciseCatalog.byId[i.ex])out.push('missing '+i.ex);
           if(/^Rehab_/.test(i.ex)){if(!EX_HU[i.ex])out.push('no hu '+i.ex);for(const src of ROUTINE_ART[i.ex].pair){const r=await fetch(src);if(!r.ok)out.push('art '+src);}}}
           if(!p.name.hu||!p.name.en||!p.info.hu||!p.info.en)out.push('text '+p.id);}return out}''')
         self.assertEqual(bad, [])
@@ -24,7 +24,7 @@ class RecoveryRecipes(unittest.TestCase):
 
     def test_all_recovery_sketch_phases_decode(self):
         page, errors = self.page()
-        results = page.evaluate('''async()=>{const ids=EXERCISES.filter(e=>/^Rehab_/.test(e.id)).map(e=>e.id);
+        results = page.evaluate('''async()=>{const ids=Object.values(ExerciseCatalog.byId).filter(e=>/^Rehab_/.test(e.id)).map(e=>e.id);
           return Promise.all(ids.flatMap(id=>ROUTINE_ART[id].pair.map(src=>new Promise(resolve=>{
             const image=new Image();image.onload=()=>resolve([src,image.naturalWidth,image.naturalHeight]);
             image.onerror=()=>resolve([src,0,0]);image.src=src;

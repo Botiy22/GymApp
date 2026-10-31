@@ -16,7 +16,7 @@ class RecipesStability(unittest.TestCase):
     def test_two_equal_columns_all_macros_and_phone_layout(self):
         for width,lang,text in [(320,'hu',20),(390,'en',16),(844,'hu',16)]:
             p,errors=self.page(width,844,lang,text,light=lang=='hu');self.recipes(p);self.bounds(p,'recipe grid')
-            self.assertEqual(p.locator('[data-a=food-view][data-v=ideas]').inner_text(),'Receptek' if lang=='hu' else 'Recipes')
+            self.assertEqual(p.locator('[data-a=food-view][data-v=ideas]').evaluate("e=>e.closest('.choice-menu').querySelector('.choice-value').textContent"),'Receptek' if lang=='hu' else 'Recipes')
             metrics=p.locator('.recipe-card').evaluate_all('(es)=>es.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})')
             self.assertEqual(len(metrics),p.evaluate('RECIPES.items.length'));self.assertEqual(metrics[0]['y'],metrics[1]['y']);self.assertGreater(metrics[1]['x'],metrics[0]['x'])
             self.assertLess(max(m['h'] for m in metrics)-min(m['h'] for m in metrics),1)

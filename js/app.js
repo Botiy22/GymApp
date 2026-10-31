@@ -42,6 +42,12 @@
     attempted.add(src);document.head.append(script);
     return;
   }
+  const atlasMissing = !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : !window.CURATED_EXERCISES ? 'data/exercises-curated.js' : !window.ExerciseCatalog ? 'js/exercise-catalog.js' : !window.ExerciseAtlas ? 'js/exercise-atlas.js' : !window.DESSERT_RECIPES_VERSION ? 'data/dessert-recipes.js' : !window.RECIPE_METHODS_VERSION ? 'data/recipe-methods.js' : '';
+  if(atlasMissing){
+    const script=document.createElement('script');script.src=atlasMissing+'?release='+encodeURIComponent(window.GYM_RELEASE.cacheId);script.onload=startGymApp;
+    script.onerror=()=>{const el=document.getElementById('view');if(el){el.textContent=(navigator.language||'').startsWith('hu')?'Csatlakozz az internethez, majd töltsd újra az alkalmazást.':'Connect to the internet, then reload the app.';}};
+    document.head.append(script);return;
+  }
   /* ---------- helpers ---------- */
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -77,7 +83,7 @@
     el.classList.add('closing'); setTimeout(() => { el.classList.remove('closing'); done(); }, ms);
   }
 
-  const EX = {}; window.EXERCISES.forEach(e => { EX[e.id] = e; });
+  const EX = { ...ExerciseCatalog.byId };
   const PLAN_BY_EX = {}; const HU_NAME = {};
   window.PLAN.items.forEach(i => { if (!PLAN_BY_EX[i.ex]) PLAN_BY_EX[i.ex] = i; if (!i.similar && i.reps !== '21') HU_NAME[i.ex] = i.hu; });
   /* The user's own picture for an exercise (their own exercises, or a replacement for a built-in one) comes before the library's photos. */
@@ -85,18 +91,22 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (!ui.figBad[id] && window.FIG?.[id] ? 'img/fig/'+window.FIG[id]+'-0.svg' : '') || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
+  const thumb = id => ownPic(id) || (EX[id]?.curated ? 'img/atlas/'+encodeURIComponent(id)+'-0.svg' : '') || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (!ui.figBad[id] && window.FIG?.[id] ? 'img/fig/'+window.FIG[id]+'-0.svg' : '') || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
-  const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
-  const exSteps = id => { const hu = L() === 'hu' && EXHU[id] ? (EXHU[id][1] || []).filter(Boolean) : []; return hu.length ? { list: hu, own: true } : { list: (EX[id].i || []).filter(Boolean), own: L() !== 'hu' || !!EX[id].own }; };
+  const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (e.hu || HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
+  const exSteps = id => { const guide=window.EXERCISE_GUIDES[id];if(guide)return {list:guide.steps[L()]||guide.steps.en,own:true}; const hu = L() === 'hu' && EXHU[id] ? (EXHU[id][1] || []).filter(Boolean) : []; return hu.length ? { list: hu, own: true } : { list: (EX[id].i || []).filter(Boolean), own: L() !== 'hu' || !!EX[id].own }; };
   /* Our own database: exercises the user added live in their data (and account) and are merged into the library here. */
-  const BASE_N = window.EXERCISES.length; let ownRef = null;
+  let ownRef = null;
   function ownSync() {
-    const my = D().myEx; if (my === ownRef) return; ownRef = my;
-    window.EXERCISES.length = BASE_N; Object.keys(EX).forEach(k => { if (EX[k].own) delete EX[k]; });
-    my.forEach(e => { if (EX[e.id]) return; const x = { id: e.id, n: e.n, p: e.p, s: e.s, eq: e.eq, c: 'strength', lv: '', m: '', f: '', i: e.steps, k: 0, own: true, img: e.img, vid: e.vid }; window.EXERCISES.push(x); EX[x.id] = x; });
-    exIdx = null;
+    const next=ExerciseCatalog.forData(D());
+    const signature=JSON.stringify(next.map(e=>e.own?[e.id,e.n,e.p,e.s,e.eq,e.i]:e.id));
+    const media=next.filter(e=>e.own).map(e=>[e.id,e.img,e.vid]);
+    if(ownRef?.signature===signature&&media.length===ownRef.media.length&&media.every((m,i)=>m.every((v,j)=>v===ownRef.media[i][j])))return;
+    ownRef={signature,media};
+    Object.keys(EX).forEach(k=>{if(EX[k].own)delete EX[k];});
+    window.EXERCISES.splice(0,window.EXERCISES.length,...next);
+    next.forEach(e=>{EX[e.id]=e;});exIdx=null;
   }
   let exIdx = null;
   const exerciseIndex = () => exIdx || (exIdx = ExerciseSearch.create(window.EXERCISES,{translations:EXHU,aliases:window.EXERCISE_ALIASES,planNames:HU_NAME,vocabulary:I18N}));
@@ -1046,8 +1056,8 @@
     return () => {
       const r = RCP.items.find(x => x.id === id); if (!r) return { title: '', html: '' };
       const k = L() === 'hu' ? 0 : 1, q = ui.recipeQty || 1, macro = key => r[key] == null ? '—' : r1(r[key] * q);
-      return { title: r[L()] || r.en, html: `${mealPicker()}${recipeReference(r,true)}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
-        <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
+      return { title: r[L()] || r.en, html: `${mealPicker()}${recipeReference(r,true)}${r.description?`<p class="recipe-intro">${esc(r.description[L()]||r.description.en)}</p>`:''}${r.portion?`<p class="cap"><b>${esc(L()==='hu'?'1 adag: ':'1 serving: ')}${esc(r.portion[L()])}</b></p>`:''}<div class="kpis k4"><div><b>${macro('kcal')}</b><i>kcal</i></div><div><b>${macro('p')} g</b><i>${esc(t('protein'))}</i></div><div><b>${macro('c')} g</b><i>${esc(t('carbs'))}</i></div><div><b>${macro('f')} g</b><i>${esc(t('fat'))}</i></div></div>
+        <div class="recipe-portions"><span>${esc(t('recipeQty'))}</span><button class="icon-btn" data-a="recipe-qty" data-n="-0.5" ${q <= .5 ? 'disabled' : ''} aria-label="−0.5">−</button><b>${q}</b><button class="icon-btn" data-a="recipe-qty" data-n="0.5" ${q >= 20 ? 'disabled' : ''} aria-label="+0.5">+</button></div><p class="cap">${r.g ? r1(r.g * q) + ' g · ' : ''}${r.min} ${esc(t('min'))}${r.waitMin?' + '+r.waitMin+' '+esc(t('min'))+' '+esc(L()==='hu'?'hűtés':'chilling'):''} · ${esc(t('recipeYield', r.servings || 1))}${r.source ? ' · ' + esc(t('recipeEstimate')) : ''}</p>
         <section class="card"><h3>${esc(t('recipeBatch'))}</h3><ul class="ing">${r.ing.map(i => `<li${typeof i[2]==='string'&&i[2].length>24?' class="long-quantity"':''}><span>${esc(i[k])}</span><b>${esc(recipeAmount(i[2]))}</b></li>`).join('')}</ul></section>
         <button class="btn primary recipe-cook-launch" data-a="recipe-cook" data-id="${esc(r.id)}">${IC.play}${esc(t('cookTogether'))}</button>${r.oats && window.OvernightOats ? `<button class="btn recipe-oats-custom" data-a="oats-open" data-id="${esc(r.id)}">${IC.pen}${esc(t('oatsCustomize'))}</button>` : ''}<h3 class="recipe-method-title">${esc(t('method'))}</h3><ol class="recipe-steps">${(r.steps[L()] || r.steps.en).map((x, n) => `<li class="recipe-step"><span class="recipe-step-art">${CookArt.svg(stepArt(r, n))}<b>${n + 1}</b></span><p>${esc(x)}</p></li>`).join('')}</ol>${r.note?`<p class="cap">${esc(r.note[L()]||r.note.en)}</p>`:''}`,
         foot: `<button class="btn primary" data-a="idea-add" data-id="${esc(r.id)}">${esc(t('addToDiary'))}</button>` };
@@ -1601,12 +1611,13 @@
   }
   function shEx(id, item) {
     return () => {
-      const e = EX[id], pl0 = PLAN_BY_EX[id], special = pl0 && (pl0.similar || pl0.reps === '21'), name = item ? itemName(item) : exName(id);
+      const e = EX[id], pl0 = e.curated ? null : PLAN_BY_EX[id], special = pl0 && (pl0.similar || pl0.reps === '21'), name = item ? itemName(item) : exName(id);
       const pl = pl0 && (!special || (item && item.label && item.label.hu === pl0.hu)) ? pl0 : null;
       const focus = ui.muscleFocus && ui.muscleFocus.id === id ? ui.muscleFocus.group : '', mm = focus ? MuscleMap.fromLists(e.p.includes(focus) ? [focus] : [], e.s.includes(focus) ? [focus] : []) : pl && pl.mm ? pl.mm : MuscleMap.fromLists(e.p, e.s), hst = exHistory(id);
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
-      const routineArt = !ui.figBad[id] && !ownPic(id) && window.ROUTINE_ART[id];
+      const guide=window.EXERCISE_GUIDES[id];
+      const routineArt = guide ? {pair:[0,1].map(n=>'img/atlas/'+encodeURIComponent(id)+'-'+n+'.svg')} : !ui.figBad[id] && !ownPic(id) && window.ROUTINE_ART[id];
       const art = !routineArt && (window.EX_ART || {})[id], figure = !routineArt && FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
       const drawing = !ui.figBad[id] && figure;
       const photos = !routineArt && !board && !drawing && e.k >= 2;
@@ -1616,7 +1627,7 @@
       const mapLabel = focus ? t('muscleSelected', muscleName(focus)) : [t('musclesWorked'), t('primary') + ': ' + e.p.map(muscleName).join(', '), t('secondary') + ': ' + e.s.map(muscleName).join(', ')].join('. ');
       const map = `<section class="muscle-spotlight"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'), mapLabel)}</div><p class="cap muscle-legend"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p>${e.p.length || e.s.length ? `<p class="cap">${esc(t('muscleMapHint'))}</p><div class="muscle-picks"><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary',e.p],['secondary',e.s]].map(([key,list]) => list.length ? `<div><small>${esc(t(key))}</small><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div></div>` : '').join('')}</div>` : `<p class="cap">${esc(t('muscleMapEmpty'))}</p>`}<details class="muscle-precision"><summary>${esc(t('muscleMapAbout'))}</summary><p class="cap">${esc(t('musclePrecision'))}</p></details></section>`;
       let h = `<div class="seg exercise-visual-tabs" aria-label="${esc(t('details'))}">${['muscles','movement'].map(mode => `<button class="${visual === mode ? 'on' : ''}" data-a="ex-visual" data-id="${esc(id)}" data-v="${mode}" aria-pressed="${visual === mode}">${esc(t(mode === 'muscles' ? 'muscleMapTitle' : 'movementTitle'))}</button>`).join('')}</div>`;
-      h += visual === 'muscles' ? map : e.own && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
+      h += visual === 'muscles' ? map : ownPic(id) && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : guide ? `<exercise-demo exercise="${esc(id)}" lang="${L()}"></exercise-demo>${exerciseDrawings(id,name,'',pair,false)}` : exerciseDrawings(id, name, board, pair, photos);
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
       if (routineArt && st.list.length) h += `<section class="card routine-technique"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="routine-steps">${st.list.map((x,i) => `<li><span aria-hidden="true">${i+1}</span><p>${esc(x)}</p></li>`).join('')}</ol></section>`;
@@ -2512,7 +2523,7 @@
     'pdf-plan'() {
       if (!document.querySelector('link[href="css/plan-import.css"]')) { const style = document.createElement('link'); style.rel = 'stylesheet'; style.href = 'css/plan-import.css'; document.head.append(style); }
       PlanImport.open({ lang: L(), hasMealPlan: !!D().plan, restDefault: D().settings.restDefault,
-        catalog: Object.values(EX).map(e => ({ id: e.id, hu: HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n, aliases: [e.id, (EXHU[e.id] || [])[0], (PLAN_BY_EX[e.id] || {}).en, (PLAN_BY_EX[e.id] || {}).hu].filter(Boolean) })),
+        catalog: Object.values(EX).map(e => ({ id: e.id, hu: e.hu || HU_NAME[e.id] || (EXHU[e.id] && EXHU[e.id][0]) || e.n, en: e.n, aliases: [e.id, (EXHU[e.id] || [])[0], (PLAN_BY_EX[e.id] || {}).en, (PLAN_BY_EX[e.id] || {}).hu].filter(Boolean) })),
         onExport: plan => saveFile('GymApp-terv.json', new Blob([JSON.stringify(plan, null, 2)], { type: 'application/json' })),
         onOpen: tab => { ui.tab=tab;if(tab==='home')ui.workout='plans';if(tab==='food')ui.food='plan';render(); },
         onApply: plan => {

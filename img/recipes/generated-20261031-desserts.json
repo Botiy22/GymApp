@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-31",
+  "method": "Each dish separately generated; full-frame conversion, no collage crop. Reference serving images, not photographs of cooked test batches.",
+  "images": [
+    {
+      "id": "protein-muffin-blueberry",
+      "source": "/workspace/generated_images/exec-0f431466-9223-4281-beee-f509696fafc8.png",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "protein-muffin-chocolate",
+      "source": "/workspace/generated_images/exec-2274021f-ee9d-4ab1-bfa2-54483ed34138.png",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "protein-muffin-apple",
+      "source": "/workspace/generated_images/exec-b58cc61d-205e-4a68-aae1-4ad2484ce61c.png",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "protein-cheesecake-berry",
+      "source": "/workspace/generated_images/exec-bd16179a-78a2-468f-921d-031aaf48017e.png",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "protein-mousse-cocoa",
+      "source": "/workspace/generated_images/exec-1bea7e67-778a-44a3-a283-102c6958a67d.png",
+      "width": 1448,
+      "height": 1086
+    },
+    {
+      "id": "protein-quark-raspberry",
+      "source": "/workspace/generated_images/exec-4126e63d-eb81-479f-bfc2-493ff59a281d.png",
+      "width": 1448,
+      "height": 1086
+    }
+  ]
+}

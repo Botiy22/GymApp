@@ -1,5 +1,21 @@
 # Release versions
 
+## 2.46.0 — 2026-10-31 (build 20261031.3)
+
+Six new ingredient-calculated protein desserts with independently generated full-frame
+photos, explicit per-serving yields and guided cooking. Revised bilingual recipe
+introductions and methods explain weighing state, heat, oven mode, doneness and chilling.
+Existing IDs and incomplete source nutrition are preserved.
+
+The active exercise catalogue now begins with 47 authored entries covering the original
+five-day exercise set, all starter templates and both complexes. Each has an original 2D
+movement player with play/pause and half-speed controls, two matching vector stills,
+HU/EN coaching steps and the existing anatomical muscle map. The archive is retained as a
+compatibility lookup. Exercises referenced by this account's imported/copied plans and
+custom definitions are admitted locally without changing saved IDs. Unreviewed entries
+are not assigned a generic animation. No live/private account plans were enumerated and
+no Supabase migration is needed. See `docs/EXERCISE_ATLAS.md`.
+
 ## 2.45.0 — 2026-10-31 (build 20261031.2)
 
 Food logging needs fewer steps. A "Mit ettél? / What did you eat?" box with a camera button now sits at the top of the Food tab, above the calorie ring, with up to four usual meals (food memory) as chips under it; submitting opens Describe and analyses at once. In Describe, an item that misses its amount or identity no longer sends you to a second form: `FoodQuery.choices()` returns ready-to-log answers shown as one-tap cards with grams and kcal — small/regular/large serving (⅔, 1, 1½ of the stored serving, rounded to 5 g), counted pieces (1/2/3 slices), the chain's own box sizes (King Nuggets 4/6/9/20 etc., from the BK table), the food's spoons, or plain 50/100/150 g; for an unrecognised phrase, the closest foods. "Other amount" logs typed grams directly (`FoodQuery.withGrams`). Bellozzo base choice and saved-meal choice become tap cards when there are six options or fewer. While only such questions remain, the refine form is hidden.

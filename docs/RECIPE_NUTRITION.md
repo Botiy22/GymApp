@@ -42,3 +42,35 @@ The USDA cooked roasted breast row is a declared proxy for grilled breast; actua
 All ten estimates exceed 20% energy from protein and are below 3 g fat/100 g prepared food, the EU Annex composition criteria for “high protein” and “low fat” solid foods respectively. This calculation is not laboratory or legal certification. They also contain less than 10 g fat per listed portion. Rounded serving estimates: oats 381–394 kcal, 36.4–37.7 g protein, 3.9–4.8 g fat; chicken meals 424–484 kcal, 52.9–57.5 g protein, 8.1–9.4 g fat.
 
 All ten photos were generated separately and reviewed. No sheet was sliced into food photos. Export keeps each whole frame; a maximum two-pixel generation-size discrepancy is normalized to 1448×1086, with a 384×288 thumbnail. Provenance: `img/recipes/generated-20261028.json`.
+
+## 2026-10-31 dessert collection and method edit
+
+Six original recipes in `data/dessert-recipes.js`: blueberry/lemon, cocoa cottage
+cheese and apple/cinnamon muffins; raspberry mini cheesecakes; cocoa/banana yogurt
+cream; raspberry cottage cheese glass. Ingredient arrays describe the **whole batch**.
+The three muffin batches yield six muffins / three servings; cheesecake is six minis /
+three servings; the cold desserts each make one serving. Displayed macros and diary
+multipliers use **one serving** (two muffins/minis, not one piece). `portion` makes this
+explicit. No cooked gram yield is invented for baked goods.
+
+Nutrition is calculated from the exact bundled USDA SR28 rows recorded in
+`nutritionParts`, then divided by `servings`. The whey reference is the generic
+`Beverages, Protein powder whey based` (78.1 g protein / 100 g), not the similarly
+named older isolate row. Values are estimates; flavored powders vary. Each serving
+has at least 30 g protein and >20% of its energy from protein; no blanket claim of
+low fat or guaranteed weight loss is made. Optional zero-calorie sweetener has no
+fixed quantity; extra toppings, oil, sugar or milk are not included. The usual
+transparent goal filters apply unchanged.
+
+Photos were independently generated for each dish, not cut out from a contact sheet.
+`img/recipes/generated-20261031-desserts.json` records the source outputs; deployment
+uses full-frame 1448×1086 WebP and 384×288 thumbnails. They are serving illustrations,
+not photographs of kitchen-tested batches. The recipes have not been kitchen tested.
+
+`data/recipe-methods.js` improves existing HU/EN preparation: raw versus cooked
+weights, pan heat, oven mode, time ranges plus doneness, storage, and separate chilling
+time. Keeps all existing IDs and macro values. Where earlier video recipes lack
+quantities or full nutrition, they still require completion; no values are invented.
+Safe food temperatures follow the existing FoodSafety.gov reference. Preparation
+instructions are designed for common equipment; the actual result depends on the oven,
+ingredient brands and portion geometry.
