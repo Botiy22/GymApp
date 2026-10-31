@@ -52,11 +52,11 @@ window.RESTAURANT_FOODS = (() => {
     ['Közepes burgonya', 'Medium fries', 116.0, 169.4, 3.8, 27.5, 4.9, 'bk krumpli|bk sult krumpli|bk kozepes krumpli|bk kozepes sult krumpli|burger king krumpli|burger king sult krumpli|bk fries|bk medium fries', { replace: 'Sült krumpli (Burger King)' }],
     ['XXL burgonya', 'XXL fries', 248.0, 362.1, 8.2, 58.8, 10.4, 'xxl burgonya|xxl krumpli|xxl sult krumpli|bk xxl krumpli|bk nagy krumpli|xxl fries'],
     ['Édesburgonya', 'Sweet potato fries', 100.0, 162.0, 1.2, 28.6, 4.8, 'bk edesburgonya|bk edesburgonya hasab'],
-    ['King Nuggets', 'King Nuggets', 340.0, 823.0, 41.0, 71.5, 41.0, 'king nuggets|bk nuggets|burger king nuggets|king nugget', { pcs: 20, box: 6 }],
-    ['Spicy King Nuggets', 'Spicy King Nuggets', 420.0, 1125.6, 63.4, 71.8, 64.3, 'spicy king nuggets|spicy nuggets|csipos nuggets', { pcs: 20, box: 6 }],
-    ['Chili Cheese Nuggets', 'Chili Cheese Nuggets', 140.0, 358.4, 14.7, 31.5, 18.9, 'chili cheese nuggets', { pcs: 7, box: 5 }],
-    ['Gouda sajtfalatok', 'Gouda cheese bites', 160.0, 444.8, 12.0, 45.6, 23.2, 'gouda sajtfalatok|gouda sajtfalat|bk sajtfalatok', { pcs: 8, box: 5 }],
-    ['Hagymakarika', 'Onion rings', 138.0, 528.4, 6.7, 65.5, 25.5, 'bk hagymakarika|bk hagymakarikak|burger king hagymakarika', { pcs: 12, box: 8, replace: 'Hagymakarika (Burger King)' }],
+    ['King Nuggets', 'King Nuggets', 340.0, 823.0, 41.0, 71.5, 41.0, 'king nuggets|bk nuggets|burger king nuggets|king nugget', { pcs: 20, box: 6, boxes: [4, 6, 9, 20] }],
+    ['Spicy King Nuggets', 'Spicy King Nuggets', 420.0, 1125.6, 63.4, 71.8, 64.3, 'spicy king nuggets|spicy nuggets|csipos nuggets', { pcs: 20, box: 6, boxes: [4, 6, 9, 20] }],
+    ['Chili Cheese Nuggets', 'Chili Cheese Nuggets', 140.0, 358.4, 14.7, 31.5, 18.9, 'chili cheese nuggets', { pcs: 7, box: 5, boxes: [5, 7] }],
+    ['Gouda sajtfalatok', 'Gouda cheese bites', 160.0, 444.8, 12.0, 45.6, 23.2, 'gouda sajtfalatok|gouda sajtfalat|bk sajtfalatok', { pcs: 8, box: 5, boxes: [5, 8] }],
+    ['Hagymakarika', 'Onion rings', 138.0, 528.4, 6.7, 65.5, 25.5, 'bk hagymakarika|bk hagymakarikak|burger king hagymakarika', { pcs: 12, box: 8, boxes: [8, 12], replace: 'Hagymakarika (Burger King)' }],
     ['Solo kosár', 'Solo bucket', 344.0, 995.8, 26.3, 111.2, 48.6, 'solo kosar|solo bucket'],
     ['Spicy Solo kosár', 'Spicy Solo bucket', 342.0, 908.0, 35.0, 83.1, 48.0, 'spicy solo kosar'],
     ['Dupla kosár', 'Double bucket (22)', 576.0, 1656.3, 53.4, 164.8, 86.1, 'dupla kosar|bk dupla kosar|double bucket'],   // "22-es dupla kosár" in the table; a leading number would read as an amount
@@ -123,7 +123,7 @@ window.RESTAURANT_FOODS = (() => {
     const names = alias.split('|').concat('bk ' + en.toLowerCase());   // "bk <name>" / "burger king <name>" work without listing them (js/food-query.js)
     const it = { hu, en: 'Burger King ' + en, brand: BK.name, ref: BK.ref + (o.fix ? '; ' + o.fix : ''), refEn: BK.refEn + (o.fixEn ? '; ' + o.fixEn : ''), exact: true, own: [kcal * k, p * k, c * k, f * k], a: [...new Set(names)].join('|'), fix: o.fix || undefined };
     if (o.ml) { const u = o.can ? 'doboz' : 'pohar'; it.dens = 1; it.u = { pohar: g, doboz: g, uveg: g }; it.port = ['1 ' + (o.can ? 'doboz' : 'pohár') + ' (' + String(g / 100).replace('.', ',') + ' dl)', g]; it.def = u; }   // the size sold is the portion: names carry no amount, "0,4 l" would read as one
-    else if (piece) { const box = Math.round(piece * o.box * 10) / 10; it.u = { db: Math.round(piece * 10) / 10, adag: box }; it.port = ['1 adag (' + o.box + ' db, ' + String(box).replace('.', ',') + ' g)', box]; it.def = 'adag'; it.qu = 'db'; }
+    else if (piece) { const box = Math.round(piece * o.box * 10) / 10; it.u = { db: Math.round(piece * 10) / 10, adag: box }; it.port = ['1 adag (' + o.box + ' db, ' + String(box).replace('.', ',') + ' g)', box]; it.def = 'adag'; it.qu = 'db'; if (o.boxes) it.boxes = o.boxes; }
     else { it.u = { db: g, adag: g }; it.port = ['1 adag (' + String(g).replace('.', ',') + ' g)', g]; it.def = 'db'; }
     items.push(it);
   });

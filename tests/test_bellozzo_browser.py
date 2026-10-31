@@ -11,9 +11,9 @@ class BellozzoBrowser(unittest.TestCase):
         p.locator('#tabbar [data-tab=food]').click();p.locator('[data-a=food-manual]').click()
         p.locator('[data-in=fs-q]').fill('primavera grande')
         self.bounds(p,'search pasta');p.locator('[data-a=bellozzo-open]').click()
-        p.locator('[data-in=restaurant-resolve]').wait_for(state='attached')
+        p.locator('[data-a=ai-pick-restaurant]').first.wait_for()   # 2.45: up to six options are tap cards
         self.assertEqual(p.locator('[data-a=ai-add]').count(),0)
-        choose(p,'[data-in=restaurant-resolve]','pasta-primavera-grande-fusilloni')
+        p.locator('[data-a=ai-pick-restaurant][data-id=pasta-primavera-grande-fusilloni]').click()
         self.assertEqual(p.locator('[data-in=ai-f][data-k=kcal]').input_value(),'1367')
         self.assertIn('770 kcal + Fusilloni durum 597 kcal',p.locator('.ai-basis').inner_text())
         p.locator('[data-in=ai-f][data-k=servings]').fill('0.25')
@@ -30,8 +30,8 @@ class BellozzoBrowser(unittest.TestCase):
         p.locator('[data-in=fs-q]').fill('bellozzo')
         self.assertGreater(p.locator('[data-a=bellozzo-open]').count(),10)
         p.locator('[data-in=fs-q]').fill('bellozzo margherita');p.locator('[data-a=bellozzo-open]').click()
-        p.locator('[data-in=restaurant-resolve]').wait_for(state='attached')
-        choose(p,'[data-in=restaurant-resolve]','pizza-margherita-32')
+        p.locator('[data-a=ai-pick-restaurant]').first.wait_for()   # 2.45: up to six options are tap cards
+        p.locator('[data-a=ai-pick-restaurant][data-id=pizza-margherita-32]').click()
         self.assertEqual(p.locator('[data-in=ai-f][data-k=kcal]').input_value(),'1060')
         p.locator('[data-a=ai-add]').click()
         p.locator('[data-a=food-ai][data-m=text]').click()

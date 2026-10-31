@@ -92,7 +92,7 @@ window.FoodQuery = (() => {
       }
       const m = F.meta[h] = F.meta[h] || { alias: [], u: {} };
       m.alias.push(...String(it.a || '').split('|').filter(Boolean)); Object.assign(m.u, it.u || {});
-      ['w', 'en', 'ref', 'refEn', 'def', 'qu', 'dens', 'kind', 'exact', 'brand', 'fix'].forEach(k => { if (it[k] != null) m[k] = it[k]; });
+      ['w', 'en', 'ref', 'refEn', 'def', 'qu', 'boxes', 'dens', 'kind', 'exact', 'brand', 'fix'].forEach(k => { if (it[k] != null) m[k] = it[k]; });
       if (it.mix) m.mixed = true;
       if (it.exact && it.own) m.v = it.own.map(x => Math.round(x * 1000) / 1000);   // a chain's table at full precision: a 1 kg bucket still adds up to the printed totals
     });
@@ -141,7 +141,8 @@ window.FoodQuery = (() => {
   function stems(w) {                                              // candidate dictionary forms of a Hungarian/English word
     const out = [], seen = new Set(), push = x => { if (x.length >= 2 && !seen.has(x)) { seen.add(x); out.push(x); } };
     const one = x => { const r = []; for (const s of SUFFIX) if (x.length - s.length >= 2 && x.endsWith(s)) { const b = x.slice(0, -s.length); r.push(b); if (/([bcdfghjklmnprstvz])\1$/.test(b)) r.push(b.slice(0, -1)); }
-      const m = x.match(/^(.*?)([bcdfghjklmnprstvz])\2(?:al|el)$/); if (m) r.push(m[1] + m[2]); return r; };            // sajttal -> sajt, tojással -> tojás
+      const m = x.match(/^(.*?)([bcdfghjklmnprstvz])\2(?:al|el)$/); if (m) r.push(m[1] + m[2]);            // sajttal -> sajt, tojással -> tojás
+      const d = x.match(/^(.*?)(cc(?=s)|gg(?=y)|ll(?=y)|nn(?=y)|ss(?=z)|tt(?=y)|zz(?=s))([syz])(?:al|el)$/); if (d) r.push(d[1] + d[2][0] + d[3]); return r; };   // rizzsel -> rizs, kolbásszal -> kolbász, meggyel -> meggy
     one(w).forEach(b => { push(b); one(b).forEach(push); });
     return out;
   }
@@ -272,14 +273,14 @@ window.FoodQuery = (() => {
       if (cur.food.length && WITH.test(w) && !canonQ(w, index()).unknown && !index().pre.has([...cur.food, w].map(canon).join(' '))) {   // "rántott hús krumplipürével", "zsemle vajjal": a second food (not "whopper sajttal")
         const last = cur.food[cur.food.length - 1], sz = cur.food.length > 1 && SIZE[last] ? last : '';   // "… közepes krumplival": the size belongs to the side
         if (sz) { cur.food.pop(); if (cur.raw[cur.raw.length - 1] === sz) cur.raw.pop(); }
-        start(); if (sz) { cur.size = SIZE[sz]; cur.sizeWord = sz; }
+        start(); cur.withWord = true; if (sz) { cur.size = SIZE[sz]; cur.sizeWord = sz; }
       }
       cur.food.push(w); cur.raw.push(w);
     }
     out.segs = out.segs.filter(s => s.food.length || s.qty != null || s.unit);
     return out;
   }
-  const WITH = /(?:val|vel|jal|jel|([bcdfghjklmnprstvz])\1(?:al|el))$/;
+  const WITH = /(?:val|vel|jal|jel|([bcdfghjklmnprstvz])\1(?:al|el)|(?:ccs|ggy|lly|nny|ssz|tty|zzs)(?:al|el))$/;
   const nextHasFood = (tk, k) => { for (; k < tk.length; k++) { const w = tk[k]; if (numOf(w)) return false; if (unitOf(w) || FILL.has(w) || intentOf(w) || SIZE[w]) continue; return true; } return false; };
 
     function itemFromSeg(seg, opts) {
@@ -290,9 +291,12 @@ window.FoodQuery = (() => {
     let e = X.full.get(seg.raw.map(canon).join(' ')), res = null;
     if (e == null) e = X.full.get(seg.food.map(canon).join(' '));
     if (e == null && seg.sizeWord && (e = X.full.get([seg.sizeWord, ...seg.food].map(canon).join(' '))) != null) base.size = '';   // "Kis burgonya (Burger King)": the size is part of the name
+    if (opts.entry != null) e = opts.entry;                          // a food the user picked from the offered choices
     if (e != null) res = { e, exact: true, soft: true, full: true, ignored: [], alts: [], typos: [] };
     else {
-      res = resolve(seg.food);
+      let words = seg.food;
+      if (seg.withWord || (WITH.test(words[0]) && !X.pre.has(words.map(canon).join(' ')))) { const st = stems(words[0]).map(canon).find(b => X.vocab.has(b)); if (st) words = [st, ...words.slice(1)]; }   // "… tejjel" is milk, not the "kávé tejjel" alias
+      res = resolve(words);
       if (seg.sizeWord) { const r2 = resolve([seg.sizeWord, ...seg.food]); if (r2 && r2.exact && (!res || !res.exact || r2.e !== res.e)) { res = r2; base.size = ''; } }   // "nagy fröccs", "kis fröccs"
     }
     if (!res) return { ...base, status: 'unknown' };
@@ -311,7 +315,7 @@ window.FoodQuery = (() => {
       else {
         const ug = unitGrams(en, u, base.size);
         if (!ug) { it.status = 'needGrams'; it.why = 'unit'; it.u = u; }
-        else if (opts.strict && qty == null && !unit && (u === 'adag' || ug.typ && u !== 'db')) { it.status = 'needAmount'; it.u = u; }   // the diary never guesses a serving
+        else if (opts.strict && qty == null && !unit && (u === 'adag' || ug.typ && u !== 'db') && X.F.list[en.i][1] >= 5) { it.status = 'needAmount'; it.u = u; }   // the diary never guesses a serving (water or black coffee need no question)
         else { if (qty == null) it.implicit = true; it.u = u; it.unitG = ug; it.grams = (qty ?? 1) * ug.g; it.typ = !!ug.typ; }
       }
     }
@@ -373,7 +377,7 @@ window.FoodQuery = (() => {
         return j.status === 'ok' && j.full && j.entry?.b === b ? { ...j, original: i.original, _seg: s2, chain: true } : i;
       });
     }
-    out.items.forEach(i => { delete i._seg; });
+    out.items.forEach(i => { const sg = i._seg; delete i._seg; if (sg) Object.defineProperty(i, '_seg', { value: sg, enumerable: false }); });   // kept (hidden) for choices()
     return out;
   }
 
@@ -456,6 +460,52 @@ window.FoodQuery = (() => {
     const res = resolve(words); if (!res) return [];
     const X = index(); return [res.e, ...res.alts].slice(0, limit).map(e => ({ h: X.entries[e].h, i: X.entries[e].i, exact: e === res.e && res.exact }));
   }
+  /* ---------- one question instead of a form: ready-to-log options for an item that still misses something ----------
+     needAmount/needGrams: portion sizes (or the chain's box sizes); unknown: the closest foods. Each option carries a
+     complete item (or, for a food whose amount is still open, the next pending item). Never invents a value: every
+     option is a database portion, a named piece weight or a fixed fraction of the typical serving, and says so. */
+  const SIZES = [['small', 2 / 3], ['regular', 1], ['large', 1.5]];
+  const SIZE_TXT = { hu: { small: 'kis {0}', regular: '1 {0}', large: 'nagy {0}' }, en: { small: 'small {0}', regular: '1 {0}', large: 'large {0}' } };
+  function choices(p, lang = 'hu', opts = { strict: true }) {
+    const X = index(), seg = p && p._seg, L = lang === 'hu' ? 'hu' : 'en', out = [];
+    if (!seg) return out;
+    const opt = (label, it) => { if (!it || !['ok', 'needAmount', 'needGrams'].includes(it.status)) return; Object.defineProperty(it, '_seg', { value: it._seg || seg, enumerable: false }); out.push({ label, kcal: it.status === 'ok' ? it.kcal : null, grams: it.status === 'ok' ? r1(it.grams) : null, item: it }); };
+    if (p.status === 'unknown' && p.entry) {
+      const ids = [p.entry, ...(p.alts || [])].map(en => X.entries.indexOf(en)).filter((e, k, a) => e >= 0 && a.indexOf(e) === k).slice(0, 4);
+      ids.forEach(e => opt(nameOf(X.entries[e], L), itemFromSeg(seg, { ...opts, entry: e })));
+      return out;
+    }
+    if (!['needAmount', 'needGrams'].includes(p.status) || !p.entry || p.why === 'volume') return out;
+    const en = p.entry, e = X.entries.indexOf(en), meta = en.h >= 0 ? X.F.meta?.[en.h] : null;
+    if (meta?.boxes?.length && meta.u?.db) {                           // a chain's own box sizes: "4 / 6 / 9 / 20 db"
+      meta.boxes.forEach(n => opt(n + ' ' + (L === 'hu' ? 'db' : 'pcs'), itemFromSeg({ ...seg, qty: n, unit: null }, { ...opts, entry: e })));
+      return out;
+    }
+    const u = p.u || defaultUnit(en), ug = u && unitGrams(en, u, seg.size);
+    if (!ug) {                                                       // no serving on record: the food's own spoons/pieces, else plain gram amounts
+      const named = units(en.h, en.i).filter(x => x.u !== 'adag').slice(0, 2);
+      named.forEach(x => opt('1 ' + unitLabelOf(x.u, L, 1), itemFromSeg({ ...seg, qty: 1, unit: UNIT[x.u] ? [x.u, 1] : null }, { ...opts, entry: e })));
+      if (named.length) opt('2 ' + unitLabelOf(named[named.length - 1].u, L, 2), itemFromSeg({ ...seg, qty: 2, unit: UNIT[named[named.length - 1].u] ? [named[named.length - 1].u, 1] : null }, { ...opts, entry: e }));
+      else [50, 100, 150].forEach(g => opt(g + ' g', itemFromSeg({ ...seg, qty: g, unit: ['g', 1], size: '' }, { ...opts, entry: e })));
+      return out;
+    }
+    if (['db', 'szelet', 'karika', 'gomboc', 'ek', 'tk', 'kocka', 'marek'].includes(u)) {   // counted pieces or spoons: 1 / 2 / 3 of the named one
+      [1, 2, 3].forEach(n => opt(n + ' ' + (unitLabelOf(u, L, n)), itemFromSeg({ ...seg, qty: n, unit: UNIT[u] ? [u, 1] : null }, { ...opts, entry: e })));
+      return out;
+    }
+    SIZES.forEach(([k, f]) => {                                       // a serving: small / regular / large, in grams
+      const g = ug.g * f >= 50 ? Math.round(ug.g * f / 5) * 5 : Math.max(1, Math.round(ug.g * f));
+      if (out.some(o => o.grams === g)) return;
+      opt(fill(SIZE_TXT[L][k], unitLabelOf(['adag', 'tanyer', 'pohar', 'bogre', 'csesze', 'tal'].includes(u) ? u : 'adag', L, 1)), itemFromSeg({ ...seg, qty: g, unit: ['g', 1], size: '' }, { ...opts, entry: e }));
+    });
+    return out;
+  }
+  function withGrams(p, g) {                                        // "Other amount": the same food at the grams the user typed
+    const X = index(), seg = p && p._seg, e = p?.entry ? X.entries.indexOf(p.entry) : -1;
+    if (!seg || e < 0 || !(g > 0 && g <= 5000)) return null;
+    const it = itemFromSeg({ ...seg, qty: g, unit: ['g', 1], size: '' }, { strict: true, entry: e }); return it.status === 'ok' ? it : null;
+  }
+  const unitLabelOf = (u, lang, n) => { const l = UL[lang][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; };
   function units(h, i) {                                            // named portions of one food for quick-pick chips
     const X = index(), en = { h, i }, out = [], seen = new Set(), meta = h >= 0 ? X.F.meta?.[h] : null, hu = h >= 0 ? X.F.hu[h] : null;
     const list = [...new Set([hu && hu[3] ? huPortUnit(strip(hu[3])) : '', ...Object.keys(meta?.u || {}), 'db', 'szelet', 'adag', 'ek', 'tk'].filter(Boolean))];
@@ -464,5 +514,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { choices, withGrams, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();

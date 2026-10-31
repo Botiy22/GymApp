@@ -87,9 +87,9 @@ class FoodMemoryBrowser(unittest.TestCase):
         p.locator('[data-a=sheet-close]').click()
         p.evaluate("FoodMemory.remember(Store.d,[{name:'Different shake',g:0,vml:300,kcal:400,p:40,c:30,f:2,estimated:false}],{name:'shake'});Store.save()")
         p.locator('[data-a=food-ai][data-m=text]').click();p.locator('[data-in=ai-text]').fill('2 servings shake');p.locator('[data-a=ai-go]').click()
-        p.locator('[data-in=memory-resolve]').wait_for(state='attached')
+        p.locator('[data-a=ai-pick-memory]').first.wait_for()   # 2.45: up to six saved meals are tap cards
         self.assertEqual(p.locator('[data-a=ai-add]').count(),0)
-        choose(p,'[data-in=memory-resolve]',mid)
+        p.locator(f'[data-a=ai-pick-memory][data-id="{mid}"]').click()
         self.assertEqual(p.evaluate('__gym.ui.ai.res.items[0].p'),60)
         p.locator('[data-a=ai-add]').click()
         choose(p,'[data-in=memory-quick]',mid)

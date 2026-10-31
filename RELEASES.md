@@ -1,5 +1,11 @@
 # Release versions
 
+## 2.45.0 — 2026-10-31 (build 20261031.2)
+
+Food logging needs fewer steps. A "Mit ettél? / What did you eat?" box with a camera button now sits at the top of the Food tab, above the calorie ring, with up to four usual meals (food memory) as chips under it; submitting opens Describe and analyses at once. In Describe, an item that misses its amount or identity no longer sends you to a second form: `FoodQuery.choices()` returns ready-to-log answers shown as one-tap cards with grams and kcal — small/regular/large serving (⅔, 1, 1½ of the stored serving, rounded to 5 g), counted pieces (1/2/3 slices), the chain's own box sizes (King Nuggets 4/6/9/20 etc., from the BK table), the food's spoons, or plain 50/100/150 g; for an unrecognised phrase, the closest foods. "Other amount" logs typed grams directly (`FoodQuery.withGrams`). Bellozzo base choice and saved-meal choice become tap cards when there are six options or fewer. While only such questions remain, the refine form is hidden.
+
+Recognition: Hungarian "with" forms with doubled digraphs split correctly (rizzsel, kolbásszal, meggyel…); a leading "-val/-vel" word is read as its stem (tejjel → milk); zero-calorie items (water, black coffee) need no amount question. New typical-recipe dishes: bolognai spagetti, sajtos tészta, cézár saláta, tonhalas szendvics, avokádós pirítós, gyros tál, sushi (lazacos maki, per piece), paradicsomleves. On a 56-phrase everyday set, fully automatic recognition went from 27 to 31, and 54/56 are now automatic or one tap (the two others are protein shake/bar, which deliberately ask for the product label).
+
 ## 2.44.1 — 2026-10-31 (build 20261031.1)
 
 Two Bellozzo transcription fixes, checked against the owner's screenshot of the table: Margherita 32 cm 1050 → 1060 kcal; Salame 24 cm carbohydrate 88 → 86 g. All other rows of `data/bellozzo-foods.js` match the image.
