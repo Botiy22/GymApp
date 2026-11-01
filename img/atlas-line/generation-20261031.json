@@ -1,0 +1,524 @@
+{
+  "date": "2026-10-31",
+  "generator": "OpenAI image generation",
+  "styleReference": "img/routine-line/source/Romanian_Deadlift.png",
+  "records": [
+    {
+      "id": "Barbell_Bench_Press_-_Medium_Grip",
+      "source": "/workspace/generated_images/exec-a11cc53c-13d2-49c3-9df5-dde0412559a1.png",
+      "prompt": "flat barbell bench press. Side three-quarter view, athlete lying SUPINE on a flat horizontal bench, both feet on floor. LEFT bar just above mid-chest with elbows bent about 90 degrees and forearms vertical. RIGHT bar directly above shoulders with elbows extended, wrists stacked. Shoulder blades and hips stay on bench. Barbell with equal modest round plates; no squat.",
+      "reviewed": true,
+      "split": 788,
+      "gap": 0,
+      "source_sha256": "d94bfafd5999b154f085bebd5c9be788681a193a41cc226272ba5fc3a4fb3eb5"
+    },
+    {
+      "id": "Incline_Dumbbell_Press",
+      "source": "/workspace/generated_images/exec-68df99f6-82dd-407f-8a81-fa133410241a.png",
+      "prompt": "incline dumbbell bench press on a bench angled 30 degrees. LEFT two dumbbells beside upper chest, elbows bent, forearms vertical. RIGHT both dumbbells above shoulders, elbows extended. Back/head supported, feet on floor. Show whole bench, athlete and both dumbbells, three-quarter view.",
+      "reviewed": true,
+      "source_sha256": "bfcca98381c7a8d5f13f0666585f2dc6911dbe0576f282d5995111eff6467ed5"
+    },
+    {
+      "id": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+      "source": "/workspace/generated_images/exec-baf27cd0-c0b6-4c1f-a89e-7f6e55d55566.png",
+      "prompt": "incline BARBELL bench press, 30-degree incline bench. LEFT the barbell just over upper chest, forearms vertical. RIGHT barbell above shoulders with arms extended. Athlete remains lying on inclined bench, feet firmly planted. Use a proper bench rack with small equal plates. Three-quarter side view.",
+      "reviewed": true,
+      "source_sha256": "0f2e7a63ecb9b8f20e7fb155be4d2018db4c602d6ccebe84a503bcdc25492cc7"
+    },
+    {
+      "id": "Standing_Military_Press",
+      "source": "/workspace/generated_images/exec-330d6e7c-8823-4665-b450-38dab3c9fbdd.png",
+      "prompt": "standing strict barbell overhead press. LEFT bar at upper chest/clavicles in front of face, elbows slightly forward, feet hip width, torso upright. RIGHT bar overhead above midfoot, elbows extended, no back arch, no leg drive. Entire standing body and bar visible, front three-quarter view.",
+      "reviewed": true,
+      "source_sha256": "5986f6d1a5f55f1a71515fa082d1380a089f42481b2cf790bdb69caa075210ad"
+    },
+    {
+      "id": "Front_Barbell_Squat",
+      "source": "/workspace/generated_images/exec-66f7fa84-d844-4ace-87ed-f35f9ab3c71f.png",
+      "prompt": "front barbell squat. Side three-quarter view. LEFT upright stance, bar across FRONT shoulders in front-rack grip, elbows pointing forward high, heels down. RIGHT controlled squat with thighs about parallel, same front-rack bar position and high elbows, torso upright, knees tracking toes and whole feet planted. Never put the bar behind the neck.",
+      "reviewed": true,
+      "source_sha256": "2e01920b1738fadf0d097c759eac12357a979841c70cf1d3934a17eaaa5a6994"
+    },
+    {
+      "id": "Seated_Cable_Rows",
+      "source": "/workspace/generated_images/exec-00e1be34-36b9-4513-9516-d2bc79edd990.png",
+      "prompt": "seated low-cable row with neutral close-grip V handle. Side three-quarter view, athlete seated on low bench facing pulley, feet braced on angled footplates, knees slightly bent. LEFT arms reaching forward, tall stable torso. RIGHT handle touching lower ribs with elbows pulled behind torso, no leaning back. A taut cable runs horizontally from the handle to LOW pulley in front in both panels.",
+      "reviewed": true,
+      "source_sha256": "c592201afc07cb56e7279abcb88d338b10886346d13ba8293c3b56b2b4f42901"
+    },
+    {
+      "id": "Bent_Over_Barbell_Row",
+      "source": "/workspace/generated_images/exec-49665875-9184-4274-8987-77b8ceb17b84.png",
+      "prompt": "bent-over BARBELL row. Athlete holds hip hinge, knees softly bent, torso about 35 degrees above horizontal, flat back throughout. LEFT arms hanging straight with bar below shoulders at knee level. RIGHT elbows pulled back, bar at lower ribs. Torso and legs identical, no standing up. Three-quarter side view.",
+      "reviewed": true,
+      "source_sha256": "35c3ef4b3b9c994340c264922ed8ed7c6320d414a3f0d3a547fdcf223f149e92"
+    },
+    {
+      "id": "Medium_Grip_Lat_Pulldown",
+      "source": "/workspace/generated_images/exec-82503e0b-541a-4f7c-803f-4a2e3029f561.png",
+      "prompt": "shoulder-width OVERHAND lat pulldown to FRONT chest, seated facing a high cable tower, thigh pads anchoring legs. LEFT arms extended overhead holding straight bar at shoulder width, knuckles face backward, palms away from face. RIGHT bar at upper chest in FRONT of neck, elbows alongside ribs, torso tall with a slight lean. Top cable visible and taut.",
+      "reviewed": true,
+      "source_sha256": "9252cde827db648fd8937968f81a45189e8b01aed3934a7445649f1f59b26921"
+    },
+    {
+      "id": "Underhand_Cable_Pulldowns",
+      "source": "/workspace/generated_images/exec-58e4e90d-971e-4147-803a-3707e8557043.png",
+      "prompt": "shoulder-width UNDERHAND lat pulldown. Seated at high cable machine with thigh pads. LEFT arms extended overhead, straight bar held with palms toward athlete's face (supinated grip). RIGHT bar at upper chest IN FRONT of neck, elbows pulled down close beside torso. Show supinated hands distinctly, no behind-neck pull. Three-quarter front view.",
+      "reviewed": true,
+      "source_sha256": "72e331624114e27b65872d995fe8879f98706e22d64cc19469db0619c87213b3"
+    },
+    {
+      "id": "Pullups",
+      "source": "/workspace/generated_images/exec-3f373fa9-f743-4645-91e8-c25eced2e210.png",
+      "prompt": "strict overhand pull-up on fixed horizontal pull-up bar. LEFT active dead hang with elbows extended, hands wider than shoulders, knees gently bent and feet clearly off floor. RIGHT upper chest pulled toward bar, chin just above bar, elbows down and bent, same fixed bar height, no leg swing. Front three-quarter view, entire body and bar.",
+      "reviewed": true,
+      "source_sha256": "01cc3eefd07a5f5584fd55a4c677a4d2e4ddfc33a7686868e5fc2b85a2fc20d6"
+    },
+    {
+      "id": "Side_Lateral_Raise",
+      "source": "/workspace/generated_images/exec-88550a30-d15e-49d0-a8f9-299c48fae59d.png",
+      "prompt": "standing dumbbell lateral raise. LEFT upright athlete with one dumbbell in each hand hanging at sides. RIGHT both upper arms out to the sides at shoulder height, elbows only softly bent 15 degrees, weights slightly in front of body, neutral wrists, no shrug. The movement is shoulder abduction, NOT an overhead press. Front three-quarter view.",
+      "reviewed": true,
+      "source_sha256": "5c624268748587078d8e85636ce6506373ddae1ef3fd52e6a57bcee3c890ac35"
+    },
+    {
+      "id": "Seated_Side_Lateral_Raise",
+      "source": "/workspace/generated_images/exec-7002fa58-15a2-4df3-9dbc-cace83063f16.png",
+      "prompt": "SEATED dumbbell lateral raise on flat bench. LEFT athlete sitting upright with feet planted, dumbbells beside outer thighs. RIGHT arms raised laterally to shoulder height with elbows softly bent about 15 degrees. Same seated position, torso still, no backrest required. It is NOT a lateral-raise machine. Front three-quarter view.",
+      "reviewed": true,
+      "source_sha256": "cee235bda5761228073b3e98a43ac507dd2bfe30ab596cde3c65648f9ec2eeb7"
+    },
+    {
+      "id": "Barbell_Curl",
+      "source": "/workspace/generated_images/exec-38be3ebf-f49f-4e6f-8009-b937166d5b15.png",
+      "reviewed": true,
+      "source_sha256": "ca1cca5285c001c4bee1a49c7a28229aeb1e62b250940ddcc75afc1b0c4cd97d"
+    },
+    {
+      "id": "Hammer_Curls",
+      "source": "/workspace/generated_images/exec-c0038619-386b-4bfd-a0d2-4065dc1d5683.png",
+      "reviewed": true,
+      "source_sha256": "af8fe799854c96f25ee6777fece64ab309166a549f70968e09da5235282a4c40"
+    },
+    {
+      "id": "Standing_Overhead_Barbell_Triceps_Extension",
+      "source": "/workspace/generated_images/exec-b59b7358-e546-4c59-a1ea-7f6aee67329e.png",
+      "reviewed": true,
+      "source_sha256": "dbf7b0dd953ec214c3ad8e000d14363ba7691d6b478d75d41fb0a8315e9cda94"
+    },
+    {
+      "id": "Triceps_Pushdown",
+      "source": "/workspace/generated_images/exec-b1893ea8-0889-42d1-9169-d272278671a8.png",
+      "reviewed": true,
+      "source_sha256": "e714424ef4c06ca942f2035e2afac1c2f7134eb831e1bb292ebe0f2d1fffda35"
+    },
+    {
+      "id": "Cable_One_Arm_Tricep_Extension",
+      "source": "/workspace/generated_images/exec-d2c285dc-ab67-4c8f-8dba-2953ca3b2c99.png",
+      "reviewed": true,
+      "source_sha256": "195cfc36c88e57181c2d7e3eeb93864f170433f6f39cca6a00e1ec773779ad34"
+    },
+    {
+      "id": "Incline_Barbell_Triceps_Extension",
+      "source": "/workspace/generated_images/exec-47751924-1db1-4525-b9e5-d9a59f999952.png",
+      "reviewed": true,
+      "source_sha256": "f7a514f849709c857655b3510ab606592cb2f028106b2570f107ac727044114a"
+    },
+    {
+      "id": "Lying_Leg_Curls",
+      "source": "/workspace/generated_images/exec-2d337974-3ae4-4c29-8bd5-4446b899e87b.png",
+      "prompt": "Fix this lying leg curl illustration to demonstrate BOTH LEGS curling together. Leftpanel athlete lies face-down legs extended, roller RESTS ON BACK OF LOWER CALVES justabove heels. Rightpanel BOTH knees bent90 raising BOTH heels together towardbuttocks with roller against backs of both lowercalves. Neither leg hangs down beside bench. Knees at bench edge, pelvis andabdomen remainbench. Same detailed crisp blackwhite anatomical contour style. TWO distinct panels fullbody generous margins no labels no divider.",
+      "reviewed": true,
+      "source_sha256": "a4f2ae0cdeb6f1f0d5c78058b4b5414eeb3fce34459d47b1b4d55d347238ec06"
+    },
+    {
+      "id": "Leg_Press",
+      "source": "/workspace/generated_images/exec-2bae0b93-965e-41d7-9e0f-5ca2d99e5d31.png",
+      "reviewed": true,
+      "source_sha256": "66e2a1e9668b0fd5df6f6af568a0c440fa8de6c79b813bbff1fd7fc4ed7430b0"
+    },
+    {
+      "id": "Seated_Leg_Curl",
+      "source": "/workspace/generated_images/exec-578be089-7a15-43ec-9e7e-c0457f5e68bb.png",
+      "prompt": "Edit only RIGHT PANEL of this seated leg CURL board. The lower roller is on wrong side of shin. Move the working cylindrical roller from in FRONT of the shin to BEHIND THE HEEL / BACK OF CALF, to the LEFT of the bent lower leg in this right-facing side view. Draw roller centered around x1140 y705 instead of x1240 y710. Connect machine lever to this corrected roller behind calf, with knee pivot at kneeheight. Lower leg is in FRONT of roller (roller partially hidden by back of calf). Leave TOP THIGH restraining pad and entire leftpanel unchanged. Both legs flex pulling heels backward, roller resists on BACK of lower legs. Keep same crisp blackwhite contour style no labels.",
+      "reviewed": true,
+      "source_sha256": "bedb3e0b6b84d0837741bee34129820cf4ea3002e326b97eb513ff69b63678d9"
+    },
+    {
+      "id": "Standing_Calf_Raises",
+      "source": "/workspace/generated_images/exec-9e0f45db-0dad-4372-b44a-963e92dad7af.png",
+      "reviewed": true,
+      "source_sha256": "8dd80e5ce1a8fa6e4f3a3d2e2a5e89315bb61dfc6034bba4674c113f70819076"
+    },
+    {
+      "id": "Leg_Extensions",
+      "source": "/workspace/generated_images/exec-e6c94298-b5cf-404b-b2dd-c979b3836ee1.png",
+      "reviewed": true,
+      "source_sha256": "cfb914a6b209b78afe1c1a65abbe04a4cbbc604013f59a4bced071de286d4507"
+    },
+    {
+      "id": "Seated_Calf_Raise",
+      "source": "/workspace/generated_images/exec-2d8d66c5-c1b8-4d34-826b-e464cf1a93eb.png",
+      "reviewed": true,
+      "source_sha256": "49236527c0d73c1c2a56f8f06f3494b119b945d6566e479175f78156d4e82869"
+    },
+    {
+      "id": "Ab_Crunch_Machine",
+      "source": "/workspace/generated_images/exec-07ca12ab-372e-4841-aa01-5c5bbb40247e.png",
+      "prompt": "Seated abdominal crunch machine. Feet anchored, hands on handles near shoulders. LEFT upright torso, RIGHT ribs flexed toward pelvis with back rounded modestly against machine resistance, hips stay seated. Mechanically clear.",
+      "reviewed": true,
+      "source_sha256": "a37b9fa8ce8eccc4c0e509cce28f20a4007002a95425466cffc143e980efe29d"
+    },
+    {
+      "id": "Barbell_Hip_Thrust",
+      "source": "/workspace/generated_images/exec-11233530-444d-4793-b4b3-8bdfbf2bd1ab.png",
+      "prompt": "Barbell hip thrust. Upper back supported across edge of low flat bench, barbell with padding across hip crease, feet flat shoulder width. LEFT hips lowered toward floor knees bent, RIGHT hips extended until torso horizontal shoulders hips knees aligned. Bench stays under shoulderblades, head neutral. Side view.",
+      "reviewed": true,
+      "source_sha256": "19a213bdf576f41c9a66d147e79fb9a5d4051999129f88019356f57d50218568"
+    },
+    {
+      "id": "Barbell_Lunge",
+      "source": "/workspace/generated_images/exec-421dcc31-552a-4f6f-9817-bf507b3e66de.png",
+      "prompt": "Forward lunge with modest barbell resting on upper back trapezius NOT neck. LEFT standing feet together, RIGHT split stance front knee90 rear knee near floor, torso upright, feet hip width laterally. Bar and hands steady throughout.",
+      "reviewed": true,
+      "source_sha256": "88652751345209b7de6539f3159687c92ee00431c3a1ecaf88ed210172905c31"
+    },
+    {
+      "id": "Cable_Crunch",
+      "source": "/workspace/generated_images/exec-d6161b86-f714-499e-8792-710a085d88bf.png",
+      "prompt": "Kneeling high cable rope crunch. Knees on floor facing cable tower. Rope ends held beside temples and stationary relative to head. LEFT spine neutral torso slightly forward; RIGHT ribs curled toward pelvis through spinal flexion, elbows approaching thighs. Hips remain above knees.",
+      "reviewed": true,
+      "source_sha256": "7c485d51e7cefcccdbcaa8441fe55247be0c39449be8ca291ed74b545e528c4c"
+    },
+    {
+      "id": "Cable_Rear_Delt_Fly",
+      "source": "/workspace/generated_images/exec-b814a17b-9102-46fc-b73e-cdaef311dcc4.png",
+      "prompt": "BACK VIEW of standing cable rear-delt reverse fly, athlete facing cable machine in front of him, his muscular BACK visible to viewer. TWO cable pulleys in front LEFT and RIGHT at shoulderheight. RIGHT HAND holds LEFT pulley cable, LEFT HAND holds RIGHT pulley cable. LEFTpanel arms extended FORWARD so hands close together in front of chest. RIGHTpanel both arms opened sideways at shoulderheight, a visible X of exactly TWO straight cables connects opposite hands and opposite pulleys. Each cable is ONE CONTINUOUS straight line from pulley to opposite handle, NO lines ending on chest, no extra same-side cables. Show correct exercise tension and connections, black anatomical contour style two phases.",
+      "reviewed": true,
+      "source_sha256": "0655460888d07bf68feb1111a1993f2ce5f15290a66847ea1f313422022c462e"
+    },
+    {
+      "id": "Crunches",
+      "source": "/workspace/generated_images/exec-a892029b-fb72-44c3-9e2a-8a48861a3a95.png",
+      "prompt": "Floor abdominal crunch. Supine on mat, knees bent feet flat. LEFT shoulders and head resting, hands crossed on chest. RIGHT only shoulder blades raised modestly, lower back and pelvis remain on mat. Side view, NOT a full situp.",
+      "reviewed": true,
+      "source_sha256": "a647d8e2f5e4de1d547cbe95e05a43a1725a45a3211e26baa35a358d294fa29f"
+    },
+    {
+      "id": "Dips_-_Chest_Version",
+      "source": "/workspace/generated_images/exec-5367dad7-df8a-4308-be09-4034125a7547.png",
+      "prompt": "Parallel bar chest dip, both hands on two parallel waist height bars, body suspended between them, feet off floor. Slight forward lean throughout. LEFT elbows flexed90 upper arms nearly horizontal torso lowered. RIGHT elbows extended body raised. Shoulders controlled, knees bent.",
+      "reviewed": true,
+      "source_sha256": "c7e774631e01739556e0b6394d4e556b279cc32811442cf6be0158ec19a728da"
+    },
+    {
+      "id": "Dumbbell_Lunges",
+      "source": "/workspace/generated_images/exec-ae682ff6-e2e8-4fdb-9429-40013f59691e.png",
+      "prompt": "Dumbbell forward lunge. Two dumbbells at sides. LEFT standing feet together, RIGHT step forward into split stance with both knees90, rear knee near floor, torso upright. Front heel planted knee tracks toes. Entire body and weights.",
+      "reviewed": true,
+      "source_sha256": "ef0fe1b6ca1f92aa442c89a93c4b17c53c754857ec8fe5f2ec01e228ed23a68e"
+    },
+    {
+      "id": "Incline_Push-Up",
+      "source": "/workspace/generated_images/exec-74d5904f-8b30-4f03-89a8-3c91dd2065ea.png",
+      "prompt": "Incline push-up with BOTH HANDS ON LOW FLAT BENCH and feet on floor. Side view. Body straight from head to heels at incline. LEFT elbows extended, RIGHT elbows bent chest approaches bench. Stable bench fixed sameposition.",
+      "reviewed": true,
+      "source_sha256": "c9fafa5de3d76f0a7b29aa4144c9701d8b68284d65801e8eda8eef63e8cede34"
+    },
+    {
+      "id": "Seated_Dumbbell_Palms-Up_Wrist_Curl",
+      "source": "/workspace/generated_images/exec-de59161f-4fa3-4b5c-af00-cff41ba6b5a0.png",
+      "prompt": "Seated dumbbell wrist curl palms UP. Forearms supported on thighs, wrists extend beyond knees. LEFT hands lowered by wrist extension holding dumbbells, RIGHT hands curled UP by wrist flexion. Forearms stay horizontal supported, elbows still. Close enough to clearly see wrists, show seated whole athlete.",
+      "reviewed": true,
+      "source_sha256": "43ab7c30e825b485d69bdf10ce27896c39a228285ceb54255b7dd1b8807b2c52"
+    },
+    {
+      "id": "Single-Arm_Cable_Crossover",
+      "source": "/workspace/generated_images/exec-e73b6d7c-02a5-4535-b9c4-7a6c192539bd.png",
+      "prompt": "Standing ONE ARM chest cable fly from shoulder-height pulley, split stance, other hand on hip. LEFT working arm open out to side with elbow softly bent, RIGHT same arm sweeps across chest in front to midline, elbow angle nearly fixed. Cable connects one handle to lateral tower.",
+      "reviewed": true,
+      "source_sha256": "0819005f4b7c36491558026440e89fb94d62e12717724078ef5a42c309bc3fe7"
+    },
+    {
+      "id": "Split_Squat_with_Dumbbells",
+      "source": "/workspace/generated_images/exec-e65defed-a96f-4409-9342-fe75cc4b5f50.png",
+      "prompt": "Bulgarian split squat with dumbbells, rear foot supported on low bench behind. Two dumbbells hanging at sides. LEFT tall split stance with rear instep on bench, RIGHT front knee bent90 lowering rear knee toward floor. Rear foot REMAINS on bench both panels.",
+      "reviewed": true,
+      "source_sha256": "20d101ab6f0f16d6d225b28db92fa63737d09bc6b2035a1dc195402923d5fa6f"
+    },
+    {
+      "id": "Thigh_Adductor",
+      "source": "/workspace/generated_images/exec-88757bf1-b9fc-4647-9611-118aafbe9fda.png",
+      "prompt": "Seated hip adductor machine front three-quarter view. Pads on INNER knees. LEFT thighs spread wide with knee pads inside legs, RIGHT knees together squeezing pads inward. Hips seated back against backrest. Feet on rests, NOT leg extension.",
+      "reviewed": true,
+      "source_sha256": "c0c65001463664cea8b5d24af3157ad11d012c76716e632d12fc251058468461"
+    },
+    {
+      "id": "Ab_Roller",
+      "source": "/workspace/generated_images/exec-1d6c8b48-5ee8-426d-b739-c32adaec6c50.png",
+      "prompt": "Kneeling abwheel rollout. Sideview knee pad underbothknees. LEFT knees90 hipsaboveknees bothhands holdsmall single abwheel onfloor infront, armsstraight. RIGHT wheelrolledforward armsreachout andbodyextends fromknees, trunkbraced no lowbacksag. Kneesstayfloor.",
+      "reviewed": true,
+      "source_sha256": "03ad6f7f85ef305853d611944b1a9b17ed02fd75cb31e491e24e29d135c08c15"
+    },
+    {
+      "id": "Air_Bike",
+      "source": "/workspace/generated_images/exec-bc99fe90-a6da-4343-a473-6dbd2e2a041f.png",
+      "prompt": "Bicycle abdominal crunch onfloor, NOT cardio bicycle equipment. Athlete supine onmat hands lightlybehindhead, shoulderblades raised. LEFT rightknee drawn towardleftelbow withleftleg extendedofffloor. RIGHT opposite leftknee towardrightelbow rightleg extended. Torso rotates eachside withoutpullingneck. Two clearlyoppositephases.",
+      "reviewed": true,
+      "source_sha256": "d9ce084a1e60bece2571dff8dd3df811d848d27dc7e99e268c62294e585afb64"
+    },
+    {
+      "id": "Arnold_Dumbbell_Press",
+      "source": "/workspace/generated_images/exec-b3362368-5c48-4521-98aa-62c1ae664ec7.png",
+      "prompt": "Seated Arnold shoulder press. Upright bench backrest, feetfloor. LEFT dumbbells in frontof shoulders elbows forward, palms facing athlete. RIGHT arms extended overhead and palms rotated forward away from athlete. Clearly show rotation through distinct grip endpoints, two dumbbells.",
+      "reviewed": true,
+      "source_sha256": "dc08f942c121dc85ec842aa5df2a805b168a7b52b4a5839d1df02af9f43944d0"
+    },
+    {
+      "id": "Barbell_Deadlift",
+      "source": "/workspace/generated_images/exec-fd64f666-858a-44d1-9375-08213b753e8a.png",
+      "prompt": "Conventional barbell deadlift from floor. LEFT hip-hinged spine neutral knees bent shins close to bar, both hands grip just outside knees. Barbell large plates on floor over midfoot. RIGHT standing straight bar at thighs arms straight, no backward lean.",
+      "reviewed": true,
+      "source_sha256": "5537ba138393676cf97116a086ef5bef64e2270c2a02a60ad317a9cb196dac71"
+    },
+    {
+      "id": "Barbell_Glute_Bridge",
+      "source": "/workspace/generated_images/exec-c526dab3-8f32-4339-bd81-d75672695c27.png",
+      "prompt": "Floor barbell glute bridge, NOT bench hip thrust. Supine with upperback andhead on floor mat, knees bent feetflat. Barbellpadded acrosshipcrease heldbothhands. LEFT pelvis onfloor, RIGHT pelvis raised shoulders hips kneesstraightline. Head andupperback remainfloor bothpanels.",
+      "reviewed": true,
+      "source_sha256": "4ac1e3a3b56b286c9c226033b5f3e04a8b8d85ca816d32bc5c9a8a975a2e6379"
+    },
+    {
+      "id": "Bent-Arm_Dumbbell_Pullover",
+      "source": "/workspace/generated_images/exec-398d61f1-22f4-4028-ac18-b27eefee31d3.png",
+      "prompt": "Dumbbell pullover lying LENGTHWISE supine on flatbench with head and hips supported feetfloor. Both hands cup ONE end of SINGLE dumbbell. LEFT arms softlybent holding dumbbell above chest, RIGHT arms reach behind head dumbbell just behind bench head height. Elbow angle nearlyfixed. Sideview.",
+      "reviewed": true,
+      "source_sha256": "3d80b322b6be24faaf2d51a9509e58fdfc42caf0b554a22e26c5711ca5c16fab"
+    },
+    {
+      "id": "Cable_Crossover",
+      "source": "/workspace/generated_images/exec-563847d3-dce6-4b95-adc2-112ac6508450.png",
+      "prompt": "High cable chest fly, two towers. Standing splitstance slightforwardlean. LEFT arms open out and up with elbows slightlybent handles attached SAME SIDE high pulleys. RIGHT hands meet in front of lowerchest as botharms sweep downinward, elbows remainsoft. Cables follow from upperouter corners.",
+      "reviewed": true,
+      "source_sha256": "7bcd29b4d2cd41ed23e02cf4a5f7d911dcc3e298b56c04d2d7521fb0489a9f7c"
+    },
+    {
+      "id": "Cable_Hammer_Curls_-_Rope_Attachment",
+      "source": "/workspace/generated_images/exec-5529052a-36cb-480d-8332-3dd1f488bb64.png",
+      "prompt": "Low pulley rope hammer curl. Standing facing single cable tower LOW anchor at floor. Grip both ends of rope palms inward thumbsuppermost. LEFT arms extended ropeendsatthighs, RIGHT elbowsflexed fists near shoulders. Upperarms beside torso. Cable from bottom.",
+      "reviewed": true,
+      "source_sha256": "bc0372b7540a61562ceba4dd6ff06ef4d23bfc32b39418e54bd28ce7d89dbba8"
+    },
+    {
+      "id": "Chin-Up",
+      "source": "/workspace/generated_images/exec-249759a8-cc3c-4bdc-83dc-73ab2aea0f1c.png",
+      "prompt": "Chin-up with UNDERHAND SUPINATED shoulder-width grip. Front threequarterview. Show palms facing athlete, visible BACKS of hands facing viewer on bothpanels. LEFT hangs arms extended feetclearfloor, RIGHT chin above bar elbows bent beside ribs. Same grip.",
+      "reviewed": true,
+      "source_sha256": "e72ccda1c0effc6d62ca78fc297fab7351605a3eb44852a2fe1034a88ac51c73"
+    },
+    {
+      "id": "Close-Grip_Barbell_Bench_Press",
+      "source": "/workspace/generated_images/exec-2a19480f-e0de-493f-b52f-c45f4358627d.png",
+      "prompt": "SIDE VIEW closegrip barbell benchpress. Athlete lying faceup onflatbench headonleft feetonright. Hands shoulderwidth onbar. LEFT bar lowered over LOWER STERNUM above upperabdomen, away fromneck, elbows bent and tuckedbesidetorso, forearmsvertical supportingbar. RIGHT bar pressed above SHOULDERS armsvertical extended. Fullbenchbodyfeetfloor. Safetyarms eachside ofbench, notouchneck. Two phases with clear sideview of barpositionrelativechest.",
+      "reviewed": true,
+      "source_sha256": "84a40f402aa55a274726fd2b7088471a068e53aaac34ce36d5b5c68de661e7b6"
+    },
+    {
+      "id": "Close-Grip_Front_Lat_Pulldown",
+      "source": "/workspace/generated_images/exec-6058963b-7e4f-4b55-9d88-253b0ab4daa9.png",
+      "prompt": "Close grip neutral V-handle lat pulldown. Seated cable machine kneessecured under thighpad, feetfloor. BOTH hands close together gripping Vbar palms facing eachother. LEFT arms extended overhead, RIGHT Vhandle at upperchest elbows down beside ribs. Upright slightbacklean.",
+      "reviewed": true,
+      "source_sha256": "e8be49208700165a23dcfcfa9420fcf8714d7f5f384253aab1e6b7ef40e91684"
+    },
+    {
+      "id": "Concentration_Curls",
+      "source": "/workspace/generated_images/exec-5cb99224-7d5e-4cda-a076-bac1615f5f94.png",
+      "prompt": "Seated concentration biceps curl. Athlete on lowbench legsapart, workingupperarm braced against innerthigh, palmup dumbbell. LEFT elbowextended dumbbell nearankle, RIGHT elbowflexed dumbbell towardshoulder. Otherhand rests oppositethigh. Showfullbodybothposes.",
+      "reviewed": true,
+      "source_sha256": "8db25b00e7f25f594873995279a6200afe414281187357a0823130154d8b8439"
+    },
+    {
+      "id": "Decline_Push-Up",
+      "source": "/workspace/generated_images/exec-429464a4-2894-4d3e-8441-72b449ab1868.png",
+      "prompt": "Decline push-up with FEET ON LOW BENCH and BOTH HANDS ON FLOOR. Side view entirebody. LEFT arms straight body forms slight decline toward hands. RIGHT elbows bend chest toward floor. Bench stays under toes in both panels.",
+      "reviewed": true,
+      "source_sha256": "164cb80a174d780291b18800f00462503d4c3d7cac049143fa62c86525c751ac"
+    },
+    {
+      "id": "Dumbbell_Bench_Press",
+      "source": "/workspace/generated_images/exec-30e838d1-f7ad-4fae-a78f-46767588ce43.png",
+      "prompt": "Flat dumbbell bench press. Athlete face-up on horizontal bench feet firmly on floor. LEFT elbows90 dumbbells beside mid chest, palms toward feet. RIGHT elbows extended dumbbells above shoulders. Stable shoulders hips bench.",
+      "reviewed": true,
+      "source_sha256": "2c97e5befb55a43c9fb3d9a56a4f8d5d20595fbb2b49aa0aab70a5d62c65d35b"
+    },
+    {
+      "id": "Dumbbell_Bench_Press_with_Neutral_Grip",
+      "source": "/workspace/generated_images/exec-a1571465-3315-45ed-badc-e14630d03969.png",
+      "prompt": "Neutral-grip dumbbell bench press. Athlete supine on FLAT bench feet floor. Palms face EACH OTHER throughout, dumbbell handles parallel to torso. LEFT elbows tucked close to ribs90 dumbbells beside lower chest; RIGHT elbows extended dumbbells above shoulders.",
+      "reviewed": true,
+      "source_sha256": "894ad187a44f00c74c18a5d32885fc5ddfcf38697861a57e142ada84db163987"
+    },
+    {
+      "id": "Dumbbell_Shrug",
+      "source": "/workspace/generated_images/exec-a4326614-9f36-4504-8bb2-88d9ccd2b9e1.png",
+      "prompt": "Standing dumbbell shoulder shrug. Botharms straight holdingdumbbells at sides. LEFT shoulders relaxeddown neutralneck. RIGHT shoulders raisedstraightUP towardears withARMS STILL STRAIGHT andneutralhead. No elbowcurl or shoulderrotation. Frontview wholebody bothphases.",
+      "reviewed": true,
+      "source_sha256": "6943e5f0c213f459860025517c18a7ef860aa3e49a2dd42b6d696cc5a428efb9"
+    },
+    {
+      "id": "Dumbbell_Step_Ups",
+      "source": "/workspace/generated_images/exec-80b1b2f3-e49a-4300-a3f9-0f89946ee6d1.png",
+      "prompt": "Dumbbell step-up onto stable kneeheight box. Two dumbbells hang at sides. LEFT one foot flat onbox otherfoot onfloor. RIGHT standing onbox with workingleg straight, trailingleg lifted knee bent. Torso upright, entire box andbothfeet shown, no jump.",
+      "reviewed": true,
+      "source_sha256": "70f73c4a7c68ead0f83cb95c85672c572c0e9cbe9a7683edb01b25344b7bf013"
+    },
+    {
+      "id": "EZ-Bar_Curl",
+      "source": "/workspace/generated_images/exec-81747473-8702-48f7-ad14-88b319ae53be.png",
+      "prompt": "Standing EZ-bar biceps curl. Bent EZbar with obvious zigzag gripsection, palms forward semi-supinated. LEFT arms down barnear thighs, RIGHT elbowsflexed barnear upperabdomen. Upperarms staybeside ribs. No leaning.",
+      "reviewed": true,
+      "source_sha256": "3ca4bc3dbebfea9b77e26ba368a8b0dbb5e2c63ae5ecd5942130eb2506ca57bf"
+    },
+    {
+      "id": "Front_Dumbbell_Raise",
+      "source": "/workspace/generated_images/exec-44916b4a-b4ca-4fc3-8973-cebd52cbd3d2.png",
+      "prompt": "Standing alternating dumbbell FRONT raise. LEFT botharms at sides dumbbells atfrontthighs. RIGHT one straightsoftarm raised FORWARD to shoulderheight parallelfloor, other staysdown. Side threequarterview clearly FRONT not lateral.",
+      "reviewed": true,
+      "source_sha256": "a052055d73f48c4fc591a01b9b26d74d38ca0eca6e2404144b80c54abf440cf2"
+    },
+    {
+      "id": "Goblet_Squat",
+      "source": "/workspace/generated_images/exec-a825da21-901a-42bd-a84f-f44dac98064e.png",
+      "prompt": "Goblet squat holding ONE dumbbell vertically cupped at upperchest with bothhands. LEFT standing feet shoulderwidth toesoutslightly. RIGHT squat thighsnearparallel hipsback kneestracktoes heelsdown, elbows insideknees. Weight stays chestheight relativetorso.",
+      "reviewed": true,
+      "source_sha256": "e76f38e3a0f6d15a7e06b0b2ceb19e79c9356e50edc2daaf3e852e80096820ae"
+    },
+    {
+      "id": "Hack_Squat",
+      "source": "/workspace/generated_images/exec-97ebc36e-13e6-4563-871b-50d045f47710.png",
+      "prompt": "45degree sled hack squat machine. Athlete standing facing AWAY from inclined backpad, BACK and shoulders againstpad under shoulderrests, feet on fixedplatform infront. LEFT almoststraightknees, RIGHT kneesbent90 lowering wholebackpad sled alongrails. Hands hold shoulderhandles. NOT barbellhackdeadlift.",
+      "reviewed": true,
+      "source_sha256": "bac01a7bc97c789d995edfff2acaee7db3c55e51b877181c0f1a9790536854c3"
+    },
+    {
+      "id": "Hyperextensions_Back_Extensions",
+      "source": "/workspace/generated_images/exec-9d398994-9a7e-4d83-b297-02da04a74399.png",
+      "prompt": "45degree Roman-chair back extension. Thighs supported against inclinedpad justbelowhipcrease, ankles held underrollers, hands crossed chest. LEFT torso hingeddown fromhip spine neutral, RIGHT torso aligns legs in straightline withNO overextension. Sideview equipment andfullbody.",
+      "reviewed": true,
+      "source_sha256": "f221776be54be1350c48d4a7dbd8edf839ef6b1654cdecfd603308cf1b326a79"
+    },
+    {
+      "id": "Low_Cable_Crossover",
+      "source": "/workspace/generated_images/exec-d1a81206-2fd1-4b3e-87af-279c290e25f4.png",
+      "prompt": "SIDE THREE-QUARTER VIEW of low-to-high cable chest fly, adult faces image right. Both hands hold handles from low cable pulleys BEHIND and to sides. LEFT arms softly bent lowered outbesidehips. RIGHT BOTH ARMS remain NEARLY STRAIGHT reaching FORWARD at shoulderheight, handles together about60cm IN FRONT of sternum. No curling elbows; upperarms forwardhorizontal not alongribs. Cable pulls backwardsdownwards from hands. Upperbodyupright. No overheadarms. Two phases sameathlete anddevice.",
+      "reviewed": true,
+      "source_sha256": "ba3864ccde5220ef5adcd3fabb70001d5571432b850967ef865017e5161ec268"
+    },
+    {
+      "id": "Lying_T-Bar_Row",
+      "source": "/workspace/generated_images/exec-cacb442f-ad73-4fe3-87c3-3dc05021a3eb.png",
+      "prompt": "Chest-supported T-bar row machine. Athlete face-down chest resting on inclined padded support, feet on footplates behind, spine neutral. LEFT arms hanging straight holding neutral handles below shoulder. RIGHT elbows flexed handles pulled toward lower ribs, chest stays pad. Lever with plates coherent belowbench.",
+      "reviewed": true,
+      "source_sha256": "280dc1bcb2432188eff0e6538407e5cf57ae2484edcfe55a87d33009ec3c7679"
+    },
+    {
+      "id": "Lying_Triceps_Press",
+      "source": "/workspace/generated_images/exec-b42fe5c5-5ce1-4838-b63f-5bfd8ae9e7cc.png",
+      "prompt": "Lying EZbar triceps extension skullcrusher on flatbench. Athlete supine feetground. Upper arms point up stationary. LEFT elbowsbent lowering EZbar just aboveforehead, RIGHT elbows straight bar above shoulders. No benchpress elbowposition; upperarms stay vertical bothposes.",
+      "reviewed": true,
+      "source_sha256": "10228c83fad5526a89bff7700196cc142275c53add477baab9790c28ae78836b"
+    },
+    {
+      "id": "One-Arm_Dumbbell_Row",
+      "source": "/workspace/generated_images/exec-e9fb8330-48d5-4afb-b082-c988cc8c3e6c.png",
+      "prompt": "One-arm dumbbell row with opposite knee and hand supported on flat bench. Side threequarterview. Torso nearly horizontal spine neutral. LEFT working arm hangs vertically dumbbell under shoulder. RIGHT elbow travels beside ribs dumbbell toward hip. Supporting arm straight and knee on bench bothpanels.",
+      "reviewed": true,
+      "source_sha256": "12c949bd8b228e6e0f1d170b74f82c817eb5052f6f4cfe105a908c73437bc50b"
+    },
+    {
+      "id": "One-Arm_Side_Laterals",
+      "source": "/workspace/generated_images/exec-f736067d-d992-44d4-bb9c-24a52b766d48.png",
+      "prompt": "Standing single-arm dumbbell lateral raise. Workingarm atside holding ONE dumbbell LEFT. RIGHT samearm raised sideways to shoulderheight elbow softlybent. Otherhand rests onhip throughout. Frontthreequarterview, no lifting infront.",
+      "reviewed": true,
+      "source_sha256": "987de76950bd39aefa5d92bdae12f97873ebcc4f743f554c7caec33ef8ffff93"
+    },
+    {
+      "id": "One_Arm_Lat_Pulldown",
+      "source": "/workspace/generated_images/exec-efd5d883-aed3-4867-8c0e-8d46653279c0.png",
+      "prompt": "Seated ONE ARM lat pulldown, single Dhandle highpulley. LEFT working arm overhead extended, RIGHT elbow pulled down beside ribs handle near shoulder. Other hand rests on thigh, feetfloor, knees underpad. Same singlehandle bothpanels.",
+      "reviewed": true,
+      "source_sha256": "23bed784a40bfffe810ce8050f34ad5641acd287684952de198eda252c5fc810"
+    },
+    {
+      "id": "Plank",
+      "source": "/workspace/generated_images/exec-775999b0-339f-40f7-8639-0a4e0e6c4fad.png",
+      "prompt": "Forearm plank setup and hold. Sideview athlete onmat elbows belowshoulders forearmsflatparallel. LEFT kneesresting onmat preparing withneutraltrunk. RIGHT knees lifted straightlegs supported ontoes, perfectlystraightline head shoulders hips heels. Abdomen braced, hipsneither sag norpike.",
+      "reviewed": true,
+      "source_sha256": "e81c0ad944180f13a4bd98fb911c4b8297cca05b89d37a9fdc4922f615c6e9d6"
+    },
+    {
+      "id": "Preacher_Curl",
+      "source": "/workspace/generated_images/exec-8138159a-10a6-43d1-8762-b2abb7adfa71.png",
+      "prompt": "EZ-bar preacher curl. Athlete seated atpreacherbench BOTH upperarms fully supported on inclined pad, armpits near topedge. LEFT elbows almostextended holdingEZbar nearbottom ofpad. RIGHT elbowsflexed raisingbar towardshoulders. Hands supinated shoulderwidth. No shoulder movement.",
+      "reviewed": true,
+      "source_sha256": "a8cb573d6e29b1d9c45f5ae08917dbdaa2352e146ec5e48997f1f3b2e006f253"
+    },
+    {
+      "id": "Pushups",
+      "source": "/workspace/generated_images/exec-541e83df-0d36-47dc-8b97-7f94b3493578.png",
+      "prompt": "Standard floor push-up, side three-quarter view. Hands on floor beneath shoulders, toes support on mat, head torso hips heels aligned. LEFT elbows extended high plank. RIGHT elbows bent lowering chest close to floor, body remains straight.",
+      "reviewed": true,
+      "source_sha256": "68b8025fde646428f76f6983714cb55d3fd351a3e52e6057331ef0cad516502b"
+    },
+    {
+      "id": "Reverse_Barbell_Curl",
+      "source": "/workspace/generated_images/exec-cc4ef167-6b5a-4b7c-9f7f-7f46fefcce37.png",
+      "prompt": "Standing REVERSE GRIP barbell curl. Pronated OVERHAND grip with visible BACKS OF HANDS upward at waist. LEFT baratthighs armsdown, RIGHT elbowsflexed barnear lowerchest, hands gripping OVER bar palms down. Upperarms stay beside torso.",
+      "reviewed": true,
+      "source_sha256": "440260113d06de8bef53913fa2187a426450754ad86aa823effea10ef603df51"
+    },
+    {
+      "id": "Reverse_Crunch",
+      "source": "/workspace/generated_images/exec-755592ae-8f49-4cad-9077-2d91f60e43ae.png",
+      "prompt": "Reverse abdominal crunch onmat supine armsbesidesbody palmsdown. LEFT hips onmat thighsvertical kneesbent90 shins horizontal. RIGHT pelvis curls slightlyoffmat kneesapproachchest throughabdominalcurl, shouldersandhead remainmat. Do not liftwholeback. Sideview.",
+      "reviewed": true,
+      "source_sha256": "15a38b9c661c4cf37a21fe676445f86f20b3a7ac7bc240d6b6e4c71ba1806945"
+    },
+    {
+      "id": "Seated_Bent-Over_Rear_Delt_Raise",
+      "source": "/workspace/generated_images/exec-d1fa0ae2-c5eb-4c17-bc09-1bccfc096501.png",
+      "prompt": "Seated bent-over rear deltoid fly with dumbbells. Sitting end of flatbench feetfloor, hinge forward torso close thighs spine neutral. LEFT botharms hanging down weightsbelowshoulders. RIGHT arms lift OUTSIDES to horizontal relativetorso, elbows softlybent, torso stays forwardnearlyhorizontal.",
+      "reviewed": true,
+      "source_sha256": "987193e42a86b39ef24d7df9b977e23e3f1d28b80c9accaa3962f4292914117f"
+    },
+    {
+      "id": "Side_Bridge",
+      "source": "/workspace/generated_images/exec-ff8517d2-f49c-40c8-9f0b-b03945aca956.png",
+      "prompt": "Side plank bridge setup and hold. Sideview athlete on ONE forearm, elbow directlyunder shoulder, legs straight feetstacked. LEFT lower hip restingmat, RIGHT hipslifted body straightdiagonal shoulders hips ankles. Freehand onhip. No rotation.",
+      "reviewed": true,
+      "source_sha256": "edde585f8230dbd07724f9f31ec2c1d66a29557e3629348bce33c9a571c956f9"
+    },
+    {
+      "id": "Smith_Machine_Squat",
+      "source": "/workspace/generated_images/exec-739c4816-4226-4f44-a088-23859fe8c164.png",
+      "prompt": "Smith machine back squat. Bar fixed on TWO VERTICAL guide rails rests across upperback traps, hands outside shoulders. LEFT standing tall feetshoulderwidth slightlyforward. RIGHT squat kneesbent thighsnearparallel, heelsfloor spine neutral. Same bar attached rails bothsides.",
+      "reviewed": true,
+      "source_sha256": "dcd1ff5bab1dd1386ba431a1947b53cd84d00601104aed35ed037eae6dd816f7"
+    },
+    {
+      "id": "Thigh_Abductor",
+      "source": "/workspace/generated_images/exec-b8b2493d-93b7-4892-a699-34cd8930e46b.png",
+      "prompt": "Seated hip ABDUCTOR machine. Pads against OUTSIDE of thighs just above knees. LEFT knees together, RIGHT knees spread sideways pressing OUT againstpads. Back supported hands sidehandles. Feet onrests. Clearly pads outsidelegs bothposes.",
+      "reviewed": true,
+      "source_sha256": "4c451effdef99ae2a965ffadd6398bdfeee92e88d4b7350e430ac706513a9c87"
+    },
+    {
+      "id": "Tricep_Dumbbell_Kickback",
+      "source": "/workspace/generated_images/exec-95f6ad01-3353-48e0-b76f-7ece351ed538.png",
+      "prompt": "Single-arm dumbbell triceps kickback. Torso hinged nearlyhorizontal onehand supported onbench, stable back. Working upperarm held alongside ribs horizontal. LEFT elbow bent90 dumbbell hangs under elbow; RIGHT elbowextended dumbbell behindhip armparallelfloor. Shoulder stationary.",
+      "reviewed": true,
+      "source_sha256": "bc262eddc4b3ff344eada9201d4d69c1ae301ea9148c1364a4f95663046a0409"
+    }
+  ]
+}

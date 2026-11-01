@@ -1,9 +1,9 @@
 /* The active collection is a deliberate, reversible choice. The old dataset is
    lookup-only: saved workouts and shared plans must never lose their IDs. */
 (function(root){
-  if(root.ExerciseCatalog)return;
+  if(root.ExerciseCatalog?.version===2)return;
   const ACTIVE_CATALOG = 'curated'; // Change to 'legacy' to restore the old browse catalogue.
-  const legacy=root.EXERCISES.slice(),curated=root.CURATED_EXERCISES;
+  const legacy=(root.LEGACY_EXERCISES||root.EXERCISES).slice(),curated=root.CURATED_EXERCISES;
   const byId=Object.fromEntries(legacy.map(e=>[e.id,e]));
   for(const e of curated)byId[e.id]=e;
   const base=ACTIVE_CATALOG==='curated'?curated:legacy;
@@ -19,5 +19,5 @@
   }
   root.LEGACY_EXERCISES=legacy;
   root.EXERCISES=base.slice();
-  root.ExerciseCatalog={version:1,active:ACTIVE_CATALOG,base,byId,forData};
+  root.ExerciseCatalog={version:2,active:ACTIVE_CATALOG,base,byId,forData};
 })(globalThis);

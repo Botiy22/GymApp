@@ -1,4 +1,4 @@
-"""Curated browsing, playback, serving logging and legacy-plan compatibility."""
+"""Curated browsing, illustrations, serving logging and legacy-plan compatibility."""
 import unittest
 import test_responsive_polish as responsive
 from workout_navigation import select_workout
@@ -10,23 +10,19 @@ class CuratedAtlas(unittest.TestCase):
     page=responsive.ResponsivePolish.page
     bounds=responsive.ResponsivePolish.bounds
 
-    def test_curated_library_playback_muscles_and_all_guides(self):
+    def test_curated_library_images_zoom_muscles_and_all_guides(self):
         p,errors=self.page(320,844,'hu',20)
         select_workout(p,'exercises')
-        self.assertEqual(p.evaluate('EXERCISES.length'),47)
+        self.assertEqual(p.evaluate('EXERCISES.length'),100)
         p.locator('[data-in=lib-q]').fill('ulo labnyujto gep')
         p.locator('#lib-list [data-a=ex-open][data-id=Leg_Extensions]').click()
         self.bounds(p,'exercise on narrow phone')
-        demo=p.locator('exercise-demo')
-        self.assertEqual(demo.count(),1)
-        initial=demo.locator('.scene').inner_html()
-        demo.locator('[data-do=play]').click()
-        p.wait_for_function('()=>document.querySelector("exercise-demo").phase>.05')
-        self.assertNotEqual(initial,demo.locator('.scene').inner_html())
-        demo.locator('[data-do=play]').click();phase=demo.evaluate('(e)=>e.phase')
-        p.wait_for_timeout(150);self.assertEqual(phase,demo.evaluate('(e)=>e.phase'))
-        demo.locator('[data-do=speed]').click();self.assertEqual(demo.evaluate('(e)=>e.speed'),.5)
-        demo.locator('[data-do=end]').click();self.assertEqual(demo.evaluate('(e)=>e.phase'),.5)
+        self.assertEqual(p.locator('exercise-demo').count(),0)
+        self.assertEqual(p.locator('.drawing-phase').count(),2)
+        p.wait_for_function('()=>[...document.querySelectorAll(".drawing-phase img")].every(i=>i.complete&&i.naturalWidth>0)')
+        p.locator('.drawing-phase').first.click()
+        p.wait_for_function('()=>{const i=document.querySelector(".drawing-zoom img");return i?.complete&&i.naturalWidth>0}')
+        p.locator('[data-a=sheet-back]').click()
         p.screenshot(path='/tmp/reppsy-atlas-mobile.png')
         choose(p,'[data-a=ex-visual][data-v=muscles]')
         self.assertGreater(p.locator('.muscle-spotlight .mm-hi').count(),0)
@@ -35,8 +31,9 @@ class CuratedAtlas(unittest.TestCase):
             p.evaluate('(id)=>__gym.A["ex-open"]({dataset:{id}})',id)
             # Reset visual mode if the previously opened exercise selected muscle view.
             choose(p,'[data-a=ex-visual][data-v=movement]')
-            self.assertEqual(p.locator('exercise-demo').count(),1,id)
-            self.assertEqual(p.locator('.routine-steps li').count(),4,id)
+            self.assertEqual(p.locator('exercise-demo').count(),0,id)
+            p.wait_for_function('()=>[...document.querySelectorAll(".drawing-phase img")].length===2&&[...document.querySelectorAll(".drawing-phase img")].every(i=>i.complete&&i.naturalWidth>0)')
+            self.assertGreaterEqual(p.locator('.routine-steps li').count(),3,id)
             p.locator('[data-a=sheet-close]').click()
         self.assertEqual(errors,[])
 
@@ -81,11 +78,10 @@ class CuratedAtlas(unittest.TestCase):
         p.evaluate('()=>navigator.serviceWorker.register("sw.js")')
         p.wait_for_function('()=>navigator.serviceWorker.controller!==null',timeout=120000)
         context.set_offline(True);p.reload();p.wait_for_function('()=>!!window.__gym')
-        result=p.evaluate('''async()=>{const paths=[...CURATED_EXERCISES.flatMap(e=>[0,1].map(n=>'img/atlas/'+e.id+'-'+n+'.svg')),...RECIPES.items.filter(r=>r.id.startsWith('protein-')&&r.nutritionParts).flatMap(r=>['','-thumb'].map(s=>'img/recipes/'+r.id+s+'.webp'))];return await Promise.all(paths.map(async path=>{const i=new Image();i.src=path;await i.decode();return i.naturalWidth>0;}));}''')
-        self.assertEqual(result,[True]*106)
+        result=p.evaluate('''async()=>{const paths=[...Object.values(GENERATED_EXERCISE_ART).flatMap(a=>[...a.pair,a.thumb]),...RECIPES.items.filter(r=>r.id.startsWith('protein-')&&r.nutritionParts).flatMap(r=>['','-thumb'].map(s=>'img/recipes/'+r.id+s+'.webp'))];return await Promise.all(paths.map(async path=>{const i=new Image();i.src=path;await i.decode();return i.naturalWidth>0;}));}''')
+        self.assertEqual(result,[True]*312)
         p.evaluate('()=>__gym.A["ex-open"]({dataset:{id:"Barbell_Full_Squat"}})')
-        p.locator('exercise-demo [data-do=play]').click()
-        p.wait_for_function('()=>document.querySelector("exercise-demo").phase>.02')
+        p.wait_for_function('()=>[...document.querySelectorAll(".drawing-phase img")].every(i=>i.complete&&i.naturalWidth>0)')
         self.assertEqual(errors,[])
 
     def test_changed_screens_fit_narrow_and_landscape_phones(self):
@@ -97,7 +93,7 @@ class CuratedAtlas(unittest.TestCase):
             p.locator('#tabbar [data-tab=home]').click();select_workout(p,'exercises')
             self.bounds(p,'curated library')
             p.locator('[data-a=ex-open]').first.click();self.bounds(p,'exercise detail')
-            self.assertTrue(p.locator('exercise-demo button').evaluate_all('(es)=>es.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.left>=0&&r.right<=innerWidth})'))
+            self.assertTrue(p.locator('.drawing-phase').evaluate_all('(es)=>es.every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.left>=0&&r.right<=innerWidth})'))
             self.assertEqual(errors,[])
 
 if __name__=='__main__':unittest.main()

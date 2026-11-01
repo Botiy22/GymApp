@@ -33,7 +33,7 @@ window.ExerciseSearch = (() => {
   const muscleNames={quadriceps:['combfeszítő','quads'],hamstrings:['combhajlító','hamstring'],glutes:['farizom','fenék'],calves:['vádli'],lats:['széles hátizom'],abdominals:['has','hasizom','abs'],adductors:['combközelítő','belső comb'],abductors:['combtávolító','külső comb'],shoulders:['váll','delts']};
   function create(exercises,{translations={},aliases={},planNames={},vocabulary={}}={}){
     const records=new Map(exercises.map(e=>{
-      const names=distinct([e.n,translations[e.id]?.[0],planNames[e.id]].map(phrase));
+      const names=distinct([e.n,e.hu,translations[e.id]?.[0],planNames[e.id]].map(phrase));
       const other=distinct((aliases[e.id]||[]).map(phrase));
       const tags=distinct([e.eq,...e.p,...e.p.flatMap(m=>muscleNames[m]||[]),...Object.values(vocabulary).flatMap(v=>[v.eq?.[e.eq],...e.p.map(m=>v.mus?.[m])])].map(phrase));
       return [e.id,{names,other,nameWords:distinct([...names,...other].flatMap(words)),tags:distinct(tags.flatMap(words))}];

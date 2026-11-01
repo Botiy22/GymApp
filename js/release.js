@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.46.0';
-  const build = '20261031.3';
+  const version = '2.47.0';
+  const build = '20261101.1';
   const history = [
+    {version:'2.47.0',build:'20261101.1',date:'2026-11-01',
+      hu:['100 gyakorlat részletes, generált kontúrrajzokkal: nagyítható kezdő- és véghelyzet, éles képek.','Új gépes, kézisúlyzós és saját testsúlyos gyakorlatok magyar és angol útmutatóval, izomcsoportokkal.','A korábbi rajzstílus visszatért; az egyszerű figurás mozgásbemutatót leváltották az illusztrációk. A mentett edzéstervek és naplók megmaradnak.'],
+      en:['100 exercises with detailed generated contour illustrations: sharp, zoomable start and end positions.','More machine, dumbbell and bodyweight exercises with Hungarian and English instructions and muscle groups.','The earlier drawing style returns, replacing the schematic motion player. Saved routines and workout logs are preserved.']},
     {version:'2.46.0',build:'20261031.3',date:'2026-10-31',
       hu:['Hat új fehérjedús édesség külön képekkel: három muffin, mini sajttorta és két pohárdesszert. Egyértelmű adagok, hozzávalókból számolt makrók.','Pontosabb magyar és angol receptleírások: hőfok, sütési mód, elkészítési sorrend, állag és hűtési idő.','Új, 47 gyakorlatos kezdő gyűjtemény saját 2D mozgásbemutatókkal, lassítható lejátszással, képekkel és részletes technikával.','A régi adatbázis megmarad: a mentett, importált és átvett tervek, valamint a saját gyakorlatok továbbra is használhatók.'],
       en:['Six high-protein desserts with individual images: three muffins, mini cheesecakes and two creamy desserts. Clear portions and ingredient-calculated macros.','Clearer Hungarian and English recipe methods: oven mode, temperatures, sequence, doneness and chilling time.','A new 47-exercise starter collection with original 2D movement studies, half-speed playback, stills and detailed technique.','The legacy database is retained: saved, imported and copied routines and your custom exercises remain usable.']},

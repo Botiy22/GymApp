@@ -40,10 +40,8 @@ class ExerciseSearchBrowser(unittest.TestCase):
 
     def test_library_aliases_typo_filters_and_custom_exercises(self):
         p,errors=self.page(390,844,lang='en')
-        # Archived exercises become searchable when referenced by this account's plan.
-        p.evaluate("()=>{Store.d.routines.push({id:'legacy-search',name:'Existing plan',items:['Butterfly','Machine_Hip_Thrust'].map(ex=>({ex,sets:3,reps:'10',rest:60}))});Store.save();__gym.render()}")
         select_workout(p,'exercises')
-        for q,id in [('láb nyújtó gép','Leg_Extensions'),('pec deck','Butterfly'),('fekvo labhajlito','Lying_Leg_Curls'),('hip thrust machine','Machine_Hip_Thrust')]:
+        for q,id in [('láb nyújtó gép','Leg_Extensions'),('pec deck','Butterfly'),('fekvo labhajlito','Lying_Leg_Curls'),('hip thrust machine','Machine_Hip_Thrust'),('alkartamasz','Plank'),('biciklis haspres','Air_Bike'),('serleg guggolas','Goblet_Squat')]:
             p.locator('[data-in=lib-q]').fill(q)
             self.assertEqual(p.locator('#lib-list [data-a=ex-open]').first.get_attribute('data-id'),id,q)
         p.locator('[data-in=lib-q]').fill('labnyujtto')

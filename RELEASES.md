@@ -1,5 +1,14 @@
 # Release versions
 
+## 2.47.0 — 2026-11-01 (build 20261101.1)
+
+The active exercise collection grows from 47 to 100 stable IDs. Every entry now uses
+detailed generated anatomical contour illustrations, with two zoomable poses and a
+small thumbnail. Approved generated drawings are reused; missing poses were generated
+individually per exercise. The schematic mannequin player is removed from the active
+UI and offline shell. Bilingual technique, muscle maps, saved IDs, imports and custom
+exercise media remain supported. No live database migration is required.
+
 ## 2.46.0 — 2026-10-31 (build 20261031.3)
 
 Six new ingredient-calculated protein desserts with independently generated full-frame

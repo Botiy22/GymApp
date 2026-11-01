@@ -42,7 +42,7 @@
     attempted.add(src);document.head.append(script);
     return;
   }
-  const atlasMissing = !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : !window.CURATED_EXERCISES ? 'data/exercises-curated.js' : !window.ExerciseCatalog ? 'js/exercise-catalog.js' : !window.ExerciseAtlas ? 'js/exercise-atlas.js' : !window.DESSERT_RECIPES_VERSION ? 'data/dessert-recipes.js' : !window.RECIPE_METHODS_VERSION ? 'data/recipe-methods.js' : '';
+  const atlasMissing = !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : window.EXERCISE_GUIDES_VERSION!==2 ? 'data/exercise-guides-extra.js' : !window.GENERATED_EXERCISE_ART ? 'data/generated-exercise-art.js' : window.CURATED_EXERCISES?.length!==100 ? 'data/exercises-curated.js' : window.ExerciseCatalog?.version!==2 ? 'js/exercise-catalog.js' : !window.DESSERT_RECIPES_VERSION ? 'data/dessert-recipes.js' : !window.RECIPE_METHODS_VERSION ? 'data/recipe-methods.js' : '';
   if(atlasMissing){
     const script=document.createElement('script');script.src=atlasMissing+'?release='+encodeURIComponent(window.GYM_RELEASE.cacheId);script.onload=startGymApp;
     script.onerror=()=>{const el=document.getElementById('view');if(el){el.textContent=(navigator.language||'').startsWith('hu')?'Csatlakozz az internethez, majd töltsd újra az alkalmazást.':'Connect to the internet, then reload the app.';}};
@@ -91,7 +91,7 @@
   const ownPic = id => { const m = D().exMedia[id]; return (m && m.img) || (EX[id] && EX[id].own ? (EX[id].img || NOPIC) : /^my_/.test(id) ? NOPIC : ''); };      // a deleted own exercise has no picture to ask the server for
   const exVid = id => { const m = D().exMedia[id]; return (m && m.vid) || (EX[id] && EX[id].own && EX[id].vid) || ''; };
   const img = (id, f) => ownPic(id) || 'img/ex/' + encodeURIComponent(id) + '/' + (f || 0) + '.jpg';
-  const thumb = id => ownPic(id) || (EX[id]?.curated ? 'img/atlas/'+encodeURIComponent(id)+'-0.svg' : '') || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (!ui.figBad[id] && window.FIG?.[id] ? 'img/fig/'+window.FIG[id]+'-0.svg' : '') || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
+  const thumb = id => ownPic(id) || window.GENERATED_EXERCISE_ART[id]?.thumb || (!ui.figBad[id] && window.ROUTINE_ART[id]?.thumb) || (!ui.figBad[id] && window.FIG?.[id] ? 'img/fig/'+window.FIG[id]+'-0.svg' : '') || (window.EX_ART && window.EX_ART[id] ? 'img/fig/' + window.EX_ART[id] + '.webp' : 'img/ex/' + encodeURIComponent(id) + '/t.jpg');
   const FIG = window.FIG || {};                                                        // exercise id -> line drawing (Everkinetic)
   const EXHU = window.EX_HU || {};                                                   // Hungarian names and steps for the whole library
   const exName = id => { const e = EX[id]; if (!e) return /^my_/.test(id) ? t('myExGone') : id; return L() === 'hu' ? (e.hu || HU_NAME[id] || (EXHU[id] && EXHU[id][0]) || e.n) : e.n; };
@@ -1616,8 +1616,7 @@
       const focus = ui.muscleFocus && ui.muscleFocus.id === id ? ui.muscleFocus.group : '', mm = focus ? MuscleMap.fromLists(e.p.includes(focus) ? [focus] : [], e.s.includes(focus) ? [focus] : []) : pl && pl.mm ? pl.mm : MuscleMap.fromLists(e.p, e.s), hst = exHistory(id);
       let best = 0, top = null; hst.forEach(x => x.sets.forEach(s => { if (s.w) return; const v = e1rm(s.kg, s.reps); if (v > best) best = v; if (!top || s.kg > top.kg || (s.kg === top.kg && s.reps > top.reps)) top = s; }));
       const pts = hst.map(x => ({ x: fmtDate(x.d), y: r1(bestOf(x.sets)) })).filter(p => p.y > 0);
-      const guide=window.EXERCISE_GUIDES[id];
-      const routineArt = guide ? {pair:[0,1].map(n=>'img/atlas/'+encodeURIComponent(id)+'-'+n+'.svg')} : !ui.figBad[id] && !ownPic(id) && window.ROUTINE_ART[id];
+      const routineArt = window.GENERATED_EXERCISE_ART[id] || (!ui.figBad[id] && !ownPic(id) && window.ROUTINE_ART[id]);
       const art = !routineArt && (window.EX_ART || {})[id], figure = !routineArt && FIG[id], board = !ui.figBad[id] && art ? 'img/fig/' + art + '.webp' : '';
       const drawing = !ui.figBad[id] && figure;
       const photos = !routineArt && !board && !drawing && e.k >= 2;
@@ -1627,7 +1626,7 @@
       const mapLabel = focus ? t('muscleSelected', muscleName(focus)) : [t('musclesWorked'), t('primary') + ': ' + e.p.map(muscleName).join(', '), t('secondary') + ': ' + e.s.map(muscleName).join(', ')].join('. ');
       const map = `<section class="muscle-spotlight"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'), mapLabel)}</div><p class="cap muscle-legend"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p>${e.p.length || e.s.length ? `<p class="cap">${esc(t('muscleMapHint'))}</p><div class="muscle-picks"><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary',e.p],['secondary',e.s]].map(([key,list]) => list.length ? `<div><small>${esc(t(key))}</small><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div></div>` : '').join('')}</div>` : `<p class="cap">${esc(t('muscleMapEmpty'))}</p>`}<details class="muscle-precision"><summary>${esc(t('muscleMapAbout'))}</summary><p class="cap">${esc(t('musclePrecision'))}</p></details></section>`;
       let h = `<div class="seg exercise-visual-tabs" aria-label="${esc(t('details'))}">${['muscles','movement'].map(mode => `<button class="${visual === mode ? 'on' : ''}" data-a="ex-visual" data-id="${esc(id)}" data-v="${mode}" aria-pressed="${visual === mode}">${esc(t(mode === 'muscles' ? 'muscleMapTitle' : 'movementTitle'))}</button>`).join('')}</div>`;
-      h += visual === 'muscles' ? map : ownPic(id) && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : guide ? `<exercise-demo exercise="${esc(id)}" lang="${L()}"></exercise-demo>${exerciseDrawings(id,name,'',pair,false)}` : exerciseDrawings(id, name, board, pair, photos);
+      h += visual === 'muscles' ? map : ownPic(id) && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
       if (routineArt && st.list.length) h += `<section class="card routine-technique"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="routine-steps">${st.list.map((x,i) => `<li><span aria-hidden="true">${i+1}</span><p>${esc(x)}</p></li>`).join('')}</ol></section>`;
@@ -3249,6 +3248,12 @@
   /* A photo missing from this copy of the app is fetched from the open dataset instead (needs a connection). */
   document.addEventListener('error', e => {
     const el = e.target; if (!el || el.tagName !== 'IMG') return; const src = el.getAttribute('src') || '';
+    if (src.indexOf('img/atlas-line/') === 0) {
+      const picture=el.closest('.drawing-picture');
+      if(picture){picture.innerHTML=`<span class="phase-missing">${esc(t('artUnavailable'))}</span>`;const button=picture.closest('button');if(button)button.disabled=true;}
+      else {el.src=NOPIC;}
+      return;
+    }
     if (src.indexOf('img/fig/') === 0 || src.indexOf('img/guide/') === 0 || src.indexOf('img/routine-line/') === 0) {
       const holder = el.closest('[data-id]'), id = holder && holder.dataset.id;
       if (id) ui.figBad[id] = 1;
