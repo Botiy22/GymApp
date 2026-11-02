@@ -114,7 +114,7 @@ SPECS = {
 
 def main():
     for i, (rid, spec) in enumerate(SPECS.items()):
-        if rid == 'oats-berry-turo':  # Replaced by a reviewed generated photo; preserve it.
+        if rid in {'oats-berry-turo', 'oats-choco-pb', 'oats-apple-cinnamon', 'oats-mango-coconut', 'oats-tiramisu'}:  # Reviewed generated photos; preserve them.
             continue
         im = jar(stone(i + 7), spec, i + 3).resize((W, H), Image.LANCZOS)
         im.save(OUT / f'{rid}.webp', 'WEBP', quality=92, method=6)

@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.47.0';
-  const build = '20261101.1';
+  const version = '2.47.1';
+  const build = '20261102.1';
   const history = [
+    {version:'2.47.1',build:'20261102.1',date:'2026-11-02',
+      hu:['A csokis-mogyoróvajas, almás-fahéjas, mangós-kókuszos és tiramisus zab új, egységes fotóstílusú képet kapott.','Pontosított elkészítés: kimért feltétek, rétegezés és hűtési idő. A receptek makrói és naplózása változatlan.'],
+      en:['New consistent photographic-style images for chocolate peanut butter, apple cinnamon, mango coconut and tiramisu oats.','Clearer preparation: measured toppings, layering and chilling time. Recipe macros and logging are unchanged.']},
     {version:'2.47.0',build:'20261101.1',date:'2026-11-01',
       hu:['100 gyakorlat részletes, generált kontúrrajzokkal: nagyítható kezdő- és véghelyzet, éles képek.','Új gépes, kézisúlyzós és saját testsúlyos gyakorlatok magyar és angol útmutatóval, izomcsoportokkal.','A korábbi rajzstílus visszatért; az egyszerű figurás mozgásbemutatót leváltották az illusztrációk. A mentett edzéstervek és naplók megmaradnak.'],
       en:['100 exercises with detailed generated contour illustrations: sharp, zoomable start and end positions.','More machine, dumbbell and bodyweight exercises with Hungarian and English instructions and muscle groups.','The earlier drawing style returns, replacing the schematic motion player. Saved routines and workout logs are preserved.']},

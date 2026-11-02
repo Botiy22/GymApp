@@ -34,6 +34,33 @@ class RecipesStability(unittest.TestCase):
         self.assertTrue(image.evaluate('(e)=>e.currentSrc.endsWith("clip-chicken-gnocchi.webp")'))
         self.assertEqual(image.evaluate('async e=>{const bitmap=await createImageBitmap(await (await fetch(e.currentSrc)).blob());return bitmap.width}'),1448)
 
+    def test_updated_oats_photos_methods_and_portion_logging(self):
+        p,errors=self.page(390,844,'hu',16);self.recipes(p)
+        ids=['oats-choco-pb','oats-apple-cinnamon','oats-mango-coconut','oats-tiramisu']
+        for id in ids:
+            p.locator(f'[data-a=idea-open][data-id={id}]').click()
+            self.bounds(p,id)
+            p.wait_for_function('()=>{const i=document.querySelector(".recipe-hero img");return i?.complete&&i.naturalWidth===1448}')
+            self.assertFalse(p.evaluate('(id)=>RECIPES.items.find(r=>r.id===id).illustration',id))
+            self.assertEqual(p.locator('.recipe-steps li').count(),3)
+            self.assertIn('240 perc hűtés',p.locator('#sheet').inner_text())
+            p.locator('[data-a=recipe-cook]').click();p.locator('[data-a=cook-next]').click()
+            self.assertEqual(p.locator('.cook-instruction').inner_text(),p.evaluate('(id)=>RECIPES.items.find(r=>r.id===id).steps.hu[0]',id))
+            p.locator('[data-a=sheet-back]').click()
+            if id=='oats-tiramisu':
+                self.assertIn('54,4 g',p.locator('.kpis').inner_text())
+                p.screenshot(path='/tmp/reppsy-oats-detail-248.png')
+                p.locator('[data-a=recipe-qty][data-n="0.5"]').click()
+                self.assertEqual(p.locator('.recipe-portions>b').inner_text(),'1,5')
+                expected=p.evaluate('(id)=>RECIPES.items.find(r=>r.id===id).p*1.5',id)
+                p.locator('[data-a=idea-add]').click()
+                self.assertAlmostEqual(p.evaluate('Object.values(Store.d.food).flat()[0].p'),expected,delta=.1)
+            else:p.locator('[data-a=sheet-close]').click()
+        self.recipes(p)
+        p.locator('[data-id=oats-choco-pb]').scroll_into_view_if_needed()
+        p.screenshot(path='/tmp/reppsy-oats-grid-248.png')
+        self.assertEqual(errors,[])
+
     def test_cooking_checklist_steps_return_and_no_automatic_logging(self):
         p,errors=self.page(320,844,'hu',20);self.recipes(p)
         p.locator('[data-a=idea-open][data-id=clip-chicken-gnocchi]').click();p.locator('[data-a=recipe-cook]').click();self.bounds(p,'ingredient checklist')

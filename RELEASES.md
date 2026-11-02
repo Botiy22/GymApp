@@ -1,5 +1,12 @@
 # Release versions
 
+## 2.47.1 — 2026-11-02 (build 20261102.1)
+
+Replace the four remaining flat overnight-oat drawings with separately generated
+full-frame photographic-style references and sharp thumbnails. Refine their bilingual
+methods to match measured ingredients and depicted toppings; preserve IDs, nutrition
+and portion logging. Protect the photos against the old illustration generator.
+
 ## 2.47.0 — 2026-11-01 (build 20261101.1)
 
 The active exercise collection grows from 47 to 100 stable IDs. Every entry now uses

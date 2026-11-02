@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-02",
+  "generator": "OpenAI image generation",
+  "reference": "img/recipes/oats-berry-turo.webp",
+  "method": "Each recipe generated separately; full frame exports; no contact-sheet crops",
+  "records": [
+    {
+      "id": "oats-choco-pb",
+      "source": "/workspace/generated_images/exec-7d37872c-7777-4e0b-885a-12a57779a624.png",
+      "sha256": "40e622889e4730354d7d923fac077b7b45315103c0e8a7a35a19e6e50c076a7d",
+      "reviewed": true
+    },
+    {
+      "id": "oats-apple-cinnamon",
+      "source": "/workspace/generated_images/exec-d6690eeb-0dbb-472b-9335-6aca9eb9f897.png",
+      "sha256": "3be32d3b277220e42af546e6bf8f1ec3721222c08f993720afb9bf847c38b1c3",
+      "reviewed": true
+    },
+    {
+      "id": "oats-mango-coconut",
+      "source": "/workspace/generated_images/exec-b25c91f6-a3d2-4383-8707-dce1db253a95.png",
+      "sha256": "e93aa4f5918f94a37b8e110d4b09b3bb0aa9eb1158df0caffafb457313860497",
+      "reviewed": true
+    },
+    {
+      "id": "oats-tiramisu",
+      "source": "/workspace/generated_images/exec-84606ab3-8304-49dc-affc-f05019f54fb7.png",
+      "sha256": "cdc271e85e1e3332cb575212f6d64d7e076d88cd1e6a648fba6a31abe78fe005",
+      "reviewed": true
+    }
+  ]
+}

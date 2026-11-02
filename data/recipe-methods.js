@@ -1,7 +1,7 @@
 /* Editorial preparation pass. Existing IDs and nutrition remain stable.
    No guessed branded labels or missing video quantities are filled silently. */
 (function(){
- if(window.RECIPE_METHODS_VERSION)return;
+ if(window.RECIPE_METHODS_VERSION===2)return;
  const R=window.RECIPES;
  const updates={
  'oats-banana-pb':{
@@ -47,5 +47,24 @@
  const sweet=get('grilled-chicken-sweet-potato');if(sweet){sweet.steps.hu[0]='A nyers édesburgonyát vágd kb. 2 cm-es kockákra, és sütőpapíron, előmelegített, 200 °C-os alsó-felső sütőben (180 °C légkeverés) süsd 25–30 percig, félidőben átforgatva. Mérj ki 130 g sült adagot. Az olajat a csirkéhez használd.';sweet.steps.en[0]='Cut raw sweet potato into roughly 2 cm cubes and bake on parchment in a preheated oven at 200 °C conventional / 180 °C fan for 25–30 minutes, turning halfway. Weigh 130 g cooked for this portion. Reserve the oil for the chicken.';}
  // Use clear timing: active/preparation time and any separate refrigeration wait.
  get('oats-banana-pb').min=10;get('protein-oats').min=10;get('lean-bolognese').min=30;get('salmon-sweet-potato').min=35;
- window.RECIPE_METHODS_VERSION=1;
+ const oatsMethods={
+  'oats-choco-pb':{
+   description:{hu:'Krémes kakaós-fehérjés zab banánnal és mogyoróvajjal.',en:'Creamy cocoa protein oats with banana and peanut butter.'},
+   steps:{hu:['Legalább 600 ml-es, fedeles edényben keverd simára a 150 ml tejet, a 25 g fehérjeport és a 8 g kakaót. A port fokozatosan add hozzá, hogy ne csomósodjon.','Forgasd bele az 50 g zabpelyhet. Fedd le, és tedd legfeljebb 4 °C-os hűtőbe legalább 4 órára vagy éjszakára.','Reggel keverd át; ha túl sűrű, kevés vízzel lazítsd. Tedd rá a 60 g felszeletelt banánt és a 15 g mogyoróvajat. Az egész üveg egy adag; 2 napon belül fogyaszd el.'],en:['In a lidded container of at least 600 ml, whisk 150 ml milk with 25 g whey and 8 g cocoa. Add the powders gradually to avoid lumps.','Stir in 50 g oats. Cover and refrigerate at 4 °C or below for at least 4 hours or overnight.','Stir before serving; loosen with a little water if needed. Top with 60 g sliced banana and 15 g peanut butter. The whole jar is one serving; eat within 2 days.']}
+  },
+  'oats-apple-cinnamon':{
+   description:{hu:'Reszelt almás, fahéjas zab ropogós dióval és kevés mézzel.',en:'Grated-apple cinnamon oats with crunchy walnuts and a little honey.'},
+   steps:{hu:['A megmosott, kimagozott almából mérj ki 100 g-ot: 80 g-ot reszelj le, 20 g-ot vágj apró kockákra és tedd külön, lefedve hűtőbe.','Legalább 600 ml-es, fedeles edényben keverd össze az 50 g zabot, a 120 ml tejet, a 100 g joghurtot, a reszelt almát és a 2 g fahéjat. Lefedve hűtsd legfeljebb 4 °C-on legalább 4 órát.','Tálaláskor keverd át, majd tedd rá a félretett almakockákat, a 10 g durvára vágott diót és a 10 g mézet. Egy üveg egy adag; 2 napon belül fogyaszd el.'],en:['Weigh 100 g washed, cored apple. Grate 80 g; finely dice the remaining 20 g and refrigerate separately in a covered container.','In a lidded container of at least 600 ml, mix 50 g oats, 120 ml milk, 100 g yogurt, the grated apple and 2 g cinnamon. Cover and chill at 4 °C or below for at least 4 hours.','Stir before serving, then top with the reserved apple, 10 g roughly chopped walnuts and 10 g honey. One jar is one serving; eat within 2 days.']}
+  },
+  'oats-mango-coconut':{
+   description:{hu:'Chiamagos, joghurtos zab friss mangóval és kókusszal.',en:'Creamy yogurt chia oats with fresh mango and coconut.'},
+   steps:{hu:['Legalább 600 ml-es edényben keverd össze a 150 ml mandulaitalt és a 100 g görög joghurtot. Add hozzá az 50 g zabot, a 8 g chiamagot és a 8 g kókuszreszelék háromnegyedét.','10 perc után keverd át ismét, hogy a chia ne csomósodjon. Fedd le, és hűtsd legfeljebb 4 °C-on legalább 4 órán át vagy éjszakán keresztül.','Hámozd meg a mangót, és a húsából mérj ki 80 g-ot. Felkockázva tedd a zab tetejére, majd szórd rá a félretett kókuszt. Az egész egy adag; 2 napon belül fogyaszd el.'],en:['In a container of at least 600 ml, mix 150 ml almond drink and 100 g Greek yogurt. Add 50 g oats, 8 g chia seeds and three quarters of the 8 g shredded coconut.','Stir again after 10 minutes to prevent chia clumps. Cover and refrigerate at 4 °C or below for at least 4 hours or overnight.','Peel the mango and weigh 80 g flesh. Dice onto the oats and sprinkle with the reserved coconut. The whole jar is one serving; eat within 2 days.']}
+  },
+  'oats-tiramisu':{
+   description:{hu:'Kávés zab görögjoghurt-rétegekkel és vékony kakaós tetővel.',en:'Coffee oats layered with Greek yogurt and a fine cocoa topping.'},
+   steps:{hu:['Hűtsd le a 30 ml eszpresszót. Keverd össze a 100 ml tejjel, a 10 g mézzel és az 50 g zabpehellyel; hagyd 10 percig sűrűsödni.','Legalább 600 ml-es üvegbe kanalazd a zab felét, majd az összesen 100 g görög joghurt felét. Ismételd meg a rétegezést a maradék zabbal és joghurttal.','Fedd le, és tedd legfeljebb 4 °C-os hűtőbe legalább 4 órára vagy éjszakára. Tálalás előtt szitáld rá az 5 g kakaóport. Az egész üveg egy adag; 2 napon belül fogyaszd el.'],en:['Cool 30 ml espresso. Mix with 100 ml milk, 10 g honey and 50 g oats; leave for 10 minutes to thicken.','Spoon half the oats into a jar of at least 600 ml, followed by half of the total 100 g Greek yogurt. Repeat with the remaining oats and yogurt.','Cover and refrigerate at 4 °C or below for at least 4 hours or overnight. Sift 5 g cocoa over the top just before serving. The whole jar is one serving; eat within 2 days.']}
+  }
+ };
+ for(const [id,update]of Object.entries(oatsMethods)){const r=get(id);if(r){Object.assign(r,update);r.art=id==='oats-apple-cinnamon'?['knife','mix','serve']:id==='oats-tiramisu'?['mix','pour','chill']:['mix','chill','serve'];}}
+ window.RECIPE_METHODS_VERSION=2;
 })();

@@ -135,7 +135,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.assertEqual(page.evaluate("RECIPES.items.filter(r=>r.oats).length"),11)   # Recipe additions also load into a cached shell without duplicate presets.
         self.assertEqual(page.evaluate('Store.d.settings.profileStyle.cover'),'glow')
         self.assertEqual(page.evaluate('EXERCISES.length'),100)
-        self.assertTrue(page.evaluate('!!GENERATED_EXERCISE_ART&&ExerciseCatalog.version===2&&DESSERT_RECIPES_VERSION===1&&RECIPE_METHODS_VERSION===1'))
+        self.assertTrue(page.evaluate('!!GENERATED_EXERCISE_ART&&ExerciseCatalog.version===2&&DESSERT_RECIPES_VERSION===1&&RECIPE_METHODS_VERSION===2'))
         self.assertEqual(errors,[])
 
     def test_verified_update_reload_preserves_diary_and_confirms_build(self):
