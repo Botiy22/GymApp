@@ -69,6 +69,20 @@ class CuratedAtlas(unittest.TestCase):
         self.assertGreater(p.locator('.steps li').count(),0)
         self.assertEqual(errors,[])
 
+    def test_filled_muffin_single_piece_logging(self):
+        p,errors=self.page(320,844,'hu',20)
+        p.locator('#tabbar [data-tab=food]').click();choose(p,'[data-a=food-view][data-v=ideas]')
+        p.locator('[data-a=idea-open][data-id=protein-filled-hazelnut]').click()
+        self.bounds(p,'filled muffin')
+        self.assertIn('2 muffin',p.locator('#sheet').inner_text())
+        p.locator('[data-a=recipe-qty][data-n="-0.5"]').click()
+        self.assertEqual(p.locator('.recipe-portions>b').inner_text(),'0,5')
+        p.locator('[data-a=idea-add]').click()
+        entry=p.evaluate('Object.values(Store.d.food).flat()[0]')
+        self.assertAlmostEqual(entry['p'],16.9,delta=.1)
+        self.assertAlmostEqual(entry['kcal'],200.5,delta=1)
+        self.assertEqual(errors,[])
+
     def test_new_collection_and_desserts_work_offline(self):
         context=self.browser.new_context(viewport={'width':390,'height':844},service_workers='allow')
         self.addCleanup(context.close)
@@ -79,7 +93,7 @@ class CuratedAtlas(unittest.TestCase):
         p.wait_for_function('()=>navigator.serviceWorker.controller!==null',timeout=120000)
         context.set_offline(True);p.reload();p.wait_for_function('()=>!!window.__gym')
         result=p.evaluate('''async()=>{const paths=[...Object.values(GENERATED_EXERCISE_ART).flatMap(a=>[...a.pair,a.thumb]),...RECIPES.items.filter(r=>r.id.startsWith('protein-')&&r.nutritionParts).flatMap(r=>['','-thumb'].map(s=>'img/recipes/'+r.id+s+'.webp'))];return await Promise.all(paths.map(async path=>{const i=new Image();i.src=path;await i.decode();return i.naturalWidth>0;}));}''')
-        self.assertEqual(result,[True]*312)
+        self.assertEqual(result,[True]*320)
         p.evaluate('()=>__gym.A["ex-open"]({dataset:{id:"Barbell_Full_Squat"}})')
         p.wait_for_function('()=>[...document.querySelectorAll(".drawing-phase img")].every(i=>i.complete&&i.naturalWidth>0)')
         self.assertEqual(errors,[])

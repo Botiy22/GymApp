@@ -1,7 +1,7 @@
 /* Original Reppsy recipes. Whole-batch ingredients, per-serving nutrition.
    Generic USDA ingredients, not a branded product claim. See docs/RECIPE_NUTRITION.md. */
 (function () {
-  if (window.DESSERT_RECIPES_VERSION) return;
+  if (window.DESSERT_RECIPES_VERSION===2) return;
   const F = window.FOODS, R = window.RECIPES;
   const refs = {
     oats:['Oats','Zabpehely, finomra darálva','Oats, finely ground'],
@@ -43,6 +43,48 @@
       description:{hu:'Réteges málnás pohárdesszert selymesre turmixolt fehérjekrémmel.',en:'Raspberry layers with a silky blended cottage cheese cream.'},
       steps:{hu:['A cottage cheese-t, joghurtot és vaníliás fehérjeport turmixold 30–60 másodpercig teljesen simára. A pohár méretéhez legalább 400 ml-es edényt válassz.','A friss málnát mosd meg, csepegtesd le; a felét villával törd össze. A zabot ehhez a recepthez hagyd pehely formában.','Rétegezd a krémet és az összetört málnát a pohárba. A tetejére tedd az egész málnaszemeket és a 10 g zabpelyhet.','Lefedve hűtsd 20 percig; puhább zabhoz hagyd 2 órát. A teljes pohár egy adag.'],en:['Blend the cottage cheese, yogurt and vanilla whey for 30–60 seconds until completely smooth. Use a glass or jar holding at least 400 ml.','Wash and drain the fresh raspberries; crush half with a fork. Leave the oats as flakes for this recipe.','Layer the cream and crushed berries in the glass. Top with the whole raspberries and 10 g oat flakes.','Cover and chill for 20 minutes, or 2 hours for softer oats. The whole glass is one serving.']},art:['blend','mash','glass','chill']}
   ];
+  // Six muffins per batch: the chocolate core and crisp topping are included.
+  Object.assign(refs,{
+    chocolate:['Chocolate, dark, 70-85% cacao solids','Étcsokoládé, 70–85%, a töltelékhez','Dark chocolate, 70–85%, for the centres'],
+    hazelnut:['Nuts, hazelnuts or filberts','Törökmogyoró, durvára vágva','Hazelnuts, roughly chopped'],
+    peanut:['Peanuts, all types, dry-roasted, without salt','Sózatlan, szárazon pörkölt földimogyoró','Unsalted dry-roasted peanuts'],
+    almond:['Nuts, almonds','Mandula, szeletelve','Almonds, sliced'],
+    oatTop:['Oats','Zabpehely, a ropogós tetőhöz','Rolled oats, for the crunchy topping'],
+    honey:['Honey','Méz, a morzsához','Honey, for the crumble']
+  });
+  const filled=[
+    {id:'protein-filled-hazelnut',hu:'Mogyorós proteinmuffin csokiszívvel',en:'Hazelnut protein muffins with chocolate centres',nut:'hazelnut',cocoa:10,
+     description:{hu:'Kakaós zabmuffin étcsokis középpel és pirult törökmogyoróval.',en:'Cocoa oat muffins with a dark chocolate centre and toasted hazelnut crunch.'}},
+    {id:'protein-filled-peanut',hu:'Földimogyorós proteinmuffin csokiszívvel',en:'Peanut crunch protein muffins with chocolate centres',nut:'peanut',cocoa:10,
+     description:{hu:'Puha kakaós muffin csokoládétöltelékkel és ropogós földimogyoróval.',en:'Soft cocoa muffins with chocolate filling and a crunchy peanut topping.'}},
+    {id:'protein-filled-raspberry-almond',hu:'Málnás-mandulás proteinmuffin csokiszívvel',en:'Raspberry almond protein muffins with chocolate centres',nut:'almond',fruit:true,
+     description:{hu:'Málnás zabmuffin étcsokis középpel és vékony, pirult mandulaszeletekkel.',en:'Raspberry oat muffins with a dark chocolate centre and toasted almond flakes.'}},
+    {id:'protein-filled-oat-crunch',hu:'Zabmorzsás proteinmuffin csokiszívvel',en:'Oat crumble protein muffins with chocolate centres',crumble:true,cocoa:10,
+     description:{hu:'Kakaós muffin csokis töltelékkel és vékony, mézes zab-mandula morzsával.',en:'Cocoa muffins with a chocolate centre and a thin honey oat–almond crumble.'}}
+  ];
+  for(const f of filled){
+    const amounts={oats:90,yogurt:180,whey:60,egg:100,baking:5,chocolate:36};
+    if(f.cocoa)amounts.cocoa=f.cocoa;if(f.nut)amounts[f.nut]=24;if(f.fruit)amounts.raspberry=90;
+    if(f.crumble)Object.assign(amounts,{oatTop:18,almond:12,honey:12});
+    const toppingHu=f.crumble?'A tetőhöz a 18 g egész zabpelyhet, a 12 g apróra vágott mandulát és a 12 g mézet külön keverd morzsásra.':`A 24 g ${f.nut==='hazelnut'?'törökmogyorót vágd durvára':f.nut==='peanut'?'földimogyorót vágd durvára':'mandulát szeleteld vékonyra'}; tedd félre a tetőhöz.`;
+    const toppingEn=f.crumble?'For the topping, separately mix 18 g rolled oats, 12 g finely chopped almonds and 12 g honey into a loose crumble.':`Prepare 24 g ${f.nut==='hazelnut'?'roughly chopped hazelnuts':f.nut==='peanut'?'roughly chopped peanuts':'sliced almonds'} and reserve for the tops.`;
+    recipes.push({id:f.id,hu:f.hu,en:f.en,description:f.description,min:40,servings:3,portion:{hu:'2 muffin (a 6 darabos adag harmada)',en:'2 muffins (one third of the 6-muffin batch)'},amounts,filledChocolate:true,
+      steps:{hu:[
+        'Melegítsd elő a sütőt 180 °C-ra alsó-felső sütéssel (160 °C légkeveréssel). Tegyél 6, kb. 180 ml-es szilikon muffinformát tepsire. A 36 g csokoládét oszd 6 darab, egyenként 6 g-os töltelékre.',
+        'Keverd simára a 100 g héj nélküli tojást és a 180 g joghurtot. Külön vegyítsd a 90 g finomra darált zabot, a 60 g fehérjeport és az 5 g sütőport'+(f.cocoa?', valamint a 10 g kakaót.':'.')+' Édesített vaníliás vagy csokis fehérjeporral készítsd; natúr porhoz ízlés szerint energiamentes édesítőt adhatsz.',
+        'Röviden forgasd össze a nedves és száraz részt. Ha túl sűrű, 1–3 evőkanál vizet adj hozzá: sűrű, kanalazható massza legyen.'+(f.fruit?' Óvatosan forgasd bele a 90 g megmosott, szárazra törölt friss málnát.':'')+' '+toppingHu,
+        'Oszd a tészta felét a formákba. Mindegyik közepébe tegyél 6 g csokoládét, majd fedd be a maradék tésztával. Legfeljebb háromnegyedig töltsd. A kimért ropogós feltétet oszd el a 6 tetőn, és enyhén nyomd a tésztába.',
+        'Süsd középen 22–28 percig. A csokitöltelék mellett ellenőrizd pálcikával: a tésztán ne maradjon nyers massza, a tojásos tészta közepe érje el a 71 °C-ot. Az olvadt csokoládé önmagában nem a nyers tészta jele.',
+        'Pihentesd 10 percig a formában, majd tedd rácsra fedetlenül. Langyosan a csoki lágy, hűtve megszilárdul; a tető frissen a legropogósabb. Egy adag 2 muffin. Hűtés után 160 °C-os sütőben 5–7 perc alatt melegítheted át.'
+      ],en:[
+        'Preheat to 180 °C conventional / 160 °C fan. Place 6 silicone muffin cups of about 180 ml on a tray. Divide the 36 g chocolate into six 6 g pieces for the centres.',
+        'Whisk 100 g eggs without shells with 180 g yogurt. Separately mix 90 g finely ground oats, 60 g whey and 5 g baking powder'+(f.cocoa?', plus 10 g cocoa.':'.')+' Use sweetened vanilla or chocolate whey; with plain whey, add zero-calorie sweetener to taste if desired.',
+        'Briefly fold the wet and dry mixtures together. If too stiff, add 1–3 tablespoons of water for thick, spoonable batter.'+(f.fruit?' Gently fold in 90 g washed, dried fresh raspberries.':'')+' '+toppingEn,
+        'Divide half the batter among the cups. Put 6 g chocolate in each centre and cover completely with the remaining batter, filling no more than three-quarters full. Divide the measured crunchy topping between all six muffins and gently press it in.',
+        'Bake on the middle shelf for 22–28 minutes. Test the crumb beside the chocolate pocket: a skewer should have no wet batter and the egg batter should reach 71 °C. Melted chocolate alone does not mean the batter is raw.',
+        'Rest in the cups for 10 minutes, then cool uncovered on a rack. The chocolate is soft when warm and sets when chilled; the top is crunchiest fresh. One serving is 2 muffins. Reheat chilled muffins at 160 °C for 5–7 minutes if desired.'
+      ]},art:['oven','mix','mix','tray','oven','serve']});
+  }
   for (const recipe of recipes) {
     const {amounts,...r}=recipe, total={kcal:0,p:0,c:0,f:0};
     r.nutritionParts=Object.entries(amounts).map(([key,g])=>{const [ref,hu,en]=refs[key],row=F.list.find(x=>x[0]===ref);if(!row)throw Error('Missing dessert ingredient '+ref);const part={source:ref,g,hu,en};['kcal','p','c','f'].forEach((k,i)=>{part[k]=row[i+1]*g/100;total[k]+=part[k];});return part;});
@@ -52,5 +94,5 @@
     r.note={hu:'A tápérték egy adagra számolt becslés; a fehérjepor címkéje eltérhet. Lefedve, legfeljebb 4 °C-on tárold, és 2 napon belül fogyaszd el.',en:'Estimated nutrition per serving; your whey label may differ. Keep covered at 4 °C or below and eat within 2 days.'};
     if(!R.items.some(x=>x.id===r.id))R.items.push(r);
   }
-  window.DESSERT_RECIPES_VERSION=1;
+  window.DESSERT_RECIPES_VERSION=2;
 })();

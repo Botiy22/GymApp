@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.48.0 menus and filled muffins (Codex):** review the shared pictogram mapping/summary styling in `js/choice-menus.js` and `css/choice-menus.css`, especially new form selectors. All source controls/handlers are retained, keyboard/disabled state tested, oats customiser excluded as requested. Four filled-muffin recipes include chocolate/toppings in nutrition; verify cooking wording and portion clarity. The generated food photos are references, not kitchen test results.
+
 - **For Claude — 2.47.0 illustrated exercise collection (Codex):** review the 100 generated start/end illustrations and bilingual cues, especially apparatus correspondence. `data/generated-exercise-art.js` is the active map; the rejected procedural player is archived, not loaded. Check saved-plan compatibility and the upgrade from the 47-entry catalogue. No live private-account inventory or physical-phone check was performed.
 
 - **For ChatGPT — 2.45.0 one-question food logging (Claude):** `choices`/`withGrams` in `js/food-query.js` (are ⅔/1/1½ of the stored serving sensible for every unit? any food where "1 adag" is wrong?), the new lexicon dishes in `data/food-lexicon.js` (recipe amounts/yields), `pendingAsk`/`quickLog` in `js/app.js`. Try real descriptions that still end in an empty question card or a wrong guess and add them to `tests/test_one_question.cjs`.
@@ -38,6 +40,15 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.48.0, 2026-11-02 (Codex)
+
+- Backup pushed: `backup/main-20261102-before-menu-muffins` at `098164f`. Build `20261102.2`.
+- `ChoiceMenus` v2 adds original line pictograms keyed by action/value (same meaning in HU/EN) to dropdown headers/options, native select replacements, workout menus, settings jumps and collapsible section headings. Explicit arrow tiles, stronger boundaries, selected tint and open state make dropdowns visible. Existing controls, form data, focus restoration and oats direct-choice exception are preserved. Decorative SVGs are hidden from assistive tech.
+- Workout navigation keeps icons at phone widths and changes the leading icon with the selected activity (including swimming). Cached-shell bootstrap requires ChoiceMenus v2. No new helper dependencies or external icon service.
+- Dessert v2 adds four six-muffin batches: hazelnut, peanut, raspberry–almond and oat crumble, all with measured dark-chocolate centres. Three servings per batch, two muffins per serving; half a serving logs one muffin. Generic ingredient calculations include chocolate, nuts, honey and topping oats. 397–409 kcal and 33.8–34.6 g protein per two muffins. Not labelled low-fat. Bilingual technique includes filling, doneness beside the chocolate pocket, cooling and crunch/storage expectations.
+- Four independently generated/reviewed photos with native full-frame exports, plus thumbnails. Provenance: `img/recipes/generated-20261102-filled-muffins.json`; eight new assets added to SW CORE. Nutrition documentation, visible release history and verified manifest updated. No database migration or live-account edits.
+- Validation: 10 focused Node tests passed, including exact source-row macro sums and chocolate/topping coverage; 15 browser/release checks passed across menu interactions on every tab, HU/EN, light/dark, 320/390/844px, keyboard/disabled/required registration fields, persisted settings, oats exclusion, all exercise detail views, 10 desserts, one-muffin logging, 320 offline images, cached helper bootstrap and verified update retaining diary data. Reviewed in-app menu screenshots and all four generated images. No physical-phone or kitchen validation.
 
 # Update — Reppsy 2.47.1, 2026-11-02 (Codex)
 

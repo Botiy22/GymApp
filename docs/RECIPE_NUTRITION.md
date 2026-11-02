@@ -74,3 +74,26 @@ quantities or full nutrition, they still require completion; no values are inven
 Safe food temperatures follow the existing FoodSafety.gov reference. Preparation
 instructions are designed for common equipment; the actual result depends on the oven,
 ingredient brands and portion geometry.
+
+## 2026-11-02 chocolate-filled muffins
+
+Four new batches in `data/dessert-recipes.js`: hazelnut, peanut crunch,
+raspberry–almond and oat crumble. Each yields six muffins / three two-muffin
+servings. The 36 g of 70–85% dark chocolate is divided into six 6 g centres.
+Nuts, topping oats and honey are included in the ingredient sum; no uncounted
+frosting or oil is required. Half a logged serving means one muffin.
+
+Per two-muffin portion (generic ingredients, rounded):
+
+| Variant | kcal | Protein | Carbs | Fat |
+|---|---:|---:|---:|---:|
+| Hazelnut | 401 | 33.8 g | 32.7 g | 16.2 g |
+| Peanut | 397 | 34.6 g | 33.1 g | 15.3 g |
+| Raspberry–almond | 405 | 34.0 g | 34.7 g | 15.1 g |
+| Oat crumble | 409 | 34.5 g | 39.5 g | 13.8 g |
+
+These exceed the high-protein energy threshold; they are not labelled low-fat.
+Cooking instructions distinguish melted chocolate from raw egg batter and explain
+that the centre sets when cold and toppings are crunchiest fresh. Recipes are
+original and have not been kitchen tested. Four independent generated serving
+images are recorded in `img/recipes/generated-20261102-filled-muffins.json`.

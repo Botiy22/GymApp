@@ -23,3 +23,24 @@
 .planner-view-row>.choice-menu{flex:1 1 160px;max-width:240px;margin:0}.planner-view-row{flex-wrap:wrap}
 
 .choice-caption{display:grid;gap:3px;min-width:0}.choice-context{font-size:.65rem;color:var(--mut);font-weight:500}
+
+/* Visible affordance: pictogram, selected label, dedicated arrow tile. */
+.menu-pictogram{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:0 0 24px;color:var(--acc-tx);pointer-events:none}
+.menu-pictogram>svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7}
+.choice-menu{border-color:color-mix(in srgb,var(--acc-tx) 32%,var(--edge));box-shadow:0 2px 7px #0000000b;transition:border-color .18s,box-shadow .18s}
+.choice-menu>summary{justify-content:flex-start;gap:10px;min-height:58px;padding:10px 12px}
+.choice-menu>summary>.menu-pictogram{width:34px;height:34px;flex-basis:34px;border-radius:10px;background:color-mix(in srgb,var(--acc-tx) 10%,transparent)}
+.choice-menu>summary>.choice-value,.choice-menu>summary>.choice-caption{flex:1;min-width:0}
+.choice-chevron{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;margin-left:auto;border:1px solid color-mix(in srgb,var(--acc-tx) 30%,var(--edge));border-radius:10px;background:color-mix(in srgb,var(--acc-tx) 13%,var(--card));color:var(--acc-tx)}
+.choice-chevron svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;transition:transform .22s ease}
+.choice-menu[open]{border-color:var(--acc-tx);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc-tx) 12%,transparent)}
+.choice-menu[open]>summary .choice-chevron svg{transform:rotate(180deg)}
+.choice-menu[open]>summary{background:color-mix(in srgb,var(--acc-tx) 6%,transparent);border-radius:13px 13px 0 0}
+.choice-menu .choice-options>button:has(small){flex-direction:row;align-items:center}
+.choice-option-copy{display:grid;gap:3px;min-width:0}.choice-option-copy>small{font-size:.76rem;color:var(--mut);font-weight:400}
+.choice-menu .choice-options>button.on,.choice-menu .choice-options>button[aria-pressed=true]{background:color-mix(in srgb,var(--acc-tx) 12%,var(--card))}
+.choice-menu .choice-options>button .menu-pictogram{flex-basis:24px}
+.settings-jumps button{display:inline-flex;align-items:center;gap:7px}.settings-jumps .menu-pictogram{width:20px;height:20px;flex-basis:20px}.settings-jumps .menu-pictogram svg{width:18px;height:18px}
+summary.pictogram-summary{display:flex;align-items:center;gap:10px}summary.pictogram-summary>svg:last-child{margin-left:auto;flex-shrink:0}
+@media(hover:hover){.choice-menu>summary:hover{background:color-mix(in srgb,var(--acc-tx) 7%,transparent)}.choice-menu .choice-options>button:hover{background:var(--raised)}}
+@media(max-width:350px){.choice-menu>summary{gap:7px;padding:9px;min-height:54px}.choice-menu>summary>.menu-pictogram{width:28px;height:30px;flex-basis:28px}.choice-chevron{width:28px;height:30px;flex-basis:28px}.exercise-search>.choice-menu{flex-basis:100%}}

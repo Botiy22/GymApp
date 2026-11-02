@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.48.0 — 2026-11-02 (build 20261102.2)
+
+Menu items and settings sections gain consistent line pictograms. Dropdowns show a
+clear arrow tile, stronger boundary and selected state; workout icons stay visible
+on narrow phones and follow the selected page. Existing keyboard/form handling and
+the direct oats customiser controls remain intact. Four chocolate-filled protein
+muffin recipes add measured crunchy toppings, separate images and per-serving macros.
+
 ## 2.47.1 — 2026-11-02 (build 20261102.1)
 
 Replace the four remaining flat overnight-oat drawings with separately generated

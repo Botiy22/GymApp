@@ -29,8 +29,8 @@ test('all 100 guides have bilingual technique, generated artwork and valid image
  assert.ok(!fs.readFileSync('index.html','utf8').includes('js/exercise-atlas.js'));
  assert.ok(!fs.readFileSync('js/app.js','utf8').includes('<exercise-demo'));
 });
-test('six desserts have ingredient-calculated per-portion nutrition and separate full images',()=>{
- const recipes=RECIPES.items.filter(r=>r.id.startsWith('protein-')&&r.nutritionParts);assert.equal(recipes.length,6);
+test('ten desserts have ingredient-calculated per-portion nutrition and separate full images',()=>{
+ const recipes=RECIPES.items.filter(r=>r.id.startsWith('protein-')&&r.nutritionParts);assert.equal(recipes.length,10);
  for(const r of recipes){for(const k of ['kcal','p','c','f']){const n=r.nutritionParts.reduce((sum,p)=>sum+p[k],0)/r.servings;assert.ok(Math.abs(n-r[k])<=(k==='kcal'?.5:.05)+1e-8,r.id+' '+k);}
  assert.ok(r.p>=30);assert.ok(r.p*4/r.kcal>=.2);assert.equal(r.ing.length,r.nutritionParts.length);assert.ok(r.portion.hu);assert.ok(r.portion.en);
  for(const suffix of ['','-thumb'])assert.ok(fs.statSync(`img/recipes/${r.id}${suffix}.webp`).size>1000);
@@ -38,6 +38,18 @@ test('six desserts have ingredient-calculated per-portion nutrition and separate
 });
 test('existing recipe IDs retain complete bilingual instructions and descriptions',()=>{
  for(const r of RECIPES.items){assert.ok(r.description?.hu,r.id);assert.ok(r.description?.en,r.id);assert.ok(r.steps.hu.length>=3,r.id);assert.equal(r.steps.hu.length,r.steps.en.length,r.id);}
+});
+
+test('filled muffin portions include the chocolate centre and each crunchy topping',()=>{
+ const filled=RECIPES.items.filter(r=>r.filledChocolate);assert.equal(filled.length,4);
+ for(const r of filled){
+  assert.equal(r.servings,3);assert.match(r.portion.en,/2 muffins/);
+  assert.equal(r.nutritionParts.find(p=>p.source==='Chocolate, dark, 70-85% cacao solids').g,36);
+  assert.ok(r.nutritionParts.some(p=>p.source.startsWith('Nuts,')||p.source.startsWith('Peanuts,')));
+  for(const p of r.nutritionParts){const row=FOODS.list.find(f=>f[0]===p.source);for(const [i,k]of ['kcal','p','c','f'].entries())assert.equal(p[k],row[i+1]*p.g/100);}
+  assert.match(r.steps.en.join(' '),/beside the chocolate pocket/);
+  assert.equal(r.steps.hu.length,r.art.length);
+ }
 });
 
 test('all authored Hungarian names can find their exercise without legacy translations',()=>{

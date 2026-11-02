@@ -9,6 +9,31 @@ class ChoiceMenus(unittest.TestCase):
     page=responsive.ResponsivePolish.page
     bounds=responsive.ResponsivePolish.bounds
     auth_page=sharing.ProfileSharing.auth_page
+    def test_pictograms_clear_arrows_and_selection_across_tabs(self):
+        for width,lang,light in [(320,'hu',False),(390,'en',True)]:
+            p,errors=self.page(width,844,lang,20,light=light)
+            for tab in ['home','food','goals','settings','profile']:
+                p.locator('.profile-shortcut' if tab=='profile' else f'#tabbar [data-tab={tab}]').click()
+                p.wait_for_timeout(60)
+                self.bounds(p,tab)
+                self.assertTrue(p.locator('.choice-menu>summary').evaluate_all('(es)=>es.every(e=>e.querySelectorAll(":scope>.menu-pictogram").length===1&&e.querySelector(".choice-chevron")&&e.getBoundingClientRect().height>=44)'))
+            p.locator('#tabbar [data-tab=food]').click()
+            menu=p.locator('[data-a=food-view]').first.locator('xpath=../..')
+            before=menu.locator('summary .menu-pictogram').inner_html()
+            menu.locator('summary').click()
+            self.assertTrue(menu.evaluate('e=>e.open'))
+            self.assertTrue(menu.locator('.choice-options>button').evaluate_all('(es)=>es.every(e=>e.querySelector(".menu-pictogram,svg"))'))
+            p.screenshot(path=f'/tmp/reppsy-menu-open-{width}.png')
+            choose(p,'[data-a=food-view][data-v=ideas]')
+            menu=p.locator('[data-a=food-view]').first.locator('xpath=../..')
+            self.assertNotEqual(before,menu.locator('summary .menu-pictogram').inner_html())
+            self.assertFalse(menu.evaluate('e=>e.open'))
+            p.evaluate('()=>{ChoiceMenus.enhance();ChoiceMenus.enhance()}')
+            self.assertEqual(menu.locator('summary>.menu-pictogram').count(),1)
+            p.locator('#tabbar [data-tab=home]').click()
+            p.locator('[data-workout-menu=training] summary').click()
+            self.assertEqual(p.locator('[data-workout-menu=training] .workout-menu-items .menu-pictogram').count(),3)
+            self.assertEqual(errors,[])
     def test_workout_titles_and_swimming_entry_and_history(self):
         p,errors=self.page(320,844,'hu',20)
         self.assertEqual(p.locator('[data-workout-menu=library] summary span').inner_text(),'Gyakorlatok')

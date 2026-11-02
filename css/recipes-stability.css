@@ -83,3 +83,9 @@
 /* Authored recipe introductions stay compact beside the existing serving tools. */
 .recipe-intro{font-size:1em;line-height:1.5;margin:12px 0 16px;color:var(--ink)}
 exercise-demo{min-width:0}
+
+/* Workout navigation keeps its pictograms even on narrow phones. */
+.workout-menu-nav summary{border:1px solid color-mix(in srgb,var(--acc-tx) 24%,var(--edge));background:var(--card);color:var(--ink)}
+.workout-menu-nav summary>svg:last-child{box-sizing:content-box;width:14px;height:14px;padding:4px;border-radius:6px;background:color-mix(in srgb,var(--acc-tx) 15%,var(--card));color:var(--acc-tx)}
+.workout-menu-items button>span:not(.menu-pictogram){flex:1;min-width:0}.workout-menu-items .menu-pictogram{flex:none}
+@media(max-width:600px){.workout-menu-nav summary,.workout-menu-nav .workout-menu-history{display:grid;grid-template-columns:minmax(0,1fr) 22px;grid-template-rows:20px auto;gap:5px 2px;padding:9px 6px;min-height:70px}.workout-menu-nav summary>svg:first-child,.workout-menu-nav .workout-menu-history>svg{display:block;grid-column:1;grid-row:1;justify-self:center;margin-left:22px;width:18px;height:18px}.workout-menu-nav summary>svg:last-child{grid-column:2;grid-row:1;margin:0}.workout-menu-nav summary>span,.workout-menu-history>span{grid-column:1/-1;grid-row:2;text-align:center;font-size:.73rem;line-height:1.25}.workout-menu-nav .workout-menu-history>svg{margin-left:0;grid-column:1/-1}}

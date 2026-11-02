@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-02",
+  "generator": "OpenAI image generation",
+  "reference": "img/recipes/protein-muffin-chocolate.webp",
+  "method": "Four independent full-frame photographs; no montage crops",
+  "records": [
+    {
+      "id": "protein-filled-hazelnut",
+      "source": "/workspace/generated_images/exec-c1bf0a47-9158-4ad2-ba9a-6c0de7275e5b.png",
+      "sha256": "b65053611018ef4d3ad6b215a1007de6895ff69e5ac43cbd243ab7344f457d2b",
+      "reviewed": true
+    },
+    {
+      "id": "protein-filled-peanut",
+      "source": "/workspace/generated_images/exec-c41b4f62-1263-472d-aa4a-aaf5f4ebd61c.png",
+      "sha256": "e74464da57c479eec7d9edef49e6902bb1204cdee5f9be2fe86e050a2b18b68a",
+      "reviewed": true
+    },
+    {
+      "id": "protein-filled-raspberry-almond",
+      "source": "/workspace/generated_images/exec-a38f82ee-b334-4742-9d4a-b4e5d3377f58.png",
+      "sha256": "38d8b063de45615ab2c31ab7c5fbbc612148f66563c9c837252a1d4a0b2ab42a",
+      "reviewed": true
+    },
+    {
+      "id": "protein-filled-oat-crunch",
+      "source": "/workspace/generated_images/exec-3f217fb9-9b13-42f6-b216-e23c304f9d49.png",
+      "sha256": "6dc16cc52c471db9b9a8a8c0139422a911dfcfc75e6247ff60a06e358ea6269c",
+      "reviewed": true
+    }
+  ]
+}
