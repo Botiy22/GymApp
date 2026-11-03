@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.49.1 food-text clarifications (Codex):** review the exact eight-line regression in `tests/fixtures/oats-description.txt`, canned-pineapple choices and the opt-in generic crunchy-peanut-butter estimate. Labels stay authoritative; no real brand nutrition was inferred. Check that fruit choices remain settled after label saves and old cached helpers upgrade.
+
 - **For Claude — 2.49.0 equal menus and initial motion studies (Codex):** check equal cell sizing at 320px with enlarged HU text, workout-menu keyboard behaviour, and the three explicit SVG motion rigs in `js/exercise-motion.js` (hammer curl, lateral raise, seated extension). Detailed generated artwork is unchanged. These are simplified 2D studies, not video/motion capture; no generic fallback is used for the other exercises.
 
 - **For Claude — 2.48.0 menus and filled muffins (Codex):** review the shared pictogram mapping/summary styling in `js/choice-menus.js` and `css/choice-menus.css`, especially new form selectors. All source controls/handlers are retained, keyboard/disabled state tested, oats customiser excluded as requested. Four filled-muffin recipes include chocolate/toppings in nutrition; verify cooking wording and portion clarity. The generated food photos are references, not kitchen test results.
@@ -42,6 +44,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.49.1, 2026-11-03 (Codex)
+
+- Backup pushed: `backup/main-20261103-before-food-text-fix` at `c7da109`. Build `20261103.2`. Reproduced the owner's exact eight-line description: seven pending items, including unrecognised canned pineapple and Alnatura sent toward the ordinary-food AI route.
+- `js/food-products.js` v2 recognises Alnatura and matches saved crunchy-peanut-butter labels across Hungarian/English word order. `data/food-lexicon.js` v2 adds USDA canned pineapple (drained / with juice) and explicitly generic crunchy peanut butter. No unverified product-label values added.
+- `js/food-query.js`: preserve frozen-fruit quantities, give canned-fruit clarification choices without assuming fresh fruit or fructose-syrup values, offer the generic peanut-butter estimate only by explicit choice, and provide small cinnamon amounts. Known yogurt protein (20 g) and milk volume (10 ml) remain intact. Muesli/yogurt/milk still require a verified or user-entered label when none is saved; these are not claimed to be recognised with exact nutrition from a name alone.
+- `js/app.js`: reuse the one-question cards; fruit selection updates only that pending item instead of re-running the whole meal. Choices persist into description text for subsequent label saves. Cached helper checks upgraded.
+- Validation: 24 focused Node checks; 12 distinct browser/release checks, including the new full eight-item flow on 320px HU/enlarged text, synthetic label save/reuse after reload, 10 ml diary volume, zero AI calls for this flow, existing product/one-question flows, cached helpers, verified update/diary retention and release text integrity. Browser screenshot reviewed. Synthetic test-label values are not production brand data. No physical iPhone or live-account test; no SQL migration.
 
 # Update — Reppsy 2.49.0, 2026-11-03 (Codex)
 

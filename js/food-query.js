@@ -341,7 +341,16 @@ window.FoodQuery = (() => {
     const memories=window.FoodMemory?.resolve(piece,opts.doc||window.Store?.d);if(memories)return {items:memories,intent:new Set()};
     const restaurant=window.BellozzoFoods?.resolve(piece);if(restaurant)return {items:restaurant,intent:new Set()};
     if(d?.packaged)return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
-    if(/^(?:\d+(?:[.,]\d+)?\s*g\s+)?fagyi gyumi$/i.test(strip(piece).trim()))return {items:[{text:piece,status:'needIdentity'}],intent:new Set()};
+    if(/^fagyi gyumi$/i.test(strip(d?.name||piece).trim()))return {items:[{...d,text:piece,status:'needIdentity'}],intent:new Set()};
+    const foodName=strip(d?.name||piece);
+    // "Unsweetened" and "fruit sugar" do not tell us whether the weighed portion includes juice.
+    // Never substitute fresh pineapple or assume a fructose-sweetened syrup has the juice values.
+    if(/ananasz|pineapple/.test(foodName)&&/konzerv|canned/.test(foodName)&&!index().full.has(nameToks(d?.name||piece).join(' '))&&
+        (/gyumolcscukr|fructose|szirup|syrup/.test(foodName)||!/sajat le|in juice|with juice|water|viz/.test(foodName))) {
+      const syrup=/szirup|syrup/.test(foodName);
+      return {items:[{...d,text:d?.name||piece,status:syrup?'needLabel':'needIdentity',identityKind:'pineapple',
+        options:syrup?[]:['ananászkonzerv saját lében lecsepegtetve','ananászkonzerv saját lével']}],intent:new Set()};
+    }
     const sc = scan(d ? (d.amount!=null?d.amount+' '+d.unit+' ':'')+d.name : piece);
     return { items: sc.segs.map(s => ({...itemFromSeg(s, opts),original:sc.segs.length===1?piece:undefined,_seg:s})), intent: sc.intent };
   }
@@ -468,6 +477,17 @@ window.FoodQuery = (() => {
   const SIZE_TXT = { hu: { small: 'kis {0}', regular: '1 {0}', large: 'nagy {0}' }, en: { small: 'small {0}', regular: '1 {0}', large: 'large {0}' } };
   function choices(p, lang = 'hu', opts = { strict: true }) {
     const X = index(), seg = p && p._seg, L = lang === 'hu' ? 'hu' : 'en', out = [];
+    // These are explicit, labelled alternatives, never automatic brand matches.
+    let alternatives=p?.options;
+    if(p?.status==='needLabel'&&!p.conflict&&!Object.keys(p.known||{}).length&&
+        window.FoodProducts?.identity(p.text)==='alnatura butter crunchy peanut')alternatives=['darabos mogyoróvaj'];
+    if(alternatives?.length) {
+      return alternatives.flatMap(name=>{
+        const prefix=p.grams>0?p.grams+' g ':p.ml>0?p.ml+' ml ':'',it=parse(prefix+name,opts).items[0];
+        if(!it?.entry||!['ok','needAmount','needGrams'].includes(it.status))return [];
+        return [{label:nameOf(it.entry,L),kcal:it.status==='ok'?it.kcal:null,grams:it.grams??null,item:it}];
+      });
+    }
     if (!seg) return out;
     const opt = (label, it) => { if (!it || !['ok', 'needAmount', 'needGrams'].includes(it.status)) return; Object.defineProperty(it, '_seg', { value: it._seg || seg, enumerable: false }); out.push({ label, kcal: it.status === 'ok' ? it.kcal : null, grams: it.status === 'ok' ? r1(it.grams) : null, item: it }); };
     if (p.status === 'unknown' && p.entry) {
@@ -477,6 +497,10 @@ window.FoodQuery = (() => {
     }
     if (!['needAmount', 'needGrams'].includes(p.status) || !p.entry || p.why === 'volume') return out;
     const en = p.entry, e = X.entries.indexOf(en), meta = en.h >= 0 ? X.F.meta?.[en.h] : null;
+    if(X.F.list[en.i][0]==='Spices, cinnamon, ground') {
+      [[.3,L==='hu'?'Kevés (≈0,3 g)':'A little (≈0.3 g)'],[1,'1 g'],[2.6,L==='hu'?'1 teáskanál (≈2,6 g)':'1 tsp (≈2.6 g)']].forEach(([g,label])=>opt(label,itemFromSeg({...seg,qty:g,unit:['g',1],size:''},{...opts,entry:e})));
+      return out;
+    }
     if (meta?.boxes?.length && meta.u?.db) {                           // a chain's own box sizes: "4 / 6 / 9 / 20 db"
       meta.boxes.forEach(n => opt(n + ' ' + (L === 'hu' ? 'db' : 'pcs'), itemFromSeg({ ...seg, qty: n, unit: null }, { ...opts, entry: e })));
       return out;
@@ -514,5 +538,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { choices, withGrams, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { choices, withGrams, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();

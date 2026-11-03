@@ -18,6 +18,32 @@ test('the exact meal preserves eight ingredients and the protein/fat claims with
 });
 // Test fixtures are deliberately synthetic, NOT verified real brand nutrition.
 const foods=[{name:'choco-oat musli',kcal:400,p:10,c:60,f:10},{name:'Pilos high protein coconut yoghurt',kcal:70,p:10,c:5,f:1},{name:'Pilos freefrom lactosefree tej 1,5 fat',basis:'ml',kcal:46,p:3.4,c:4.8,f:1.5}];
+const oatsText=require('node:fs').readFileSync(require('node:path').join(__dirname,'fixtures/oats-description.txt'),'utf8').trim();
+test('new oats description keeps all eight lines local and offers actionable clarifications',async()=>{
+ global.fetch=()=>{throw Error('Do not send known branded products to AI to guess a label')};
+ const result=await FoodAI.analyze('key','m',{text:oatsText,lang:'hu'});
+ assert.equal(result.local,true);assert.equal(result.items.length+result.pending.length,8);
+ const r=FoodQuery.parse(oatsText,{strict:true}).items;
+ assert.deepEqual(r.map(i=>i.status),['needLabel','needIdentity','ok','needLabel','needLabel','needAmount','needIdentity','needLabel']);
+ assert.equal(r[1].grams,80);assert.equal(r[3].grams,200);assert.deepEqual(r[3].known,{p:20});assert.equal(r[4].ml,10);assert.equal(r[6].grams,62);assert.equal(r[7].grams,10);
+ const canned=FoodQuery.choices(r[6],'hu');assert.equal(canned.length,2);assert.ok(canned.every(c=>c.item.grams===62&&c.kcal===37));
+ assert.match(FoodAI.fromQuery(canned[0].item,'en').en,/canned, juice pack, drained/);
+ const peanut=FoodQuery.choices(r[7],'hu');assert.equal(peanut.length,1);assert.match(peanut[0].label,/becslés/);assert.equal(peanut[0].grams,10);assert.equal(FoodAI.fromQuery(peanut[0].item,'hu').approx,true);
+ assert.deepEqual(FoodQuery.choices(r[5],'hu').map(c=>c.grams),[.3,1,2.6]);
+ // A tapped choice must survive later label saves/re-analysis as a single item.
+ for(const c of [...canned,...peanut])assert.equal(FoodQuery.parse(c.grams+' g '+FoodQuery.nameOf(c.item.entry,'hu'),{strict:true}).items[0].status,'ok');
+});
+test('canned fruit never silently becomes fresh fruit or an assumed syrup; flavoured spreads get no plain proxy',()=>{
+ for(const s of ['62g konzerv ananász gyümölcscukros szirupban','62g canned pineapple in fructose syrup'])assert.equal(FoodQuery.parse(s,{strict:true}).items[0].status,'needLabel');
+ assert.equal(FoodQuery.parse('62g ananász',{strict:true}).items[0].kcal,31);
+ assert.equal(FoodQuery.parse('62g Pineapple, canned, juice pack, drained',{strict:true}).items[0].status,'ok');
+ assert.equal(FoodQuery.choices(FoodQuery.parse('10g Alnatura crunchy peanut butter',{strict:true}).items[0]).length,1);
+ for(const s of ['10g Alnatura chocolate crunchy peanut butter','10g Alnatura hazelnut butter','10g Alnatura crunchy peanut butter 8g protein'])assert.equal(FoodQuery.choices(FoodQuery.parse(s,{strict:true}).items[0]).length,0);
+ const exact={name:'Alnatura crunchy peanut butter',kcal:600,p:25,c:20,f:48}; // Synthetic fixture.
+ const r=FoodQuery.parse('10g mogyorovaj crunchy alnatura',{strict:true,foods:[exact]}).items[0];
+ assert.equal(r.status,'ok');assert.equal(r.label,true);assert.equal(r.kcal,60);
+ assert.equal(FoodQuery.parse('10g Alnatura smooth peanut butter',{strict:true,foods:[exact]}).items[0].status,'needLabel');
+});
 test('confirmed labels calculate offline on the next use; 20 g stays 20 g and 17 ml stays a volume',async()=>{
  global.Store={d:{myFoods:foods}};const fixed=text.replace('fagyi gyumi','fagyasztott gyümi').replace('Fahej por','1g Fahej por');
  const a=await FoodAI.analyze('key','m',{text:fixed,lang:'hu'});assert.equal(a.local,true);assert.equal(a.items.length,8);assert.equal(a.items.find(i=>/yoghurt/.test(i.name)).p,20);

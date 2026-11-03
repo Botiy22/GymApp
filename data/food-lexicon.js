@@ -8,7 +8,7 @@
    u: portion weights in grams. They are TYPICAL weights (bakeries, shops and recipes differ) and the app always shows them
       with ≈; w gives the usual range. Portions taken from the USDA row itself are not repeated here.
    approx: 1 when the values come from a close but not identical food (the name says which). */
-window.FOOD_LEXICON = { version: 1, items: [
+window.FOOD_LEXICON = { version: 2, items: [
   { hu: 'Fahéj, őrölt', en: 'Ground cinnamon', usda: 'Spices, cinnamon, ground', a: 'fahéj|fahej|fahéj por|fahej por|őrölt fahéj|ground cinnamon|cinnamon powder|cinnamon', u: { tk: 2.6 }, w: { tk: 'USDA teáskanál' } },
   /* ---------- bread and bakery ---------- */
   { hu: 'Zsemle (kaiser)', en: 'Bread roll (zsemle)', a: 'zsemle|zsömle|zsemlye|zsemli|vizes zsemle|semmel|kaiser|kaiser zsemle|bread roll|roll|white roll|kaiser roll', u: { db: 57 }, w: { db: 'boltonként kb. 50–60 g' } },
@@ -175,6 +175,8 @@ window.FOOD_LEXICON = { version: 1, items: [
   { hu: 'Sárgadinnye', en: 'Cantaloupe', a: 'sárgadinnye|sargadinnye|cantaloupe|melon', u: { szelet: 130 }, w: { szelet: 'héj nélkül' } },
   { hu: 'Kivi', en: 'Kiwi', a: 'kivi|kivit|kiwi|kiwifruit' },
   { hu: 'Ananász', en: 'Pineapple', a: 'ananász|ananasz|pineapple', u: { szelet: 85 }, w: { szelet: 'egy karika, héj nélkül' } },
+  { hu: 'Ananászkonzerv saját lében, lecsepegtetve', en: 'Canned pineapple in juice, drained', usda: 'Pineapple, canned, juice pack, drained', a: 'ananászkonzerv saját lében lecsepegtetve|konzerv ananász saját lében lecsepegtetve|canned pineapple in juice drained' },
+  { hu: 'Ananászkonzerv saját lével', en: 'Canned pineapple with its juice', usda: 'Pineapple, canned, juice pack, solids and liquids', a: 'ananászkonzerv saját lével|konzerv ananász saját lével|canned pineapple with juice' },
   { hu: 'Mangó', en: 'Mango', a: 'mangó|mango|mangót', u: { db: 336 }, w: { db: 'USDA: egy egész gyümölcs ehető része' } },
   { hu: 'Citrom', en: 'Lemon', a: 'citrom|citromot|lemon|lemons', u: { db: 58 } },
   { hu: 'Lime', en: 'Lime', usda: 'Limes, raw', a: 'lime|zöldcitrom|limes' },
@@ -245,6 +247,7 @@ window.FOOD_LEXICON = { version: 1, items: [
   { hu: 'Szezámmag', en: 'Sesame seeds', a: 'szezám|szezámmag|szezam|sesame|sesame seeds' },
   { hu: 'Kókuszreszelék (cukrozatlan)', en: 'Desiccated coconut', a: 'kókuszreszelék|kokuszreszelek|kókusz|desiccated coconut|coconut flakes', u: { ek: 5 } },
   { hu: 'Mogyoróvaj', en: 'Peanut butter', a: 'mogyoróvaj|mogyorovaj|peanut butter|földimogyoró-vaj', u: { tk: 5 } },
+  { hu: 'Darabos mogyoróvaj (általános becslés)', en: 'Crunchy peanut butter (generic estimate)', usda: 'Peanut butter, chunk style, without salt', approx: 1, a: 'darabos mogyoróvaj|ropogós mogyoróvaj|crunchy peanut butter|chunky peanut butter', u: { tk: 5 } },
   { hu: 'Mogyorókrém (csokis)', en: 'Chocolate hazelnut spread', a: 'mogyorókrém|mogyorokrem|nutella|csokikrém|kakaós krém|hazelnut spread|chocolate spread', u: { ek: 15, tk: 5 }, w: { ek: 'egy kenésnyi', tk: 'egy vékony kenés' } },
 
   /* ---------- fats, sauces, sweet things ---------- */

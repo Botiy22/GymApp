@@ -1,5 +1,12 @@
 # Release versions
 
+## 2.49.1 — 2026-11-03
+
+- Clarify canned pineapple as drained fruit or fruit with juice; preserve the entered weight. Unspecified fructose syrup still needs a label.
+- Recognise Alnatura as a packaged brand, reuse saved Hungarian/English crunchy-peanut-butter labels, and offer a clearly marked generic estimate only by choice.
+- Small cinnamon amounts can be selected in one tap. Fruit clarification keeps other resolved items instead of re-running the entire analysis.
+- Regression coverage uses the complete eight-line oats description, including 200 g yogurt / 20 g protein and 10 ml milk. No unverified brand nutrition was added.
+
 ## 2.49.0 — 2026-11-03 (build 20261103.1)
 
 Equal-width workout/menu/action cells replace content-weighted sizing. Settings

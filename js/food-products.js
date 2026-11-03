@@ -2,7 +2,7 @@
    Open Food Facts is community-maintained (ODbL); users review the exact variant/label before saving. */
 window.FoodProducts=(()=>{
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const brands=/\b(lidl|pilos|crownfield|milbona|alesto|freshona|combino|solevita|tesco|spar|s-budget|s budget|despar|freefrom|free from|biotech|biotechusa)\b/;
+  const brands=/\b(lidl|pilos|crownfield|milbona|alesto|freshona|combino|solevita|tesco|spar|s-budget|s budget|despar|freefrom|free from|biotech|biotechusa|alnatura)\b/;
   const number=s=>Number(String(s).replace(',','.'));
   function read(text){
     const original=String(text||'').trim(), m=original.match(/^(\d+(?:[.,]\d+)?)\s*(kg|dkg|g|ml|dl|l)\b\s*(.*)$/i);
@@ -17,7 +17,7 @@ window.FoodProducts=(()=>{
     return {original,name,known,amount,unit,grams:unit&&['g','dkg','kg'].includes(unit)?amount*({g:1,dkg:10,kg:1000}[unit]):null,ml,packaged:brands.test(norm(name))||/\b(choco|chocolate|csokis)\b.*\b(musli|muzli|muesli|granola)\b/.test(norm(name))};
   }
   function identity(s){
-    return norm(read(s).name).replace(/yoghurt|joghurt/g,'yogurt').replace(/kokusz(?:os)?/g,'coconut').replace(/vanilias|vanilia/g,'vanilla').replace(/csokolades|csokis|choco\b/g,'chocolate').replace(/tej\b/g,'milk').replace(/laktozmentes|lactosefree|lactose-free/g,'lactose free').replace(/freefrom/g,'free from').replace(/musli|muzli/g,'muesli').replace(/\b(low fat|no added sugar|hozzaadott cukor nelkul|zsirszegeny|flavour|flavor|izu)\b/g,' ').replace(/[^a-z0-9.%]+/g,' ').trim().split(/\s+/).filter(Boolean).sort().join(' ');
+    return norm(read(s).name).replace(/yoghurt|joghurt/g,'yogurt').replace(/kokusz(?:os)?/g,'coconut').replace(/vanilias|vanilia/g,'vanilla').replace(/csokolades|csokis|choco\b/g,'chocolate').replace(/tej\b/g,'milk').replace(/laktozmentes|lactosefree|lactose-free/g,'lactose free').replace(/freefrom/g,'free from').replace(/musli|muzli/g,'muesli').replace(/mogyorovaj/g,'peanut butter').replace(/\b(darabos|chunky)\b/g,'crunchy').replace(/\b(low fat|no added sugar|hozzaadott cukor nelkul|zsirszegeny|flavour|flavor|izu)\b/g,' ').replace(/[^a-z0-9.%]+/g,' ').trim().split(/\s+/).filter(Boolean).sort().join(' ');
   }
   function saved(text,foods){
     const d=read(text),id=identity(d.name);if(!id||d.amount==null)return null;
@@ -49,5 +49,5 @@ window.FoodProducts=(()=>{
     const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
     try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw Error('product lookup failed');const data=await r.json();return (barcode?[data.product]:data.products||[]).map(product).filter(Boolean).slice(0,20);}finally{clearTimeout(timer);}
   }
-  return {version:1,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR']};
+  return {version:2,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR']};
 })();

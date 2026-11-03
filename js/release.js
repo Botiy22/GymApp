@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.49.0';
-  const build = '20261103.1';
+  const version = '2.49.1';
+  const build = '20261103.2';
   const history = [
+    {version:'2.49.1',build:'20261103.2',date:'2026-11-03',
+      hu:['Étel-leírás javítás: ananászkonzerv, Alnatura mogyoróvaj és kis mennyiségű fahéj egyszerű pontosítása, a megadott mennyiségek megtartásával.','A gyümölcsválasztás megőrzi az elemzés többi tételét. A címkeadatok újra használhatók; az általános mogyoróvaj-becslés külön jelölést kap.'],
+      en:['Better food descriptions: simple clarifications for canned pineapple, Alnatura peanut butter and a little cinnamon, keeping your entered quantities.','Choosing fruit preserves the other analysed items. Saved labels are reusable; the optional generic peanut-butter estimate is clearly marked.']},
     {version:'2.49.0',build:'20261103.1',date:'2026-11-03',
       hu:['Egyenlő szélességű és magasságú navigációs gombok, olvasható feliratok kis képernyőn is.','Három új 2D mozgásbemutató: kalapács bicepsz, oldalemelés és ülő lábnyújtás. Lejátszás, szünet, újrakezdés és lassítás a részletes képek mellett.','A gyakorlatlistában jelölés mutatja a mozgásbemutatókat; az edzésmenü billentyűzettel is könnyebben kezelhető.'],
       en:['Evenly sized navigation buttons with readable labels on small screens.','Three new 2D movement demos: hammer curls, lateral raises and seated leg extensions. Play, pause, restart and slow playback alongside the detailed drawings.','Movement demos are marked in the exercise list; workout menus gain keyboard navigation and Escape to close.']},
