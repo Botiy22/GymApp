@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.48.0';
-  const build = '20261102.2';
+  const version = '2.49.0';
+  const build = '20261103.1';
   const history = [
+    {version:'2.49.0',build:'20261103.1',date:'2026-11-03',
+      hu:['Egyenlő szélességű és magasságú navigációs gombok, olvasható feliratok kis képernyőn is.','Három új 2D mozgásbemutató: kalapács bicepsz, oldalemelés és ülő lábnyújtás. Lejátszás, szünet, újrakezdés és lassítás a részletes képek mellett.','A gyakorlatlistában jelölés mutatja a mozgásbemutatókat; az edzésmenü billentyűzettel is könnyebben kezelhető.'],
+      en:['Evenly sized navigation buttons with readable labels on small screens.','Three new 2D movement demos: hammer curls, lateral raises and seated leg extensions. Play, pause, restart and slow playback alongside the detailed drawings.','Movement demos are marked in the exercise list; workout menus gain keyboard navigation and Escape to close.']},
     {version:'2.48.0',build:'20261102.2',date:'2026-11-02',
       hu:['Jól látható menük: egységes piktogramok, hangsúlyos lenyitónyilak és egyértelmű kiválasztás az alkalmazásban.','Négy új, csokival töltött proteinmuffin ropogós mogyorós, földimogyorós, málnás-mandulás vagy zabmorzsás tetővel. Külön képek, részletes elkészítés és adagonként számolt makrók.'],
       en:['Clearer menus throughout the app: matching pictograms, prominent dropdown arrows and visible selection.','Four new chocolate-filled protein muffins with hazelnut, peanut, raspberry–almond or oat-crumble crunch. Individual images, detailed methods and per-serving macros.']},

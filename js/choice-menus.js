@@ -168,6 +168,12 @@ window.ChoiceMenus=(()=>{
     },true);
     document.addEventListener('input',e=>{const d=e.target.closest?.('.choice-menu');if(d)sync(d);});
     document.addEventListener('keydown',e=>{
+      const workout=e.target.closest?.('.workout-menu');
+      if(workout){
+        const summary=workout.querySelector('summary'),buttons=[...workout.querySelectorAll('button:not(:disabled)')];
+        if(e.key==='Escape'&&workout.open){e.preventDefault();e.stopPropagation();workout.open=false;summary.focus();return;}
+        if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)&&buttons.length){e.preventDefault();workout.open=true;closeOthers(workout);const n=buttons.indexOf(document.activeElement),next=e.key==='Home'?0:e.key==='End'?buttons.length-1:e.key==='ArrowDown'?(n+1)%buttons.length:(n<0?buttons.length-1:(n+buttons.length-1)%buttons.length);buttons[next].focus();return;}
+      }
       const d=e.target.closest?.('.choice-menu');if(!d)return;
       if(e.key==='Escape'&&d.open){e.preventDefault();e.stopPropagation();d.open=false;d._summary.focus();return;}
       const bs=[...d.querySelectorAll('.choice-options>button:not(:disabled)')];if(!bs.length)return;

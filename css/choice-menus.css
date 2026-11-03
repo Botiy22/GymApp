@@ -44,3 +44,21 @@
 summary.pictogram-summary{display:flex;align-items:center;gap:10px}summary.pictogram-summary>svg:last-child{margin-left:auto;flex-shrink:0}
 @media(hover:hover){.choice-menu>summary:hover{background:color-mix(in srgb,var(--acc-tx) 7%,transparent)}.choice-menu .choice-options>button:hover{background:var(--raised)}}
 @media(max-width:350px){.choice-menu>summary{gap:7px;padding:9px;min-height:54px}.choice-menu>summary>.menu-pictogram{width:28px;height:30px;flex-basis:28px}.choice-chevron{width:28px;height:30px;flex-basis:28px}.exercise-search>.choice-menu{flex-basis:100%}}
+
+/* Equal cells for peer navigation and action buttons; labels may wrap. */
+.workout-tabs.workout-menu-nav{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.workout-menu-nav>.workout-menu{display:flex;flex-direction:column}
+.workout-menu-nav>.workout-menu>summary,.workout-menu-nav>.workout-menu-history{height:100%;min-height:76px;box-sizing:border-box}
+.workout-menu-nav>.workout-menu-history{border:1px solid var(--edge);background:var(--card)}
+.workout-menu-nav>.workout-menu-history.on{background:var(--raised);color:var(--acc-tx)}
+.workout-menu-nav summary>span,.workout-menu-history>span{overflow-wrap:normal;hyphens:auto}
+.settings-jumps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr;align-items:stretch}
+.settings-jumps>.chip{width:100%;height:100%;min-height:48px;white-space:normal;overflow:visible;word-break:normal;line-height:1.3;padding:8px;flex-direction:column;gap:6px}
+.food-actions{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.food-actions>.btn,.food-actions>.btn:first-child{grid-column:auto;min-width:0;min-height:78px;height:100%;flex-direction:column;white-space:normal;overflow-wrap:normal}
+.sheet-foot>.btn:not(.routine-remove){flex:1 1 0;min-width:0}
+@media(max-width:420px){.settings-jumps{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-jumps>.chip{flex-direction:row;justify-content:center}}
+@media(min-width:601px){.workout-menu-nav summary,.workout-menu-nav .workout-menu-history{display:grid;grid-template-columns:1fr 24px;grid-template-rows:22px auto;gap:6px;padding:9px}.workout-menu-nav summary>svg:first-child{grid-column:1;grid-row:1;justify-self:center;margin-left:24px}.workout-menu-nav summary>svg:last-child{grid-column:2;grid-row:1}.workout-menu-nav summary>span,.workout-menu-history>span{grid-column:1/-1;grid-row:2;text-align:center}.workout-menu-nav .workout-menu-history>svg{grid-column:1/-1;grid-row:1;justify-self:center}}
+@media(max-width:600px){.workout-menu-nav summary>span,.workout-menu-history>span{font-size:.65rem}.settings-jumps{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-jumps>.chip{font-size:.75rem}}
+
+.motion-available{display:flex;align-items:center;gap:5px;color:var(--acc-tx);font-size:.65rem;line-height:1.4;margin-top:7px}.motion-available svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}

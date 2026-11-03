@@ -114,7 +114,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.addCleanup(context.close)
         context.route('**/js/config.js',lambda r:r.fulfill(body="window.CLOUD={url:'',key:''};",content_type='application/javascript'))
         html=(responsive.ROOT/'index.html').read_text()
-        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','food-memory','workout-energy','choice-menus','exercise-catalog','exercise-atlas']:
+        for script in ['competition','routine-share','app-updates','accent-theme','hue-wheel','food-volume','food-query','overnight-oats','exercise-search','recipe-goals','food-products','food-memory','workout-energy','choice-menus','exercise-catalog','exercise-atlas','exercise-motion']:
             html=html.replace(f'<script src="js/{script}.js"></script>','')
         for script in ['exercise-aliases','library-expansion','food-lexicon','goal-recipes','bellozzo-foods','exercise-guides','exercise-guides-extra','generated-exercise-art','exercises-curated','dessert-recipes','recipe-methods']:
             html=html.replace(f'<script src="data/{script}.js"></script>','')
@@ -135,7 +135,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.assertEqual(page.evaluate("RECIPES.items.filter(r=>r.oats).length"),11)   # Recipe additions also load into a cached shell without duplicate presets.
         self.assertEqual(page.evaluate('Store.d.settings.profileStyle.cover'),'glow')
         self.assertEqual(page.evaluate('EXERCISES.length'),100)
-        self.assertTrue(page.evaluate('!!GENERATED_EXERCISE_ART&&ExerciseCatalog.version===2&&DESSERT_RECIPES_VERSION===2&&RECIPE_METHODS_VERSION===2'))
+        self.assertTrue(page.evaluate('ExerciseMotion.version===1&&!!GENERATED_EXERCISE_ART&&ExerciseCatalog.version===2&&DESSERT_RECIPES_VERSION===2&&RECIPE_METHODS_VERSION===2'))
         self.assertEqual(errors,[])
 
     def test_verified_update_reload_preserves_diary_and_confirms_build(self):

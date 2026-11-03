@@ -1,5 +1,14 @@
 # Release versions
 
+## 2.49.0 — 2026-11-03 (build 20261103.1)
+
+Equal-width workout/menu/action cells replace content-weighted sizing. Settings
+shortcuts wrap as a balanced grid on phones, and workout menus support arrow keys
+and Escape. Three original continuous 2D motion studies supplement the existing
+detailed illustrations: hammer curls, lateral raises and seated leg extensions.
+Each has explicit play/pause, restart and half-speed controls; playback stops when
+collapsed, offscreen or removed. Only these three IDs show a movement-demo badge.
+
 ## 2.48.0 — 2026-11-02 (build 20261102.2)
 
 Menu items and settings sections gain consistent line pictograms. Dropdowns show a

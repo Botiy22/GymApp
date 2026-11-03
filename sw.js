@@ -25,6 +25,7 @@ const CORE = [
   "img/recipes/protein-quark-raspberry.webp",
   "js/food-memory.js",
   "js/choice-menus.js",
+  "js/exercise-motion.js",
   "css/choice-menus.css",
   "js/food-products.js",
   "data/goal-recipes.js",

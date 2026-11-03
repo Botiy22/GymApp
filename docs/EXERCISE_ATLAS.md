@@ -33,3 +33,20 @@ static catalogue. The old builder name redirects to this command.
 The existing third-party assets and notices remain for archived entries. They are
 not used by the 100-entry generated collection. User-added media still takes priority.
 All active image pairs and thumbnails belong in the verified service-worker cache.
+
+## First continuous movement studies (2.49.0)
+
+`js/exercise-motion.js` adds three explicit, original 2D vector animations:
+`Hammer_Curls`, `Side_Lateral_Raise`, and `Leg_Extensions`. These are continuous
+joint rotations, not fades between the two photographs and not filmed video.
+Only these supported IDs receive a badge and collapsible player. Detailed generated
+stills, technique instructions and muscle views remain available for all 100 entries.
+The previous `exercise-atlas.js` renderer remains inactive.
+
+Playback starts only when opened, with pause, restart and half-speed controls.
+It stops when collapsed or its dialog closes; it suspends offscreen or when the
+browser tab is hidden. Animation frames and observers are cleaned up on removal.
+All controls retain text labels and visible keyboard focus. Geometry and visual
+frames have been checked in browser, but no professional motion-capture or physical
+biomechanical validation is claimed. New exercises require a matching authored
+motion rather than a generic fallback.
