@@ -59,6 +59,30 @@ class FoodProductsBrowser(unittest.TestCase):
         self.assertEqual(p.evaluate('Store.d.myFoods.length'),3)
         self.assertEqual(p.locator('.ai-item').count(),4)
         self.assertEqual(calls,[]);self.assertEqual(errors,[])
+    def test_with_protein_uses_previously_saved_labels_for_the_full_meal(self):
+        text=(responsive.ROOT/'tests/fixtures/oats-description.txt').read_text().strip().replace('sugar 20g','sugar with 20g')
+        p,errors=self.page(390,844,'hu')
+        # Synthetic labels represent foods already saved under the earlier, shorter wording.
+        p.evaluate("""Store.d.myFoods=[
+          {id:'muesli-test',name:'choco-oat musli',kcal:400,p:10,c:60,f:10},
+          {id:'yogurt-test',name:'Pilos high protein coconut yoghurt',kcal:70,p:10,c:5,f:1},
+          {id:'milk-test',name:'Pilos freefrom lactosefree tej 1,5 fat',basis:'ml',kcal:46,p:3.4,c:4.8,f:1.5},
+          {id:'peanut-test',name:'Alnatura crunchy peanut butter',kcal:600,p:25,c:20,f:48}
+        ];Store.save()""")
+        self.describe(p,text)
+        self.assertEqual(p.locator('.ai-pending section').count(),3)
+        self.assertEqual(p.locator('[data-a=ai-label]').count(),1) # Only the optional canned-fruit label.
+        self.assertEqual(p.evaluate('__gym.ui.ai.res.items.find(i=>i.name.includes("yoghurt")).p'),20)
+        p.locator('[data-a=ai-fruit][data-kind=berries]').click()
+        p.locator('[data-a=ai-choice]').filter(has_text='Kevés').click()
+        p.locator('[data-a=ai-choice]').filter(has_text='lecsepegtetve').click()
+        self.assertEqual(p.locator('.ai-item').count(),8)
+        self.assertEqual(p.locator('.ai-pending section').count(),0)
+        self.assertFalse(p.locator('[data-a=ai-add]').is_disabled())
+        p.locator('[data-a=ai-add]').click()
+        self.assertEqual(len(p.evaluate('Object.values(Store.d.food).flat()')),8)
+        self.assertEqual(p.evaluate('Store.d.myFoods.length'),4)
+        self.assertEqual(errors,[])
     def test_exact_meal_pending_labels_saved_then_reused_after_reload(self):
         p,errors=self.page(320,844,'hu',20);self.describe(p,TEXT)
         self.assertEqual(p.locator('.ai-pending section').count(),5)

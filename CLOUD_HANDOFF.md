@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.49.2 product-claim wording (Codex):** check `FoodProducts.read`/`identity` for optional “with” / “of” around nutrient claims, compatibility with old saved names and the protein-powder exclusion. The exact new eight-line browser regression uses previously saved synthetic labels; no automatic label-free completion is claimed.
+
 - **For Claude — 2.49.1 food-text clarifications (Codex):** review the exact eight-line regression in `tests/fixtures/oats-description.txt`, canned-pineapple choices and the opt-in generic crunchy-peanut-butter estimate. Labels stay authoritative; no real brand nutrition was inferred. Check that fruit choices remain settled after label saves and old cached helpers upgrade.
 
 - **For Claude — 2.49.0 equal menus and initial motion studies (Codex):** check equal cell sizing at 320px with enlarged HU text, workout-menu keyboard behaviour, and the three explicit SVG motion rigs in `js/exercise-motion.js` (hammer curl, lateral raise, seated extension). Detailed generated artwork is unchanged. These are simplified 2D studies, not video/motion capture; no generic fallback is used for the other exercises.
@@ -44,6 +46,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.49.2, 2026-11-03 (Codex)
+
+- Backup: `backup/main-20261103-before-with-protein-fix` at `8816390`. Build `20261103.3`.
+- Reproduced a real mismatch: adding “with” before “20g protein” left a connector in the identity, so the already saved Pilos coconut yogurt was not reused. `js/food-products.js` v3 removes the connector with the claim and tolerates connectors in older saved names; supports “20g of protein” too. Nutrient quantities, flavour distinctions and conflicting-label checks remain. “20g protein powder” remains an ingredient description, not a protein claim.
+- Cached helper loader upgraded. Added Node and full-meal browser regressions, including labels saved under the shorter wording, 200 g yogurt / 20 g protein, eight logged ingredients and no duplicate own foods.
+- Validation: 25 Node tests; 9 browser/release checks (six product flows, cached helper bootstrap, verified update/diary retention and LF integrity). The user's exact UI failure is not yet confirmed: an asynchronous question asks whether the result is pending labels, an error or endless loading. Without saved labels, the meal still asks for product nutrition; this fix does not claim automatic exact macros. Tried Open Food Facts lookup, blocked by proxy 403; no invented nutrition added. No live account/physical-phone verification or SQL migration.
 
 # Update — Reppsy 2.49.1, 2026-11-03 (Codex)
 

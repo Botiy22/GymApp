@@ -9,7 +9,7 @@ window.FoodProducts=(()=>{
     let name=m?m[3]:original;const known={};
     const per100=name.match(/\bper\s*100\s*(ml|g)\b/i);if(per100)name=name.replace(per100[0],' ');
     // A second nutrient amount is label information, never a second ingredient.
-    if(m)name=name.replace(/(\d+(?:[.,]\d+)?)\s*g\s*(protein|fehérje|feherje|carbs|szénhidrát|szenhidrat|fat|zsír|zsir)\b/gi,(all,n,k)=>{known[/protein|feh/i.test(k)?'p':/carb|sz.n/i.test(k)?'c':'f']=number(n);return ' ';});
+    if(m)name=name.replace(/(?:\bwith\s+)?(\d+(?:[.,]\d+)?)\s*g\s*(?:of\s+)?(protein|fehérje|feherje|carbs|szénhidrát|szenhidrat|fat|zsír|zsir)\b(?!\s*(?:powder|por)\b)/gi,(all,n,k)=>{known[/protein|feh/i.test(k)?'p':/carb|sz.n/i.test(k)?'c':'f']=number(n);return ' ';});
     name=name.replace(/(\d+(?:[.,]\d+)?)\s*%?\s*(?:fat|zsír|zsir)(?![a-záéíóöőúüű])/gi,(_,n)=>number(n)+'%');
     name=name.replace(/\bni added sugar\b/gi,'no added sugar').replace(/\s+/g,' ').replace(/^[, ]+|[, ]+$/g,'');
     const unit=m?.[2].toLowerCase(),amount=m?number(m[1]):null,ml=unit&&['ml','dl','l'].includes(unit)?amount*({ml:1,dl:100,l:1000}[unit]):null;
@@ -17,7 +17,7 @@ window.FoodProducts=(()=>{
     return {original,name,known,amount,unit,grams:unit&&['g','dkg','kg'].includes(unit)?amount*({g:1,dkg:10,kg:1000}[unit]):null,ml,packaged:brands.test(norm(name))||/\b(choco|chocolate|csokis)\b.*\b(musli|muzli|muesli|granola)\b/.test(norm(name))};
   }
   function identity(s){
-    return norm(read(s).name).replace(/yoghurt|joghurt/g,'yogurt').replace(/kokusz(?:os)?/g,'coconut').replace(/vanilias|vanilia/g,'vanilla').replace(/csokolades|csokis|choco\b/g,'chocolate').replace(/tej\b/g,'milk').replace(/laktozmentes|lactosefree|lactose-free/g,'lactose free').replace(/freefrom/g,'free from').replace(/musli|muzli/g,'muesli').replace(/mogyorovaj/g,'peanut butter').replace(/\b(darabos|chunky)\b/g,'crunchy').replace(/\b(low fat|no added sugar|hozzaadott cukor nelkul|zsirszegeny|flavour|flavor|izu)\b/g,' ').replace(/[^a-z0-9.%]+/g,' ').trim().split(/\s+/).filter(Boolean).sort().join(' ');
+    return norm(read(s).name).replace(/yoghurt|joghurt/g,'yogurt').replace(/kokusz(?:os)?/g,'coconut').replace(/vanilias|vanilia/g,'vanilla').replace(/csokolades|csokis|choco\b/g,'chocolate').replace(/tej\b/g,'milk').replace(/laktozmentes|lactosefree|lactose-free/g,'lactose free').replace(/freefrom/g,'free from').replace(/musli|muzli/g,'muesli').replace(/mogyorovaj/g,'peanut butter').replace(/\b(darabos|chunky)\b/g,'crunchy').replace(/\b(with|low fat|no added sugar|hozzaadott cukor nelkul|zsirszegeny|flavour|flavor|izu)\b/g,' ').replace(/[^a-z0-9.%]+/g,' ').trim().split(/\s+/).filter(Boolean).sort().join(' ');
   }
   function saved(text,foods){
     const d=read(text),id=identity(d.name);if(!id||d.amount==null)return null;
@@ -49,5 +49,5 @@ window.FoodProducts=(()=>{
     const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
     try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw Error('product lookup failed');const data=await r.json();return (barcode?[data.product]:data.products||[]).map(product).filter(Boolean).slice(0,20);}finally{clearTimeout(timer);}
   }
-  return {version:2,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR']};
+  return {version:3,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR']};
 })();

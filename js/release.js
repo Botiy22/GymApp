@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.49.1';
-  const build = '20261103.2';
+  const version = '2.49.2';
+  const build = '20261103.3';
   const history = [
+    {version:'2.49.2',build:'20261103.3',date:'2026-11-03',
+      hu:['A „with 20g protein” és „with 20g of protein” leírások ugyanazt a mentett terméket találják meg. A megadott fehérje és az adag mennyisége megmarad.','A korábban „with” szóval mentett címkék is használhatók. Az eltérő ízeket és az ellentmondó tápértékeket továbbra is külön ellenőrzi az elemzés.'],
+      en:['Descriptions with “with 20g protein” or “with 20g of protein” reuse the same saved product while preserving the stated protein and portion size.','Previously saved labels containing “with” remain usable. Different flavours and conflicting nutrition claims still require review.']},
     {version:'2.49.1',build:'20261103.2',date:'2026-11-03',
       hu:['Étel-leírás javítás: ananászkonzerv, Alnatura mogyoróvaj és kis mennyiségű fahéj egyszerű pontosítása, a megadott mennyiségek megtartásával.','A gyümölcsválasztás megőrzi az elemzés többi tételét. A címkeadatok újra használhatók; az általános mogyoróvaj-becslés külön jelölést kap.'],
       en:['Better food descriptions: simple clarifications for canned pineapple, Alnatura peanut butter and a little cinnamon, keeping your entered quantities.','Choosing fruit preserves the other analysed items. Saved labels are reusable; the optional generic peanut-butter estimate is clearly marked.']},

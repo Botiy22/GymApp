@@ -19,6 +19,23 @@ test('the exact meal preserves eight ingredients and the protein/fat claims with
 // Test fixtures are deliberately synthetic, NOT verified real brand nutrition.
 const foods=[{name:'choco-oat musli',kcal:400,p:10,c:60,f:10},{name:'Pilos high protein coconut yoghurt',kcal:70,p:10,c:5,f:1},{name:'Pilos freefrom lactosefree tej 1,5 fat',basis:'ml',kcal:46,p:3.4,c:4.8,f:1.5}];
 const oatsText=require('node:fs').readFileSync(require('node:path').join(__dirname,'fixtures/oats-description.txt'),'utf8').trim();
+test('with 20g protein reuses the existing yogurt label without creating a new identity',()=>{
+ const plain=oatsText.split('\n')[3],withProtein=plain.replace('sugar 20g','sugar with 20g');
+ for(const text of [plain,withProtein,withProtein.replace('20g protein','20g of protein')]) {
+   const r=FoodQuery.parse(text,{strict:true,foods}).items;
+   assert.equal(r.length,1);assert.equal(r[0].status,'ok');assert.equal(r[0].grams,200);assert.equal(r[0].p,20);assert.equal(r[0].kcal,140);
+   assert.equal(FoodProducts.identity(FoodProducts.read(text).name),FoodProducts.identity(foods[1].name));
+ }
+ // Labels saved by the old parser with a stray connector still match after the upgrade.
+ const old={...foods[1],name:'pilos high protein yoghurt, low fat no added sugar with coconut flavour'};
+ assert.equal(FoodQuery.parse(plain,{strict:true,foods:[old]}).items[0].status,'ok');
+ assert.equal(FoodQuery.parse(withProtein.replace('20g','28g'),{strict:true,foods}).items[0].status,'needLabel');
+ assert.equal(FoodQuery.parse(withProtein.replace('coconut','vanilla'),{strict:true,foods}).items[0].status,'needLabel');
+ // Real extra ingredients and protein powder are not nutrition claims.
+ const powder=FoodProducts.read('200g Pilos yoghurt with 20g protein powder');assert.deepEqual(powder.known,{});assert.match(powder.name,/20g protein powder/);
+ assert.notEqual(FoodProducts.identity('Pilos yoghurt with honey'),FoodProducts.identity('Pilos yoghurt'));
+ assert.equal(FoodQuery.parse('200g Pilos yoghurt with 20g banana',{strict:true,foods}).items[0].status,'needLabel');
+});
 test('new oats description keeps all eight lines local and offers actionable clarifications',async()=>{
  global.fetch=()=>{throw Error('Do not send known branded products to AI to guess a label')};
  const result=await FoodAI.analyze('key','m',{text:oatsText,lang:'hu'});

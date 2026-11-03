@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.49.2 — 2026-11-03 (build 20261103.3)
+
+Fix saved-product recognition when a nutrition claim says “with 20g protein” or
+“with 20g of protein”. Keep the 200 g food amount and 20 g protein claim separate.
+Previously saved names containing the leftover connector also match. Real extra
+ingredients, different flavours and contradictory claims are not silently ignored.
+Missing product labels still require review; this does not add verified brand data.
+
 ## 2.49.1 — 2026-11-03
 
 - Clarify canned pineapple as drained fruit or fruit with juice; preserve the entered weight. Unspecified fructose syrup still needs a label.

@@ -132,7 +132,7 @@ class ProfileThemeUpdates(unittest.TestCase):
         self.assertEqual(len(calls),2)
         self.assertTrue(page.evaluate('!!AppUpdates&&!!AccentTheme&&!!HueWheel&&!!FoodVolume&&!!ExerciseSearch&&!!EXERCISE_ALIASES&&EXERCISE_LIBRARY_VERSION===2'))
         self.assertEqual(page.evaluate("FoodQuery.answer('1 zsemle','hu').items[0].kcal"),167)
-        self.assertTrue(page.evaluate('FoodQuery.mealDetails&&FoodProducts.version===2&&FOOD_LEXICON.version===2'))
+        self.assertTrue(page.evaluate('FoodQuery.mealDetails&&FoodProducts.version===3&&FOOD_LEXICON.version===2'))
         self.assertEqual(page.evaluate("RECIPES.items.filter(r=>r.oats).length"),11)   # Recipe additions also load into a cached shell without duplicate presets.
         self.assertEqual(page.evaluate('Store.d.settings.profileStyle.cover'),'glow')
         self.assertEqual(page.evaluate('EXERCISES.length'),100)
