@@ -1,5 +1,19 @@
 # Release versions
 
+## 2.50.0 — 2026-11-03 (build 20261103.4)
+
+Text analysis offers an explicit local estimate when supported foods have a known
+amount but no saved label. The reported eight-line oats meal can now be logged
+without manually entering product nutrition: accept estimates, then choose the
+fruit, canned-pineapple form and cinnamon quantity. No API key is required.
+
+Generic nutrition remains marked as estimated in review and in the saved diary.
+Entered quantities/protein survive; exact saved labels take precedence. Estimate
+mode persists through re-analysis of this meal and resets with Again. Unknown
+food classes and contradictory labels still need review. See
+`docs/FOOD_ESTIMATES.md` for substitutes and limits. Add-button totals wrap onto a
+separate line on small screens.
+
 ## 2.49.2 — 2026-11-03 (build 20261103.3)
 
 Fix saved-product recognition when a nutrition claim says “with 20g protein” or

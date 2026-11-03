@@ -62,3 +62,7 @@ summary.pictogram-summary{display:flex;align-items:center;gap:10px}summary.picto
 @media(max-width:600px){.workout-menu-nav summary>span,.workout-menu-history>span{font-size:.65rem}.settings-jumps{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-jumps>.chip{font-size:.75rem}}
 
 .motion-available{display:flex;align-items:center;gap:5px;color:var(--acc-tx);font-size:.65rem;line-height:1.4;margin-top:7px}.motion-available svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}
+
+/* Keep the complete meal total readable beside the reset button on small phones. */
+.ai-add-label{display:grid;gap:3px;min-width:0;line-height:1.2;text-align:center;white-space:normal}
+.ai-add-label small{font-size:.72em;font-weight:500}

@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.49.2';
-  const build = '20261103.3';
+  const version = '2.50.0';
+  const build = '20261103.4';
   const history = [
+    {version:'2.50.0',build:'20261103.4',date:'2026-11-03',
+      hu:['Címke nélkül is továbbléphetsz az étel-leírásból: válaszd a „Címkék helyett becslés” gombot a támogatott ételeknél.','A mennyiségek és a megadott fehérje megmaradnak. A becslések külön jelölést kapnak, a mentett pontos címkék továbbra is elsőbbséget élveznek.','A hozzáadás gombján a kalóriaösszeg kis képernyőn is teljesen olvasható.'],
+      en:['Continue without product labels: choose “Use estimates instead” for supported foods in text analysis.','Your quantities and stated protein are preserved. Estimates are marked clearly; saved exact labels still take priority.','The Add button keeps the full calorie total readable on small screens.']},
     {version:'2.49.2',build:'20261103.3',date:'2026-11-03',
       hu:['A „with 20g protein” és „with 20g of protein” leírások ugyanazt a mentett terméket találják meg. A megadott fehérje és az adag mennyisége megmarad.','A korábban „with” szóval mentett címkék is használhatók. Az eltérő ízeket és az ellentmondó tápértékeket továbbra is külön ellenőrzi az elemzés.'],
       en:['Descriptions with “with 20g protein” or “with 20g of protein” reuse the same saved product while preserving the stated protein and portion size.','Previously saved labels containing “with” remain usable. Different flavours and conflicting nutrition claims still require review.']},

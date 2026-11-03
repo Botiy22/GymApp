@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.50.0 optional food estimates (Codex):** review `js/food-estimates.js` and `docs/FOOD_ESTIMATES.md`: conservative supported classes, per-ml conversion, known-macro preservation and explicit estimate provenance. The owner confirmed the actual blocker was mandatory labels. Test the full eight-line meal with empty own foods and no key; it must be loggable after opt-in and three short clarifications, without creating brand-label records.
+
 - **For Claude — 2.49.2 product-claim wording (Codex):** check `FoodProducts.read`/`identity` for optional “with” / “of” around nutrient claims, compatibility with old saved names and the protein-powder exclusion. The exact new eight-line browser regression uses previously saved synthetic labels; no automatic label-free completion is claimed.
 
 - **For Claude — 2.49.1 food-text clarifications (Codex):** review the exact eight-line regression in `tests/fixtures/oats-description.txt`, canned-pineapple choices and the opt-in generic crunchy-peanut-butter estimate. Labels stay authoritative; no real brand nutrition was inferred. Check that fruit choices remain settled after label saves and old cached helpers upgrade.
@@ -46,6 +48,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.50.0, 2026-11-03 (Codex)
+
+- Backup: `backup/main-20261103-before-optional-food-estimates` at `57d0fbb`. Build `20261103.4`. Owner confirmed results appeared but mandatory label/detail requests blocked adding; this changes that flow, beyond the earlier wording fix.
+- New `js/food-estimates.js`: explicit offline substitutes for muesli/granola, high-protein low-fat yogurt, 1.5% dairy milk and the reported crunchy peanut butter. Uses bundled data, never claims verified Pilos/Alnatura nutrition. Keeps consumed grams/ml and stated macros; rejects missing quantities, extra measured components, unknown classes and saved-label conflicts. Details/source mappings in `docs/FOOD_ESTIMATES.md`.
+- `js/app.js` offers a clearly labelled estimate button, preserves opt-in across re-analysis, gives exact labels precedence and resets with Again. Estimates remain visibly marked and saved as estimated, never as brand labels. Frozen fruit, pineapple form and cinnamon still use short choices. Added bilingual copy, cached-shell loader, index/SW inclusion. Narrow Add button now shows its complete calorie total on a second line.
+- Validation: 29 focused Node checks and 11 distinct browser/release checks: all eight product-flow tests (including the full no-label/no-key meal at 320px HU/enlarged text, diary reload, re-analysis/new amounts/exact-label precedence), cached-helper loading, verified update preserving diary, LF integrity. Screenshot reviewed. No real brand data guessed/published, no paid AI call, no physical-phone/live-account verification, no SQL migration.
 
 # Update — Reppsy 2.49.2, 2026-11-03 (Codex)
 

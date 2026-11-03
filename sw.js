@@ -28,6 +28,7 @@ const CORE = [
   "js/exercise-motion.js",
   "css/choice-menus.css",
   "js/food-products.js",
+  "js/food-estimates.js",
   "data/goal-recipes.js",
   "js/recipe-goals.js",
   "img/recipes/oats-lean-blueberry.webp",
