@@ -29,9 +29,15 @@ test('estimates never override a saved label or a contradictory label claim',asy
  delete global.Store;
 });
 test('unknown products, ambiguous quantities, plant milk and added ingredients are not guessed',()=>{
- for(const s of ['Pilos high protein low fat yoghurt','10ml Pilos coconut milk 1.5 fat','10ml Pilos almond milk 1.5 fat','100g Pilos milk chocolate 1.5 fat','100g Pilos protein shake','50g choco-oat musli with 20g banana','62g ananaszkonzerv szirupban','100g Alnatura hazelnut spread','200g Pilos high protein low fat yoghurt 200g protein']) {
+ for(const s of ['Pilos high protein low fat yoghurt','10ml Pilos coconut milk 1.5 fat','10ml Pilos almond milk 1.5 fat','100g Pilos milk chocolate 1.5 fat','100g Pilos protein shake','62g ananaszkonzerv szirupban','100g Alnatura hazelnut spread','200g Pilos high protein low fat yoghurt 200g protein']) {
    const p=FoodQuery.parse(s,{strict:true}).items[0];assert.equal(FoodEstimates.item(p),null,s);
  }
+});
+test('inline added ingredients are separate foods rather than hidden inside a brand estimate',()=>{
+ const parsed=FoodQuery.parse('50g choco-oat musli with 20g banana',{strict:true}).items;
+ assert.equal(parsed.length,2);assert.equal(FoodEstimates.item(parsed[0]).grams,50);
+ assert.equal(parsed[1].grams,20);assert.equal(parsed[1].status,'ok');
+ assert.equal(FoodQuery.nameOf(parsed[1].entry,'hu'),'Banán');
 });
 test('re-analysis uses newly typed quantities and marks results as estimates in both languages',async()=>{
  const r=FoodEstimates.apply(await FoodAI.analyze('','',{text:'20ml pilos freefrom lactosefree tej 1,5 fat\n100g pilos high protein yoghurt, low fat with 10g protein coconut flavour',lang:'en'}),'en');

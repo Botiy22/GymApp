@@ -66,7 +66,7 @@ class OneQuestionBrowser(unittest.TestCase):
     def test_quick_log_from_the_top_of_the_food_tab(self):
         page, errors = self.page(320, 700, 'hu')
         page.locator('#tabbar [data-tab=food]').click()
-        box = page.locator('.quick-log input[name=q]'); box.wait_for()
+        box = page.locator('.quick-log textarea[name=q]'); box.wait_for()
         self.assertLess(box.bounding_box()['y'], 260, 'visible without scrolling')
         self.shot(page, 'quick-log'); self.bounds(page, 'quick log')
         box.fill('2 tojás és 2 szelet kenyér'); box.press('Enter')

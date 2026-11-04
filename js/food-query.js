@@ -38,7 +38,7 @@ window.FoodQuery = (() => {
     'the of in is are there how many much what whats does do i had ate eat drank my for about approx approximately around roughly typical average please tell me can could you give show contain contains has have per info information value values total').split(' '));
   const SIZE = { nagy: 'large', nagyobb: 'large', large: 'large', big: 'large', kozepes: 'medium', medium: 'medium', kicsi: 'small', kis: 'small', kisebb: 'small', small: 'small' };
   const SIZE_K = { large: 1.3, medium: 1, small: .75 };
-  const SPLIT = /\n|;|\+|,(?![^()]*\))(?=\s*\d+(?:[.,]\d+)?\s*(?:kg|dkg|g|ml|dl|l)\b)|\s+(?:és|es|meg|plusz|valamint|and|plus)\s+/i;
+  const SPLIT = /[\r\n\u2028\u2029]|;|\+|\s+(?:és|es|meg|plusz|valamint|and|plus)\s+/i;
   // Hungarian case/possessive endings and English plurals, longest first
   const SUFFIX = ['javal', 'jevel', 'aban', 'eben', 'jaban', 'jeben', 'ban', 'ben', 'bol', 'rol', 'tol', 'nak', 'nek', 'hoz', 'hez', 'val', 'vel', 'nal', 'nel', 'jat', 'jet', 'jal', 'jel', 'nyi', 'ot', 'et', 'at', 'ok', 'ek', 'ak', 'ja', 'je', 'ba', 'be', 'ra', 're', 't', 'k', 'es', 's'];
   const canon = w => w.length > 3 && /s$/.test(w) && !/(ss|us|is|zs|ys)$/.test(w) ? (/ies$/.test(w) ? w.slice(0, -3) + 'y' : /oes$/.test(w) ? w.slice(0, -2) : w.slice(0, -1)) : w;
@@ -355,12 +355,45 @@ window.FoodQuery = (() => {
     return { items: sc.segs.map(s => ({...itemFromSeg(s, opts),original:sc.segs.length===1?piece:undefined,_seg:s})), intent: sc.intent };
   }
   const grade = r => r.items.reduce((s, i) => s + (i.status === 'ok' ? (i.exact ? 10 : 4) : i.status === 'unknown' && !i.text ? 0 : i.status === 'unknown' ? -15 : -5), 0);
+  // A pasted/typed list may contain spaces instead of line breaks. Split BEFORE the
+  // packaged-food shortcut, otherwise one brand swallows every later ingredient.
+  function measuredParts(text) {
+    const measuredStart=/^\s*\d+(?:[.,]\d+)?\s*(?:kg|dkg|g|ml|dl|l)\b/i;
+    let structured=measuredStart.test(text);
+    const cuts=[0],amount=/(^|[\s,])(\d+(?:[.,]\d+)?)\s*(kg|dkg|g|ml|dl|l)\b/gi;
+    let depth=0,pos=0;
+    for(const m of text.matchAll(amount)) {
+      const start=m.index+m[1].length;
+      while(pos<start){if(text[pos]==='(')depth++;else if(text[pos]===')')depth=Math.max(0,depth-1);pos++;}
+      if(start===0||depth)continue;
+      const before=text.slice(0,start),after=strip(text.slice(m.index+m[0].length)).trimStart();
+      // Keep suffix quantities ("banana 71g") intact. A comma can start a measured
+      // list even if its first food has no quantity ("Pilos yogurt, 50g banana").
+      if(!structured&&!/,\s*$/.test(before))continue;
+      // Claims and label bases belong to the current food, not new ingredients.
+      if(/(?:\bper|\/|\bfor every)\s*$/i.test(before)||/^-(?:ban|ben|ra|re)\b/.test(after))continue;
+      if(m[3].toLowerCase()==='g'&&/^(?:of\s+)?(?:protein|feherje|carbs|szenhidrat|fat|zsir)\b(?!\s*(?:powder|por)\b)/.test(after))continue;
+      if(/^(?:pack|package|pot|tub|container|csomag|kiszereles)\b/.test(after))continue;
+      if(!after||/^[,.)]/.test(after))continue;
+      cuts.push(start);
+      structured=true;
+    }
+    cuts.push(text.length);
+    return cuts.slice(0,-1).flatMap((start,k)=>{
+      const part=text.slice(start,cuts[k+1]).replace(/^[\s,]+|[\s,]+$/g,'');
+      // In inline dairy lists an unmeasured trailing cinnamon addition needs its
+      // own amount question. Do not silently count it as part of the milk label.
+      const spice=part.match(/^(.+?)\s+((?:fah[eé]j(?:\s+por)?|(?:ground\s+)?cinnamon(?:\s+powder)?))$/i);
+      if(spice&&measuredStart.test(spice[1])&&/\b(?:tej|milk)\b/i.test(spice[1]))return [spice[1],spice[2]];
+      return part?[part]:[];
+    });
+  }
   function parse(text, opts = {}) {
     text = String(text || '').trim();
     if(text.length>4000)return {items:[{text:'…',status:'tooLong'}],intent:new Set()};
     const out = { items: [], intent: new Set() };
     if (!text) return out;
-    const parts = text.replace(/^(?:I (?:had|ate|drank)|ettem|ittam|megettem)\s+/i, '').replace(/(\d),(?=\d)/g,'$1\uE000').split(SPLIT).map(x => x.replace(/\uE000/g,',').trim()).filter(Boolean);
+    const parts = text.replace(/^(?:I (?:had|ate|drank)|ettem|ittam|megettem)\s+/i, '').split(SPLIT).map(x=>x.trim()).filter(Boolean).flatMap(measuredParts);
     for (let k = 0; k + 1 < parts.length; k++) {                  // "Whopper baconnel és sajttal" is one name, not two foods
       const X = index(), joined = parts[k] + ' és ' + parts[k + 1], t = tokens(joined).filter(w => !numOf(w) && !unitOf(w)).map(canon).join(' ');
       if (/\s(?:és|es)\s/i.test(text) && (X.names.has(t) || X.full.has(t))) parts.splice(k, 2, joined);
@@ -538,5 +571,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { choices, withGrams, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { choices, withGrams, inlineMeals:true, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();

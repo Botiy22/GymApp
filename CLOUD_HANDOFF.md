@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.50.1 inline food lists (Codex):** review `measuredParts()` before the packaged-food shortcut in `js/food-query.js`. The owner screenshot exposed a flattened list becoming one 50 g product; earlier tests only supplied newlines. Check nutrient-claim/label-base exclusions, comma-separated lists and the dairy/cinnamon tail. Browser regression now enters via Quick log, with native clipboard paste and a space-only list, then resolves/reanalyses/logs all eight ingredients.
+
 - **For Claude — 2.50.0 optional food estimates (Codex):** review `js/food-estimates.js` and `docs/FOOD_ESTIMATES.md`: conservative supported classes, per-ml conversion, known-macro preservation and explicit estimate provenance. The owner confirmed the actual blocker was mandatory labels. Test the full eight-line meal with empty own foods and no key; it must be loggable after opt-in and three short clarifications, without creating brand-label records.
 
 - **For Claude — 2.49.2 product-claim wording (Codex):** check `FoodProducts.read`/`identity` for optional “with” / “of” around nutrient claims, compatibility with old saved names and the protein-powder exclusion. The exact new eight-line browser regression uses previously saved synthetic labels; no automatic label-free completion is claimed.
@@ -48,6 +50,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.50.1, 2026-11-04 (Codex)
+
+- Backup pushed before edits: `backup/main-20261103-before-inline-food-lists` at `5997035`. Build `20261104.1` (session crossed midnight).
+- Reproduced the screenshot exactly: newline-free meal text bypassed the generic scanner because packaged-food recognition captured the entire list as one 50 g item, attaching the yogurt protein to it. `js/food-query.js` now segments measured ingredients first. Claims like “20 g protein”, per-100-g bases, parenthesised label totals and package weights are protected; comma and suffix-weight cases retained. Phone paragraph separators supported. Trailing unmeasured cinnamon after measured milk is a separate question. Cached helper feature check updated.
+- `js/app.js` Quick log uses a textarea instead of a text input so pasted line breaks survive. Enter submits; Shift+Enter allows another line; IME composition is respected. `css/clean.css` preserves the compact layout. Estimate mode and exact-label priority unchanged.
+- Validation: 52 Node checks, including screenshot parity across eight whitespace variants, protein ownership, decimal milk fat/ml, label totals, standalone protein powder, item limits, saved products/memory and restaurant portions. Sixteen distinct browser/release checks passed: nine product flows (native clipboard paste plus space-only Quick log at 390/320px, all eight items logged, re-analysis intact), four one-question flows, cached helper bootstrap, verified update preserving diary, LF integrity. Screenshot reviewed; no physical iPhone/live-account check, no new nutrition data or SQL migration.
 
 # Update — Reppsy 2.50.0, 2026-11-03 (Codex)
 

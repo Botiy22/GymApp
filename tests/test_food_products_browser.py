@@ -130,6 +130,43 @@ class FoodProductsBrowser(unittest.TestCase):
         self.assertEqual(p.evaluate('__gym.ui.ai.res.items[0].kcal'),70)
         p.locator('[data-a=ai-reset]').click();self.assertFalse(p.evaluate('__gym.ui.ai.allowEstimates'))
         self.assertEqual(errors,[])
+
+    def test_quick_log_paste_preserves_lines_and_inline_screenshot_text_logs_eight_items(self):
+        text=(responsive.ROOT/'tests/fixtures/oats-description.txt').read_text().strip().replace('sugar 20g','sugar with 20g')
+        for pasted in [False,True]:
+            with self.subTest(pasted=pasted):
+                p,errors=self.page(390 if pasted else 320,844,'hu',16 if pasted else 20)
+                p.locator('#tabbar [data-tab=food]').click()
+                box=p.locator('.quick-log textarea[name=q]')
+                value=text if pasted else text.replace('\n',' ')
+                if pasted:
+                    p.context.grant_permissions(['clipboard-read','clipboard-write'])
+                    p.evaluate('(text)=>navigator.clipboard.writeText(text)',value)
+                    box.focus();box.press('Control+V')
+                else:box.fill(value)
+                self.assertEqual(box.input_value(),value)
+                box.press('Enter')
+                p.locator('[data-a=ai-estimate]').wait_for()
+                self.assertEqual(p.evaluate('__gym.ui.ai.text'),value)
+                self.assertEqual(p.locator('.ai-pending section').count(),7)
+                self.assertIn('(4)',p.locator('[data-a=ai-estimate]').inner_text())
+                self.assertEqual(p.evaluate('__gym.ui.ai.res.pending.find(i=>i.text.includes("musli")).known.p??null'),None)
+                self.assertEqual(p.evaluate('__gym.ui.ai.res.pending.find(i=>i.text.includes("yoghurt")).known.p'),20)
+                self.bounds(p,'inline food recognition')
+                p.screenshot(path='/tmp/inline-food-recognised.png')
+                p.locator('[data-a=ai-estimate]').click()
+                p.locator('[data-a=ai-fruit][data-kind=berries]').click()
+                p.locator('[data-a=ai-choice]').filter(has_text='Kevés').click()
+                p.locator('[data-a=ai-choice]').filter(has_text='lecsepegtetve').click()
+                # Re-analysis must still separate the single line after short answers edit it.
+                p.locator('[data-a=ai-refine]').click();p.locator('.ai-item').first.wait_for()
+                self.assertEqual(p.locator('.ai-item').count(),8)
+                self.assertEqual(p.locator('.ai-pending section').count(),0)
+                self.assertEqual(p.evaluate('__gym.ui.ai.res.items.find(i=>i.name.includes("yoghurt")).p'),20)
+                self.assertEqual(p.locator('[data-in=ai-f][data-k=dl]').input_value(),'0.1')
+                p.locator('[data-a=ai-add]').click()
+                self.assertEqual(len(p.evaluate('Object.values(Store.d.food).flat()')),8)
+                self.assertEqual(errors,[])
     def test_exact_meal_pending_labels_saved_then_reused_after_reload(self):
         p,errors=self.page(320,844,'hu',20);self.describe(p,TEXT)
         self.assertEqual(p.locator('.ai-pending section').count(),5)

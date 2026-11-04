@@ -1,5 +1,16 @@
 # Release versions
 
+## 2.50.1 — 2026-11-04 (build 20261104.1)
+
+Fix the reported single-card meal import: quantity-led lists are segmented before
+brand recognition, so one brand cannot consume all later ingredients. Nutrient
+claims, fat percentages, per-100-g bases and parenthesised labels stay attached
+to their food. The reported unmeasured cinnamon after milk gets its own question.
+Quick log now uses a multiline-capable field; paste keeps newlines, Enter submits
+and Shift+Enter inserts a line. Verified the exact eight-ingredient meal through
+both native clipboard paste and space-only quick entry, including re-analysis
+and logging with the existing optional estimates.
+
 ## 2.50.0 — 2026-11-03 (build 20261103.4)
 
 Text analysis offers an explicit local estimate when supported foods have a known
