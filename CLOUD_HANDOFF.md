@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.51.0 visible navigation (Codex):** review shared `ChoiceMenus` v3: peer page tabs and recipe/exercise filters remain visible, native form selects stay dropdowns. Check mobile sizing with enlarged Hungarian text, equal buttons, and focus restoration after redraw. Equipment selection now has its own full-width row.
+
 - **For Claude — 2.50.1 inline food lists (Codex):** review `measuredParts()` before the packaged-food shortcut in `js/food-query.js`. The owner screenshot exposed a flattened list becoming one 50 g product; earlier tests only supplied newlines. Check nutrient-claim/label-base exclusions, comma-separated lists and the dairy/cinnamon tail. Browser regression now enters via Quick log, with native clipboard paste and a space-only list, then resolves/reanalyses/logs all eight ingredients.
 
 - **For Claude — 2.50.0 optional food estimates (Codex):** review `js/food-estimates.js` and `docs/FOOD_ESTIMATES.md`: conservative supported classes, per-ml conversion, known-macro preservation and explicit estimate provenance. The owner confirmed the actual blocker was mandatory labels. Test the full eight-line meal with empty own foods and no key; it must be loggable after opt-in and three short clarifications, without creating brand-label records.
@@ -50,6 +52,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.51.0, 2026-11-04 (Codex)
+
+- Backup: `backup/main-20261104-before-visible-tabs` at `a318f7a`. Build `20261104.2`.
+- `js/choice-menus.js` v3 keeps peer page selectors and recipe/exercise filters as visible equal icon buttons; original controls/actions remain. Arrow/Home/End keyboard navigation and focus restoration survive redraws. Updated cached-helper bootstrap in `js/app.js`.
+- `css/choice-menus.css` gives exercise equipment its own full-width row, preventing the reported Hungarian word fragmentation; equal responsive grid cells wrap by screen width. Native form selectors, cover/color presets and workout dropdown submenus remain dropdowns. Oats customization remains excluded.
+- Validation: 14 browser/release checks passed: visible tabs/layout at 320/390/430/844 px with HU/EN and enlarged text, equipment word wrapping, exercise search/library and routine picker, dropdown forms/accessibility, keyboard focus, cached-helper loading, verified update/diary retention and LF integrity. Screenshots inspected at 320/390 px; no physical iPhone or live-account verification. No data or schema changes.
 
 # Update — Reppsy 2.50.1, 2026-11-04 (Codex)
 

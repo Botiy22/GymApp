@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.51.0 — 2026-11-04 (build 20261104.2)
+
+Visible equal-sized icon tabs replace dropdowns for peer pages and recipe/exercise
+filters. Food, Profile and Daily routine can be switched directly. Equipment
+selection has a full-width row so Hungarian labels do not split into fragments.
+Native form choices retain dropdowns; oats customization stays unchanged.
+Keyboard navigation preserves focus through page redraws.
+
 ## 2.50.1 — 2026-11-04 (build 20261104.1)
 
 Fix the reported single-card meal import: quantity-led lists are segmented before

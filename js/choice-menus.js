@@ -1,4 +1,4 @@
-/* Shared touch-friendly single-choice dropdowns. Original controls keep their form data and handlers. */
+/* Visible peer tabs and touch-friendly form dropdowns. Keep original controls and handlers. */
 window.ChoiceMenus=(()=>{
   'use strict';
   const DOWN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
@@ -101,7 +101,13 @@ window.ChoiceMenus=(()=>{
       s.insertAdjacentHTML('afterbegin',icon(name));s.classList.add('pictogram-summary');
     });
   }
-  let busy=false,started=false,pendingFocus=null;
+  let busy=false,started=false,pendingFocus=null,segmentFocus=null;
+  function segments(g,bs){
+    g.classList.add('choice-segments');
+    const columns=Math.min(bs.length,3);if(g.style.getPropertyValue('--choice-columns')!==String(columns))g.style.setProperty('--choice-columns',columns);
+    if(bs.length>3)g.classList.add('choice-many');
+    bs.forEach(b=>{decorateOption(b,g);const pressed=String(pick(b));if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);});
+  }
   function excluded(e){return !!e.closest('.workout-menu-nav,.choice-menu,[data-choice-skip]')||!!(e.closest('#sheet')&&document.querySelector('#sheet #oats-sum'));}
   function key(e){return [e.tagName,e.id,e.className,e.name,e.dataset.in,e.dataset.k,e.querySelector('button')?.dataset.a,label(e)].join('|');}
   function shell(source){
@@ -141,11 +147,13 @@ window.ChoiceMenus=(()=>{
           const bs=[...g.children].filter(e=>e.tagName==='BUTTON');if(bs.length<2||bs.length!==g.children.length)return;
           if(g.matches('.chips')&&!bs.every(b=>chipActions.has(b.dataset.a)))return;
           const selected=bs.filter(pick);if(selected.length>1)return;
+          if(g.matches('.seg,.recipe-goals,.planner-view-switch')||bs.every(b=>['lib-mus','lib-grp'].includes(b.dataset.a))){segments(g,bs);return;}
           const d=shell(g);g.classList.add('choice-options');if(g.matches('.accent-swatches'))bs.forEach(b=>{const text=document.createElement('span');text.textContent=caption(b);b.append(text);});sync(d);
         });
       });
       root.querySelectorAll('.choice-menu').forEach(sync);
       decorateNavigation(root);
+      if(segmentFocus){const f=segmentFocus;if(Date.now()>f.until)segmentFocus=null;else if(!f.group.isConnected){const g=[...document.querySelectorAll('.choice-segments')].find(g=>key(g)===f.key);if(g){g.querySelectorAll(':scope>button')[f.index]?.focus({preventScroll:true});segmentFocus=null;}}}
       if(pendingFocus){if(Date.now()>pendingFocus.until)pendingFocus=null;else if(!pendingFocus.d.isConnected){const next=[...document.querySelectorAll('.choice-menu')].find(x=>x.dataset.choiceKey===pendingFocus.key);if(next){next._summary.focus({preventScroll:true});pendingFocus=null;}}}
     }finally{busy=false;}
   }
@@ -155,6 +163,8 @@ window.ChoiceMenus=(()=>{
     if(started)return;started=true;enhance();
     new MutationObserver(records=>{if(records.some(r=>r.type==='childList'||r.target.matches?.('.choice-options>button,select,option')))enhance();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','selected','disabled','aria-pressed']});
     document.addEventListener('click',e=>{
+      const segment=e.target.closest?.('.choice-segments'),option=e.target.closest?.('.choice-segments>button');
+      if(segment&&option&&!option.disabled){segmentFocus={group:segment,key:key(segment),index:[...segment.children].indexOf(option),until:Date.now()+1500};queueMicrotask(()=>enhance());}
       const d=e.target.closest?.('.choice-menu');closeOthers(d||e.target.closest?.('.workout-menu'));
       if(!d)return;
       if(e.target.closest('summary')&&d._source.disabled){e.preventDefault();return;}
@@ -168,6 +178,12 @@ window.ChoiceMenus=(()=>{
     },true);
     document.addEventListener('input',e=>{const d=e.target.closest?.('.choice-menu');if(d)sync(d);});
     document.addEventListener('keydown',e=>{
+      const segment=e.target.closest?.('.choice-segments');
+      if(segment&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){
+        const bs=[...segment.querySelectorAll(':scope>button:not(:disabled)')];if(!bs.length)return;
+        const n=bs.indexOf(document.activeElement),next=e.key==='Home'?0:e.key==='End'?bs.length-1:e.key==='ArrowRight'?(n+1)%bs.length:(n+bs.length-1)%bs.length;
+        e.preventDefault();bs[next].focus();return;
+      }
       const workout=e.target.closest?.('.workout-menu');
       if(workout){
         const summary=workout.querySelector('summary'),buttons=[...workout.querySelectorAll('button:not(:disabled)')];
@@ -186,5 +202,5 @@ window.ChoiceMenus=(()=>{
     },true);
     document.addEventListener('reset',()=>queueMicrotask(()=>document.querySelectorAll('.choice-menu').forEach(sync)));
   }
-  return {start,enhance,version:2};
+  return {start,enhance,version:3};
 })();

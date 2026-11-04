@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.50.1';
-  const build = '20261104.1';
+  const version = '2.51.0';
+  const build = '20261104.2';
   const history = [
+    {version:'2.51.0',build:'20261104.2',date:'2026-11-04',
+      hu:['Az Étkezés, Profil és Napirend oldalválasztói látható, egyforma méretű, ikonos fülek lettek. A recept- és gyakorlatszűrők is közvetlenül választhatók.','A gyakorlatok eszközválasztója teljes szélességű: kis telefonon sem törik betűkre a felirata.'],
+      en:['Food, Profile and Daily routine page selectors now use visible, equally sized icon tabs. Recipe and exercise filters are directly accessible too.','The exercise equipment selector spans the full row, keeping its label readable on small phones.']},
     {version:'2.50.1',build:'20261104.1',date:'2026-11-04',
       hu:['A gyorsbevitel megőrzi a beillesztett lista sortöréseit. Egyetlen sorban megadva is külön ételekre bontja a mennyiségeket.','A „20 g protein”, a zsírszázalék és a címke 100 g-ra vonatkozó adatai a megfelelő terméknél maradnak. A tej után írt fahéj külön pontosítható.'],
       en:['Quick log preserves pasted line breaks. Quantity-led food lists also split into separate ingredients when entered on one line.','Claims such as “20 g protein”, fat percentages and per-100-g label values stay attached to the correct product. Cinnamon following milk can be clarified separately.']},
