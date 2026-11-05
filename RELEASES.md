@@ -1,5 +1,20 @@
 # Release versions
 
+## 2.52.0 — 2026-11-05 (build 20261105.1)
+
+Swimming now has Workouts, Technique and History. Four original session templates
+adapt whole lengths/repeats to 10–100 m pools and a 20–59 minute budget, including
+rests and a five-minute buffer. Pace-based timing is an estimate; infeasible
+sessions show a clear message. Pool/pace preferences persist with account data.
+
+Three original animated stroke studies provide slow/pause/scrub controls and
+bilingual arm/hand, leg/body and breathing cues. Breathing-skills work uses normal
+breathing, with no breath-hold or hyperventilation protocols. Evidence boundaries
+and the blocked source-access limitation are documented in `docs/SWIMMING_GUIDANCE.md`.
+
+Review & log opens editable actual lengths and active swim time; plans do not
+create completed workouts automatically. Manual logs now accept custom pools.
+
 ## 2.51.0 — 2026-11-04 (build 20261104.2)
 
 Visible equal-sized icon tabs replace dropdowns for peer pages and recipe/exercise

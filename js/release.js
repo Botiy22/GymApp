@@ -1,8 +1,11 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.51.0';
-  const build = '20261104.2';
+  const version = '2.52.0';
+  const build = '20261105.1';
   const history = [
+    {version:'2.52.0',build:'20261105.1',date:'2026-11-05',
+      hu:['Új úszóedzések: könnyű, alapozó, résztávos és légzéstechnikai program, a medencédhez és az idődhöz igazított hosszakkal, pihenőkkel.','Gyors-, mell- és hátúszás animált technikája: lassítás, megállítás, fázisonkénti kar-, láb- és légzésútmutató.','25–100 m-es medenceválasztás, egyéni méret és mentett beállítások. Úszás után a tényleges hosszakat és aktív időt átnézheted naplózás előtt.'],
+      en:['New easy, aerobic, interval and breathing-skills swims with lengths and rests adapted to your pool, pace and available time.','Animated freestyle, breaststroke and backstroke guides: slow playback, pause and phase-by-phase arm, kick and breathing cues.','Pool presets plus custom lengths and saved preferences. Review actual lengths and active swim time before logging.']},
     {version:'2.51.0',build:'20261104.2',date:'2026-11-04',
       hu:['Az Étkezés, Profil és Napirend oldalválasztói látható, egyforma méretű, ikonos fülek lettek. A recept- és gyakorlatszűrők is közvetlenül választhatók.','A gyakorlatok eszközválasztója teljes szélességű: kis telefonon sem törik betűkre a felirata.'],
       en:['Food, Profile and Daily routine page selectors now use visible, equally sized icon tabs. Recipe and exercise filters are directly accessible too.','The exercise equipment selector spans the full row, keeping its label readable on small phones.']},

@@ -41,6 +41,7 @@ window.Store = (function () {
     out.settings = {
       onboardingVersion: s.onboardingVersion === 1 ? 1 : 0,
       sections:Object.fromEntries(Object.entries(obj(s.sections)).filter(([k,v])=>/^[a-zA-Z0-9-]{1,80}$/.test(k)&&typeof v==='boolean').slice(0,80)),
+      swimTraining:globalThis.SwimTraining?SwimTraining.clean(s.swimTraining):{pool:25,minutes:45,pace:150,routine:'foundation',stroke:'free'},
       mealGroups:s.mealGroups===true,
       publicProfile: Profile.clean(s.publicProfile),profileStyle:Profile.cleanStyle(s.profileStyle),
       lang: s.lang === 'hu' || s.lang === 'en' ? s.lang : null,
@@ -252,7 +253,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsBellozzo:true,supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsSwimTraining:true, supportsBellozzo:true,supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

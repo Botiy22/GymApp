@@ -1,0 +1,32 @@
+/* Swimming sessions and technique: compact cards, visible choices, large controls. */
+#swim-training{min-width:0;padding-bottom:16px}
+.swim-tabs,.swim-stroke-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:14px 0;padding:5px;border:1px solid var(--edge);border-radius:16px;background:var(--card)}
+.swim-tabs button,.swim-stroke-options button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;min-width:0;min-height:52px;padding:10px 4px;font-size:.78rem;line-height:1.3;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--mut);overflow-wrap:normal}
+#swim-training svg{width:22px;height:22px;flex:none}
+#swim-training [aria-pressed=true]{background:color-mix(in srgb,var(--acc-tx) 13%,var(--card));color:var(--acc-tx);border-color:color-mix(in srgb,var(--acc-tx) 40%,var(--edge))}
+#swim-training button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:2px}
+.swim-heading{margin:24px 0 18px}.swim-heading h2{margin:5px 0;font-size:1.5rem}.swim-heading p{color:var(--mut);font-size:.85rem;margin:7px 0}
+.swim-config,.swim-plan,.swim-demo,.swim-entry{padding:18px;border:1px solid var(--edge);border-radius:22px;background:var(--card);margin:14px 0;min-width:0}
+.swim-config .fld{margin:0 0 12px}.swim-config .fld>span{font-size:.78rem}.swim-config input{width:100%;min-width:0;min-height:48px;margin-top:7px;font-size:1rem}
+.swim-config small,.swim-plan small{font-size:.73rem;color:var(--mut);line-height:1.5}
+.swim-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:14px;align-items:end}.swim-fields .fld>span{display:block;min-height:2.8em}
+.swim-presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0}
+.swim-presets button{width:100%;min-width:0;min-height:44px;border-radius:10px;border:1px solid var(--edge);background:var(--raised);color:var(--ink);padding:8px 3px;font-size:.85rem}
+.swim-routines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}
+.swim-routines button{display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;min-width:0;width:100%;padding:16px;border-radius:17px;border:1px solid var(--edge);background:var(--card);color:var(--ink)}
+.swim-routines b{font-size:.85rem;line-height:1.35}.swim-routines small{font-size:.7rem;line-height:1.5;color:var(--mut)}
+.swim-total{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}.swim-total>div{display:grid;gap:6px}.swim-total b{font-size:1.6rem;line-height:1.2;overflow-wrap:anywhere}.swim-total b small{font-size:.8rem}.swim-total span{font-size:.75rem;color:var(--mut)}
+.swim-time-parts{font-size:.72rem;color:var(--mut);line-height:1.6;margin:16px 0}
+.swim-blocks{list-style:none;padding:0;margin:0}.swim-blocks li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:18px 0;border-top:1px solid var(--edge)}
+.swim-index{display:grid;place-items:center;width:26px;height:26px;border:1px solid var(--edge);border-radius:50%;font-size:.7rem;color:var(--acc-tx)}
+.swim-block-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:7px;font-size:.8rem}.swim-block-head>span{font-size:.65rem;color:var(--mut)}
+.swim-blocks h3{font-size:1.05rem;margin:10px 0 6px;line-height:1.5}.swim-blocks p{font-size:.75rem;margin:5px 0 9px;color:var(--mut)}
+.swim-details{padding:16px;border:1px solid var(--edge);border-radius:17px;margin:12px 0;background:var(--card)}.swim-details summary{cursor:pointer;font-size:.85rem;min-height:28px}.swim-details p,.swim-details li,.swim-safety p,.swim-entry p{font-size:.8rem;line-height:1.65;color:var(--mut)}.swim-details li{margin:9px 0}.swim-details a{color:var(--acc-tx)}
+.swim-safety{padding:18px;border-left:3px solid var(--acc-tx);border-radius:6px 16px 16px 6px;background:var(--card);margin:20px 0}.swim-safety b{font-size:.85rem}.swim-safety p{margin-bottom:0}
+.swim-demo{padding:0;overflow:hidden}.swim-scene{background:#edf5f5;aspect-ratio:480/220;overflow:hidden}#swim-training .swim-scene svg,#swim-training .swim-entry svg{display:block;width:100%;height:auto}
+.swim-playback{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 8px}.swim-playback .btn{width:100%;min-width:0;min-height:48px;padding:9px;font-size:.8rem;gap:8px}
+.swim-scrub{display:block;padding:8px 18px;font-size:.75rem;color:var(--mut)}.swim-scrub input{width:100%;height:44px;padding:0;accent-color:var(--acc-tx)}
+.swim-phases{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 16px}.swim-phases button{min-height:48px;padding:8px;border:1px solid var(--edge);border-radius:11px;color:var(--ink);background:var(--raised);font-size:.72rem;line-height:1.4}
+.swim-cue{padding:5px 18px 18px;min-height:300px}.swim-cue h3{font-size:1rem}.swim-cue p{font-size:.8rem;line-height:1.65;color:var(--mut);margin:14px 0}.swim-cue b{display:block;font-size:.73rem;color:var(--ink);margin-bottom:3px}
+.swim-entry h3{font-size:.95rem}.swim-entry svg{border-radius:12px}
+@media(max-width:360px){.swim-config,.swim-plan,.swim-entry{padding:14px}.swim-routines button{padding:12px}.swim-total b{font-size:1.4rem}}

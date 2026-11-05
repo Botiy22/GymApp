@@ -4,6 +4,8 @@ importScripts('js/release.js');
 const VERSION = GYM_RELEASE.cacheId;
 const SHELL = 'gym-shell-' + VERSION, IMG = 'gym-img-v3';   // v3: invalidate replaced movement boards as well as cached photos
 const CORE = [
+  "js/swim-training.js",
+  "css/swim-training.css",
   "data/dessert-recipes.js",
   "data/recipe-methods.js",
   "data/exercise-guides.js",
