@@ -264,7 +264,7 @@ window.FoodQuery = (() => {
       }
       if (SOFT[w] && cur.qty == null && !cur.food.length) { cur.soft = 1; const u = tk[k + 1] && unitOf(tk[k + 1], true); if (u) { cur.unit = u; k++; } continue; }
       const it = intentOf(w);
-      if (it && !(it === 'f' && cur.unit && !cur.food.length)) { out.intent.add(it); continue; }   // "1 ek zsír" is lard, "hány zsír" is a question
+      if (it && !(it === 'f' && cur.unit && !cur.food.length) && !(tk[k + 1] && index().pre.has(canon(w) + ' ' + canon(tk[k + 1])))) { out.intent.add(it); continue; }   // "protein puding" is a food, "hány protein" a question   // "1 ek zsír" is lard, "hány zsír" is a question
       if (FILL.has(w)) { if (cur.food.length) cur.raw.push(w); continue; }
       const u = unitOf(w, false);
       if (u && u[0] === 'g' && cur.qty == null) { out.intent.add('g'); continue; }                // "hány gramm"
@@ -333,14 +333,78 @@ window.FoodQuery = (() => {
     if (!(grams > 0) || grams > 5000 || v.slice(1).reduce((a, b) => a + b, 0) > grams * 1.05 || v[0] > grams * 9.02) return { text: part, status: 'bad' };
     return { text: m[3], label: true, status: 'ok', grams, kcal: Math.round(v[0]), p: v[1], c: v[2], f: v[3], k100: v[0] * 100 / grams, p100: v[1] * 100 / grams, c100: v[2] * 100 / grams, f100: v[3] * 100 / grams };
   }
+  /* 2.53: a packaged product with no saved label is logged at once from its generic food (marked ≈), never blocked.
+     The label is an optional refinement afterwards. A stated nutrient amount ("20 g protein") replaces the generic value. */
+  const BRAND_WORDS=/\b(?:lidl|pilos|crownfield|milbona|alesto|freshona|combino|solevita|tesco|spar|s-budget|s budget|despar|biotech|biotechusa|alnatura|auchan|penny|aldi|danone|muller|zott|activia|nestle|corny|myprotein|scitec|olimp|dmbio|dm bio|rauch|milka|bonduelle|riso|gallo|mizo|sole|parmalat|president|hochland|exquisa|alpro|oatly|kelloggs?|nesquik|fitness|jana|szentkiralyi|theodora|naturaqua|happy day|sio|rio mare|globus|univer|kotanyi|baconos)\b/g;
+  const PRODUCT_RULES=[
+    [/\b(?:protein|feherje|whey)\s*(?:shake|ital|drink|turmix)\b/,'fehérjeturmix'],
+    [/\b(?:iso\s*whey|whey|protein\s*(?:por|powder)|feherjepor|proteinpor)\b/,'fehérjepor'],
+    [/\b(?:protein|feherje)\w*\s*(?:szelet|bar)\b|\bszelet\b.*\bprotein\b/,'fehérjeszelet'],
+    [/\b(?:protein|feherje)\w*\s*pud+ing\b|\bpud+ing\b.*\b(?:protein|high protein)\b/,'fehérjepuding'],
+    [/\bskyr\b/,'skyr'],
+    [/\b(?:yogurt|yoghurt|joghurt)\b.*\b(?:high protein|magas feherje|protein)\b|\b(?:high protein|protein)\b.*\b(?:yogurt|yoghurt|joghurt)\b/,'zsírmentes görög joghurt'],
+    [/\b(?:musli|muzli|muesli|granola)\b/,'müzli'],
+    [/\b(?:csirkemell|csirke|pulyka)\s*sonka\b|\bchicken\s*(?:breast\s*)?ham\b/,'csirkemell sonka'],
+    [/^(?!.*\b(?:choco\w*|csok\w*|kakao\w*|hazelnut|mogyorokrem|honey|mez\w*)\b).*(?:\b(?:mogyorovaj|peanut butter)\b.*\b(?:crunchy|darabos)\b|\b(?:crunchy|darabos)\b.*\b(?:mogyorovaj|peanut butter)\b)/,'darabos mogyoróvaj'],   // a flavoured spread is not plain peanut butter
+  ];
+  function genericText(name) {
+    let n = ' ' + strip(name).replace(/(\d),(\d)/g, '$1.$2').replace(/[,;()]/g, ' ') + ' ';
+    for (const [rx, to] of PRODUCT_RULES) if (rx.test(n)) return to;
+    n = n.replace(/\blow fat\b/g, 'zsirszegeny').replace(/\b(?:lactosefree|lactose free|laktozmentes|freefrom|free from)\b/g, ' ');
+    n = n.replace(BRAND_WORDS, ' ').replace(/\b(?:no added sugar|hozzaadott cukor nelkul|cukormentes|bio|organic|classic|klasszikus|premium|original|flavou?r|izu|izesitesu|ni|uj|new)\b/g, ' ');
+    return n.replace(/\s+/g, ' ').trim().replace(/\s+(?:with|es|and|meg|plusz)$/, '');   // "Pilos yoghurt with | 20g banana": the connector belongs to the next food
+  }
+  const LEAD_QTY=/^\s*((?:\d+(?:[.,]\d+)?|egy|ket|két|harom|három|negy|négy|fel|fél)\s+(?:(?:szelet|db|darab|adag|doboz|pohar|pohár|csomag|bogre|bögre|evokanal|evőkanál|ek|tk|marek|marék|scoop|meroadag|mérőadag|kanal|kanál|tabla|tábla|rud|rúd)\s+)?)/i;
+  function estimate(d, piece, opts) {
+    let name = d.name, lead = d.amount != null ? d.amount + ' ' + d.unit + ' ' : '';
+    if (!lead) { const tail = name.match(/\s(\d+(?:[.,]\d+)?)\s*(kg|dkg|g|ml|dl|l)\s*$/i);   // "spagetti 100g"
+      if (tail) { lead = tail[1] + ' ' + tail[2] + ' '; name = name.slice(0, tail.index).replace(/^\s*(?:\d+|egy)\s+(?=\D)/i, ''); }   // "1 … 100g": the weight wins
+      else { const m = name.match(LEAD_QTY); if (m) { lead = m[1]; name = name.slice(m[0].length); } } }
+    const generic = genericText(name); if (!generic || generic.length < 3) return null;
+    const q = parse(lead + generic, { ...opts, noEstimate: true }).items;   // "pilos joghurt with honey": the product plus what was added
+    if (!q.length || q.length > 4 || !q[0].entry || !['ok', 'needAmount', 'needGrams'].includes(q[0].status) || q[0].label || q.slice(1).some(i => ['unknown', 'bad'].includes(i.status))) return null;
+    const it = q[0];
+    Object.assign(it, { text: d.name, product: d.name, estimated: true, generic: nameOf(it.entry, 'hu'), genericEn: nameOf(it.entry, 'en'), known: d.known || {} });
+    if (it.status === 'ok' && !plausible(it, d.known)) return null;
+    it.extra = q.slice(1);     // "10 g peanut butter, 8 g protein" contradicts the generic food: ask for the label
+    if (it.status === 'ok' && d.ml > 0 && it.grams > 0) {             // a drink measured in ml stays a volume, values per 100 ml
+      const f = it.grams / d.ml; for (const k of ['k100', 'p100', 'c100', 'f100']) it[k] *= f;
+      Object.assign(it, { basisUnit: 'ml', ml: d.ml, grams: 0 });
+    }
+    if (it.status === 'ok') applyKnown(it);
+    return it;
+  }
+  function plausible(it, known) {
+    const amount = it.grams; if (!(amount > 0)) return true;
+    return ['p', 'c', 'f'].every(k => known?.[k] == null || Math.abs(known[k] * 100 / amount - it[k + '100']) <= 15 && known[k] <= amount);
+  }
+  function keepEstimate(p, it) {                                   // an answered estimate stays the named product, still marked ≈
+    if (p?.estimated && it) { Object.assign(it, { text: p.text, product: p.product, estimated: true, generic: p.generic, genericEn: p.genericEn, known: p.known || {} }); if (it.status === 'ok') applyKnown(it); }
+    return it;
+  }
+  function applyKnown(it) {                                         // "200 g … 20 g protein": the stated amount wins, energy follows
+    const amount = it.ml > 0 ? it.ml : it.grams; if (!(amount > 0)) return it;
+    for (const k of ['p', 'c', 'f']) {
+      const v = it.known?.[k]; if (v == null || !(v >= 0)) continue;
+      const per = Math.min(100, v * 100 / amount), key = k + '100';
+      it.k100 = Math.max(0, it.k100 + (per - it[key]) * (k === 'f' ? 9 : 4)); it[key] = per;
+    }
+    const f = amount / 100; it.kcal = Math.round(it.k100 * f); it.p = r1(it.p100 * f); it.c = r1(it.c100 * f); it.f = r1(it.f100 * f);
+    return it;
+  }
   function parsePiece(piece, opts) {
+    piece = String(piece).replace(/\b(protein|feherje|fehérje|whey)\s+(shake|turmix|ital|drink)\b/gi, 'fehérjeturmix');   // "protein shake" is one food; a bare "shake" is not
     if(/^\s*-\s*\d/.test(piece))return {items:[{text:piece,status:'bad'}],intent:new Set()};
     const lab = labelItem(piece); if (lab) return { items: [lab], intent: new Set(), stray: 0 };
     const products=window.FoodProducts, d=products?.read(piece), saved=products?.saved(piece,opts.foods||window.Store?.d?.myFoods);
     if(saved)return {items:[saved],intent:new Set()};
     const memories=window.FoodMemory?.resolve(piece,opts.doc||window.Store?.d);if(memories)return {items:memories,intent:new Set()};
     const restaurant=window.BellozzoFoods?.resolve(piece);if(restaurant)return {items:restaurant,intent:new Set()};
-    if(d?.packaged)return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
+    if(d&&(d.packaged||new RegExp(BRAND_WORDS.source).test(' '+strip(d.name)+' '))&&!index().full.has(nameToks(d.name).join(' '))){
+      const est=!opts.noEstimate&&!opts.exactOnly&&estimate(d,piece,opts);
+      if(est){const extra=est.extra||[];delete est.extra;return {items:[est,...extra],intent:new Set()};}
+      return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
+    }
     if(/^fagyi gyumi$/i.test(strip(d?.name||piece).trim()))return {items:[{...d,text:piece,status:'needIdentity'}],intent:new Set()};
     const foodName=strip(d?.name||piece);
     // "Unsweetened" and "fruit sugar" do not tell us whether the weighed portion includes juice.
@@ -405,6 +469,8 @@ window.FoodQuery = (() => {
       if (pieces.length > 1 && !best.items.some(i=>i.restaurantId||i.memoryId||['needRestaurant','needRestaurantDetail','needLabel','needIdentity','needMemory','needMemoryAmount'].includes(i.status))) {
         const alt = pieces.map(p => parsePiece(p, opts)), merged = { items: alt.flatMap(a => a.items), intent: new Set(alt.flatMap(a => [...a.intent])) };
         if (!best.items.every(i => i.status === 'ok' && i.exact) && grade(merged) > grade(best)) best = merged;
+        // "biotech protein shake with milk": the milk is a food of its own, not part of the estimated product
+        else if (best.items.some(i => i.estimated) && merged.items.length > best.items.length && merged.items.every(i => i.status !== 'unknown' && i.status !== 'bad')) best = merged;
       }
       best.items.forEach(i => { if (i.status !== 'unknown' || i.text) out.items.push(i); });
       best.intent.forEach(k => out.intent.add(k));
@@ -419,7 +485,7 @@ window.FoodQuery = (() => {
         return j.status === 'ok' && j.full && j.entry?.b === b ? { ...j, original: i.original, _seg: s2, chain: true } : i;
       });
     }
-    out.items.forEach(i => { const sg = i._seg; delete i._seg; if (sg) Object.defineProperty(i, '_seg', { value: sg, enumerable: false }); });   // kept (hidden) for choices()
+    out.items.forEach(i => { const sg = i._seg; delete i._seg; if (sg) Object.defineProperty(i, '_seg', { value: sg, enumerable: false, configurable: true }); });   // kept (hidden) for choices()
     return out;
   }
 
@@ -522,7 +588,7 @@ window.FoodQuery = (() => {
       });
     }
     if (!seg) return out;
-    const opt = (label, it) => { if (!it || !['ok', 'needAmount', 'needGrams'].includes(it.status)) return; Object.defineProperty(it, '_seg', { value: it._seg || seg, enumerable: false }); out.push({ label, kcal: it.status === 'ok' ? it.kcal : null, grams: it.status === 'ok' ? r1(it.grams) : null, item: it }); };
+    const opt = (label, it) => { if (!it || !['ok', 'needAmount', 'needGrams'].includes(it.status)) return; keepEstimate(p, it); Object.defineProperty(it, '_seg', { value: it._seg || seg, enumerable: false, configurable: true }); out.push({ label, kcal: it.status === 'ok' ? it.kcal : null, grams: it.status === 'ok' ? r1(it.grams) : null, item: it }); };
     if (p.status === 'unknown' && p.entry) {
       const ids = [p.entry, ...(p.alts || [])].map(en => X.entries.indexOf(en)).filter((e, k, a) => e >= 0 && a.indexOf(e) === k).slice(0, 4);
       ids.forEach(e => opt(nameOf(X.entries[e], L), itemFromSeg(seg, { ...opts, entry: e })));
@@ -560,7 +626,7 @@ window.FoodQuery = (() => {
   function withGrams(p, g) {                                        // "Other amount": the same food at the grams the user typed
     const X = index(), seg = p && p._seg, e = p?.entry ? X.entries.indexOf(p.entry) : -1;
     if (!seg || e < 0 || !(g > 0 && g <= 5000)) return null;
-    const it = itemFromSeg({ ...seg, qty: g, unit: ['g', 1], size: '' }, { strict: true, entry: e }); return it.status === 'ok' ? it : null;
+    const it = itemFromSeg({ ...seg, qty: g, unit: ['g', 1], size: '' }, { strict: true, entry: e }); return it.status === 'ok' ? keepEstimate(p, it) : null;
   }
   const unitLabelOf = (u, lang, n) => { const l = UL[lang][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; };
   function units(h, i) {                                            // named portions of one food for quick-pick chips
@@ -571,5 +637,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { choices, withGrams, inlineMeals:true, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { choices, withGrams, productEstimates:true, inlineMeals:true, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();

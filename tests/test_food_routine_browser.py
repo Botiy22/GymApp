@@ -12,7 +12,10 @@ class FoodRoutine(unittest.TestCase):
         p.locator('[data-in=ai-text]').fill('100 g banana');p.locator('[data-a=ai-go]').click()
         p.locator('[data-in=ai-f][data-k=p]').wait_for();self.assertEqual(p.locator('[data-in=ai-f][data-k=p]').input_value(),'1.1')
         p.locator('[data-in=ai-text]').fill('one biotech protein shake with milk');p.locator('[data-a=ai-refine]').click()
-        self.assertEqual(p.locator('[data-a=ai-add]').count(),0)
+        # 2.53: the shake is estimated (≈), only the milk amount is asked; nothing is logged before that
+        p.locator('.ask1').first.wait_for();self.assertTrue(p.locator('[data-a=ai-add]').is_disabled())
+        self.assertTrue(p.evaluate('__gym.ui.ai.res.items.some(i=>i.estimated)'))
+        p.locator('.ai-edit summary').click()   # the description stays editable behind one tap
         p.locator('[data-in=ai-text]').fill('35 g BioTech (140 kcal, 28 g protein, 4 g carbs, 1 g fat)');p.locator('[data-a=ai-refine]').click()
         p.locator('[data-in=ai-f][data-k=p]').wait_for();self.assertEqual(p.locator('[data-in=ai-f][data-k=p]').input_value(),'28')
         self.bounds(p,'food review')

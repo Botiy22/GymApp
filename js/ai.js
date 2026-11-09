@@ -12,9 +12,9 @@ window.FoodAI = (function () {
       ' 2) Items: list every distinct food and drink. Cooking fat, sauces, dressings, butter and sugar in drinks count even when barely visible: list them as their own items when they add more than about 30 kcal.' +
       ' 3) Portion: estimate the weight of each item in grams as eaten (cooked weight for cooked food). Work it out, do not guess: for countable foods (eggs, slices, nuggets, dumplings, cookies) count the pieces and multiply by a typical piece weight; for everything else judge the area it covers and its height against the scale, turn that into a volume and then into grams. Write that working briefly in "basis" (for example "3 pieces x 55 g" or "a third of a 27 cm plate, about 2 cm deep"). Do not round to 50 or 100 out of habit. Also give the smallest and largest weight that would still be plausible as "gmin" and "gmax".' +
       ' 4) Values: give energy and macros PER 100 g of each item as prepared, using typical food-composition-table values.' +
-      ' Important: A brand or shaker logo does not identify a product, serving weight, protein amount or milk volume. Separate powder and milk. Never substitute a generic shake for a named product. Ask for exact variant, label serving size and milk volume/fat when missing; never invent branded nutrition. User-stated label values override generic values. For photos, packaging net weight is NOT the consumed weight; unreadable labels are estimates. Do not infer invisible oil as a fact: explicitly identify assumptions. ' +
+      ' Important: the user wants an answer, not a questionnaire. For a named or branded product without a readable label, give your best estimate: use what you reliably know about that product, otherwise the typical values of that product type (high-protein yogurt, protein bar, whey powder…); set "src" to "estimate" and name the basis in "basis" (for example "typical high-protein yogurt"). A missing label is never a reason to leave a food unresolved. Separate powder and milk in shakes; one scoop of protein powder is about 30 g unless stated. User-stated label values override generic values. For photos, packaging net weight is NOT the consumed weight; unreadable labels are estimates. Do not infer invisible oil as a fact: explicitly identify assumptions. ' +
       ' For mixed dishes separate visible components only when useful: do not count both the whole dish and its ingredients. Do not count a nutrition-label photo as a second meal. Multiple photos show the same meal unless the user explicitly says otherwise. '+
-      ' 5) Labels: if a nutrition table or the packaging of a product is readable, do not estimate that product: copy its values per 100 g (or per 100 ml) exactly as printed, use the printed product name, set "src" to "label", and use the consumed amount supplied by the user; if unknown ask, never assume the whole package was eaten. For a per-100-ml label keep basisUnit="ml" and give millilitres consumed, grams=0; never invent density or treat ml as grams. Numeric kcal100/protein100/carbs100/fat100 then mean per 100 ml. Read the energy unit: kJ / 4.184 = kcal. Read the total carbohydrate, not just sugars. Polyols such as erythritol can contribute carbohydrate on EU labels without 4 kcal/g; use printed kcal, do not force 4/4/9. Distinguish dry/as-sold from prepared values. Do not confuse per-serving values with per-100-g values. Everything else has "src":"estimate". If a brand, quantity, nutrition value or basis is unreadable or missing, put that food in unresolved, with the reason; never put zero for an unknown nutrient. Preserve any user-stated protein amount in known.p, but do not invent its other macros. Every described food must occur in items or unresolved. If the request numbers input lines with sourceIndex, echo that index on every output item and unresolved entry.' +
+      ' 5) Labels: if a nutrition table or the packaging of a product is readable, do not estimate that product: copy its values per 100 g (or per 100 ml) exactly as printed, use the printed product name, set "src" to "label", and use the consumed amount supplied by the user; if unknown ask, never assume the whole package was eaten. For a per-100-ml label keep basisUnit="ml" and give millilitres consumed, grams=0; never invent density or treat ml as grams. Numeric kcal100/protein100/carbs100/fat100 then mean per 100 ml. Read the energy unit: kJ / 4.184 = kcal. Read the total carbohydrate, not just sugars. Polyols such as erythritol can contribute carbohydrate on EU labels without 4 kcal/g; use printed kcal, do not force 4/4/9. Distinguish dry/as-sold from prepared values. Do not confuse per-serving values with per-100-g values. Everything else has "src":"estimate". If a nutrition value is unreadable, estimate it as above. If the consumed amount is missing, assume one typical serving, say so in "basis" and give gmin/gmax. Use unresolved only for something you cannot identify as a food at all; never put zero for an unknown nutrient. Preserve any user-stated protein amount in known.p, but do not invent its other macros. Every described food must occur in items or unresolved. If the request numbers input lines with sourceIndex, echo that index on every output item and unresolved entry.' +
       ' 6) One question: if a single missing fact would change the total energy by more than about 15% (how it was cooked and in how much fat, sugar in a drink, lean or fatty cut, how much of the plate was eaten), put ONE short question in "question" with 2 to 4 short answers to choose from; otherwise "question" is null. Do not ask what the extra information already answers.' +
       (o.hint ? ' Extra information from the user (trust it over what you see): "' + String(o.hint).replace(/"/g, "'").slice(0, 600) + '".' : '') +
       (o.notes ? ' ' + o.notes : '') +
@@ -32,16 +32,22 @@ window.FoodAI = (function () {
     if(i.restaurantId)return total({...i,name:lang==='en'?i.nameEn:i.text,en:'',approx:i.warning,basis:BellozzoFoods.description(i,lang),gmin:0,gmax:0});
     if(i.memoryId)return total({...i,name:i.text,en:'',approx:i.estimated,basis:lang==='hu'?'Mentett saját adag':'Saved personal portion',gmin:0,gmax:0});
     const FQ = window.FoodQuery, v = FQ.view(i, lang), hu = lang === 'hu';
+    if(i.estimated&&!i.label){                                         // 2.53: a product logged from its generic food, refinable with the label later
+      const k=i.known||{},kn=['p','c','f'].filter(x=>k[x]!=null).map(x=>(hu?{p:'fehérje',c:'szénhidrát',f:'zsír'}:{p:'protein',c:'carbs',f:'fat'})[x]+' '+k[x]+' g');
+      return total({basisUnit:i.basisUnit||'g',ml:i.ml||0,name:String(i.text||v.name).slice(0,80),en:v.usda,grams:Math.round(i.grams*10)/10,k100:i.k100,p100:i.p100,c100:i.c100,f100:i.f100,label:false,estimated:true,approx:true,product:i.product||i.text,known:k,
+        basis:(hu?'≈ '+(i.generic||v.name)+' alapján':'≈ based on '+(i.genericEn||v.name))+(kn.length?(hu?'; megadva: ':'; stated: ')+kn.join(', '):'')+(hu?'. Címkével pontosíthatod.':'. You can refine it with the label.'),gmin:0,gmax:0});
+    }
     return total({ basisUnit:i.basisUnit||'g', ml:i.ml||0, name: v.name, en: i.label ? '' : v.usda, grams: Math.round(i.grams * 10) / 10, k100: i.k100, p100: i.p100, c100: i.c100, f100: i.f100, label: !!i.label, db: i.label ? undefined : v.usda,
       basis: i.label ? String(i.text || '') : (/erythritol|eritrit/i.test(v.name)?(hu?'A szénhidrát poliol, nem cukor; 0 kcal. ':'Carbohydrate is polyol, not sugar; 0 kcal. '):'')+v.qty + (v.typ ? ' ≈ ' : ' = ') + Math.round(i.grams * 10) / 10 + ' g' + (v.typ ? (hu ? ' (tipikus' : ' (typical') + (v.note && hu ? ': ' + v.note : '') + ')' : ''), gmin: 0, gmax: 0,approx:v.approx||v.typ });
   }
+  const estNote=(lang,items)=>!items.some(i=>i.estimated)?'':lang==='hu'?' A ≈ termékeket általános értékekkel becsültem; ha akarod, címkével pontosíthatod.':' Products marked ≈ use typical values; refine them with the label if you like.';
   const localNote = (lang, typ) => (lang === 'hu' ? 'Adatbázisból számolva a megadott mennyiséggel.' : 'Calculated from the food database using your quantities.') + (typ ? (lang === 'hu' ? ' A ≈ darabsúly tipikus érték: ha lemérted, írd át a grammot.' : ' A ≈ piece weight is typical: if you weighed it, change the grams.') : '');
   function local(o) {
     if ((o.images || []).length || o.hint) return null;
     if (window.FoodQuery && window.FOODS) {
       const r = window.FoodQuery.parse(String(o.text || ''), { strict: true });
       if (!r.items.length || r.items.length > 20 || r.items.some(i => i.status !== 'ok')) return null;
-      return { items: r.items.map(i => fromQuery(i, o.lang)), confidence: r.items.every(i=>i.label&&!i.typ)?'high':'medium', notes: localNote(o.lang, r.items.some(i => i.typ)), scene: '', question: null, local: true };
+      return { items: r.items.map(i => fromQuery(i, o.lang)), confidence: r.items.every(i=>i.label&&!i.typ)?'high':'medium', notes: localNote(o.lang, r.items.some(i => i.typ))+estNote(o.lang,r.items), scene: '', question: null, local: true };
     }
     const text = String(o.text || '').trim().replace(/^(?:I (?:had|ate|drank)|ettem|ittam)\s+/i,''), db = window.FOODS;
     if (!text || !db) return null;
@@ -175,7 +181,7 @@ window.FoodAI = (function () {
     } catch (e) { return 'offline'; } finally { clearTimeout(timer); }
   }
   return {
-    bellozzo:true,foodMemory:true,productLabels:true,shrink, parse, check, local, fromQuery,
+    bellozzo:true,foodMemory:true,productLabels:true,productEstimates:true,shrink, parse, check, local, fromQuery,
     total,
     /* coach chat: system = who the coach is plus the user's data, msgs = [{ role: 'user' | 'assistant', content }] */
     chat: async (key, model, system, msgs) => {
@@ -200,8 +206,8 @@ window.FoodAI = (function () {
           for(const c of corrections){const matches=parsed.items.map((i,n)=>({i,n})).filter(({i})=>c.entry&&i.entry&&c.entry.i===i.entry.i||FoodProducts.identity(c.text)===FoodProducts.identity(i.text));if(matches.length===1)parsed.items[matches[0].n]=c;}
         }
         const known=parsed.items.filter(i=>i.status==='ok'),pending=parsed.items.filter(i=>i.status!=='ok');
-        const unknown=pending.filter(i=>i.status==='unknown');
-        const base={items:known.map(i=>fromQuery(i,o.lang)),pending,local:true,needsDetails:pending.length>0,scene:'',question:null,confidence:pending.length?'low':known.every(i=>i.label&&!i.typ)?'high':'medium',notes:localNote(o.lang,known.some(i=>i.typ))};
+        const unknown=pending.filter(i=>i.status==='unknown'||i.status==='needLabel'&&!i.conflict);   // 2.53: products without a label go to the AI for an estimate too
+        const base={items:known.map(i=>fromQuery(i,o.lang)),pending,local:true,needsDetails:pending.length>0,scene:'',question:null,confidence:pending.length?'low':known.every(i=>i.label&&!i.typ)?'high':'medium',notes:localNote(o.lang,known.some(i=>i.typ))+estNote(o.lang,known)};
         if(!key||!unknown.length){
           if(pending.length)base.notes+=(o.lang==='hu'?' Még pontosítandó: ':' Still needs details: ')+pending.map(i=>'„'+i.text+'”').join(', ')+'.';
           if(!known.length&&!pending.some(i=>i.status!=='unknown'))base.notes=o.lang==='hu'?'Ezt nem találtam az adatbázisban. Írd így: „2 zsemle, 10 dkg sonka, 1 pohár tej”, vagy add meg a címke adatait.':'Not found in the database. Try "2 bread rolls, 100 g ham, 1 glass of milk", or enter the label.';
@@ -213,9 +219,10 @@ window.FoodAI = (function () {
         const incomplete=new Set((result.pending||[]).map(i=>i.sourceIndex));
         const accepted=result.items.filter(i=>Number.isInteger(i.sourceIndex)&&i.sourceIndex>=0&&i.sourceIndex<unknown.length&&!incomplete.has(i.sourceIndex)&&!incomplete.has(null));
         const unresolved=unknown.filter((i,n)=>!accepted.some(a=>a.sourceIndex===n));
-        return {...result,items:base.items.concat(accepted),pending:pending.filter(i=>i.status!=='unknown').concat(unresolved),confidence:'medium',local:false};
+        accepted.forEach(a=>{const src=unknown[a.sourceIndex];if(src?.status==='needLabel'){a.estimated=true;a.approx=true;a.product=src.text;}});
+        return {...result,items:base.items.concat(accepted),pending:pending.filter(i=>!unknown.includes(i)).concat(unresolved),confidence:'medium',local:false};
       }
-      if (!photo && /biotech|protein.*shake|feherje|fehérje|whey|shaker/i.test(o.text||'')&&!o.hint) return clarification(o);
+      if (!photo && !key && /biotech|protein.*shake|feherje|fehérje|whey|shaker/i.test(o.text||'')&&!o.hint) return clarification(o);   // with a key the AI estimates it
       if(!key)return {...clarification(o),notes:o.lang==='hu'?'Fotóhoz vagy összetett leíráshoz AI-kulcs kell. A pontos címkét a Saját ételekhez is elmentheted.':'Photos or complex descriptions need an AI key. You can also save the exact label in My foods.'};
       const imgs = (o.images || []).slice(0, 2);
       const result=await call(key, model, imgs.map(b => ({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b } }))

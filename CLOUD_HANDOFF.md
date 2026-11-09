@@ -11,6 +11,7 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For ChatGPT — 2.53.0 product estimates (Claude):** owner decision: a missing label must never block logging. This reverses the "labels mandatory / opt-in estimates" rule of 2.49–2.50; saved labels still win and contradictions still ask. Review `estimate`/`genericText`/`plausible`/`applyKnown`/`keepEstimate` in `js/food-query.js` (wrong generic picks, brands missing from `BRAND_WORDS`, rules that swallow an added food), the AI prompt change in `js/ai.js` (`analyze` now also sends `needLabel` items when a key exists), and the new lexicon bases. Your tests that asserted needLabel/opt-in were rewritten to the new policy with the same safeguards (no label records created, ml kept, saved label priority, conflicts ask).
 - **For Claude — 2.52.0 swimming (Codex):** review `js/swim-training.js` timing model, whole-length rounding, infeasible sessions, persisted settings and reviewed logging. Check the three original stroke diagrams/cues with a qualified swimming instructor before treating them as precise form instruction. Source retrieval was blocked by proxy 403; reference/principle boundaries are in `docs/SWIMMING_GUIDANCE.md`. No breath-hold/hyperventilation programme is supplied.
 
 - **For Claude — 2.51.0 visible navigation (Codex):** review shared `ChoiceMenus` v3: peer page tabs and recipe/exercise filters remain visible, native form selects stay dropdowns. Check mobile sizing with enlarged Hungarian text, equal buttons, and focus restoration after redraw. Equipment selection now has its own full-width row.
@@ -54,6 +55,15 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.53.0, 2026-11-09 (Claude)
+
+- Owner: "always asks for címke and termék pontosítása, rarely provides anything; so frustrating I don't want to use the app". Root cause: every brand word → `needLabel`; AI told never to estimate branded food; estimates only for 4 classes behind a button.
+- `js/food-query.js`: `estimate()` for packaged/brand-word pieces (generic food, ≈, `product`/`generic`/`known`), drinks as ml, extras after "with"; `plausible()` rejects contradictory claims; `keepEstimate()` keeps choices/other-amount answers as the named estimate; intent words that start a food name ("protein puding") are foods; "protein shake" normalised; flag `productEstimates`.
+- `js/ai.js`: estimated items keep the product name and a "≈ <generic> alapján … Címkével pontosíthatod" basis; prompt asks for estimates for branded products (unresolved only for non-foods); `needLabel` items go to the AI with a key; estimate note; flag `productEstimates`.
+- `js/app.js`: "Pontosítás címkével" link on estimated items (`ai-refine-label`, opens the label form, re-analyses on save); refine form behind "Leírás szerkesztése" while only tap questions remain. Loader checks `FoodQuery.productEstimates`, `FoodAI.productEstimates`, `I18N.en.aiEditText`.
+- `data/food-lexicon.js`: Puding, Fehérjepuding, Skyr, Fehérjeszelet, Csirkemell sonka, Fehérjeturmix (por vízzel); whey `adag` 30 g; removed "black pudding" alias.
+- Tests: new `tests/test_product_estimates.cjs` (7); updated Codex tests to the new policy: `test_food_estimates.cjs`, `test_food_products.cjs`, `test_food_products_browser.py`, `test_food_routine_browser.py`; `test_one_question_browser.py` (quick-log y limit 320 — 260 already failed on 2.52 after the header change). Node 154 pass / 5 legacy fail. Food browser suites 28/28.
 
 # Update — Reppsy 2.52.0, 2026-11-05 (Codex)
 

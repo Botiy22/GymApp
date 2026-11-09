@@ -1,8 +1,9 @@
 /* Release metadata and visible history shared by the app and service worker. */
 (function (scope) {
-  const version = '2.52.0';
-  const build = '20261105.1';
+  const version = '2.53.0';
+  const build = '20261109.1';
   const history = [
+    {version:'2.53.0',build:'20261109.1',date:'2026-11-09',en:['Packaged products no longer stop you with label questions: Pilos, Milbona, Lidl, Tesco, SPAR, BioTech and similar products are logged at once from their generic food, marked ≈. Amounts you state ("20 g protein") are kept.','The label is now optional: tap "Refine with label" on an estimated item if you want exact values. A saved label is always used first.','With an AI key, products the database cannot place are estimated by the AI instead of being left as questions.'],hu:['A csomagolt termékek már nem akasztanak meg címkekérdésekkel: a Pilos, Milbona, Lidl, Tesco, SPAR, BioTech és hasonló termékeket rögtön rögzíti az app az általános étel alapján, ≈ jellel. Az általad megadott értékek („20 g fehérje”) megmaradnak.','A címke már nem kötelező: a becsült tételnél a „Pontosítás címkével” gombbal adhatod meg a pontos értékeket. Az elmentett címkét mindig ezt használja először.','AI-kulccsal az adatbázisban nem talált termékeket az AI becsli meg, ahelyett hogy kérdésként maradnának.']},
     {version:'2.52.0',build:'20261105.1',date:'2026-11-05',
       hu:['Új úszóedzések: könnyű, alapozó, résztávos és légzéstechnikai program, a medencédhez és az idődhöz igazított hosszakkal, pihenőkkel.','Gyors-, mell- és hátúszás animált technikája: lassítás, megállítás, fázisonkénti kar-, láb- és légzésútmutató.','25–100 m-es medenceválasztás, egyéni méret és mentett beállítások. Úszás után a tényleges hosszakat és aktív időt átnézheted naplózás előtt.'],
       en:['New easy, aerobic, interval and breathing-skills swims with lengths and rests adapted to your pool, pace and available time.','Animated freestyle, breaststroke and backstroke guides: slow playback, pause and phase-by-phase arm, kick and breathing cues.','Pool presets plus custom lengths and saved preferences. Review actual lengths and active swim time before logging.']},

@@ -11,10 +11,12 @@ const text=`50g choco-oat musli
 Fahej por`;
 test('the exact meal preserves eight ingredients and the protein/fat claims without inventing labels',async()=>{
  const r=FoodQuery.parse(text,{strict:true});assert.equal(r.items.length,8);
- assert.deepEqual(r.items.map(i=>i.status),['needLabel','ok','ok','needIdentity','ok','needLabel','needLabel','needAmount']);
+ // 2.53 (owner): a missing label no longer blocks. Products are estimated (≈, never saved as labels); only identity/amount questions remain.
+ assert.deepEqual(r.items.map(i=>i.status),['ok','ok','ok','needIdentity','ok','ok','ok','needAmount']);
+ assert.deepEqual(r.items.map(i=>!!i.estimated),[true,false,false,false,false,true,true,false]);assert.ok(r.items.every(i=>!i.label));
  assert.deepEqual(r.items[5].known,{p:20});assert.equal(r.items[4].c,15);assert.equal(r.items[4].kcal,0);assert.deepEqual(FoodProducts.read('200g Pilos yogurt 20g protein per 100g').known,{p:40});assert.equal(FoodQuery.parse('200g Pilos yogurt, 71g banan',{strict:true}).items.length,2);assert.equal(r.items[5].grams,200);assert.equal(r.items[6].ml,17);assert.match(r.items[6].text,/1\.5%/);assert.equal(r.items[7].entry.i,FOODS.list.findIndex(r=>r[0]==='Spices, cinnamon, ground'));
- global.fetch=()=>{throw Error('should not pay AI to guess brand labels')};const a=await FoodAI.analyze('key','m',{text,lang:'hu'});assert.equal(a.local,true);assert.equal(a.items.length,3);assert.equal(a.pending.length,5);assert.equal(a.confidence,'low');
- for(const shop of ['Lidl','Tesco','SPAR'])assert.equal(FoodQuery.parse('100g '+shop+' high protein yoghurt',{strict:true}).items[0].status,'needLabel');
+ global.fetch=()=>{throw Error('estimable products are answered offline, no AI call')};const a=await FoodAI.analyze('key','m',{text,lang:'hu'});assert.equal(a.local,true);assert.equal(a.items.length,6);assert.equal(a.pending.length,2);assert.equal(a.confidence,'low');
+ for(const shop of ['Lidl','Tesco','SPAR']){const y=FoodQuery.parse('100g '+shop+' high protein yoghurt',{strict:true}).items[0];assert.equal(y.status,'ok');assert.equal(y.estimated,true);assert.equal(y.label,undefined);}
 });
 // Test fixtures are deliberately synthetic, NOT verified real brand nutrition.
 const foods=[{name:'choco-oat musli',kcal:400,p:10,c:60,f:10},{name:'Pilos high protein coconut yoghurt',kcal:70,p:10,c:5,f:1},{name:'Pilos freefrom lactosefree tej 1,5 fat',basis:'ml',kcal:46,p:3.4,c:4.8,f:1.5}];
@@ -30,22 +32,22 @@ test('with 20g protein reuses the existing yogurt label without creating a new i
  const old={...foods[1],name:'pilos high protein yoghurt, low fat no added sugar with coconut flavour'};
  assert.equal(FoodQuery.parse(plain,{strict:true,foods:[old]}).items[0].status,'ok');
  assert.equal(FoodQuery.parse(withProtein.replace('20g','28g'),{strict:true,foods}).items[0].status,'needLabel');
- assert.equal(FoodQuery.parse(withProtein.replace('coconut','vanilla'),{strict:true,foods}).items[0].status,'needLabel');
+ const vanilla=FoodQuery.parse(withProtein.replace('coconut','vanilla'),{strict:true,foods}).items[0];assert.equal(vanilla.estimated,true);assert.equal(vanilla.label,undefined,'another flavour never borrows the saved coconut label');
  // Real extra ingredients and protein powder are not nutrition claims.
  const powder=FoodProducts.read('200g Pilos yoghurt with 20g protein powder');assert.deepEqual(powder.known,{});assert.match(powder.name,/20g protein powder/);
  assert.notEqual(FoodProducts.identity('Pilos yoghurt with honey'),FoodProducts.identity('Pilos yoghurt'));
- assert.equal(FoodQuery.parse('200g Pilos yoghurt with 20g banana',{strict:true,foods}).items[0].status,'needLabel');
+ const mixed=FoodQuery.parse('200g Pilos yoghurt with 20g banana',{strict:true,foods}).items;assert.equal(mixed.length,2);assert.equal(mixed[0].estimated,true);assert.equal(FoodQuery.nameOf(mixed[1].entry,'hu'),'Banán');
 });
 test('new oats description keeps all eight lines local and offers actionable clarifications',async()=>{
- global.fetch=()=>{throw Error('Do not send known branded products to AI to guess a label')};
+ global.fetch=()=>{throw Error('estimable products are answered offline, no AI call')};
  const result=await FoodAI.analyze('key','m',{text:oatsText,lang:'hu'});
  assert.equal(result.local,true);assert.equal(result.items.length+result.pending.length,8);
  const r=FoodQuery.parse(oatsText,{strict:true}).items;
- assert.deepEqual(r.map(i=>i.status),['needLabel','needIdentity','ok','needLabel','needLabel','needAmount','needIdentity','needLabel']);
+ assert.deepEqual(r.map(i=>i.status),['ok','needIdentity','ok','ok','ok','needAmount','needIdentity','ok']);   // 2.53: products estimated
  assert.equal(r[1].grams,80);assert.equal(r[3].grams,200);assert.deepEqual(r[3].known,{p:20});assert.equal(r[4].ml,10);assert.equal(r[6].grams,62);assert.equal(r[7].grams,10);
  const canned=FoodQuery.choices(r[6],'hu');assert.equal(canned.length,2);assert.ok(canned.every(c=>c.item.grams===62&&c.kcal===37));
  assert.match(FoodAI.fromQuery(canned[0].item,'en').en,/canned, juice pack, drained/);
- const peanut=FoodQuery.choices(r[7],'hu');assert.equal(peanut.length,1);assert.match(peanut[0].label,/becslés/);assert.equal(peanut[0].grams,10);assert.equal(FoodAI.fromQuery(peanut[0].item,'hu').approx,true);
+ assert.equal(r[7].estimated,true);assert.equal(r[7].grams,10);assert.match(r[7].generic,/mogyoróvaj/);assert.equal(FoodAI.fromQuery(r[7],'hu').approx,true);const peanut=[];
  assert.deepEqual(FoodQuery.choices(r[5],'hu').map(c=>c.grams),[.3,1,2.6]);
  // A tapped choice must survive later label saves/re-analysis as a single item.
  for(const c of [...canned,...peanut])assert.equal(FoodQuery.parse(c.grams+' g '+FoodQuery.nameOf(c.item.entry,'hu'),{strict:true}).items[0].status,'ok');
@@ -54,19 +56,20 @@ test('canned fruit never silently becomes fresh fruit or an assumed syrup; flavo
  for(const s of ['62g konzerv ananász gyümölcscukros szirupban','62g canned pineapple in fructose syrup'])assert.equal(FoodQuery.parse(s,{strict:true}).items[0].status,'needLabel');
  assert.equal(FoodQuery.parse('62g ananász',{strict:true}).items[0].kcal,31);
  assert.equal(FoodQuery.parse('62g Pineapple, canned, juice pack, drained',{strict:true}).items[0].status,'ok');
- assert.equal(FoodQuery.choices(FoodQuery.parse('10g Alnatura crunchy peanut butter',{strict:true}).items[0]).length,1);
- for(const s of ['10g Alnatura chocolate crunchy peanut butter','10g Alnatura hazelnut butter','10g Alnatura crunchy peanut butter 8g protein'])assert.equal(FoodQuery.choices(FoodQuery.parse(s,{strict:true}).items[0]).length,0);
+ assert.equal(FoodQuery.parse('10g Alnatura crunchy peanut butter',{strict:true}).items[0].estimated,true);
+ // a flavoured spread, an unknown nut butter or a contradictory claim is not estimated from plain peanut butter
+ for(const s of ['10g Alnatura chocolate crunchy peanut butter','10g Alnatura hazelnut butter','10g Alnatura crunchy peanut butter 8g protein'])assert.equal(FoodQuery.parse(s,{strict:true}).items[0].status,'needLabel',s);
  const exact={name:'Alnatura crunchy peanut butter',kcal:600,p:25,c:20,f:48}; // Synthetic fixture.
  const r=FoodQuery.parse('10g mogyorovaj crunchy alnatura',{strict:true,foods:[exact]}).items[0];
  assert.equal(r.status,'ok');assert.equal(r.label,true);assert.equal(r.kcal,60);
- assert.equal(FoodQuery.parse('10g Alnatura smooth peanut butter',{strict:true,foods:[exact]}).items[0].status,'needLabel');
+ const smooth=FoodQuery.parse('10g Alnatura smooth peanut butter',{strict:true,foods:[exact]}).items[0];assert.notEqual(smooth.label,true,'the crunchy label is never reused for smooth');
 });
 test('confirmed labels calculate offline on the next use; 20 g stays 20 g and 17 ml stays a volume',async()=>{
  global.Store={d:{myFoods:foods}};const fixed=text.replace('fagyi gyumi','fagyasztott gyümi').replace('Fahej por','1g Fahej por');
  const a=await FoodAI.analyze('key','m',{text:fixed,lang:'hu'});assert.equal(a.local,true);assert.equal(a.items.length,8);assert.equal(a.items.find(i=>/yoghurt/.test(i.name)).p,20);
  const milk=a.items.find(i=>i.basisUnit==='ml');assert.equal(milk.ml,17);assert.equal(milk.grams,0);assert.equal(milk.kcal,8);assert.equal(milk.p,.6);
  const conflict=FoodQuery.parse('200g Pilos high protein coconut yoghurt 28g protein',{strict:true});assert.equal(conflict.items[0].status,'needLabel');
- assert.equal(FoodQuery.parse('200g Pilos high protein vanilla yoghurt',{strict:true}).items[0].status,'needLabel');
+ assert.equal(FoodQuery.parse('200g Pilos high protein vanilla yoghurt',{strict:true}).items[0].estimated,true);
  delete global.Store;
 });
 test('label search validates complete per-100 values, rejects missing fields and preserves ml/kJ basis',async()=>{

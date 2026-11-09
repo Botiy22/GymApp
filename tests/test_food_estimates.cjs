@@ -2,22 +2,19 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 global.window=global;
 for(const f of ['data/foods','data/food-lexicon','js/food-volume','js/food-products','js/food-memory','js/food-query','js/ai','js/food-estimates'])require('../'+f+'.js');
 const text=require('node:fs').readFileSync(require('node:path').join(__dirname,'fixtures/oats-description.txt'),'utf8').replace('sugar 20g','sugar with 20g');
-test('explicit opt-in makes all four missing labels usable, offline, without inventing brand records',async()=>{
+test('2.53: missing labels no longer block: the four products are estimated at once, offline, without inventing brand records',async()=>{
  global.fetch=()=>{throw Error('no network required')};
- const r=await FoodAI.analyze('key','model',{text,lang:'hu'});
- assert.equal(r.pending.length,7);assert.equal(r.items.length,1); // Strict analysis unchanged before opt-in.
- const out=FoodEstimates.apply(r,'hu'),estimated=out.items.filter(i=>i.estimated);
- assert.equal(out.items.length,5);assert.equal(out.pending.length,3);assert.equal(estimated.length,4);
- assert.equal(r.pending.length,7); // No destructive change to the original result.
- assert.ok(estimated.every(i=>!i.label&&!i.db&&i.approx&&i.kcal>0));
+ const r=await FoodAI.analyze('key','model',{text,lang:'hu'}),estimated=r.items.filter(i=>i.estimated);
+ assert.equal(r.items.length,5);assert.equal(r.pending.length,3);assert.equal(estimated.length,4); // fruit identity, cinnamon amount, canned pineapple stay one-tap questions
+ assert.ok(estimated.every(i=>!i.label&&i.approx&&i.kcal>0&&i.product));
  const yogurt=estimated.find(i=>/yoghurt/.test(i.name));assert.equal(yogurt.grams,200);assert.equal(yogurt.p,20);
- assert.match(yogurt.basis,/megadott adatból: 20 g/);
+ assert.match(yogurt.basis,/megadva: fehérje 20 g/);assert.match(yogurt.basis,/Címkével pontosíthatod/);
  const milk=estimated.find(i=>i.basisUnit==='ml');assert.equal(milk.ml,10);assert.equal(milk.grams,0);assert.equal(milk.kcal,5);
  assert.equal(estimated.find(i=>/musli/.test(i.name)).grams,50);
  assert.equal(estimated.find(i=>/alnatura/.test(i.name)).grams,10);
- assert.equal(out.items.find(i=>/Eritrit/.test(i.name)).kcal,0);
- assert.deepEqual(FoodEstimates.apply(out,'hu').items,out.items);
- assert.equal(out.confidence,'low'); // Questions remain; no false certainty.
+ assert.equal(r.items.find(i=>/Eritrit/.test(i.name)).kcal,0);
+ assert.deepEqual(FoodEstimates.apply(r,'hu').items,r.items,'the old opt-in step changes nothing now');
+ assert.equal(r.confidence,'low'); // Questions remain; no false certainty.
 });
 test('estimates never override a saved label or a contradictory label claim',async()=>{
  // Synthetic product fixture; NOT brand nutrition.
@@ -35,7 +32,7 @@ test('unknown products, ambiguous quantities, plant milk and added ingredients a
 });
 test('inline added ingredients are separate foods rather than hidden inside a brand estimate',()=>{
  const parsed=FoodQuery.parse('50g choco-oat musli with 20g banana',{strict:true}).items;
- assert.equal(parsed.length,2);assert.equal(FoodEstimates.item(parsed[0]).grams,50);
+ assert.equal(parsed.length,2);assert.equal(parsed[0].estimated,true);assert.equal(parsed[0].grams,50);
  assert.equal(parsed[1].grams,20);assert.equal(parsed[1].status,'ok');
  assert.equal(FoodQuery.nameOf(parsed[1].entry,'hu'),'Banán');
 });

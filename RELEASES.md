@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.53.0 — 2026-11-09 (build 20261109.1)
+
+Owner feedback: food recognition "always asks for a label and product clarification and rarely provides anything". Packaged products no longer block logging. In `js/food-query.js`, a branded or packaged product without a saved label is estimated at once from its generic food (`estimate`/`genericText`: brand and marketing words removed, product rules for whey, protein shake/bar/pudding, skyr, high-protein yogurt, muesli, chicken ham, plain crunchy peanut butter), marked `estimated` (≈ in the review and diary, never saved as a label). Stated nutrients ("20 g protein") replace the generic values with matching energy; a contradictory claim (more than 15 g/100 g off) or a flavoured spread is not guessed and still asks. Drinks in ml stay volumes. Leading counts, trailing weights ("1 combino spagetti 100g") and added foods ("… with honey", "… with milk") are handled. A saved label is always used first, and a conflicting saved label still asks.
+
+The label is optional: estimated items have a "Pontosítás címkével / Refine with label" link that opens the label form; saving re-analyses and the item becomes exact. With an AI key, products the database cannot place are sent to the AI, whose prompt now asks for a typical-value estimate instead of leaving branded foods unresolved; the AI's estimates are marked ≈ too. The protein-shake hard stop applies only without a key.
+
+Database: new generic bases (Puding, Fehérjepuding, Skyr, Fehérjeszelet, Csirkemell sonka, Fehérjeturmix with water), whey scoop 30 g. Fixed "puding" landing on blood sausage (the "black pudding" alias). "protein puding/szelet" are foods, not protein questions. On 25 realistic branded inputs, 3 could be logged before; now 25/25 are logged at once or with one tap. The owner's 8-line oats meal now asks only three questions (frozen fruit, cinnamon amount, canned pineapple) instead of seven. While only tap questions remain, the description stays editable behind "Leírás szerkesztése".
+
 ## 2.52.0 — 2026-11-05 (build 20261105.1)
 
 Swimming now has Workouts, Technique and History. Four original session templates
