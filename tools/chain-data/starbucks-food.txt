@@ -1,0 +1,79 @@
+# Starbucks Magyarország "SBX HU Ételkínálat tápérték információ / Food Nutrition - 2026.02.27", starbucks.hu. Per portion.
+# name hu / en | flags | portion g | kcal | fat | sat | carb | sugar | protein
+Croissant csokoládé-mogyorós töltelékkel / Chocolate-hazelnut filled croissant | | 95|356|19|10|39|15|6
+Vegán narancsos croissant / Vegan orange croissant | | 85|291|12|3|40|14|5
+Sajtos csiga / Cheese roll | | 85|319|18|10|30|3|9
+Málnás brownie / Raspberry brownie | | 88|308|16|4|36|28|4
+Csokoládés muffin / Chocolate muffin | | 115|447|23|5|52|30|6
+Áfonyás muffin / Blueberry muffin | | 115|435|22|3|52|22|7
+Vegán citromos-málnás muffin / Vegan lemon-raspberry muffin | | 135|465|20|2|61|35|8
+Fehércsokis keksz / White chocolate cookie | | 80|350|15|7|48|32|4
+Csokis keksz / Chocolate cookie | | 80|345|13|7|51|35|4
+New York sajttorta / New York cheesecake | | 136|370|21|10|36|26|9
+Almás pite / Apple pie | | 158|317|9|3|55|33|3
+Epres sajttorta / Strawberry cheesecake | | 157|363|18|8|42|31|8
+Répatorta / Carrot cake | | 118|315|19|6|39|24|4
+Vegán almatorta / Vegan apple cake | | 188|314|9|4|53|32|3
+Fahéjas tekercs / Cinnamon roll | | 120|355|15|9|48|22|7
+Waffel / Waffle | | 90|401|20|8|48|22|5
+Crazelnut bite mini fánk / The Crazelnut Bite | u | 25|128|8|3|12|6|2
+Berry Bomb bite mini fánk / The Berry Bomb Bite | u | 25|104|6|3|11|5|1
+White chocolate bite mini fánk / The White Chocolate Bite | u | 25|128|7|3|13|7|2
+Paradicsomos-mozzarellás hajtott pizza / Folded pizza tomato mozzarella | | 150|333|5|2|55|2|13
+Csirkés pesztós schiacciata / Chicken pesto schiacciata | u | 162|365|14|3|42|5|14
+Guacamole schiacciata / Guacamole schiacciata | u | 195|378|16|6,1|42|4|15
+Trüffeles sonkás camembert-es schiacciata / Truffle mayo ham camembert schiacciata | u | 171|413|19|6,7|38|3|22
+Lazacos bagel / Salmon bagel | | 178|403|7|2|30|4|11
+Tonhalas bagel / Tuna bagel | | 171|239|7|1|30|3|12
+Croissant vajjal és dzsemmel / Croissant with butter and jam | | 85|327|20|13|54|12|4
+Sajtos-sonkás croissant / Ham and cheese croissant | | 130|290|15|10|28|5|15
+Tojásos-baconös croissant / Egg and bacon croissant | | 152|400|24|12|28|5|17
+Olasz szalámis croissant / Italian salami croissant | | 108|345|22|13,5|28|5|14
+Sárgabarack-krémes croissant / Apricot crème croissant | | 95|309|11,7|7,2|46,2|20,3|4,3
+Mogyorókrémes croissant / Hazelnut crème croissant | | 95|406|23,5|9,5|41,6|18,7|6,2
+Pisztáciakrémes croissant / Pistachio crème croissant | | 95|405|22,8|9,5|43,9|20,4|5,8
+Tejsodókrémes croissant / Custard crème croissant | | 95|314|14,1|8,1|41,7|14|4,6
+Tojásfehérje omlettes tortilla / Egg white omelette wrap | | 230|415|12|4|49|10|14
+Grillcsirkemelles tortilla / Grilled chicken wrap | | 230|475|15|5|64|10|21
+Szezonális gyümölcssaláta / Seasonal fruit salad | | 240|101|0|0|24|20|2
+Zöldségszeletek humusszal / Hummus dip with veggie sticks | | 210|275|19|2|17|5|7
+Epres tápióka puding / Strawberry tapioca pudding | | 200|259|13|7|31|10|4
+Narancsos-barackos tápióka puding / Orange-apricot tapioca pudding | | 200|268|13|7|34|12|8
+Joghurt meggyes granolával / Yogurt with sour cherry granola | | 170|216|9|4|26|12|6
+Protein tál / Protein pot | | 200|198|7|5|26|5|6
+Fekete rizspuding / Black rice pudding | | 200|278|3|3|55|13|6
+Arrabbiata tészta / Pasta arrabbiata | | 220|253|7|3|36|4|12
+Pesztós-csirkés tészta / Pesto chicken pasta | | 220|532|24|5|61|4|18
+Tonhalas tésztasaláta / Tuna pasta salad | | 220|233|6|1|33|4|11
+Karamellás waffel / Caramel waffle | | 39|176|8|5|24|14|1
+Starbucks csokoládé érme / Starbucks chocolate coin | u | 23|120|6|4|14|14|1
+Csokoládés kekszrúd / Cookie straw | | 20|90|3|2|15|9|1
+Narancsos-kakaós szelet / Orange-cocoa bar | | 50|218|11|2,5|22,5|20|4,5
+Vaníliás-bogyós gyümölcsös szelet / Vanilla berry bar | | 50|215|11|1|21,5|21,5|5
+Almás-fahéjas szelet / Apple cinnamon bar | | 50|209|9,5|1|23,5|23|4,5
+Mandulatorta karamellel / Almond cake caramel | | 80|380|26|8|33|28|5
+Spenótos-fetás börek / Spinach feta börek | | 80|287|18|3|25|1|6
+Csirkés börek szezámmaggal / Chicken börek with sesame | | 80|280|16|2|27|3|7
+Almás-morzsás sajttorta / Apple crumble cheesecake | | 133|452|29|17|41|26|6
+Pastel de nata / Pastel de nata | | 50|135|5|3|19|11|3
+Passiógyümölcsös-málnás raw torta / Raw cake passionfruit raspberry | | 65|268|19|10|18|15|5
+Vegán citromos-cseresznyés muffin / Vegan lemon-cherry muffin | | 135|466|20|2|61|35|8
+Sóskaramellás brownie pite / Salted caramel brownie tart | | 92|386|23|13|40|29|4
+Red velvet torta / Red velvet cake | | 112|432|26|9|44|29|5
+Mézeskalácsos fánk / Gingerbread donut | | 69|320|19|9|32|12|4
+Pisztáciás latte kalács / Pistachio latte loaf | | 100|429|25|9|43|27|7
+Pisztáciás-málnás torta / Pistachio lover cake | | 178|616|32|15|71|15|10
+Pisztáciás-ricottás muffin / Pistachio ricotta muffin | | 115|406|20|4|48|22|8
+Eperszív / Strawberry heart | | 75|313|19|2|32|19|3
+Pisztáciás fehércsokis keksz / Pistachio white chocolate cookie | | 105|479|23|11|57|36|9
+Pisztáciás muffin / Pistachio muffin | | 115|468|25|3|51|28|9
+Pisztáciás fánk / Pistachio donut | | 77|359|22|9|34|19|5
+Cseresznyés-krémes muffin / Cherry cream muffin | | 145|396|16|2|56|35|7
+Duplacsokis lávasüti / Double chocolate lava cake | | 80|342|16|9|46|28|4
+Sóskaramellás lávasüti / Salted caramel lava cake | | 80|314|10|5|51|32|5
+Spenótos-sajtos empanada / Spinach cheese empanada | | 95|224|11|8|19|1|10
+Marhahúsos empanada / Beef empanada | | 95|216|10|5|20|1|11
+Ube-vaníliás matcha kalács / Ube vanilla matcha loaf | | 100|396|21|7|46|31|5
+Áfonyás tekercs / Blueberry roll | | 120|343|17|10|51|5|7
+Cseresznyés matchás muffin / Matcha cherry muffin | | 130|472|22|4|63|38|5
+Répás-diós fahéjas tekercs / Carrot walnut cinnamon roll | | 120|462|19|10|61|24|8

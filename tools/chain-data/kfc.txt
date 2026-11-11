@@ -1,0 +1,85 @@
+# KFC Magyarország tápérték táblázat (AmRest), kfc_hun_tapertek_wolt.pdf; allergen notice dated 2026-10-28.
+# name hu / en | flags | portion kJ kcal kcal% fat fat% sat sat% carb carb% sugar sugar% fibre protein protein% salt salt%
+# flags: u = name is unique to KFC (answers without "kfc"); pcs = one piece per portion
+Zinger / Zinger | u | 170 1863 445 22 22,1 32 3,2 16 36,2 14 4,8 5 1 24,8 50 3 50
+Dupla Zinger / Double Zinger | u | 240 2472 590 30 29 41 5 25 41 16 5 6 0 41 82 4,5 75
+Grander / Grander | u | 300 3162 756 38 38 55 8 42 61 23 15 16 n/a 37 73 6,5 109
+Dupla Grander / Double Grander | u | 415 4258 1017 51 50 71 8 42 83 32 15 17 n/a 58 116 5,5 91
+Kentucky Gold Grander / Kentucky Gold Grander | u | 320 3520 842 42 45 64 8 42 78 30 14 16 n/a 36 72 4,99 83
+Kentucky Gold Wrapper / Kentucky Gold Wrapper | u | 350 4995 1197 60 77 110 15 77 91 35 16 18 n/a 42 84 7,35 123
+Sajtburger / Cheeseburger | | 125 1371 326 16 15 21 8 41 32 12 8,2 9 n/a 16 31 2,6 44
+iTwist Classic / iTwist Classic | u a=itwist;i twist | 132 1566 284 14 15 22 2,5 13 27 10 1,4 2 2 9 18 1,1 18
+Twister Classic / Twister Classic | u a=twister;kfc twister | 226 2260 540 27 28 40 4,7 24 51,5 22 3,8 4 2,9 19,4 43 2,9 49
+Qurrito / Qurrito | u | 230 2893 692 35 38 54 14 71 53 20 11 12 1,8 35 69 3,73 62
+Halloumi Burger / Halloumi Burger | u | 280 2962 708 35 39 56 20 99 55 21 11,8 13 n/a 31 61 5,12 85
+Halloumi Twister / Halloumi Twister | u | 260 2899 697 35 44 63 19 96 44 17 5,5 6 n/a 28 57 4,63 77
+Kentucky alsócomb / Kentucky drumstick | u pcs | 69 666 159 8 9,1 13 1,7 9 4,7 2 0,3 0 n/a 14 29 1,3 22
+Kentucky csirkemell / Kentucky breast | u pcs a=kentucky mell | 100 990 236 12 11,5 16 2,9 15 7,8 3 0,4 n/a n/a 25,4 56 1,5 25
+Kentucky melleshát / Kentucky rib | u pcs | 150 1369 326 16 15,3 22 4,2 21 10,9 5 0,6 1 n/a 36,4 81 1,9 32
+Kentucky felsőcomb / Kentucky thigh | u pcs | 111 1258 301 15 19,7 28 5,4 27 9,3 4 0,4 n/a n/a 21,8 48 1,3 22
+Kentucky szárny / Kentucky wing | u pcs | 65 772 185 9 11,2 16 2,8 14 6,5 3 0,3 n/a n/a 14,5 32 1,2 21
+Hot Shots falatok / Hot Shots bites | u a=hot shots;hotshots;hot shot | 90 1212 291 15 18 26 4,2 21 14 5 0,5 1 0,9 17 33 1,2 20
+Hot&Spicy Strips / Hot&Spicy strips | u pcs a=strips;csipos strips;hot strips;kfc strips | 32 384 92 5 5 7 1,1 5 3,2 1 0,1 0 n/a 6,6 13 1,3 22
+Hot Wings csípős csirkeszárny / Hot Wings | u pcs a=hot wings;hot wing;csipos szarny kfc | 36 477 114 6 7,4 11 1,4 7 5 2 0,2 0 n/a 7 14 0,9 14
+Sajtos toast / Cheese toast | | 120,7 977 233 14 11,1 19 2,6 15 23,6 11 2,8 4 0,5 9,6 23 0,83 17
+Deluxe toast / Deluxe toast | | 223,4 1990 475,8 24 11,3 36 3,55 40 16,1 14 2,4 6 1 11,2 50 0,97 36
+Reggeli Qurrito / Morning Qurrito | u | 200,5 2003 481 24 15,3 44 6,65 67 13,8 11 1,3 3 1,1 11,1 45 1,1 34
+California Sun Poké Bowl rizzsel, Hot Shots / California Sun Poké Bowl, rice, Hot Shots | u | 312 2325 554 28 24 34 5,5 28 64 24 17 19 n/a 21 43 3,78 63
+California Sun Poké Bowl rizzsel, halloumi / California Sun Poké Bowl, rice, halloumi | u | 322 2352 559 28 29 42 18 88 50 19 17 19 n/a 24 48 4,58 76
+New Mexico Poké Bowl rizzsel, Hot Shots / New Mexico Poké Bowl, rice, Hot Shots | u | 300 2703 664 33 35 50 13,4 67 56 22 9 9 n/a 31 62 3,57 60
+New Mexico Poké Bowl rizzsel, halloumi / New Mexico Poké Bowl, rice, halloumi | u | 310 2730 669 33 40 58 26 128 43 17 8,5 10 n/a 34 68 4,37 73
+Sweetest Chili Poké Bowl rizzsel, Hot Shots / Sweetest Chili Poké Bowl, rice, Hot Shots | u | 342 2088 515 26 21 29 4,6 23 63 24 12 13 n/a 21 43 2,45 41
+Sweetest Chili Poké Bowl rizzsel, halloumi / Sweetest Chili Poké Bowl, rice, halloumi | u | 352 2115 520 26 25,9 37 16,7 84 49,6 19 12,3 14 n/a 24,3 49 3,25 54
+Édes csili lunchbox kicsi / Sweet Chili Lunchbox small | u | 260 1955 465 23 16 22 1,8 9 65 25 13 14 n/a 19 38 3,07 51
+Keleti teriyaki lunchbox kicsi / Orient Teriyaki Lunchbox small | u | 260 1997 476 24 15 22 2 10 73 28 17 19 n/a 13 27 3,85 64
+Édes csili lunchbox nagy / Sweet Chili Lunchbox large | u | 330 2482 591 30 20 28 2,3 12 83 32 17 18 n/a 24 38 3,89 65
+Keleti teriyaki lunchbox nagy / Orient Teriyaki Lunchbox large | u | 330 2534 604 30 19 28 2,9 13 93 36 21 24 n/a 17 34 4,88 81
+Káposztasaláta / Coleslaw | | 140 834 202 10 15 21 1 6 14,3 5 14,3 16 n/a 1,6 3 0,59 10
+Uborkasaláta / Cucumber salad | | 100 183 43 2 0,1 0 0 0 10,2 4 9,2 10 n/a 0,5 1 1,3 22
+Kentucky Gold Fries / Kentucky Gold Fries | u a=kentucky gold krumpli | 215 2598 622 32 31,6 47 10,4 57 77,1 30 6,8 8 7,3 17 n/a 1,6 29
+Főtt kukorica / Corn on the cob | | 125 470 139 7 2,9 4 0,3 1 25 9 2,9 3 2,8 5,3 0 0 0
+Kis sült burgonya / Small fries | | 70 748 179 9 7,7 11 1,7 8 23,7 9 0,1 0 1,8 2,7 5 0,4 7
+Normál sült burgonya / Normal fries | | 105 1122 268 13 11,6 17 2,5 13 35,5 14 0,2 0 2,7 4,1 8 0,6 11
+Sült burgonya kosár / Bucket of fries | | 210 2245 536 27 23 33 5 25 71 27 0,4 0 5 8 16 1,3 21
+Hagymakarika 4 db / Onion rings 4 pcs | | 72 893 213 11 11 15 4 18 30 11 3,5 4 n/a 2 4 0,97 16
+Hagymakarika 15 db / Onion rings 15 pcs | | 270 3348 799 40 39 56 13 66 112 43 13,2 15 n/a 8 15 3,65 61
+Churros csokoládés / Churros chocolate | | 87 1150 274 14 10,8 0,2 1,3 0,1 40,7 0,2 25,5 0,3 n/a 2,8 6 1,12 19
+Churros toffee / Churros toffee | | 87 843 199 10 1,6 0 0,5 0 42,8 0,2 21,9 0,2 n/a 2,8 6 1,06 18
+Churros epres / Churros strawberry | | 87 656 155 8 0,3 0 0 0 34,7 0,1 17,4 0,2 n/a 2,3 5 1,05 17
+Shake vanília kicsi / Vanilla shake small | | 180 945 216 11 6,3 9 4,5 23 36 14 29 32 n/a 5,6 11 0,23 4
+Shake vanília normál / Vanilla shake normal | | 300 1418 324 16 9,5 14 6,8 34 54 21 43 48 n/a 8,4 17 0,35 6
+Shake vanília nagy / Vanilla shake large | | 500 2100 480 24 14 20 10 50 80 31 64 71 n/a 12 25 0,52 9
+Shake epres kicsi / Strawberry shake small | | 180 988 234 12 5 7 3,4 17 42 16 34 38 0 5 10 0,23 4
+Shake epres normál / Strawberry shake normal | | 300 1482 351 18 8 11 5,1 26 65 26 51 57 0 7,6 15 0,35 6
+Shake epres nagy / Strawberry shake large | | 500 2251 533 27 11 16 7,8 39 98 38 78 87 0 11 23 0,53 9
+Shake csokoládés kicsi / Chocolate shake small | | 180 1373 326 16 10 15 7,5 38 52 20 35 38 n/a 6,5 13 0,25 9
+Shake csokoládés normál / Chocolate shake normal | | 300 2022 480 24 15 22 11 56 76 29 51 57 n/a 9,6 19 0,4 7
+Shake csokoládés nagy / Chocolate shake large | | 500 3128 742 37 24 34 17 86 118 45 80 88 n/a 15 30 0,62 10
+Shake tejkaramellás kicsi / Fudge shake small | | 180 1177 279 14 6,5 9 4,7 23 50 19 44 49 n/a 5,2 10 0,27 5
+Shake tejkaramellás normál / Fudge shake normal | | 300 1733 411 21 10 14 6,9 34 74 28 65 73 n/a 7,6 15 0,4 7
+Shake tejkaramellás nagy / Fudge shake large | | 500 2681 636 32 15 21 11 53 114 44 101 113 n/a 12 24 0,62 10
+Shake mogyoróvajas kicsi / Peanut butter shake small | | 180 1305 311 16 15 22 5,8 29 33 13 30 33 n/a 12 25 0,34 6
+Shake mogyoróvajas normál / Peanut butter shake normal | | 300 1776 424 21 21 29 7,8 39 43 16 43 47 n/a 17 34 0,47 8
+Shake mogyoróvajas nagy / Peanut butter shake large | | 500 2828 675 34 33 47 12 62 70 27 66 74 n/a 27 54 0,74 12
+Protein shake vanília / Vanilla protein shake | u | 400 2224 528 26 14 21 10,3 51 63 24 53,4 59 n/a 36 73 0,56 9
+Amerikai palacsinta / American pancakes | | 190 2673 638,4 32 17,5 48 7,83 74 39,6 29 23,2 49 1,6 4,3 16 1,03 33
+Tejszínhab / Whipped cream | | 18 220 52 3 4,7 7 3,4 12 2 1 2 2 n/a 0,4 1 0,02 0
+BBQ szósz / BBQ dip | | 25 164 39 0 0 0 0 0 9 3 7,3 8 0 0,5 1 0,5 8
+Fokhagymás majonéz / Garlic mayonnaise | | 25 516 125 6 13 18 1 5 1,8 1 1,1 1 0 0,6 1 0,4 6
+Ketchup / Ketchup | | 25 157 37 2 0 0 0 0 8,7 3 8,8 10 0 0,5 1 0,6 10
+Kentucky Gold szósz / Kentucky Gold dip | u | 25 446 108 5 9 13 1 3 6,5 3 5,3 6 0 0,2 0 0,45 8
+Majonéz / Mayonnaise | | 25 506 123 6 13 19 1 5 1,1 1 1 1 0 0,2 0 0,3 5
+Salsa szósz / Salsa dip | | 25 97 23 1 0,05 0 0,03 0 5,3 2 3,5 4 0 0,2 0 0,55 9
+Édes csili szósz / Sweet chili dip | | 25 126 30 1 0 0 0 0 7,2 3 6,9 8 0 0,2 0 0,4 7
+Narancslé 0,33 l / Orange juice 0.33 l | ml | 330 620 145 7 1 1 0 0 32 12 28 31 n/a 2 4 0,1 2
+Almalé 0,33 l / Apple juice 0.33 l | ml | 330 630 149 7 1 1 0 0 36 14 36 40 n/a 1 1 0,1 2
+Refill Pepsi 0,3 l / Refill Pepsi 0.3 l | ml | 300 546 129 6 0 0 0 0 32 12 32 35 n/a 0 0 0,08 1
+Refill 7Up 0,3 l / Refill 7Up 0.3 l | ml | 300 536 129 6 0 0 0 0 34 13 33 37 n/a 0 0 0,1 1
+Lipton Ice Tea 0,33 l / Lipton Ice Tea 0.33 l | ml | 330 271 63 3 0 0 0 0 15 8 15 17 n/a 0 0 0,17 3
+Pepsi Max 0,33 l / Pepsi Max 0.33 l | ml | 330 6,6 3,3 0 0 0 0 0 0 0 0 0 n/a 0 0 0,03 1
+Café latte kicsi / Caffè latte small | ml | 300 613 147 7 8 11 n/a n/a 12 4 n/a n/a 0 7,9 16 0 0
+Café latte nagy / Caffè latte large | ml | 400 818 196 10 10 14 n/a n/a 16 6 n/a n/a 0 11 21 0 0
+Ice latte / Iced latte | ml | 360 382 90,6 5 3,1 4 2 10 9,4 4 9,4 10 6,6 13 n/a 0,2 3
+Cappuccino / Cappuccino | ml | 200 284 68 3 1,9 3 1,3 6 7,4 4 6 4 n/a 5,1 12 0,10 2
+Bacon szelet / Bacon slice | | 20 213 51 3 4 6 2 9 0 0 0 0 n/a 3 6 0,3 6
+Sajtszelet / Cheese slice | | 12 162 39 2 3 4 2 10 0 0 0,4 0 n/a 2 5 0,4 7

@@ -17,8 +17,8 @@
   if(!document.querySelector('link[href="css/swim-training.css"]')){const link=document.createElement('link');link.rel='stylesheet';link.href='css/swim-training.css';document.head.append(link);}
   // A previously cached HTML shell may receive this newer app script before its new script tags.
   // Load the release metadata before initializing storage or installing event handlers.
-  if (!window.SwimTraining || !window.Store?.supportsSwimTraining || !window.FoodEstimates || !window.I18N?.en?.aiUseEstimates || !window.BellozzoFoods || !window.FoodQuery?.bellozzo || !window.FoodAI?.bellozzo || !window.Store?.supportsBellozzo || !window.I18N?.en?.restaurantChoose || !window.FoodMemory || window.ChoiceMenus?.version!==3 || !window.FoodQuery?.foodMemory || !window.RESTAURANT_FOODS || !window.FoodQuery?.restaurants || !window.FoodQuery?.inlineMeals || !window.FoodQuery?.productEstimates || !window.FoodAI?.productEstimates || !window.I18N?.en?.aiEditText || !window.I18N?.en?.updateDownloadingPct || !window.I18N?.en?.askHowMuch || !window.FoodAI?.foodMemory || window.FoodProducts?.version!==3 || !window.Store?.supportsFoodMemory || !window.I18N?.en?.foodMemoryTitle || !window.Wearable || !window.WorkoutEnergy?.independentBudget || !window.RecipeGoals || window.GOAL_RECIPES_VERSION !== 1 || !window.I18N?.en?.recipeGoalTitle || window.FOOD_LEXICON?.version!==2 || !window.FoodQuery || !window.OvernightOats || !window.ExerciseSearch || !window.EXERCISE_ALIASES || window.EXERCISE_LIBRARY_VERSION !== 2 || !window.I18N?.en?.exClearFilters || !window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsFoodMemory || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
-    const src = !window.SwimTraining ? 'js/swim-training.js' : !window.Store?.supportsSwimTraining ? 'js/store.js' : !window.FoodEstimates ? 'js/food-estimates.js' : !window.I18N?.en?.aiUseEstimates ? 'js/i18n.js' : !window.BellozzoFoods ? 'data/bellozzo-foods.js' : !window.FoodQuery?.bellozzo ? 'js/food-query.js' : !window.FoodAI?.bellozzo ? 'js/ai.js' : !window.Store?.supportsBellozzo ? 'js/store.js' : !window.I18N?.en?.restaurantChoose ? 'js/i18n.js' : !window.FoodMemory ? 'js/food-memory.js' : window.ChoiceMenus?.version!==3 ? 'js/choice-menus.js' : !window.FoodQuery?.foodMemory ? 'js/food-query.js' : !window.RESTAURANT_FOODS ? 'data/restaurant-foods.js' : !window.FoodQuery?.restaurants ? 'js/food-query.js' : !window.FoodQuery?.inlineMeals ? 'js/food-query.js' : !window.FoodQuery?.productEstimates ? 'js/food-query.js' : !window.FoodAI?.productEstimates ? 'js/ai.js' : !window.I18N?.en?.aiEditText ? 'js/i18n.js' : !window.I18N?.en?.updateDownloadingPct ? 'js/i18n.js' : !window.I18N?.en?.askHowMuch ? 'js/i18n.js' : !window.FoodAI?.foodMemory ? 'js/ai.js' : window.FoodProducts?.version!==3 ? 'js/food-products.js' : !window.Store?.supportsFoodMemory ? 'js/store.js' : !window.I18N?.en?.foodMemoryTitle ? 'js/i18n.js' : !window.Wearable ? 'js/wearable.js' : !window.WorkoutEnergy?.independentBudget ? 'js/workout-energy.js' : !window.RecipeGoals ? 'js/recipe-goals.js' : window.FOOD_LEXICON?.version!==2 ? 'data/food-lexicon.js' : !window.FoodQuery ? 'js/food-query.js' : !window.OvernightOats ? 'js/overnight-oats.js' : window.GOAL_RECIPES_VERSION !== 1 ? 'data/goal-recipes.js' : !window.I18N?.en?.recipeGoalTitle ? 'js/i18n.js' : !window.ExerciseSearch ? 'js/exercise-search.js' : !window.EXERCISE_ALIASES ? 'data/exercise-aliases.js' : window.EXERCISE_LIBRARY_VERSION !== 2 ? 'data/library-expansion.js' : !window.I18N?.en?.exClearFilters ? 'js/i18n.js' : !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsFoodMemory ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
+  if (!window.RoutineKinds || !window.Store?.supportsRoutineKinds || !window.CHAIN_MENUS || !window.STORE_PRODUCTS || window.RESTAURANT_FOODS?.version!==2 || !window.FoodQuery?.storeBrands || !window.I18N?.en?.aiProductFound || !window.I18N?.en?.routineKindTitle || !window.SwimTraining || !window.Store?.supportsSwimTraining || !window.FoodEstimates || !window.I18N?.en?.aiUseEstimates || !window.BellozzoFoods || !window.FoodQuery?.bellozzo || !window.FoodAI?.bellozzo || !window.Store?.supportsBellozzo || !window.I18N?.en?.restaurantChoose || !window.FoodMemory || window.ChoiceMenus?.version!==3 || !window.FoodQuery?.foodMemory || !window.RESTAURANT_FOODS || !window.FoodQuery?.restaurants || !window.FoodQuery?.inlineMeals || !window.FoodQuery?.productEstimates || !window.FoodAI?.productEstimates || !window.I18N?.en?.aiEditText || !window.I18N?.en?.updateDownloadingPct || !window.I18N?.en?.askHowMuch || !window.FoodAI?.foodMemory || window.FoodProducts?.version!==3 || !window.Store?.supportsFoodMemory || !window.I18N?.en?.foodMemoryTitle || !window.Wearable || !window.WorkoutEnergy?.independentBudget || !window.RecipeGoals || window.GOAL_RECIPES_VERSION !== 1 || !window.I18N?.en?.recipeGoalTitle || window.FOOD_LEXICON?.version!==2 || !window.FoodQuery || !window.OvernightOats || !window.ExerciseSearch || !window.EXERCISE_ALIASES || window.EXERCISE_LIBRARY_VERSION !== 2 || !window.I18N?.en?.exClearFilters || !window.CookArt || !window.RECOVERY_PROGRAMS || !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') || !window.I18N?.en?.recoveryReady || !window.Store?.supportsStability || !window.I18N?.en?.stabilityTitle || !window.ICAL || !window.DailyPlanner || !window.Store?.supportsPlanner || !window.Cloud?.supportsFoodMemory || !window.I18N?.en?.plannerTitle || !window.Stories || !window.Competition || !window.RoutineShare?.sharingUpdates || !window.AppUpdates || !window.AccentTheme || !window.HueWheel || !window.FoodVolume || !window.RoutineTemplates?.genericFiveDay || !window.WorkoutEnergy || !window.PersonalSetup || !window.GYM_RELEASE || !window.OfficeLocal || !window.PlanSheet || !window.PDFLocal || !window.PlanImport || !window.StrengthRanks?.lowWeights || (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) || !window.Social?.consistency || !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups || !window.Rides || (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) || !window.ModalLock) {
+    const src = !window.RoutineKinds ? 'js/routine-kinds.js' : !window.Store?.supportsRoutineKinds ? 'js/store.js' : !window.CHAIN_MENUS ? 'data/chain-menus.js' : !window.STORE_PRODUCTS ? 'data/store-products.js' : window.RESTAURANT_FOODS?.version!==2 ? 'data/restaurant-foods.js' : !window.FoodQuery?.storeBrands ? 'js/food-query.js' : !window.I18N?.en?.aiProductFound ? 'js/i18n.js' : !window.I18N?.en?.routineKindTitle ? 'js/i18n.js' : !window.SwimTraining ? 'js/swim-training.js' : !window.Store?.supportsSwimTraining ? 'js/store.js' : !window.FoodEstimates ? 'js/food-estimates.js' : !window.I18N?.en?.aiUseEstimates ? 'js/i18n.js' : !window.BellozzoFoods ? 'data/bellozzo-foods.js' : !window.FoodQuery?.bellozzo ? 'js/food-query.js' : !window.FoodAI?.bellozzo ? 'js/ai.js' : !window.Store?.supportsBellozzo ? 'js/store.js' : !window.I18N?.en?.restaurantChoose ? 'js/i18n.js' : !window.FoodMemory ? 'js/food-memory.js' : window.ChoiceMenus?.version!==3 ? 'js/choice-menus.js' : !window.FoodQuery?.foodMemory ? 'js/food-query.js' : !window.RESTAURANT_FOODS ? 'data/restaurant-foods.js' : !window.FoodQuery?.restaurants ? 'js/food-query.js' : !window.FoodQuery?.inlineMeals ? 'js/food-query.js' : !window.FoodQuery?.productEstimates ? 'js/food-query.js' : !window.FoodAI?.productEstimates ? 'js/ai.js' : !window.I18N?.en?.aiEditText ? 'js/i18n.js' : !window.I18N?.en?.updateDownloadingPct ? 'js/i18n.js' : !window.I18N?.en?.askHowMuch ? 'js/i18n.js' : !window.FoodAI?.foodMemory ? 'js/ai.js' : window.FoodProducts?.version!==3 ? 'js/food-products.js' : !window.Store?.supportsFoodMemory ? 'js/store.js' : !window.I18N?.en?.foodMemoryTitle ? 'js/i18n.js' : !window.Wearable ? 'js/wearable.js' : !window.WorkoutEnergy?.independentBudget ? 'js/workout-energy.js' : !window.RecipeGoals ? 'js/recipe-goals.js' : window.FOOD_LEXICON?.version!==2 ? 'data/food-lexicon.js' : !window.FoodQuery ? 'js/food-query.js' : !window.OvernightOats ? 'js/overnight-oats.js' : window.GOAL_RECIPES_VERSION !== 1 ? 'data/goal-recipes.js' : !window.I18N?.en?.recipeGoalTitle ? 'js/i18n.js' : !window.ExerciseSearch ? 'js/exercise-search.js' : !window.EXERCISE_ALIASES ? 'data/exercise-aliases.js' : window.EXERCISE_LIBRARY_VERSION !== 2 ? 'data/library-expansion.js' : !window.I18N?.en?.exClearFilters ? 'js/i18n.js' : !window.CookArt ? 'js/cook-art.js' : !window.RECOVERY_PROGRAMS ? 'data/recovery.js' : !window.RECIPES?.items?.some(r=>r.id==='clip-protein-banana-muffins') ? 'data/clip-recipes.js' : !window.I18N?.en?.recoveryReady ? 'js/i18n.js' : !window.Store?.supportsStability ? 'js/store.js' : !window.I18N?.en?.stabilityTitle ? 'js/i18n.js' : !window.ICAL ? 'vendor/ical/ical.min.js' : !window.DailyPlanner ? 'js/daily-planner.js' : !window.Store?.supportsPlanner ? 'js/store.js' : !window.Cloud?.supportsFoodMemory ? 'js/cloud.js' : !window.I18N?.en?.plannerTitle ? 'js/i18n.js' : !window.Stories ? 'js/stories.js' : !window.MuscleRanks ? 'js/muscle-ranks.js' : !window.Rides ? 'js/rides.js' : !window.Competition ? 'js/competition.js' : !window.RoutineShare?.sharingUpdates ? 'js/routine-share.js' : !window.AppUpdates ? 'js/app-updates.js' : !window.AccentTheme ? 'js/accent-theme.js' : !window.HueWheel ? 'js/hue-wheel.js' : !window.FoodVolume ? 'js/food-volume.js' : !window.RoutineTemplates?.genericFiveDay ? 'js/routine-templates.js' : !window.WorkoutEnergy ? 'js/workout-energy.js' : !window.PersonalSetup ? 'js/personal-setup.js' : !window.GYM_RELEASE ? 'js/release.js' : !window.OfficeLocal ? 'js/office-local.js' : !window.PlanSheet ? 'js/plan-sheet.js' : !window.PDFLocal ? 'js/pdf-local.js' : !window.PlanImport ? 'js/plan-import.js' : !window.StrengthRanks?.lowWeights ? 'js/strength-ranks.js' : (!window.Profile?.cleanStyle || !window.Profile?.coverPhotos) ? 'js/profile.js' : !window.Social?.consistency ? 'js/social.js' : !window.Cloud?.consistencyRpc || !window.Cloud?.supportsMealGroups ? 'js/cloud.js' : (!window.Store?.supportsMaterial || !window.Store?.retiredPersonalSplit || !window.Store?.supportsRides || !window.Store?.supportsMealGroups) ? 'js/store.js' : 'js/modal-lock.js';
     const script = document.createElement('script');
     // A distinct URL avoids re-executing the document's cached older script.
     script.src=src+'?release='+encodeURIComponent(window.GYM_RELEASE?.cacheId||'latest');
@@ -209,7 +209,7 @@
     return m;
   }
   function nextRoutine() {
-    const all = D().routines.filter(r=>!RoutineTemplates.isComplex(r)&&!r.focus); if (!all.length) return null;
+    const all = D().routines.filter(r=>!RoutineTemplates.isComplex(r)&&!r.focus&&!isKind(r)); if (!all.length) return null;
     const must = all.filter(r => !r.opt), rs = must.length ? must : all;                  // optional days are never offered as "next"
     const ws = D().workouts; for (let i = ws.length - 1; i >= 0; i--) { const k = rs.findIndex(r => r.id === ws[i].rid); if (k >= 0) return rs[(k + 1) % rs.length]; }
     return rs[0];
@@ -490,6 +490,7 @@
     const grouped=new Set(groups.flatMap(g=>g.days.map(r=>r.id)));
     const individual=routines.filter(r=>!grouped.has(r.id));
     const tile=(r,p)=>{
+      if(isKind(r))return `<button class="rcard rtile ic-cardio kind-${r.kind}" data-a="r-open" data-id="${esc(r.id)}" aria-label="${esc(rName(r))}"><span class="r-ic">${r.kind==='swim'?IC.swim:IC.bike}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${esc(kindSummary(r))}</i></span>${IC.chev}</button>`;
       const ic=rIcon(r),name=rName(r),prefix=p&&p.name[L()]+' · ',label=prefix&&name.startsWith(prefix)?name.slice(prefix.length):name;
       return `<button class="rcard rtile ic-${ic}" data-a="r-open" data-id="${esc(r.id)}" aria-label="${esc(name)}"><span class="r-ic">${RICON[ic]}</span><span class="rc-t"><b>${esc(label)}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))} · ~${estMin(r)} ${esc(t('min'))}${r.opt?' · '+esc(t('optional')):''}</i></span>${IC.chev}</button>`;
     };
@@ -691,6 +692,7 @@
     let h = ride
       ? `<button class="hero ride-hero resume" data-a="ride-open"><small>${esc(t('rideInProgress'))}</small><strong data-rh="dist"></strong><span data-rh="time"></span></button>`
       : `<section class="hero ride-hero"><small>${esc(t('rideTitle'))}</small><strong>${esc(t('rideReady'))}</strong><span>${esc(t('rideLead'))}</span><button class="btn primary big" data-a="ride-start">${IC.play}${esc(t('rideStart'))}</button></section>`;
+    h += ridePlanCard();
     if (isIOS) h += `<p class="cap ride-ios">${esc(t('rideIOSNote'))}</p>`;
     h += `<div class="ride-totals"><div><small>${esc(t('rideThisWeek'))}</small>${rideTotals(rides, weekStart(Date.now()).getTime())}</div><div><small>${esc(t('rideThisMonth'))}</small>${rideTotals(rides, month.getTime())}</div></div>`;
     h += `<section class="card ride-sensors"><h3>${esc(t('rideSensors'))}</h3>`;
@@ -1345,7 +1347,7 @@
   }
   function shReviewEditor(){const fn=()=>{const d=ui.reviewDraft||{},target=d.target;return {title:t(d.edit?'editReview':'addReview'),html:`<form id="review-editor" data-f="profile-review" class="review-editor" data-id="${esc(target)}"><p class="review-recipient">@${esc(ui.friendProfile?.username||'')}</p><fieldset class="star-rating"><legend>${esc(t('rating'))}</legend><input type="hidden" name="rating" value="${d.rating||5}"><div role="group" aria-label="${esc(t('rating'))}">${[1,2,3,4,5].map(n=>`<button type="button" data-a="review-rating" data-v="${n}" aria-label="${n} / 5" aria-pressed="${d.rating===n}" class="${n<=(d.rating||5)?'selected':''}" ${ui.communityBusy?'disabled':''}>★</button>`).join('')}</div></fieldset><label class="fld"><span>${esc(t('writeReview'))}</span><textarea name="body" data-in="review-text" rows="4" maxlength="280" required placeholder="${esc(t('reviewPlaceholder'))}" ${ui.communityBusy?'disabled':''}>${esc(d.body||'')}</textarea></label><div class="review-meta"><span data-review-count>${(d.body||'').length} / 280</span></div>${ui.reviewError?`<p class="note warn" role="status">${esc(t(ui.reviewError))}</p>`:''}</form>`,foot:`<button class="btn primary" form="review-editor" ${ui.communityBusy?'disabled':''}>${esc(t(ui.communityBusy?'savingProfile':d.edit?'save':'postReview'))}</button>`};};fn.kind='review-editor';return fn;}
 
-  function shSharing(){const fn=()=>({title:t('manageSharing'),html:`<p class="cap">${esc(t('sharePrivacy'))}</p>${D().routines.map(r=>{const shared=Social.state.activity?.routines?.find(x=>x.source_id===r.id),current=RoutineShare.pack(r,D(),L()),changed=shared&&!RoutineShare.matches(current,shared.snapshot,L());return `<article class="sharing-row" data-source="${esc(r.id)}"><div class="sharing-heading"><h3>${esc(rName(r))}</h3><small class="sharing-state ${changed?'changed':''}">${esc(t(shared?changed?'shareChanges':'sharedCurrent':'routinePrivate'))}</small></div><p class="cap">${r.items.length} ${esc(pl(r.items.length,'exercises'))}${shared?' · '+esc(shared.snapshot.routine.name):''}</p>${ui.sharingNotice?.id===r.id?`<p class="sharing-notice" role="status">${IC.check}${esc(t(ui.sharingNotice.key))}</p>`:''}<div class="sharing-actions">${shared?`<button class="btn sm" data-a="routine-unshare" data-id="${esc(shared.id)}" ${ui.communityBusy?'disabled':''}>${esc(t('unshare'))}</button>`:''}<button class="btn sm ${shared?'':'primary'}" data-a="routine-share" data-id="${esc(r.id)}" ${ui.communityBusy||!r.items.length?'disabled':''}>${shared?IC.refresh:IC.plus}${esc(t(shared?'updateShared':'shareRoutine'))}</button></div></article>`;}).join('')||`<p class="cap">${esc(t('noRoutinesYet'))}</p>`}`});fn.kind='sharing';return fn;}
+  function shSharing(){const fn=()=>({title:t('manageSharing'),html:`<p class="cap">${esc(t('sharePrivacy'))}</p>${D().routines.filter(r=>!isKind(r)).map(r=>{const shared=Social.state.activity?.routines?.find(x=>x.source_id===r.id),current=RoutineShare.pack(r,D(),L()),changed=shared&&!RoutineShare.matches(current,shared.snapshot,L());return `<article class="sharing-row" data-source="${esc(r.id)}"><div class="sharing-heading"><h3>${esc(rName(r))}</h3><small class="sharing-state ${changed?'changed':''}">${esc(t(shared?changed?'shareChanges':'sharedCurrent':'routinePrivate'))}</small></div><p class="cap">${r.items.length} ${esc(pl(r.items.length,'exercises'))}${shared?' · '+esc(shared.snapshot.routine.name):''}</p>${ui.sharingNotice?.id===r.id?`<p class="sharing-notice" role="status">${IC.check}${esc(t(ui.sharingNotice.key))}</p>`:''}<div class="sharing-actions">${shared?`<button class="btn sm" data-a="routine-unshare" data-id="${esc(shared.id)}" ${ui.communityBusy?'disabled':''}>${esc(t('unshare'))}</button>`:''}<button class="btn sm ${shared?'':'primary'}" data-a="routine-share" data-id="${esc(r.id)}" ${ui.communityBusy||!r.items.length?'disabled':''}>${shared?IC.refresh:IC.plus}${esc(t(shared?'updateShared':'shareRoutine'))}</button></div></article>`;}).join('')||`<p class="cap">${esc(t('noRoutinesYet'))}</p>`}`});fn.kind='sharing';return fn;}
 
   function shFriend(){const fn=()=>{const r=ui.friendProfile,p=Profile.clean({username:r.username,displayName:r.display_name,bio:r.bio,avatar:r.avatar,coverPhoto:r.cover_photo,theme:r.theme,showcase:r.badges}),stats=r.stats||{},earned=Profile.badges.filter(b=>(stats.badges||[]).includes(b.id)&&p.showcase.includes(b.id)).map(b=>({...b,earned:true}));return {title:'@'+p.username,html:`<section class="profile-cover theme-${p.theme} cover-${esc(r.cover_style||'glow')}"${colorStyle(p)}>${coverPhoto(p,{cover:r.cover_style})}<div class="profile-identity">${Stories.state.media[r.user_id]?.stories?.length?`<button class="story-ring cover-ring${Stories.groupSeen({items:Stories.state.media[r.user_id].stories})?' seen':''}" data-a="story-user" data-id="${esc(r.user_id)}" aria-label="${esc(t('storyOf',p.displayName||p.username))}">${avatar(p,false,false)}</button>`:avatar(p,false,true)}<div><h2>${esc(p.displayName||p.username)}</h2><p>@${esc(p.username)}</p></div></div><p class="profile-bio">${esc(p.bio)}</p><div class="profile-showcase">${earned.map(b=>badgeChip(b,false)).join('')}</div></section><div class="profile-stats friend-profile-stats"><div><b>${compact(stats.score||0)}</b><small>${esc(t('weeklyPoints'))}</small></div><div><b>${stats.days||0}</b><small>${esc(t('trainingDays'))}</small></div><div><b>${esc(stats.highest>=0?StrengthRanks.tiers[stats.highest+(Social.state.competitionReady?0:3)]?.[L()]||t('rankUnranked'):t('rankUnranked'))}</b><small>${esc(t('highestRank'))}</small></div></div>${mediaBlock(r.user_id,r.user_id===CL?.user?.id)}${ui.friendActivityError?`<p class="cap">${esc(t(ui.friendActivityError))}</p>`:activityView(ui.friendActivity,r.user_id,r.user_id===CL?.user?.id)}`};};fn.kind='friend-profile';return fn;}
 
@@ -1681,7 +1683,7 @@
     };
   }
   function shPickRoutine(exId) {
-    return () => ({ title: t('addToRoutine'), html: D().routines.filter(r=>!RoutineTemplates.isComplex(r)).map(r => `<button class="rcard" data-a="ex-routine-add" data-id="${esc(r.id)}" data-ex="${esc(exId)}"><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))}</i></span>${IC.plus}</button>`).join('') });
+    return () => ({ title: t('addToRoutine'), html: D().routines.filter(r=>!RoutineTemplates.isComplex(r)&&!isKind(r)).map(r => `<button class="rcard" data-a="ex-routine-add" data-id="${esc(r.id)}" data-ex="${esc(exId)}"><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))}</i></span>${IC.plus}</button>`).join('') });
   }
 
   /* ---------- routines ---------- */
@@ -1713,6 +1715,8 @@
   function shRoutine(id) {
     return () => {
       const r = getR(id); if (!r) return { title: '', html: '' };
+      if (isKind(r)) return { title: shortName(rName(r)), html: `<p class="lead kind-lead">${r.kind === 'swim' ? IC.swim : IC.bike}${esc(t('kind_' + r.kind))}</p><p class="cap">${esc(kindSummary(r))}</p>${kindBlocks(r)}<p class="cap">${esc(t(r.kind === 'swim' ? 'kindSwimNote' : 'kindRideNote'))}</p>`,
+        foot: `<button class="btn primary" data-a="w-start" data-id="${esc(r.id)}">${esc(t(r.kind === 'swim' ? 'kindStartSwim' : 'kindStartRide'))}</button><button class="btn" data-a="r-edit" data-id="${esc(r.id)}">${esc(t('edit'))}</button><button class="btn routine-remove" data-a="routine-remove" data-id="${esc(r.id)}" aria-label="${esc(t('deleteRoutine'))}">${IC.close}</button>` };
       const complex=RoutineTemplates.isComplex(r);
       const h = (r.sub ? `<p class="lead">${esc(r.sub[L()])}</p>` : '') + (r.info ? `<p class="cap rinfo">${esc(typeof r.info === 'object' ? r.info[L()] || r.info.en || '' : r.info)}</p>` : '') + `<p class="cap">${r.items.length} ${esc(pl(r.items.length,'exercises'))} · ${r.items.reduce((a, i) => a + i.sets, 0)} ${esc(pl(r.items.reduce((a, i) => a + i.sets, 0),'setsWord'))}${complex?'':' · ~'+estMin(r)+' '+esc(t('min'))}</p>${!complex?`<p class="cap">${esc(t('durationHint'))}</p>`:''}${prepRow('warm', { entries: r.items }, ` data-r="${esc(r.id)}"`)}${prepRow('cool', { entries: r.items }, ` data-r="${esc(r.id)}"`)}<div class="exlist prep-gap">` +
         r.items.map((it, i) => `<button class="exrow" data-a="ex-open" data-id="${esc(it.ex)}" data-r="${esc(r.id)}" data-i="${i}"><img src="${thumb(it.ex)}" alt="" loading="lazy" decoding="async"><span><b>${esc(itemName(it))}</b><i>${it.sets} × ${esc(bi(it.reps, r.id))}${it.rir ? ' · RIR ' + esc(it.rir) : ''} · ${esc(t('rest'))} ${clock(it.rest)}</i>${it.note ? `<i class="nt">${esc(bi(it.note, r.id))}</i>` : ''}</span>${IC.chev}</button>`).join('') + `</div>` +
@@ -1731,6 +1735,64 @@
         <button class="btn" data-a="re-add">${IC.plus}${esc(t('addExercise'))}</button>${r._old ? `<button class="btn" data-a="r-dup">${esc(t('saveCopy'))}</button>` : ''}${r._old ? `<button class="btn danger" data-a="r-del">${esc(t('deleteRoutine'))}</button>` : ''}`;
       return { title: r._old ? t('editRoutine') : t('newRoutine'), html: h, foot: `<button class="btn primary" data-a="re-save">${esc(t('save'))}</button>` };
     };
+  }
+  /* ---------- swim & ride routines: a type first, then the settings; the plan is built from them ---------- */
+  const isKind = r => !!r && (r.kind === 'swim' || r.kind === 'ride');
+  const nfmt = n => new Intl.NumberFormat(L() === 'hu' ? 'hu-HU' : 'en-GB', { maximumFractionDigits: 1 }).format(n);
+  const kindPlan = r => RoutineKinds[r.kind].plan(r.plan);
+  const swimText = () => SwimTraining.text[L()];
+  function kindDefaultName(r) {
+    const c = RoutineKinds[r.kind].clean(r.plan);
+    return t('kind_' + r.kind) + ' · ' + (r.kind === 'swim' ? swimText()[c.routine] : t('rideStyle_' + c.style));
+  }
+  function kindSummary(r) {
+    const p = kindPlan(r);
+    if (r.kind === 'swim') return p.fits ? `${nfmt(p.metres)} m · ${p.lengths} ${swimText().lengths} · ~${Math.ceil(p.elapsedSeconds / 60)} ${t('min')}` : `${p.config.minutes} ${t('min')}`;
+    return `${p.config.minutes} ${t('min')} · ${t('rideStyle_' + p.config.style)}`;
+  }
+  function kindBlocks(r) {
+    const p = kindPlan(r);
+    if (!p.fits) return `<p class="note warn kind-short">${esc(t('kindTooShort', p.minimumMinutes))}</p>`;
+    if (r.kind === 'swim') {
+      const st = swimText(), pool = p.config.pool;
+      return `<ol class="kind-blocks">${p.blocks.map(b => `<li data-block="${b.id}"><b>${esc(st[b.id])}</b><span>${b.reps} × ${b.lengths} ${esc(st.lengths)} · ${nfmt(b.reps * b.lengths * pool)} m</span><small>RPE ${esc(b.rpe)}/10${b.rest ? ' · ' + b.rest + ' s ' + esc(t('kindRest')) : ''}</small></li>`).join('')}</ol>`;
+    }
+    return `<ol class="kind-blocks">${p.blocks.map(b => `<li data-block="${b.id}"><b>${esc(t('rideBlock_' + b.id))}</b><span>${b.minutes} ${esc(t('min'))}${b.reps ? ' · ' + esc(t('rideIntervalLine', b.reps, b.on, b.off)) : ''}</span><small>${esc(t('rideZone', b.zone, b.rpe))} · ${esc(t('rideTalk_' + b.zone))}</small></li>`).join('')}</ol>`;
+  }
+  function shRoutineKind() {
+    return () => ({ title: t('routineKindTitle'), html: `<p class="lead">${esc(t('routineKindLead'))}</p><div class="kind-pick">${[['gym', RICON.full], ['swim', IC.swim], ['ride', IC.bike]].map(([k, ic]) => `<button class="rcard kind-card" data-a="r-kind" data-v="${k}"><span class="r-ic">${ic}</span><span class="rc-t"><b>${esc(t('kind_' + k))}</b><i>${esc(t('kind_' + k + 'Sub'))}</i></span>${IC.chev}</button>`).join('')}</div>` });
+  }
+  function shKindEdit() {
+    return () => {
+      const r = ui.kedit, c = r.plan, st = swimText();
+      const chips = (k, vals) => `<div class="kind-chips" role="group">${vals.map(([v, b, s]) => `<button type="button" data-a="ke-set" data-k="${k}" data-v="${v}" aria-pressed="${String(c[k]) === String(v)}"><b>${esc(b)}</b>${s ? `<small>${esc(s)}</small>` : ''}</button>`).join('')}</div>`;
+      const field = (k, label, min, max, hint) => `<label class="fld"><span>${esc(label)}</span><input type="number" inputmode="numeric" data-in="ke-num" data-k="${k}" min="${min}" max="${max}" value="${esc(c[k])}">${hint ? `<small>${esc(hint)}</small>` : ''}</label>`;
+      let h = `<label class="fld"><span>${esc(t('routineName'))}</span><input type="text" data-in="ke-name" value="${esc(r.name || '')}" placeholder="${esc(kindDefaultName(r))}" autocomplete="off" maxlength="80"></label>`;
+      if (r.kind === 'swim') {
+        h += `<p class="lbl">${esc(t('kindSession'))}</p>` + chips('routine', ['easy', 'foundation', 'intervals', 'breathing'].map(k => [k, st[k], st[k + 'Sub']]));
+        if (c.routine !== 'breathing') h += `<p class="lbl">${esc(st.stroke)}</p>` + chips('stroke', ['free', 'breast', 'back'].map(k => [k, st[k]]));
+        h += `<p class="lbl">${esc(st.pool)} · m</p>` + chips('pool', [25, 50].map(n => [n, n + ' m']));
+        h += `<div class="row2">${field('minutes', st.minutesLabel, 20, 59)}${field('pace', st.pace, 60, 600)}</div><p class="cap">${esc(st.paceHint)}</p>`;
+      } else {
+        h += `<p class="lbl">${esc(t('kindSession'))}</p>` + chips('style', RoutineKinds.ride.styles.map(k => [k, t('rideStyle_' + k), t('rideStyleSub_' + k)]));
+        h += field('minutes', t('rideMinutes'), 15, 300);
+        if (c.style === 'intervals') h += `<div class="row3">${field('reps', t('rideReps'), 1, 20)}${field('on', t('rideOn'), 1, 30)}${field('off', t('rideOff'), 1, 15)}</div>`;
+      }
+      h += `<p class="lbl">${esc(t('kindPreview'))}</p><div id="ke-preview">${kindBlocks(r)}</div><p class="cap">${esc(t(r.kind === 'swim' ? 'kindSwimNote' : 'kindRideNote'))}</p>`;
+      return { title: t(r._old ? 'editRoutine' : r.kind === 'swim' ? 'newSwimRoutine' : 'newRideRoutine'), html: h,
+        foot: `<button class="btn primary" data-a="ke-save">${esc(t('save'))}</button>${r._old ? `<button class="btn routine-remove" data-a="routine-remove" data-id="${esc(r.id)}" aria-label="${esc(t('deleteRoutine'))}">${IC.close}</button>` : ''}` };
+    };
+  }
+  function startKind(r) {
+    if (r.kind === 'swim') { if (!Store.apply(d => { d.settings.swimTraining = SwimTraining.clean(r.plan); })) { toast(t('saveFailed')); return; } }
+    else ui.ridePlan = r.id;
+    closeSheet(true); go('tab', () => { ui.tab = 'home'; ui.workout = r.kind; render(); window.scrollTo?.(0, 0); });
+  }
+  function ridePlanCard() {
+    const r = ui.ridePlan && getR(ui.ridePlan), plans = D().routines.filter(x => x.kind === 'ride');
+    if (r && r.kind === 'ride') return `<section class="card ride-plan" data-plan="${esc(r.id)}"><div class="h2row"><h3>${esc(t('ridePlanFor', rName(r)))}</h3><button class="link" data-a="ride-plan-clear">${esc(t('ridePlanClear'))}</button></div><p class="cap">${esc(kindSummary(r))}</p>${kindBlocks(r)}</section>`;
+    if (!plans.length) return '';
+    return `<section class="card ride-plan pick"><h3>${esc(t('ridePlanPick'))}</h3><div class="kind-chips">${plans.map(x => `<button type="button" data-a="ride-plan" data-id="${esc(x.id)}"><b>${esc(rName(x))}</b><small>${esc(kindSummary(x))}</small></button>`).join('')}</div></section>`;
   }
   /* What a freshly picked exercise starts with: the plan's own numbers when the plan has that exercise, otherwise 3 × 8–12. */
   const itemFor = id => { const p = PLAN_BY_EX[id]; return p && !p.similar && p.reps !== '21' ? { ex: id, label: null, sets: p.sets, reps: p.reps, rest: p.rest } : { ex: id, label: null, sets: 3, reps: '8–12', rest: D().settings.restDefault ?? 90 }; };
@@ -2069,7 +2131,7 @@
         h += s.res.items.length ? s.res.items.map((it, i) => `<div class="ai-item"><div class="re-top"><input type="text" data-in="ai-f" data-k="name" data-i="${i}" value="${esc(it.name)}" aria-label="${esc(t('name'))}"><button class="icon-btn sm" data-a="ai-del" data-i="${i}" aria-label="${esc(t('delete'))}">${IC.close}</button></div>
           <div class="grid5">${[[it.basisUnit==='portion'?'servings':it.basisUnit==='ml'?'dl':'grams', it.basisUnit==='portion'?t('portion'):it.basisUnit==='ml'?'dl':'g'], ['kcal', 'kcal'], ['p', t('pShort')], ['c', t('cShort')], ['f', t('fShort')]].map(([k, l]) => `<label><span>${esc(l)}</span><input type="text" inputmode="decimal" data-in="ai-f" data-k="${k}" data-i="${i}" value="${k==='dl'?it.ml/100:it[k]}"></label>`).join('')}</div>
           ${it.basis ? `<p class="ai-basis">${esc(it.basis)}</p>` : ''}${it.gmin && it.gmax ? `<div class="chips ai-range"><button class="chip${it.grams === it.gmin ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmin}">${esc(t('aiLess'))} · ${it.gmin} g</button><button class="chip${it.grams === it.gmax ? ' on' : ''}" data-a="ai-g" data-i="${i}" data-g="${it.gmax}">${esc(t('aiMore'))} · ${it.gmax} g</button></div>` : ''}
-          ${it.estimated?`<i class="ai-db">≈ ${esc(t('aiEstimatedValues'))}</i>${s.mode==='text'&&it.product?`<button class="link ai-refine-label" data-a="ai-refine-label" data-i="${i}">${esc(t('aiRefineLabel'))}</button>`:''}`:it.restaurantId?`<i class="ai-db">${esc(t('restaurantPortion'))}</i>`:it.memoryId?`<i class="ai-db">${esc(t('memoryPortion'))}</i>`:it.label ? `<i class="ai-db">${IC.check}${esc(t('aiLabel'))}</i>` : it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : s.res.needsDetails ? '' : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
+          ${it.estimated?`<i class="ai-db">≈ ${esc(t('aiEstimatedValues'))}</i>${it.offMatch?`<button class="link ai-off-match" data-a="ai-use-product" data-i="${i}">${esc(t('aiProductFound',it.offMatch.name,Math.round(it.offMatch.kcal)))}</button>`:''}${s.mode==='text'&&it.product?`<button class="link ai-refine-label" data-a="ai-refine-label" data-i="${i}">${esc(t('aiRefineLabel'))}</button>`:''}`:it.restaurantId?`<i class="ai-db">${esc(t('restaurantPortion'))}</i>`:it.memoryId?`<i class="ai-db">${esc(t('memoryPortion'))}</i>`:it.label ? `<i class="ai-db">${IC.check}${esc(t('aiLabel'))}</i>` : it.db ? `<i class="ai-db">${IC.check}${esc(t('aiDb'))}</i>` : ''}</div>`).join('') : s.res.needsDetails ? '' : `<p class="empty">${esc(t('aiNoFood'))}</p>`;
         if(s.mode==='photo'&&s.res.items.length)h+=`<section class="memory-save"><label class="sw"><input type="checkbox" role="switch" data-in="memory-remember" ${s.remember?'checked':''}><span>${esc(t('memoryRemember'))}</span></label>${s.remember?`<label class="fld"><span>${esc(t(s.res.items.length===1?'memoryName':'memoryBundleName'))}</span><input data-in="memory-name" maxlength="80" value="${esc(s.memoryName||(s.res.items.length===1?s.res.items[0].name:''))}" placeholder="${esc(t('memoryNameExample'))}"></label>`:''}</section>`;
         if(!menuOnly)h += `<p class="cap">${esc(t('aiCheck'))}${s.used ? ' ' + esc(t('aiUsedNotes', s.used)) : ''}</p>`;
         return { title: t(menuOnly?'restaurantMeal':'aiResult'), html: h, foot: (s.res.items.length ? `<button class="btn primary wide" data-a="ai-add" ${s.res.pending?.length?'disabled':''}><span class="ai-add-label"><span>${esc(t('add'))}</span><small><span id="ai-tot">${Math.round(tot)}</span> kcal</small></span></button>` : '') + `<button class="btn" data-a="ai-reset">${esc(t('again'))}</button>` };
@@ -2127,6 +2189,22 @@
     const r = await FoodAI.check(k); if (D().settings.apiKey !== k || (r !== 'ok' && r !== 'bad')) return;
     keyResult(r); if (topIs('settings')) refreshSheet();
   }
+  /* 2.55: an estimated packaged product is looked up online (Open Food Facts, from the phone) in the background. A close
+     match (same brand, most of the words) is offered on the item as one tap; the label form opens prefilled to confirm. */
+  const PRODUCT_NOISE=new Set(['with','and','protein','fat','low','added','sugar','flavour','flavor','high','free','from','izu','zsir','feherje','cukor','hozzaadott','nelkul','light','natur']);
+  const productWords=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\d+(?:[.,]\d+)?\s*(?:g|kg|dkg|ml|l|dl|%)?/g,' ').replace(/[^a-z ]+/g,' ').split(/\s+/).filter(w=>w.length>2&&!PRODUCT_NOISE.has(w));
+  function productMatch(it,found){
+    const words=productWords(it.product),brand=productWords(it.store?.brand||'')[0];
+    const scored=found.map(p=>{const w=new Set(productWords(p.name));return {p,sc:words.filter(x=>w.has(x)).length/words.length,brand:!brand||w.has(brand)};});
+    return scored.filter(x=>x.brand&&x.sc>=.5).sort((a,b)=>b.sc-a.sc)[0]?.p||null;
+  }
+  async function findProducts(s){
+    if(!window.FoodProducts?.search||!s||s.mode!=='text'||navigator.onLine===false)return;
+    for(const it of (s.res?.items||[]).filter(i=>i.estimated&&i.product&&!i.offTried).slice(0,5)){
+      it.offTried=true;const words=productWords(it.product).slice(0,6);if(words.length<2)continue;
+      try{const p=productMatch(it,await FoodProducts.search(words.join(' '),it.store?.store||''));if(p&&ui.ai===s&&s.res?.items?.includes(it)){it.offMatch=p;refreshSheet();}}catch(e){}
+    }
+  }
   async function aiGo() {
     const s = ui.ai, st = D().settings;
     if (!s || s.loading) return;
@@ -2139,6 +2217,7 @@
       if(s.mode==='text'&&s.allowEstimates)Object.assign(r,FoodEstimates.apply(r,L()));
       r.items.forEach(i => { dbCheck(i); i._b = { name: i.name, grams: i.grams, k100: i.k100, p100:i.p100,c100:i.c100,f100:i.f100 }; });       // _b: what the estimate was before the user touched it
       s.res = r; s.used = memo && !r.local ? Math.min(25, D().aiNotes.length) : 0; s.gone = []; if(!r.local)keyResult('ok');
+      setTimeout(()=>findProducts(s),0);   // estimated store products: look for the real label online in the background
     } catch (e) { s.err = { code: e.code || 'api', msg: e.code === 'api' || e.code === 'model' ? e.message : '' }; if (e.code === 'auth') keyResult('bad'); }
     s.loading = false; if (ui.ai === s && ui.sheets.length) refreshSheet();
   }
@@ -2820,6 +2899,7 @@
     'shop-manual'(){labelDraft(ui.shop.pending||{text:ui.shop.q});},
     'ai-label'(el){const p=ui.ai.res.pending[+el.dataset.i];if(p)labelDraft(p);},
     // 2.53: optional, after the fact: the estimate is already in the list; a saved label replaces it on re-analysis
+    'ai-use-product'(el){const s=ui.ai,it=s?.res?.items?.[+el.dataset.i],p=it?.offMatch;if(!p||s.mode!=='text'||s.loading)return;ui.myfood={...p,id:'',port:it.grams||it.ml||0,aliases:[it.product||it.name],analysisReturn:true,pendingIndex:-1};openSheet(shMyFood());},   // the found label opens prefilled; saving it re-analyses with exact values
     'ai-refine-label'(el){const s=ui.ai,it=s?.res?.items?.[+el.dataset.i];if(!it||s.mode!=='text'||s.loading)return;labelDraft({text:it.product||it.name,grams:it.grams,ml:it.ml,basisUnit:it.basisUnit,known:it.known||{}});ui.myfood.analysisReturn=true;ui.myfood.pendingIndex=-1;},
     'quick-photo'(){ui.ai=aiNew('photo');openSheet(shFoodAI());},
     'ai-choice'(el){const s=ui.ai,i=+el.dataset.i,p=s?.res?.pending?.[i],c=p?._choices?.[+el.dataset.c];if(!c)return;if(c.item.status==='ok'){settleAnalysisText(p,c.item);s.res.items.push(FoodAI.fromQuery(c.item,L()));s.res.pending.splice(i,1);}else s.res.pending[i]=c.item;refreshSheet();},
@@ -2911,7 +2991,7 @@
     },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
-    'w-start'(el) { startWorkout(getR(el.dataset.id)); }, 
+    'w-start'(el) { const r=getR(el.dataset.id);if(isKind(r)){startKind(r);return;} startWorkout(r); }, 
     'w-quick'() {
       if (D().active && !confirm(t('replaceActive'))) return;
       ui.pick = newPick({ title: t('quickWorkout'), lead: t('quickLead'), cta: t('startWorkout'), done: ids => startWorkout({ id: null, name: t('quickWorkout'), items: ids.map(itemFor) }, true) });
@@ -2943,12 +3023,31 @@
     'rest-skip'() { const a = D().active; if (a) { a.restEnd = 0; Store.saveActive(); tick(); } },
     /* routines */
     'r-open'(el) { openSheet(shRoutine(el.dataset.id)); },
-    'r-new'(el) {                                                                      // first tick the exercises, then name it and set the numbers
+    'r-new'(el) {                                                                      // gym, swim or ride first; a gym routine then ticks exercises
       const focus=['stability','knee'].includes(el?.dataset?.focus)?el.dataset.focus:null;
+      if(!focus){openSheet(shRoutineKind());return;}
+      A['r-gym'](focus);
+    },
+    'r-gym'(focus) {                                                                    // first tick the exercises, then name it and set the numbers
+      focus=typeof focus==='string'?focus:null;
       ui.pick = newPick({ title: t('newRoutine'), lead: t('newRoutineLead'), cta: t('next'), done: ids => { ui.edit = { id: uid(), name: '', ...(focus?{focus}:{}), items: ids.map(itemFor), _old: false }; ui.sheets = []; openSheet(shRoutineEdit()); } });
       openSheet(shPicker());
     },
-    'r-edit'(el) { const r = getR(el.dataset.id); ui.edit = JSON.parse(JSON.stringify(r)); ui.edit._old = true; openSheet(shRoutineEdit()); },
+    'r-kind'(el) {
+      const k=el.dataset.v;if(k==='gym'){A['r-gym']();return;}if(!['swim','ride'].includes(k))return;
+      if(D().routines.length>=100){toast(t('routineLimit'));return;}
+      ui.kedit={id:uid(),name:'',kind:k,plan:k==='swim'?SwimTraining.clean(D().settings.swimTraining):RoutineKinds.ride.clean({}),_old:false};ui.sheets=[];openSheet(shKindEdit());
+    },
+    'ke-set'(el) { const k=el.dataset.k,v=el.dataset.v;ui.kedit.plan[k]=/^\d+(\.\d+)?$/.test(v)?+v:v;refreshSheet(); },
+    'ke-save'() {
+      const e=ui.kedit;if(!e)return;const plan=RoutineKinds[e.kind].clean(e.plan),name=String(e.name||'').trim().slice(0,80)||kindDefaultName({kind:e.kind,plan});
+      const src=getR(e.id),doc=Object.assign({},src||{builtin:false,icon:'',sub:null},{id:e.id,name,kind:e.kind,plan,items:[]});
+      if(!Store.apply(d=>{const k=d.routines.findIndex(r=>r.id===doc.id);if(k>=0)d.routines[k]=doc;else d.routines.push(doc);})){toast(t('saveFailed'));return;}
+      ui.kedit=null;if(ui.tab==='home'&&ui.workout!=='plans')ui.workout='plans';closeSheet(true);render();toast(t('saved'));
+    },
+    'ride-plan'(el) { ui.ridePlan=el.dataset.id;render(); },
+    'ride-plan-clear'() { ui.ridePlan=null;render(); },
+    'r-edit'(el) { const r = getR(el.dataset.id); if(isKind(r)){ui.kedit=Object.assign(JSON.parse(JSON.stringify(r)),{_old:true});openSheet(shKindEdit());return;} ui.edit = JSON.parse(JSON.stringify(r)); ui.edit._old = true; openSheet(shRoutineEdit()); },
     'r-del'() {removeRoutine(ui.edit?.id);},
     'routine-remove'(el) {removeRoutine(el.dataset.id);},
     'routine-library'() {openSheet(shRoutineLibrary());},
@@ -3112,6 +3211,8 @@
     'w-kg'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].kg = el.value.trim(); lazyActive(); },
     'w-reps'(el) { D().active.entries[+el.dataset.i].sets[+el.dataset.j].reps = el.value.trim(); lazyActive(); },
     're-focus'(el){if(['stability','knee'].includes(el.value))ui.edit.focus=el.value;else delete ui.edit.focus;},
+    'ke-name'(el) { if(ui.kedit)ui.kedit.name = el.value; },
+    'ke-num'(el) { const e=ui.kedit;if(!e)return;e.plan[el.dataset.k]=el.value;const box=$('#ke-preview');if(box)box.innerHTML=kindBlocks({kind:e.kind,plan:e.plan}); },
     're-name'(el) { ui.edit.name = el.value; }, 're-sets'(el) { ui.edit.items[+el.dataset.i].sets = el.value; },
     're-reps'(el) { ui.edit.items[+el.dataset.i].reps = el.value; }, 're-rir'(el) { ui.edit.items[+el.dataset.i].rir = el.value; },
     'mx-n'(el) { ui.myex.n = el.value; }, 'mx-steps'(el) { ui.myex.steps = el.value; }, 'mx-vid'(el) { ui.myex.vid = el.value; }, 'mx-eq'(el) { ui.myex.eq = EQS.indexOf(el.value) >= 0 ? el.value : 'other'; },

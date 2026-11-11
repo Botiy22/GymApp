@@ -49,5 +49,5 @@ window.FoodProducts=(()=>{
     const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
     try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw Error('product lookup failed');const data=await r.json();return (barcode?[data.product]:data.products||[]).map(product).filter(Boolean).slice(0,20);}finally{clearTimeout(timer);}
   }
-  return {version:3,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR']};
+  return {version:3,read,identity,saved,product,valid,search,shops:['Lidl','Tesco','SPAR','Aldi','Auchan']};
 })();

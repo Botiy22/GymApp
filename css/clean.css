@@ -304,3 +304,26 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 @media(prefers-reduced-motion:reduce){.app-update-overlay,.app-update-overlay::backdrop,.upd-halo,.upd-stage .reload-mark,.upd-stage .reload-mark img,.app-update-overlay.ready .upd-burst i,.app-update-overlay.ready .upd-halo{animation:none}.app-update-overlay.ready .upd-check{animation:none;opacity:1;transform:none}.app-update-overlay.ready .upd-check path{animation:none;stroke-dashoffset:0}}
 :root[data-calm] .app-update-overlay,:root[data-calm] .upd-halo,:root[data-calm] .upd-stage .reload-mark,:root[data-calm] .upd-stage .reload-mark img,:root[data-calm] .app-update-overlay.ready .upd-burst i,:root[data-calm] .app-update-overlay.ready .upd-halo{animation:none}
 :root[data-calm] .app-update-overlay.ready .upd-check{animation:none;opacity:1;transform:none}:root[data-calm] .app-update-overlay.ready .upd-check path{animation:none;stroke-dashoffset:0}
+/* 2.55: an online label match for an estimated product */
+.ai-item .ai-off-match{display:block;margin-top:6px;text-align:left;font-weight:700;color:var(--acc-tx,var(--acc));font-size:.86rem;padding:6px 0;min-height:32px}
+/* 2.55 routine types: gym, swim or ride first; swim and ride plans as blocks */
+.kind-pick{display:grid;gap:10px;margin-top:12px}
+.kind-card{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);text-align:left;min-height:68px}
+.kind-card .r-ic{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(var(--acc-rgb),.12);color:var(--acc)}
+.kind-card .r-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kind-card>svg{flex:none;width:18px;height:18px;color:var(--mut);fill:none;stroke:currentColor;stroke-width:2}
+.kind-card .rc-t{flex:1;min-width:0;display:grid;gap:2px}.kind-card .rc-t i{font-style:normal;color:var(--mut);font-size:.86rem}
+.kind-card .rc-t b,.kind-card .rc-t i{white-space:normal;overflow:visible;text-overflow:clip}
+.kind-card:active{transform:scale(.98)}
+.kind-chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.kind-chips button{display:grid;gap:2px;flex:1 1 140px;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-align:left}
+.kind-chips button small{color:var(--mut);font-size:.78rem;line-height:1.25}
+.kind-chips button[aria-pressed=true]{border-color:var(--acc);background:rgba(var(--acc-rgb),.12);box-shadow:inset 0 0 0 1px var(--acc)}
+.kind-blocks{list-style:none;margin:8px 0;padding:0;display:grid;gap:8px;counter-reset:kb}
+.kind-blocks li{counter-increment:kb;position:relative;display:grid;gap:2px;padding:10px 12px 10px 44px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.kind-blocks li::before{content:counter(kb);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;font-weight:700;background:rgba(var(--acc-rgb),.14);color:var(--acc)}
+.kind-blocks li[data-block=main]{border-color:rgba(var(--acc-rgb),.55)}
+.kind-blocks span{font-weight:600}.kind-blocks small{color:var(--mut);font-size:.8rem}
+.kind-lead{display:flex;align-items:center;gap:8px}.kind-lead svg{width:22px;height:22px;fill:none;stroke:var(--acc);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rtile.kind-swim .r-ic svg,.rtile.kind-ride .r-ic svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ride-plan{margin-top:12px}.ride-plan h3{margin:0}.ride-plan .h2row{margin:0 0 4px}

@@ -117,15 +117,29 @@ window.RESTAURANT_FOODS = (() => {
   ];
   const ODD = { hu: 'a táblázat így közli, de a kalória nem egyezik a makrókkal (a kávéknál így van); helyben érdemes rákérdezni', en: 'printed like this, but the calories do not match the macros (as with all coffees in the table); worth asking in the restaurant' };
   const items = [];
-  bk.forEach(([name, en, g, kcal, p, c, f, alias, o = {}]) => {
+  // 2.55: KFC, Pizza Hut and Starbucks come from data/chain-menus.js (generated from their official tables), same row shape
+  const chains = [{ ...BK, rows: bk }, ...(window.CHAIN_MENUS || [])];
+  // store products imported from Open Food Facts (data/store-products.js): label values per 100 g, one "brand" each
+  const plainName = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9%]+/g, ' ').trim();
+  (window.STORE_PRODUCTS?.brands || []).forEach(b => {
+    const short = [plainName(b.name)];
+    b.rows.forEach(([name, brand, store, kcal, p, c, f, serving, code]) => {
+      const g = serving > 0 ? serving : 100, ref = 'Open Food Facts (ODbL), ' + store + (code ? ' · ' + code : '');
+      items.push({ hu: name + ' (' + brand + ')', en: brand + ' ' + name, brand: b.name, ref, refEn: ref, exact: true, label: true, own: [kcal, p, c, f], a: short[0] + ' ' + plainName(name),
+        u: { db: g, adag: g }, port: [serving > 0 ? '1 adag (' + g + ' g)' : '100 g', g], def: serving > 0 ? 'adag' : undefined });
+    });
+    chains.push({ name: b.name, short, rows: [] });
+  });
+  chains.forEach(B => B.rows.forEach(([name, en, g, kcal, p, c, f, alias, o = {}]) => {
     if (o.odd) { o.fix = ODD.hu; o.fixEn = ODD.en; }
-    const k = 100 / g, hu = o.replace || name + ' (Burger King)', piece = o.pcs ? g / o.pcs : 0;
-    const names = alias.split('|').concat('bk ' + en.toLowerCase());   // "bk <name>" / "burger king <name>" work without listing them (js/food-query.js)
-    const it = { hu, en: 'Burger King ' + en, brand: BK.name, ref: BK.ref + (o.fix ? '; ' + o.fix : ''), refEn: BK.refEn + (o.fixEn ? '; ' + o.fixEn : ''), exact: true, own: [kcal * k, p * k, c * k, f * k], a: [...new Set(names)].join('|'), fix: o.fix || undefined };
+    const k = 100 / g, hu = o.replace || name + ' (' + B.name + ')', piece = o.pcs ? g / o.pcs : 0;
+    const names = alias.split('|').concat(B.short[0] + ' ' + en.toLowerCase());   // "bk <name>" / "kfc <name>" work without listing them (js/food-query.js)
+    const it = { hu, en: B.name + ' ' + en, brand: B.name, ref: B.ref + (o.fix ? '; ' + o.fix : ''), refEn: B.refEn + (o.fixEn ? '; ' + o.fixEn : ''), exact: true, own: [kcal * k, p * k, c * k, f * k], a: [...new Set(names)].filter(Boolean).join('|'), fix: o.fix || undefined };
+    if (o.slices) { it.u = { db: g, adag: g, szelet: Math.round(g / o.slices) }; it.port = ['1 egész közepes pizza (' + g + ' g)', g]; it.def = 'db'; it.w = { szelet: '1/' + o.slices + ' közepes pizza (a táblázat egész pizzát ad meg)' }; items.push(it); return; }
     if (o.ml) { const u = o.can ? 'doboz' : 'pohar'; it.dens = 1; it.u = { pohar: g, doboz: g, uveg: g }; it.port = ['1 ' + (o.can ? 'doboz' : 'pohár') + ' (' + String(g / 100).replace('.', ',') + ' dl)', g]; it.def = u; }   // the size sold is the portion: names carry no amount, "0,4 l" would read as one
     else if (piece) { const box = Math.round(piece * o.box * 10) / 10; it.u = { db: Math.round(piece * 10) / 10, adag: box }; it.port = ['1 adag (' + o.box + ' db, ' + String(box).replace('.', ',') + ' g)', box]; it.def = 'adag'; it.qu = 'db'; if (o.boxes) it.boxes = o.boxes; }
     else { it.u = { db: g, adag: g }; it.port = ['1 adag (' + String(g).replace('.', ',') + ' g)', g]; it.def = 'db'; }
     items.push(it);
-  });
-  return { version: 1, brands: [{ name: BK.name, short: BK.short }], count: items.length, items };
+  }));
+  return { version: 2, brands: chains.map(B => ({ name: B.name, short: B.short })), count: items.length, items };
 })();

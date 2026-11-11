@@ -1,0 +1,90 @@
+# Pizza Hut Magyarország tápérték táblázat, Nutrition_PH_HU_2024.02.13 (AmRest). Per portion; a pizza row is one whole medium pizza.
+# name hu / en | flags | portion g | kcal | fat | sat | carb | sugar | protein   (flags: u = unique name; pizza:<crust>)
+Margarita pizza, Pan, közepes / Margarita pizza, Pan, medium | pizza:pan | 547|1427,7|50,8|25,7|180,5|10,9|69,5
+Olaszkolbászos pizza, Pan, közepes / Olaszkolbászos pizza, Pan, medium | pizza:pan | 518|1414,1|53,5|23,8|176,1|7,8|64,2
+Gyros pizza, Pan, közepes / Gyros pizza, Pan, medium | pizza:pan | 612|1646,3|73,0|36,2|168,9|8,5|73,4
+SokSajtos pizza, Pan, közepes / SokSajtos pizza, Pan, medium | pizza:pan | 543|1276,1|48,3|22,8|156,4|9,2|60,3
+Carbonara pizza, Pan, közepes / Carbonara pizza, Pan, medium | pizza:pan | 553|1332,7|49,5|23,2|167,6|8,3|61,9
+Sonkás-Kukoricás pizza, Pan, közepes / Sonkás-Kukoricás pizza, Pan, medium | pizza:pan | 649|1505,7|50,0|23,4|186,3|8,4|85,0
+Hawaii pizza, Pan, közepes / Hawaii pizza, Pan, medium | pizza:pan | 592|1361,6|41,4|19,5|184,1|11,8|70,4
+Szuprém pizza, Pan, közepes / Szuprém pizza, Pan, medium | pizza:pan | 599|1437,6|56,4|25,2|168,3|10,2|71,3
+Szuper Szuprém pizza, Pan, közepes / Szuper Szuprém pizza, Pan, medium | pizza:pan | 634|1496,2|59,2|26,0|182,0|12,0|68,5
+Csípős Olaszkolbászos pizza, Pan, közepes / Csípős Olaszkolbászos pizza, Pan, medium | pizza:pan | 560|1472,8|58,0|25,2|178,6|9,0|66,1
+Húsimádó pizza, Pan, közepes / Húsimádó pizza, Pan, medium | pizza:pan | 604|1528,1|64,4|30,2|174,6|8,5|82,1
+Magyaros pizza, Pan, közepes / Magyaros pizza, Pan, medium | pizza:pan | 613|1471,2|57,7|25,7|172,3|10,4|72,9
+Farmer pizza, Pan, közepes / Farmer pizza, Pan, medium | pizza:pan | 624|1310,4|40,8|20,6|173,5|11,2|71,8
+Texas pizza, Pan, közepes / Texas pizza, Pan, medium | pizza:pan | 612|1493,3|46,3|20,8|202,6|18,4|73,4
+Capricciosa pizza, Pan, közepes / Capricciosa pizza, Pan, medium | pizza:pan | 669|1384,8|44,3|21,4|182,0|12,7|74,3
+Dallas pizza, Pan, közepes / Dallas pizza, Pan, medium | pizza:pan | 614|1504,3|49,9|22,1|184,8|9,2|85,3
+Gombás pizza, Pan, közepes / Gombás pizza, Pan, medium | pizza:pan | 545|1504,2|51,1|18,7|186,4|16,0|65,7
+Sonkás pizza, Pan, közepes / Sonkás pizza, Pan, medium | pizza:pan | 545|1596,9|54,3|21,7|173,3|14,0|94,0
+Csirkés pizza, Pan, közepes / Csirkés pizza, Pan, medium | pizza:pan | 566|1528,2|53,3|21,8|176,6|15,1|82,4
+Megavega pizza, Pan, közepes / Megavega pizza, Pan, medium | pizza:pan | 663|1312,7|39,5|17,2|189,6|16,6|60,3
+BBQ Bacon pizza, Pan, közepes / BBQ Bacon pizza, Pan, medium | pizza:pan | 632|1500,0|59,0|28,0|193,0|23,4|70,0
+Csirkés Jalapeño pizza, Pan, közepes / Csirkés Jalapeño pizza, Pan, medium | pizza:pan | 595|1469,0|53,0|26,0|182,0|11,9|74,0
+Pepperoni-Kukorica pizza, Pan, közepes / Pepperoni-Kukorica pizza, Pan, medium | pizza:pan | 591|1538,0|59,0|29,0|184,0|11,0|77,0
+Sonka&Csirke pizza, Pan, közepes / Sonka&Csirke pizza, Pan, medium | pizza:pan | 657|1677,0|78,0|28,0|167,0|11,0|82,0
+Falafel pizza, Pan, közepes / Falafel pizza, Pan, medium | pizza:pan | 542|1642,3|84,0|23,3|153,9|10,8|62,0
+Mézes-Chilis Olaszkolbászos pizza, Pan, közepes / Mézes-Chilis Olaszkolbászos pizza, Pan, medium | pizza:pan | 569|1575,0|53,6|23,9|216,0|46,3|64,6
+Margarita pizza, San Francisco, közepes / Margarita pizza, San Francisco, medium | pizza:sf | 557|1542,9|50,4|24,5|196,6|20,2|81,9
+Olaszkolbászos pizza, San Francisco, közepes / Olaszkolbászos pizza, San Francisco, medium | pizza:sf | 528|1605,1|57,9|25,9|205,9|18,5|71,8
+Gyros pizza, San Francisco, közepes / Gyros pizza, San Francisco, medium | pizza:sf | 622|1803,8|76,1|41,3|199,7|16,0|75,4
+SokSajtos pizza, San Francisco, közepes / SokSajtos pizza, San Francisco, medium | pizza:sf | 553|1946,6|92,6|31,5|194,1|13,5|79,1
+Carbonara pizza, San Francisco, közepes / Carbonara pizza, San Francisco, medium | pizza:sf | 690|1890,6|78,6|39,3|207,0|20,4|84,1
+Sonkás-Kukoricás pizza, San Francisco, közepes / Sonkás-Kukoricás pizza, San Francisco, medium | pizza:sf | 659|1746,4|53,5|25,6|224,7|20,6|86,1
+Hawaii pizza, San Francisco, közepes / Hawaii pizza, San Francisco, medium | pizza:sf | 602|1601,3|43,9|19,3|228,8|29,5|80,7
+Szuprém pizza, San Francisco, közepes / Szuprém pizza, San Francisco, medium | pizza:sf | 609|1607,8|62,7|28,6|187,6|21,7|82,8
+Szuper Szuprém pizza, San Francisco, közepes / Szuper Szuprém pizza, San Francisco, medium | pizza:sf | 644|1693,7|62,9|27,7|199,0|33,5|90,8
+Csípős Olaszkolbászos pizza, San Francisco, közepes / Csípős Olaszkolbászos pizza, San Francisco, medium | pizza:sf | 570|1647,3|58,9|26,8|208,6|21,1|77,5
+Húsimádó pizza, San Francisco, közepes / Húsimádó pizza, San Francisco, medium | pizza:sf | 614|1799,0|73,0|33,2|195,9|28,2|97,0
+Magyaros pizza, San Francisco, közepes / Magyaros pizza, San Francisco, medium | pizza:sf | 613|1618,3|63,1|28,8|188,8|21,8|83,4
+Farmer pizza, San Francisco, közepes / Farmer pizza, San Francisco, medium | pizza:sf | 634|1597,7|47,6|20,3|213,7|27,3|83,1
+Texas pizza, San Francisco, közepes / Texas pizza, San Francisco, medium | pizza:sf | 622|1691,8|47,9|21,1|228,3|37,9|92,7
+Capricciosa pizza, San Francisco, közepes / Capricciosa pizza, San Francisco, medium | pizza:sf | 679|1527,8|46,7|21,0|200,3|29,2|84,9
+Dallas pizza, San Francisco, közepes / Dallas pizza, San Francisco, medium | pizza:sf | 624|1653,6|46,7|21,2|229,0|23,7|86,1
+Gombás pizza, San Francisco, közepes / Gombás pizza, San Francisco, medium | pizza:sf | 545|1509,7|49,3|24,0|192,4|19,8|80,1
+Sonkás pizza, San Francisco, közepes / Sonkás pizza, San Francisco, medium | pizza:sf | 546|1485,1|42,0|18,6|200,4|33,3|81,4
+Csirkés pizza, San Francisco, közepes / Csirkés pizza, San Francisco, medium | pizza:sf | 556|1473,4|47,5|21,7|191,3|17,6|75,6
+Megavega pizza, San Francisco, közepes / Megavega pizza, San Francisco, medium | pizza:sf | 635|1371,6|42,1|21,6|190,5|24,8|65,4
+BBQ Bacon pizza, San Francisco, közepes / BBQ Bacon pizza, San Francisco, medium | pizza:sf | 642|1721,0|62,0|29,0|208,0|33,0|87,0
+Csirkés Jalapeño pizza, San Francisco, közepes / Csirkés Jalapeño pizza, San Francisco, medium | pizza:sf | 605|1584,0|52,0|25,0|196,0|21,0|87,0
+Pepperoni-Kukorica pizza, San Francisco, közepes / Pepperoni-Kukorica pizza, San Francisco, medium | pizza:sf | 601|1653,0|59,0|28,0|199,0|20,0|90,0
+Sonka&Csirke pizza, San Francisco, közepes / Sonka&Csirke pizza, San Francisco, medium | pizza:sf | 667|1898,0|81,0|28,0|195,0|21,0|100,0
+Falafel pizza, San Francisco, közepes / Falafel pizza, San Francisco, medium | pizza:sf | 551|1708,1|70,5|23,1|184,0|17,1|76,0
+Mézes-Chilis Olaszkolbászos pizza, San Francisco, közepes / Mézes-Chilis Olaszkolbászos pizza, San Francisco, medium | pizza:sf | 579|1766,0|58,0|25,9|245,8|57,1|72,1
+Margarita pizza, sajttal töltött széllel, közepes / Margarita pizza, cheese-stuffed crust, medium | pizza:stuffed | 648|1963,4|91,6|50,5|165,2|14,9|127,0
+Olaszkolbászos pizza, sajttal töltött széllel, közepes / Olaszkolbászos pizza, cheese-stuffed crust, medium | pizza:stuffed | 662|2131,6|96,5|47,7|215,2|9,3|105,3
+Gyros pizza, sajttal töltött széllel, közepes / Gyros pizza, cheese-stuffed crust, medium | pizza:stuffed | 777|2268,8|104,4|54,4|216,0|11,7|122,0
+SokSajtos pizza, sajttal töltött széllel, közepes / SokSajtos pizza, cheese-stuffed crust, medium | pizza:stuffed | 834|2418,6|133,9|79,2|191,8|19,2|127,6
+Carbonara pizza, sajttal töltött széllel, közepes / Carbonara pizza, cheese-stuffed crust, medium | pizza:stuffed | 706|2054,5|101,2|53,0|192,0|13,4|104,5
+Sonkás-Kukoricás pizza, sajttal töltött széllel, közepes / Sonkás-Kukoricás pizza, cheese-stuffed crust, medium | pizza:stuffed | 706|1962,7|84,5|43,1|199,1|9,9|106,6
+Hawaii pizza, sajttal töltött széllel, közepes / Hawaii pizza, cheese-stuffed crust, medium | pizza:stuffed | 692|2034,5|89,8|46,4|199,3|12,5|114,9
+Csípős Olaszkolbászos pizza, sajttal töltött széllel, közepes / Csípős Olaszkolbászos pizza, cheese-stuffed crust, medium | pizza:stuffed | 702|2077,9|95,3|48,4|189,5|10,5|122,1
+Húsimádó pizza, sajttal töltött széllel, közepes / Húsimádó pizza, cheese-stuffed crust, medium | pizza:stuffed | 772|2254,2|103,8|54,0|214,6|11,6|121,2
+Magyaros pizza, sajttal töltött széllel, közepes / Magyaros pizza, cheese-stuffed crust, medium | pizza:stuffed | 793|2371,1|103,3|50,8|233,1|11,1|135,6
+Farmer pizza, sajttal töltött széllel, közepes / Farmer pizza, cheese-stuffed crust, medium | pizza:stuffed | 736|2060,8|89,6|44,2|189,9|11,0|129,5
+Texas pizza, sajttal töltött széllel, közepes / Texas pizza, cheese-stuffed crust, medium | pizza:stuffed | 696|1934,9|88,3|49,4|172,6|22,3|118,3
+Mexikói pizza, sajttal töltött széllel, közepes / Mexikói pizza, cheese-stuffed crust, medium | pizza:stuffed | 701|1927,8|70,1|35,1|234,8|21,0|91,1
+Szuprém pizza, sajttal töltött széllel, közepes / Szuprém pizza, cheese-stuffed crust, medium | pizza:stuffed | 716|2140,8|93,3|45,8|210,5|10,0|122,4
+Szuper Szuprém pizza, sajttal töltött széllel, közepes / Szuper Szuprém pizza, cheese-stuffed crust, medium | pizza:stuffed | 814|2336,2|103,5|52,9|225,5|10,6|132,7
+Capricciosa pizza, sajttal töltött széllel, közepes / Capricciosa pizza, cheese-stuffed crust, medium | pizza:stuffed | 734|1989,1|75,3|36,7|234,1|11,0|102,0
+Dallas pizza, sajttal töltött széllel, közepes / Dallas pizza, cheese-stuffed crust, medium | pizza:stuffed | 672|1942,1|83,4|46,4|190,2|14,8|116,3
+Gombás pizza, sajttal töltött széllel, közepes / Gombás pizza, cheese-stuffed crust, medium | pizza:stuffed | 720|2001,6|86,2|43,9|203,0|10,1|108,7
+Sonkás pizza, sajttal töltött széllel, közepes / Sonkás pizza, cheese-stuffed crust, medium | pizza:stuffed | 720|2102,4|96,8|50,4|200,2|10,8|113,0
+Csirkés pizza, sajttal töltött széllel, közepes / Csirkés pizza, cheese-stuffed crust, medium | pizza:stuffed | 741|2111,9|89,7|50,4|215,6|15,6|117,8
+Megavega pizza, sajttal töltött széllel, közepes / Megavega pizza, cheese-stuffed crust, medium | pizza:stuffed | 748|1825,1|76,7|40,4|200,5|24,7|92,8
+Cikkburgonya / Potato wedges | u | 198|378|12,0|1,2|66,9|1,0|6,3
+Fokhagymás kenyérkék 2 db / Garlic bread 2 pcs | | 54|229|11,4|5,1|28,2|1,0|4,4
+Csirkeszárny 6 db / Chicken wings 6 pcs | | 278|550|33,8|10,6|9,2|4,4|53,7
+Csirkeszárny 12 db / Chicken wings 12 pcs | | 556|1100|67,7|21,1|18,3|8,9|107,3
+Csirkeszárny 15 db / Chicken wings 15 pcs | | 745|1282|63,0|24,6|157,2|11,9|79,0
+Sonkatekercs 2 db / Ham rolls 2 pcs | | 232|740|48,0|14,8|46,9|2,1|32,2
+Cézár saláta / Caesar salad | | 313|413|20,0|5,6|18,2|5,3|26,3
+Pepperoni sült tészta / Pepperoni baked pasta | u | 450|945,0|50,0|26,1|84,6|1,5|34,0
+Veggie sült tészta / Veggie baked pasta | u | 425|786,3|34,0|20,3|84,6|1,9|31,6
+Szuper szuprém sült tészta / Super supreme baked pasta | u | 450|873,0|81,9|25,3|65,3|1,7|34,0
+Fokhagymás sült tészta / Garlic baked pasta | u | 418|961,4|57,3|10,0|75,7|2,6|32,1
+Olaszkolbászos melt / Italian sausage melt | u | 172|571,0|28,6|13,1|47,3|2,6|29,9
+Falafel melt / Falafel melt | u | 219|613,2|28,5|10,5|61,8|7,4|25,0
+Gyrosos melt / Gyros melt | u | 206|613,9|29,0|10,5|54,0|5,6|31,7
+BBQ csirke melt / BBQ chicken melt | u | 214|579,9|24,8|11,8|55,6|7,3|31,2

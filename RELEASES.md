@@ -1,5 +1,17 @@
 # Release versions
 
+## 2.55.0 — 2026-11-11 (build 20261111.2)
+
+Owner: use the chain and store databases (Lidl, Tesco, SPAR, Aldi, Auchan, Burger King, McDonald's, KFC, Starbucks, Subway, Pizza Hut) for basic macros, understand loose text without exact names, and let routines be gym, swimming or cycling.
+
+Chains: `tools/build_chain_menus.py` builds `data/chain-menus.js` from transcribed official Hungarian tables in `tools/chain-data/` (KFC 79 rows, Pizza Hut 86, Starbucks food 75); rows whose 4/4/9 energy misses the printed kcal by more than 15 % are left out and listed (KFC Deluxe toast, Reggeli Qurrito, Amerikai palacsinta; Pizza Hut Csirkeszárny 15 db, Szuper szuprém sült tészta; Starbucks Lazacos bagel, Croissant vajjal és dzsemmel). `data/restaurant-foods.js` now builds every chain the same way (version 2); pizzas have `szelet` = 1/8. Not added: McDonald's Hungary (nutrition is loaded by script, no table found), Starbucks drinks (newest table is on a robots-disallowed host), Subway (no official Hungarian table found).
+
+Stores: `FoodQuery.storeOf` maps own brands to their shop; estimated store products carry it into the basis line. Online, `findProducts` in `js/app.js` searches Open Food Facts for estimated items and offers a same-brand match with at least half the words in common ("Megtaláltam: … – használom"); confirming opens the label form prefilled. `tools/import_off.py` imports an Open Food Facts export into `data/store-products.js` (shipped empty) for offline label values.
+
+Text: describing words that are foods themselves split into their own item ("mogyoróvajas zabkása" → oats + peanut butter); new dishes and aliases in `data/food-lexicon.js`.
+
+Routines: "New" asks Gym / Swimming / Cycling first (`js/routine-kinds.js`). Swim routines store the pool-session settings; ride routines store minutes, style (recovery/endurance/tempo/intervals) and repeats, and are planned as warm-up, main set, steady riding and cool-down with zone, RPE and talk test. Starting one opens the Swimming page with those settings or the Cycling page with the plan. `js/store.js` keeps `kind`/`plan`.
+
 ## 2.54.0 — 2026-11-11 (build 20261111.1)
 
 Owner: the update screen "just spins"; make it nicer and smoother. The update window (`updateOverlay` in `js/app.js`) now shows real progress: `sw.js` reports each verified release file (`update-progress` messages, throttled to 80 ms) while it installs and refreshes, and a ring around the logo eases towards that progress, creeping slowly within a step so it never looks frozen. Four step dots and a fading status line follow the steps (looking for the new version → downloading n% → installing → restarting), a version line shows the change, and the finish fills the ring, flashes the halo, sends a burst of sparks outwards, pops a check badge that draws its tick and lets the logo settle upright before the card zooms out into the reload. Reduced motion and calm mode: no spin, breathing, burst or zoom; the ring still fills and the check appears at once. New test `tests/test_update_animation_browser.py` runs a real two-release update and checks that the ring never runs backwards, reaches over 40% on real progress before the finish and completes before the restart.

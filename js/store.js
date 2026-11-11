@@ -74,6 +74,7 @@ window.Store = (function () {
       const info = typeof x.info === 'object' && x.info ? { hu: str(x.info.hu, 1200), en: str(x.info.en, 1200) } : str(x.info, 1200).trim(); if (info) o.info = info; if (x.opt === true) o.opt = true;
       if (x.circuit === true) o.circuit = true;
       if(['stability','knee'].includes(x.focus))o.focus=x.focus;
+      const kind=globalThis.RoutineKinds&&RoutineKinds.cleanRoutine(x);if(kind){Object.assign(o,kind);o.items=[];delete o.focus;delete o.circuit;}   // a swim or ride plan, no exercises
       return o;
     });
     if (!out.routines.length && !Array.isArray(r.routines)) out.routines = f.routines;
@@ -253,7 +254,7 @@ window.Store = (function () {
     get failed() { return failed; },
     set onFail(fn) { onFail = fn; },
     set onSave(fn) { onSave = fn; },
-    supportsSwimTraining:true, supportsBellozzo:true,supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
+    supportsSwimTraining:true,supportsRoutineKinds:true, supportsBellozzo:true,supportsFoodMemory:true,supportsActivityKinds:true, supportsFoodLabels:true,supportsStability:true,supportsPlanner:true,supportsMealGroups:true,retiredPersonalSplit:true,supportsMaterial:true,supportsRides:true,MODELS, ACCENTS, BGS, ICONS, load, save, saveActive, clean,
     wipe() { try { Object.keys(localStorage).filter(k=>k.startsWith(KEY+'.calendar.')).forEach(k=>localStorage.removeItem(k)); [KEY, AKEY, KEY + '.corrupt', KEY + '.ride', KEY + '.seenStories'].forEach(k => localStorage.removeItem(k)); } catch (e) {} data = null; snap = null; },
     cloudDoc,
     /* take over a document merged with the account copy: same cleaning as a backup, the running workout and this device's key stay */

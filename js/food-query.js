@@ -335,7 +335,14 @@ window.FoodQuery = (() => {
   }
   /* 2.53: a packaged product with no saved label is logged at once from its generic food (marked ≈), never blocked.
      The label is an optional refinement afterwards. A stated nutrient amount ("20 g protein") replaces the generic value. */
-  const BRAND_WORDS=/\b(?:lidl|pilos|crownfield|milbona|alesto|freshona|combino|solevita|tesco|spar|s-budget|s budget|despar|biotech|biotechusa|alnatura|auchan|penny|aldi|danone|muller|zott|activia|nestle|corny|myprotein|scitec|olimp|dmbio|dm bio|rauch|milka|bonduelle|riso|gallo|mizo|sole|parmalat|president|hochland|exquisa|alpro|oatly|kelloggs?|nesquik|fitness|jana|szentkiralyi|theodora|naturaqua|happy day|sio|rio mare|globus|univer|kotanyi|baconos)\b/g;
+  /* 2.55: store own brands (Lidl, Aldi, Tesco, SPAR, Auchan) are named with their store; other brands are recognised as
+     brands. Both are estimated from the generic food until a label (typed, saved or found online) gives the exact values. */
+  const STORE_BRANDS={lidl:'Lidl',pilos:'Lidl',milbona:'Lidl',crownfield:'Lidl',alesto:'Lidl',freshona:'Lidl',combino:'Lidl',solevita:'Lidl','chef select':'Lidl',dulano:'Lidl','fin carre':'Lidl',sondey:'Lidl','snack day':'Lidl',vitasia:'Lidl',baresa:'Lidl',kania:'Lidl',gelatelli:'Lidl',bellarom:'Lidl',mcennedy:'Lidl',italiamo:'Lidl',eridanous:'Lidl',
+    aldi:'Aldi',milsani:'Aldi','moser roth':'Aldi',choceur:'Aldi','golden bridge':'Aldi','rio d oro':'Aldi',lyttos:'Aldi','gut bio':'Aldi',
+    tesco:'Tesco','tesco finest':'Tesco',spar:'SPAR','s-budget':'SPAR','s budget':'SPAR',despar:'SPAR','spar natur pur':'SPAR','natur pur':'SPAR',auchan:'Auchan'};
+  const OTHER_BRANDS='biotech|biotechusa|alnatura|danone|muller|zott|activia|nestle|corny|myprotein|scitec|olimp|dmbio|dm bio|rauch|milka|bonduelle|riso|gallo|mizo|sole|parmalat|president|hochland|exquisa|alpro|oatly|kelloggs?|nesquik|fitness|jana|szentkiralyi|theodora|naturaqua|happy day|sio|rio mare|globus|univer|kotanyi|baconos|pick|herz|gyermelyi|tolle|nature cookta|nutella|kinder|haribo|ehrmann|oreo|pringles|lays|chio|balaton|sport szelet|turo rudi|pottyos';
+  const BRAND_WORDS=new RegExp('\\b(?:'+Object.keys(STORE_BRANDS).map(k=>k.replace(/[-\s]/g,'[-\\s]')).join('|')+'|'+OTHER_BRANDS+')\\b','g');
+  const storeOf=name=>{const n=' '+strip(name)+' ';let best=null;for(const [k,v] of Object.entries(STORE_BRANDS))if(new RegExp('\\b'+k.replace(/[-\s]/g,'[-\\s]')+'\\b').test(n)&&(!best||k.length>best[0].length))best=[k,v];return best?{store:best[1],brand:best[0].replace(/(^|\s|-)([a-z])/g,(m,a,b)=>a+b.toUpperCase())}:null;};
   const PRODUCT_RULES=[
     [/\b(?:protein|feherje|whey)\s*(?:shake|ital|drink|turmix)\b/,'fehérjeturmix'],
     [/\b(?:iso\s*whey|whey|protein\s*(?:por|powder)|feherjepor|proteinpor)\b/,'fehérjepor'],
@@ -364,7 +371,7 @@ window.FoodQuery = (() => {
     const q = parse(lead + generic, { ...opts, noEstimate: true }).items;   // "pilos joghurt with honey": the product plus what was added
     if (!q.length || q.length > 4 || !q[0].entry || !['ok', 'needAmount', 'needGrams'].includes(q[0].status) || q[0].label || q.slice(1).some(i => ['unknown', 'bad'].includes(i.status))) return null;
     const it = q[0];
-    Object.assign(it, { text: d.name, product: d.name, estimated: true, generic: nameOf(it.entry, 'hu'), genericEn: nameOf(it.entry, 'en'), known: d.known || {} });
+    Object.assign(it, { text: d.name, product: d.name, estimated: true, generic: nameOf(it.entry, 'hu'), genericEn: nameOf(it.entry, 'en'), known: d.known || {}, store: storeOf(d.name) });
     if (it.status === 'ok' && !plausible(it, d.known)) return null;
     it.extra = q.slice(1);     // "10 g peanut butter, 8 g protein" contradicts the generic food: ask for the label
     if (it.status === 'ok' && d.ml > 0 && it.grams > 0) {             // a drink measured in ml stays a volume, values per 100 ml
@@ -379,7 +386,7 @@ window.FoodQuery = (() => {
     return ['p', 'c', 'f'].every(k => known?.[k] == null || Math.abs(known[k] * 100 / amount - it[k + '100']) <= 15 && known[k] <= amount);
   }
   function keepEstimate(p, it) {                                   // an answered estimate stays the named product, still marked ≈
-    if (p?.estimated && it) { Object.assign(it, { text: p.text, product: p.product, estimated: true, generic: p.generic, genericEn: p.genericEn, known: p.known || {} }); if (it.status === 'ok') applyKnown(it); }
+    if (p?.estimated && it) { Object.assign(it, { text: p.text, product: p.product, estimated: true, generic: p.generic, genericEn: p.genericEn, known: p.known || {}, store: p.store || null }); if (it.status === 'ok') applyKnown(it); }
     return it;
   }
   function applyKnown(it) {                                         // "200 g … 20 g protein": the stated amount wins, energy follows
@@ -392,6 +399,38 @@ window.FoodQuery = (() => {
     const f = amount / 100; it.kcal = Math.round(it.k100 * f); it.p = r1(it.p100 * f); it.c = r1(it.c100 * f); it.f = r1(it.f100 * f);
     return it;
   }
+  /* 2.55: "csirkés rizs", "mogyoróvajas kenyér", "csirkemel rizs": a describing word or a second noun that is a food of its
+     own becomes its own item (with its own amount question) instead of being dropped. Flavours ("csokis müzli", "epres
+     joghurt") stay part of the product. */
+  const FLAVOUR = /^(?:csok\w*|kakao\w*|vanili\w*|vanilia\w*|epres|malnas|karamell\w*|fahejas|citromos|narancsos|izesitett|light|zero|natur|teljes|zsirszegeny|zsirmentes|cukormentes|sos|edes|csipos|fuszeres|fustolt|friss|meleg|hideg|nagy|kis|kozepes|fott|sult|rantott|grillezett|parolt|nyers)$/;
+  function ingredientOf(w) {
+    const X = index();
+    if (FLAVOUR.test(w)) return -1;
+    for (const c of [w, w.replace(/s$/, ''), w.replace(/[aeo]s$/, '')]) {
+      if (c.length < 3 || FLAVOUR.test(c)) continue;
+      const r = resolve([c]);   // a typo is accepted only for the whole word ("csirkemel"), not for a shortened one ("ropogo")
+      if (r && r.exact && !r.ignored.length && X.entries[r.e].h >= 0 && !X.entries[r.e].b && r.full && (c === w || !(r.typos || []).length)) return r.e;   // a whole food name on its own (not part of "ropogós bacon"); a stem ("csirkés" → csirke) must match without typos
+    }
+    return -1;
+  }
+  function splitIngredients(items, opts) {
+    const X = index(), out = [];
+    for (const it of items) {
+      const seg = it._seg, ign = (it.ignored || []).map(w => prep(String(w)).trim());   // raw word: canon() would already cut the -s
+      if (!seg || !ign.length || !it.entry || it.label || it.estimated || it.restaurantId || it.memoryId || !['ok', 'unknown', 'needAmount', 'needGrams'].includes(it.status)) { out.push(it); continue; }
+      const extra = []; let rest = seg.food.slice();
+      for (const w of ign) {
+        const e = ingredientOf(w); if (e < 0 || X.entries[e] === it.entry) continue;
+        const s2 = { ...seg, food: [w], raw: [w], qty: null, unit: null, size: '', sizeWord: '' };
+        extra.push({ ...itemFromSeg(s2, { ...opts, entry: e }), _seg: s2 });
+        rest = rest.filter(x => canon(x) !== canon(w));
+      }
+      if (!extra.length || !rest.length) { out.push(it); continue; }
+      const s1 = { ...seg, food: rest, raw: rest }, head = { ...itemFromSeg(s1, opts), _seg: s1 };
+      out.push(head.status === 'unknown' ? it : head, ...extra);
+    }
+    return out;
+  }
   function parsePiece(piece, opts) {
     piece = String(piece).replace(/\b(protein|feherje|fehérje|whey)\s+(shake|turmix|ital|drink)\b/gi, 'fehérjeturmix');   // "protein shake" is one food; a bare "shake" is not
     if(/^\s*-\s*\d/.test(piece))return {items:[{text:piece,status:'bad'}],intent:new Set()};
@@ -400,7 +439,9 @@ window.FoodQuery = (() => {
     if(saved)return {items:[saved],intent:new Set()};
     const memories=window.FoodMemory?.resolve(piece,opts.doc||window.Store?.d);if(memories)return {items:memories,intent:new Set()};
     const restaurant=window.BellozzoFoods?.resolve(piece);if(restaurant)return {items:restaurant,intent:new Set()};
-    if(d&&(d.packaged||new RegExp(BRAND_WORDS.source).test(' '+strip(d.name)+' '))&&!index().full.has(nameToks(d.name).join(' '))){
+    if(d&&!opts.skipPackaged&&(d.packaged||new RegExp(BRAND_WORDS.source).test(' '+strip(d.name)+' '))&&!index().full.has(nameToks(d.name).join(' '))){
+      if(window.STORE_PRODUCTS?.count||!d.packaged){const q=parse(piece,{...opts,skipPackaged:true,noEstimate:true}).items;   // an imported label (Open Food Facts) or a product the database knows by name ("túró rudi") beats the estimate
+        if(q.length===1&&q[0].entry&&q[0].exact&&(q[0].entry.b||!d.packaged)&&['ok','needAmount'].includes(q[0].status))return {items:q,intent:new Set()};}
       const est=!opts.noEstimate&&!opts.exactOnly&&estimate(d,piece,opts);
       if(est){const extra=est.extra||[];delete est.extra;return {items:[est,...extra],intent:new Set()};}
       return {items:[{...d,text:d.name,status:d.amount==null?'needAmount':'needLabel'}],intent:new Set()};
@@ -472,6 +513,7 @@ window.FoodQuery = (() => {
         // "biotech protein shake with milk": the milk is a food of its own, not part of the estimated product
         else if (best.items.some(i => i.estimated) && merged.items.length > best.items.length && merged.items.every(i => i.status !== 'unknown' && i.status !== 'bad')) best = merged;
       }
+      if (!opts.noEstimate) best = { ...best, items: splitIngredients(best.items, opts) };   // never inside a product estimate ("chocolate peanut butter" stays one product)
       best.items.forEach(i => { if (i.status !== 'unknown' || i.text) out.items.push(i); });
       best.intent.forEach(k => out.intent.add(k));
     }
@@ -637,5 +679,5 @@ window.FoodQuery = (() => {
     });
     return out;
   }
-  return { choices, withGrams, productEstimates:true, inlineMeals:true, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
+  return { choices, storeOf, storeBrands:true, withGrams, productEstimates:true, inlineMeals:true, mealDetails:true, oneQuestion:true, bellozzo:true,foodMemory:true,productLabels:true,restaurants:true,install, parse, answer, resolve: w => resolve(tokens(w)), hits, units, view, foodWords, nameOf, unitLabel: (u, lang, n = 1) => { const l = UL[lang === 'hu' ? 'hu' : 'en'][u]; return Array.isArray(l) ? l[n === 1 ? 0 : 1] : l || u; }, _norm: prep };
 })();
