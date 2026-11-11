@@ -56,6 +56,11 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ---
 
+# Update — Reppsy 2.54.0, 2026-11-11 (Claude)
+
+- Owner: the update loading "just spins", wants it nicer and smoother. `updateOverlay()` returns `stage(key, step)`, `progress(fraction)`, `versions(a, b)`, `message(key)` (finish), `leave()`, `close()`; `update-now` drives the steps and listens for `update-progress` messages from `sw.js` (`verifiedRelease` posts `{done,total}` per verified file). Styles at the end of `css/clean.css` (`.upd-*`); the logo keeps the `reppsy-logo-turn` keyframes (slower), so the existing update tests still hold. Strings `updateChecking`, `updateDownloading`, `updateDownloadingPct`, `updateInstalling`; loader checks `I18N.en.updateDownloadingPct`.
+- Tests: new `tests/test_update_animation_browser.py` (2). `test_profile_theme_updates` update test OK; its settings test fails on main too. Node 148 pass / 5 legacy fail.
+
 # Update — Reppsy 2.53.0, 2026-11-09 (Claude)
 
 - Owner: "always asks for címke and termék pontosítása, rarely provides anything; so frustrating I don't want to use the app". Root cause: every brand word → `needLabel`; AI told never to estimate branded food; estimates only for 4 classes behind a button.

@@ -783,13 +783,15 @@ function verifiedRelease(){
       if(!response.ok)throw new Error('release manifest unavailable');
       const release=await response.json();
       if(release.version!==GYM_RELEASE.version||release.build!==GYM_RELEASE.build)throw new Error('release changed during update');
+      let verified=0,posted=0;const report=async()=>{const now=Date.now();if(verified<CORE.length&&now-posted<80)return;posted=now;   // progress for the update window
+        try{for(const c of await self.clients.matchAll({includeUncontrolled:true,type:'window'}))c.postMessage({type:'update-progress',done:verified,total:CORE.length});}catch(e){}};
       const results=await Promise.allSettled(CORE.map(async path=>{
         const url=new URL(path,self.registration.scope);url.searchParams.set('__gym_build',GYM_RELEASE.build);
         const file=await fetch(url,{cache:'no-store'});if(!file.ok)throw new Error('missing '+path);
         const digest=await crypto.subtle.digest('SHA-256',await file.clone().arrayBuffer());
         const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
         if(hash!==release.assets[path])throw new Error('outdated or incomplete '+path);
-        await stage.put(new URL(path,self.registration.scope).href,file);
+        await stage.put(new URL(path,self.registration.scope).href,file);verified++;report();
       }));
       const failure=results.find(r=>r.status==='rejected');if(failure)throw failure.reason;
       const cache=await caches.open(SHELL);
