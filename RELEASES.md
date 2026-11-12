@@ -1,5 +1,17 @@
 # Release versions
 
+## 2.56.0 — 2026-11-12 (build 20261112.1)
+
+Owner: some recipes have no good guide, "add more serving" doesn't work correctly, add user ratings everyone can see, check for errors and make recipes efficient to browse.
+
+Servings: the old stepper ("Naplózandó adag") sat above the ingredients and changed only the logged macros, so the ingredient list never followed. Now the ingredients card has its own stepper (servings to cook; muffins and pancakes step by half a batch) that scales numeric grams, amounts written as text ("300 ml (1½ doboz)" → "450 ml (2¼ doboz)") and counts in names ("tojás (3 db)"); "to taste" stays. Cook mode uses the same amounts. Nutrition is shown per serving and no longer jumps with the stepper; the bottom bar sets the servings to log and shows the total ("Naplóba: 1,5 adag · 720 kcal"). Logged entries keep `servings`, the ≈ flag and a Hungarian decimal in the name.
+
+Recipe review (`data/recipe-fixes.js`): rewrote thin methods (protein banana muffins: 7 one-line steps → 5 complete ones; pizza meat roll, gnocchi tray bake, chickpea skillet, ham flatbread, blueberry pancakes, curd-cheese oats with a wrong drawing count) and added a no-juicer option and clearer serving to the juices. Clips that showed no amounts get suggested amounts (meat roll), US cups also in grams (pancakes). Four clip recipes had missing carbs/fat (or kcal), so logging them forced a manual form; their nutrition is now calculated from USDA rows, with generic per-100 values for shop gnocchi, oat/rice cooking cream and sugar-free syrup, marked ≈ with the clip's own figures in the note (gnocchi ≈530 kcal/47 g protein vs clip 525/47; chickpeas ≈463/43.5 vs 438/43). New test `tests/test_recipe_quality.cjs` checks every recipe: complete nutrition consistent with 4/4/9, both languages, steps of at least 40 characters, drawings matching steps, no "amount not shown".
+
+Ratings: `migrations/20261112_recipe_ratings.sql` (table `recipe_ratings`, RLS on, no direct access; `recipe_rating_summary()` for anon and signed-in users returns only averages and counts; `recipe_rating_mine()`/`recipe_rate(text,int)` for signed-in users, 0 removes, max 500 ratings per user). `js/recipe-ratings.js` caches the summary, updates at once and rolls back on failure, and ranks Top rated with an average pulled towards 3.5 by three votes. The UI appears only after the server has answered once, so nothing shows until the migration is applied. Not applied to the live project in this release (needs the owner's approval).
+
+Browsing: search by name or ingredient (several words, accents ignored), sort (recommended, top rated, quickest, most protein, fewest calories), result count, "Clear filters", compact category/goal filters so the first recipes are visible on a phone, rating on each card.
+
 ## 2.55.0 — 2026-11-11 (build 20261111.2)
 
 Owner: use the chain and store databases (Lidl, Tesco, SPAR, Aldi, Auchan, Burger King, McDonald's, KFC, Starbucks, Subway, Pizza Hut) for basic macros, understand loose text without exact names, and let routines be gym, swimming or cycling.

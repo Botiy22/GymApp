@@ -21,7 +21,7 @@ class RecipesStability(unittest.TestCase):
             self.assertEqual(len(metrics),p.evaluate('RECIPES.items.length'));self.assertEqual(metrics[0]['y'],metrics[1]['y']);self.assertGreater(metrics[1]['x'],metrics[0]['x'])
             self.assertLess(max(m['h'] for m in metrics)-min(m['h'] for m in metrics),1)
             self.assertEqual(p.locator('.recipe-card-macros>span').count(),3*len(metrics))
-            gnocchi=p.locator('[data-a=idea-open][data-id=clip-chicken-gnocchi]');self.assertIn('—',gnocchi.inner_text());self.assertEqual(gnocchi.locator('img').get_attribute('src'),'img/recipes/clip-chicken-gnocchi-thumb.webp')
+            gnocchi=p.locator('[data-a=idea-open][data-id=clip-chicken-gnocchi]');self.assertIn('≈',gnocchi.inner_text());self.assertNotIn('—',gnocchi.inner_text());self.assertEqual(gnocchi.locator('img').get_attribute('src'),'img/recipes/clip-chicken-gnocchi-thumb.webp')
             choose(p,'[data-a=idea-cat][data-c=breakfast]');self.assertEqual(p.locator('.recipe-card').count(),len(p.evaluate('RECIPES.items.filter(r=>r.cat==="breakfast")')))
             p.screenshot(path=f'/tmp/reppsy-recipes-{width}-{lang}.png');self.assertEqual(errors,[])
 
@@ -73,10 +73,12 @@ class RecipesStability(unittest.TestCase):
         self.assertTrue(p.locator('#view').evaluate('(e)=>e.inert'));self.assertEqual(p.evaluate('Object.values(Store.d.food).flat().length'),0)
         p.locator('[data-a=recipe-cook]').click();self.assertTrue(p.locator('[data-in=cook-ingredient]').first.is_checked());self.assertEqual(errors,[])
 
-    def test_incomplete_video_nutrition_still_requires_completion(self):
+    def test_clip_recipes_log_with_calculated_estimates(self):
+        # 2.56: clips that stated only part of their macros are calculated from the ingredients and logged marked ≈
         p,errors=self.page();self.recipes(p);p.locator('[data-a=idea-open][data-id=clip-ham-flatbread]').click()
-        p.locator('[data-a=idea-add]').click();self.assertEqual(p.evaluate('Object.values(Store.d.food).flat().length'),0)
-        self.assertTrue(p.evaluate('__gym.ui.manual.requireMacros'));self.assertEqual(errors,[])
+        p.locator('[data-a=idea-add]').click();food=p.evaluate('Object.values(Store.d.food).flat()')
+        self.assertEqual(len(food),1);self.assertTrue(food[0]['estimated']);self.assertEqual(food[0]['kcal'],p.evaluate('RECIPES.items.find(r=>r.id==="clip-ham-flatbread").kcal'))
+        self.assertEqual(errors,[])
 
     def test_stability_and_knee_routing_preserves_ids_data_sync_and_history(self):
         p,errors=self.page(320,844,'hu',20)

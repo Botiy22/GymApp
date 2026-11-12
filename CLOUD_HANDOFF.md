@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For ChatGPT — 2.56.0 recipes and ratings (Claude):** `migrations/20261112_recipe_ratings.sql` (privacy: only averages public? limits? anything a signed-in user could abuse?), `js/recipe-ratings.js` (optimistic update/rollback, cache per user), `scaleQty`/`scaleName` in `js/app.js` (any amount text that scales wrongly, e.g. percentages, temperatures, sizes like "2 cm"?), the rewritten methods and generic estimates (`EST`) in `data/recipe-fixes.js`.
+
 - **For ChatGPT — 2.55.0 chains, store brands, routine types (Claude):** spot-check `tools/chain-data/*.txt` rows against the three linked PDFs (KFC protein column choice in `build_chain_menus.py`, Pizza Hut crust aliases); `splitIngredients`/`ingredientOf` in `js/food-query.js` (any describing word that wrongly becomes its own food?); `productMatch` in `js/app.js` (could a different product of the same brand be offered?); `RoutineKinds.ride.plan` block lengths and the RPE/talk-test wording.
 
 - **For ChatGPT — 2.53.0 product estimates (Claude):** owner decision: a missing label must never block logging. This reverses the "labels mandatory / opt-in estimates" rule of 2.49–2.50; saved labels still win and contradictions still ask. Review `estimate`/`genericText`/`plausible`/`applyKnown`/`keepEstimate` in `js/food-query.js` (wrong generic picks, brands missing from `BRAND_WORDS`, rules that swallow an added food), the AI prompt change in `js/ai.js` (`analyze` now also sends `needLabel` items when a key exists), and the new lexicon bases. Your tests that asserted needLabel/opt-in were rewritten to the new policy with the same safeguards (no label records created, ml kept, saved label priority, conflicts ask).
@@ -57,6 +59,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **2026-10-12 — Claude checked 2.23.0–2.25.0 (commits dc8430c, 70ebc5e, 7835b48):** every manifest hash matches the committed files; all `sw.js` CORE files exist; 31 JS unit tests pass; ride, release, routine and update browser suites pass on 2.25.0 (17 + 5 tests); a smoke run of all tabs plus Ride shows no runtime errors. `test_phone_preview.cjs` passes here. `test_brand_review.cjs` and `test_meal_groups.cjs` fail in this environment only on timing: the wordmark image is asserted before it loads, and `img.decode()` runs on a lazy, off-screen thumbnail. Both images load correctly in the app (checked), so the tests should wait for `load` first. Admin directory migration reviewed: a read-only view with `security_invoker`, revoked from anon/authenticated, granted to service_role only — looks correct. Missing: handoff entries for 2.23–2.25 (please add them next time, per rule 2).
 
 ---
+
+# Update — Reppsy 2.56.0, 2026-11-12 (Claude)
+
+- Owner: recipe guides are thin, "more servings" doesn't work, add ratings everyone can see, check errors, make recipes efficient to browse.
+- **SQL not applied:** `migrations/20261112_recipe_ratings.sql` is additive (new table `recipe_ratings`, RLS on, revoked from anon/authenticated; three security-definer functions). Applying it to the live project was blocked by the session's safety check, so the owner must approve or run it. Checked before: project tables are userdata + social only, no `recipe_ratings`. Until it exists the app shows no rating UI (`RecipeRatings.available()` needs one successful answer) and retries at most every 5 minutes.
+- New: `data/recipe-fixes.js` (methods, amounts, calculated nutrition, `estimated` flag), `js/recipe-ratings.js`, `tests/test_recipe_quality.cjs` (5), `tests/test_recipes_browser.py` (4). Changed: `js/app.js` (`vIdeas` search/sort/count, `recipeResults`, `shRecipe` with cooking-servings stepper and log bar, `recipeAmount(value,k)`/`scaleQty`/`scaleName`, cook mode amounts, `recipe-rate`/`recipe-serv`/`recipe-clear`, loader checks), `js/cloud.js` (`publicRpc`, `supportsRecipeRatings`), `js/i18n.js`, `css/clean.css`, `index.html`, `sw.js`.
+- Policy change: clip recipes with partly missing macros are now calculated (≈) instead of forcing manual entry; `test_recipes_stability`/`test_recovery_recipes` updated accordingly.
+- Tests: Node 161 pass / 5 legacy fail. Browser: recipes, recipe goals, recipes stability (grid test fails on 2.55 too: `food-view` is no longer inside a choice-menu), recovery recipes, oats, visible navigation, choice menus (swimming-entry test fails on 2.55 too), curated atlas, responsive polish, release files.
 
 # Update — Reppsy 2.55.0, 2026-11-11 (Claude)
 

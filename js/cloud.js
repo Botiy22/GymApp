@@ -137,6 +137,11 @@ window.Cloud = (function () {
       try { return await run(await token()); }
       catch(error) { if(error.code !== 'auth' || !ses) throw error; return run(await refresh()); }
     },
+    supportsRecipeRatings:true,
+    async publicRpc(name, body) {                                                // read-only summaries anyone may see (anon key, no session)
+      if (!on || !/^[a-z][a-z0-9_]{0,62}$/.test(name)) throw fail('api');
+      return call('/rest/v1/rpc/' + name, {method:'POST', body:body || {}});
+    },
     get user() { return ses ? ses.user : null; },
     async signUp(email, password, profile, username) {
       const setup = window.PersonalSetup && PersonalSetup.normalize(profile);

@@ -327,3 +327,42 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .kind-lead{display:flex;align-items:center;gap:8px}.kind-lead svg{width:22px;height:22px;fill:none;stroke:var(--acc);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .rtile.kind-swim .r-ic svg,.rtile.kind-ride .r-ic svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ride-plan{margin-top:12px}.ride-plan h3{margin:0}.ride-plan .h2row{margin:0 0 4px}
+/* 2.56 recipes: search, compact filters, ratings, servings that scale the ingredients */
+.recipe-filters{display:grid;gap:8px;margin:12px 0 2px}
+.recipe-search{display:flex;align-items:center;gap:8px;min-height:46px;padding:0 12px;border:1px solid var(--edge);border-radius:14px;background:var(--card)}
+.recipe-search:focus-within{border-color:var(--acc-tx)}
+.recipe-search svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--mut);stroke-width:2;stroke-linecap:round}
+.recipe-search input{flex:1;min-width:0;min-height:44px;border:0;background:transparent;color:var(--ink);font:inherit;outline:none}
+.recipe-filters .choice-segments,.recipe-filters .seg,.recipe-filters .recipe-goals,.recipe-filters .recipe-goals.choice-segments,.recipe-filters .seg.choice-segments{margin:0}
+.recipe-filters .choice-segments{font-size:.8rem;padding:4px;gap:4px;grid-auto-rows:auto}
+.recipe-filters .choice-segments>button,.recipe-filters .recipe-categories.choice-segments.seg>button{flex-direction:row;min-height:44px;padding:6px 8px;gap:6px;font-size:inherit}
+.recipe-filters .choice-segments>button .menu-pictogram{width:16px;height:16px;flex-basis:16px}
+.recipe-filters .recipe-categories.choice-segments.seg{grid-template-columns:repeat(auto-fit,minmax(4.9em,1fr))}
+@media(max-width:430px){.recipe-filters .choice-segments>button .menu-pictogram{display:none}}
+.recipe-filters .recipe-goal-help{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}.recipe-filters .recipe-goal-help .cap{margin:0}
+.recipe-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 2px 8px}.recipe-bar .recipe-count{margin:0}
+.recipe-sort{display:flex;align-items:center;gap:6px;min-width:0;color:var(--mut);font-size:.82rem}
+.recipe-sort select{min-height:40px;max-width:11.5em;padding:0 28px 0 10px;border:1px solid var(--edge);border-radius:12px;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center/14px;color:var(--ink);font:inherit;font-size:.85rem;appearance:none;-webkit-appearance:none}
+:root{--star:#f2a900}
+.rating{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;line-height:1.2;color:var(--ink);min-width:0}
+.rating b{font-weight:700}.rating small{color:var(--mut);font-size:.76rem}.rating.none{color:var(--mut)}
+.stars{display:inline-flex;gap:1px;flex:none}
+.stars i{display:block;width:12px;height:12px;background:linear-gradient(90deg,var(--star) var(--fill),color-mix(in srgb,var(--mut) 40%,transparent) var(--fill));clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.recipe-card .rating{margin:2px 0 0}
+.recipe-head{display:grid;gap:6px;margin:10px 0 4px}.recipe-head .rating{font-size:.88rem}.recipe-head .stars i{width:15px;height:15px}
+.recipe-facts{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.recipe-facts span{padding:4px 10px;border:1px solid var(--edge);border-radius:999px;background:var(--card);color:var(--mut);font-size:.8rem}
+.recipe-ing-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.recipe-ing-head h3{margin:0}
+.recipe-serv{display:flex;align-items:center;gap:6px}.recipe-serv b{min-width:4.5em;text-align:center;font-size:.9rem}
+.recipe-scaled{margin:6px 0 0;color:var(--acc-tx)}
+.recipe-log{display:flex;align-items:center;gap:8px;width:100%}
+.recipe-log .recipe-portions{margin:0;gap:4px;flex:none}.recipe-log .recipe-portions>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.recipe-log .recipe-portions b{min-width:2.2em}
+.recipe-log>.btn{flex:1 1 auto;min-width:0;padding-left:10px;padding-right:10px}
+.recipe-rate{margin-top:16px}.recipe-rate-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.recipe-rate-head h3{margin:0}
+.rate-stars{display:flex;gap:4px;margin:10px 0 4px}
+.rate-stars button{width:46px;height:46px;display:grid;place-items:center;border:0;border-radius:12px;background:transparent;color:color-mix(in srgb,var(--mut) 70%,transparent)}
+.rate-stars button svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.rate-stars button.on{color:var(--star)}.rate-stars button.on svg{fill:currentColor}
+.rate-stars button:not(:disabled):active{transform:scale(.9)}.rate-stars button:disabled{opacity:.5}
+.rate-stars button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:1px}

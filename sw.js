@@ -9,6 +9,8 @@ const CORE = [
   "css/swim-training.css",
   "data/dessert-recipes.js",
   "data/recipe-methods.js",
+  "data/recipe-fixes.js",
+  "js/recipe-ratings.js",
   "data/exercise-guides.js",
   "data/exercises-curated.js",
   "js/exercise-catalog.js",

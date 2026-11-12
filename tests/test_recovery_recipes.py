@@ -81,13 +81,14 @@ class RecoveryRecipes(unittest.TestCase):
         self.assertEqual(page.locator('#sheet .cooking-art svg').count(), 1)
         self.assertEqual(errors, [])
 
-    def test_meat_roll_keeps_unknown_macros_unknown(self):
+    def test_meat_roll_has_suggested_amounts_and_complete_macros(self):
+        # 2.56: the clip showed no amounts; the recipe now suggests them, and nutrition is calculated from USDA values
         page, errors = self.page()
         r = page.evaluate('RECIPES.items.find(r=>r.id==="clip-pizza-meat-roll")')
-        self.assertEqual((r['kcal'], r['p'], r['c'], r['f']), (550, 66, None, None))
+        self.assertEqual((r['kcal'], r['p'], r['c'], r['f']), (494, 70.5, 3.5, 20.3))
         page.locator('#tabbar [data-tab=food]').click(); choose(page,'[data-a=food-view][data-v=ideas]')
         page.locator('[data-a=idea-open][data-id=clip-pizza-meat-roll]').click(); page.locator('[data-a=idea-add]').click()
-        self.assertEqual(page.evaluate('Object.values(Store.d.food).flat().length'), 0)        # needs the missing macros first
+        self.assertEqual(page.evaluate('Object.values(Store.d.food).flat()[0].kcal'), 494)
         self.assertEqual(errors, [])
 
     def test_planner_editor_switch_and_time_fields_fit(self):
