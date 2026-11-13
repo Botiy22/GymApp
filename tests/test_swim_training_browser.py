@@ -11,6 +11,8 @@ class SwimTraining(unittest.TestCase):
     def open(self,p):
         select_workout(p,'swim')
         p.locator('[data-sw=page][data-value=workouts]').click()
+        setup=p.locator('.swim-setup')
+        if setup.count() and not setup.evaluate('(e)=>e.open'):setup.locator('summary').click()
 
     def test_pool_customisation_persists_and_logging_requires_review(self):
         p,errors=self.page(390,844,'hu',20)
@@ -62,7 +64,7 @@ class SwimTraining(unittest.TestCase):
     def test_technique_play_pause_scrub_strokes_and_no_background_player(self):
         p,errors=self.page(390,844,'en');self.open(p)
         p.locator('.swim-tabs [data-sw=page][data-value=technique]').click()
-        first=p.locator('.swim-scene').inner_html();p.wait_for_timeout(200)
+        first=p.locator('.swim-scene').inner_html();p.wait_for_timeout(2200)
         self.assertNotEqual(first,p.locator('.swim-scene').inner_html())
         p.locator('[data-sw=play]').click()
         paused=p.locator('.swim-scene').inner_html();p.wait_for_timeout(200)

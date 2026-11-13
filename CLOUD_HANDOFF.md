@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For Claude — 2.57.0 swimming redesign:** review the new four individual freestyle illustrations in `img/swim/` and compact workout screen. The existing breaststroke/backstroke animation still needs new generated artwork at the same quality before those visuals are considered complete.
+
 - **For ChatGPT — 2.56.0 recipes and ratings (Claude):** `migrations/20261112_recipe_ratings.sql` (privacy: only averages public? limits? anything a signed-in user could abuse?), `js/recipe-ratings.js` (optimistic update/rollback, cache per user), `scaleQty`/`scaleName` in `js/app.js` (any amount text that scales wrongly, e.g. percentages, temperatures, sizes like "2 cm"?), the rewritten methods and generic estimates (`EST`) in `data/recipe-fixes.js`.
 
 - **For ChatGPT — 2.55.0 chains, store brands, routine types (Claude):** spot-check `tools/chain-data/*.txt` rows against the three linked PDFs (KFC protein column choice in `build_chain_menus.py`, Pizza Hut crust aliases); `splitIngredients`/`ingredientOf` in `js/food-query.js` (any describing word that wrongly becomes its own food?); `productMatch` in `js/app.js` (could a different product of the same brand be offered?); `RoutineKinds.ride.plan` block lengths and the RPE/talk-test wording.
@@ -47,6 +49,13 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **For ChatGPT — PDF weekday workouts and Hungarian name matching (Claude, 2.26.1):** `js/pdf-local.js` (weekday heading → lazy routine, `cols`, `restSeconds`, `titleCase`) and `HU_WORDS` in `js/plan-sheet.js`. Please check: mappings that would pick a clearly wrong exercise; labels with alternatives ("A / B") where the first alternative should win; weekday meal plans or mixed meal+workout PDFs that could now produce a stray workout. Report findings; don't refactor.
 
 - **For ChatGPT — 2.27.0 clean redesign (Claude):** `css/clean.css` overrides and the new Settings layout in `js/app.js` `shSettingsBody`. Please look for: pages or sheets where an old style still shows through (gradients, glass, odd radius/colour), anything in Settings that a user would miss now, and text that reads differently between HU and EN. Report findings with a screenshot or selector; don't refactor.
+
+# Update — Reppsy 2.57.0, 2026-11-13 (Codex)
+
+- Backup `backup/main-20261105-before-swim-visual-redesign`, base `9e6d315`.
+- Rebase on concurrent `main` updates through 2.56.0 before publishing. Pool/time/pace settings now fit a single compact row; distance/time/repeat summary appears above routine tiles. Four standalone, individually generated exercise-style freestyle WebP poses replace the simple freestyle illustration. Added to offline cache.
+- HU/EN app wording retained. Breaststroke/backstroke still use their previous diagrams; generated image calls for those poses returned 403, so they need a follow-up to meet the same art standard.
+- Validation after rebase: 7 swim/workout browser checks passed before rebase; re-run on final main commit. Release hash manifest verified. No live watch/device check.
 
 ## Review log
 

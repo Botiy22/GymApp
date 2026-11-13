@@ -1,5 +1,13 @@
 # Release versions
 
+## 2.57.0 — 2026-11-13 (build 20261113.2)
+
+Move the swim session summary above workout selection and group pool, pace and time
+settings in one compact disclosure. Replace the simplified freestyle player with
+four individually generated, high-detail anatomy illustrations in the style of the
+exercise library. Add the images to the offline shell.
+
+
 ## 2.56.0 — 2026-11-12 (build 20261112.1)
 
 Owner: some recipes have no good guide, "add more serving" doesn't work correctly, add user ratings everyone can see, check for errors and make recipes efficient to browse.

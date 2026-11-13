@@ -30,3 +30,15 @@
 .swim-cue{padding:5px 18px 18px;min-height:300px}.swim-cue h3{font-size:1rem}.swim-cue p{font-size:.8rem;line-height:1.65;color:var(--mut);margin:14px 0}.swim-cue b{display:block;font-size:.73rem;color:var(--ink);margin-bottom:3px}
 .swim-entry h3{font-size:.95rem}.swim-entry svg{border-radius:12px}
 @media(max-width:360px){.swim-config,.swim-plan,.swim-entry{padding:14px}.swim-routines button{padding:12px}.swim-total b{font-size:1.4rem}}
+
+/* Keep pool setup compact; the generated exercise-style swimming studies lead. */
+.swim-setup{margin:10px 0 16px;border:1px solid var(--edge);border-radius:16px;background:var(--card)}
+.swim-setup>summary{padding:14px 16px;min-height:48px;display:flex;align-items:center;cursor:pointer;font-size:.8rem;color:var(--acc-tx)}
+.swim-setup .swim-config{margin:0;border:0;border-top:1px solid var(--edge);border-radius:0 0 16px 16px}
+.swim-scene{aspect-ratio:16/9;background:#fff}
+#swim-training .swim-scene img{display:block;width:100%;height:100%;object-fit:contain;background:#fff}
+.swim-heading{margin:16px 0 10px}.swim-heading p{margin:4px 0}
+
+.swim-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px;margin:14px 0;border:1px solid var(--edge);border-radius:18px;background:var(--card)}
+.swim-glance>div{display:grid;gap:5px;min-width:0}.swim-glance b{font-size:1rem;line-height:1.2;overflow-wrap:anywhere}.swim-glance span{font-size:.68rem;color:var(--mut);line-height:1.35}.swim-glance .swim-glance-error{grid-column:1/-1;font-size:.8rem;line-height:1.5;color:var(--mut)}
+@media(max-width:350px){.swim-glance{padding:12px 8px;gap:4px}.swim-glance b{font-size:.9rem}.swim-glance span{font-size:.62rem}}
