@@ -42,3 +42,15 @@
 .swim-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px;margin:14px 0;border:1px solid var(--edge);border-radius:18px;background:var(--card)}
 .swim-glance>div{display:grid;gap:5px;min-width:0}.swim-glance b{font-size:1rem;line-height:1.2;overflow-wrap:anywhere}.swim-glance span{font-size:.68rem;color:var(--mut);line-height:1.35}.swim-glance .swim-glance-error{grid-column:1/-1;font-size:.8rem;line-height:1.5;color:var(--mut)}
 @media(max-width:350px){.swim-glance{padding:12px 8px;gap:4px}.swim-glance b{font-size:.9rem}.swim-glance span{font-size:.62rem}}
+/* 2.58: freestyle phases cross-fade; breaststroke and backstroke as a written step list */
+#swim-training .swim-scene{position:relative}
+#swim-training .swim-scene img{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
+#swim-training .swim-scene img.on{opacity:1}
+@media (prefers-reduced-motion:reduce){#swim-training .swim-scene img{transition:none}}
+.swim-steps-only{padding:6px 18px}
+.swim-phase-list{list-style:none;margin:0;padding:0}
+.swim-phase-list li{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:16px 0;border-top:1px solid var(--edge)}
+.swim-phase-list li:first-child{border-top:0}
+.swim-phase-list h3{font-size:1rem;margin:2px 0 8px}
+.swim-phase-list p{font-size:.8rem;line-height:1.6;color:var(--mut);margin:8px 0}
+.swim-phase-list b{display:block;font-size:.73rem;color:var(--ink);margin-bottom:2px}

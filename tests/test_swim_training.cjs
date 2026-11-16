@@ -28,9 +28,10 @@ check('invalid saved preferences use bounded defaults',()=>{
  assert.deepEqual(S.clean({pool:0,minutes:NaN,pace:Infinity,routine:'__proto__',stroke:'fly'}),S.defaults);
  assert.equal(S.clean(null).pool,25);assert.equal(S.clean({pool:33.333}).pool,33.3);
 });
-check('three distinct changing animation rigs',()=>{
- for(const stroke of ['free','breast','back'])assert.notEqual(S.scene(stroke,0),S.scene(stroke,.5));
- assert.notEqual(S.scene('free',.4),S.scene('back',.4));assert.notEqual(S.scene('breast',.4),S.scene('back',.4));
+check('freestyle uses the four illustrated phases that ship offline; no drawn figures remain',()=>{
+ const fs=require('fs'),path=require('path'),root=path.join(__dirname,'..');
+ assert.equal(S.frames.length,4);for(const f of S.frames){assert.ok(fs.existsSync(path.join(root,f)),f);assert.ok(fs.readFileSync(path.join(root,'sw.js'),'utf8').includes('"'+f+'"'),f+' cached');}
+ assert.equal(S.scene,undefined);
 });
 check('HU and EN contain the same UI keys',()=>assert.deepEqual(Object.keys(S.text.hu).sort(),Object.keys(S.text.en).sort()));
 console.log(count+' swim training checks passed');

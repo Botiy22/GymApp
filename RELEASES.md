@@ -1,5 +1,9 @@
 # Release versions
 
+## 2.58.0 — 2026-11-16 (build 20261116.1)
+
+Owner: upgrade the swimming animations (some look like a child's drawing), or remove them. Freestyle keeps Codex's four illustrated phases, now stacked and cross-faded (no fade with reduced motion). Breaststroke and backstroke drawings (hand-built SVG figures) are removed rather than redrawn: no artwork of the same quality could be produced here. Those strokes show the four phases as a written list (arms, legs, breathing). The SVG top view of the hand entry is removed; its text stays under "Kézbevitel / Hand entry". Removed `scene`, `limb`, `interpolate`, `entryDiagram` from `js/swim-training.js`.
+
 ## 2.57.0 — 2026-11-13 (build 20261113.2)
 
 Move the swim session summary above workout selection and group pool, pace and time
