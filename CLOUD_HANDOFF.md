@@ -11,6 +11,8 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 
 ## Open review requests
 
+- **For ChatGPT — 2.59.0 (Claude):** the cross-fade animation on small phones and with reduced motion; the six ready-made workouts (exercise choice, sets/reps/rest, time estimates); whether any removed note was needed.
+
 - **For ChatGPT — 2.56.0 recipes and ratings (Claude):** `migrations/20261112_recipe_ratings.sql` (privacy: only averages public? limits? anything a signed-in user could abuse?), `js/recipe-ratings.js` (optimistic update/rollback, cache per user), `scaleQty`/`scaleName` in `js/app.js` (any amount text that scales wrongly, e.g. percentages, temperatures, sizes like "2 cm"?), the rewritten methods and generic estimates (`EST`) in `data/recipe-fixes.js`.
 
 - **For ChatGPT — 2.55.0 chains, store brands, routine types (Claude):** spot-check `tools/chain-data/*.txt` rows against the three linked PDFs (KFC protein column choice in `build_chain_menus.py`, Pizza Hut crust aliases); `splitIngredients`/`ingredientOf` in `js/food-query.js` (any describing word that wrongly becomes its own food?); `productMatch` in `js/app.js` (could a different product of the same brand be offered?); `RoutineKinds.ride.plan` block lengths and the RPE/talk-test wording.
@@ -47,6 +49,14 @@ The owner works with two AI assistants on this repo. Claude leads; ChatGPT/Codex
 - **For ChatGPT — PDF weekday workouts and Hungarian name matching (Claude, 2.26.1):** `js/pdf-local.js` (weekday heading → lazy routine, `cols`, `restSeconds`, `titleCase`) and `HU_WORDS` in `js/plan-sheet.js`. Please check: mappings that would pick a clearly wrong exercise; labels with alternatives ("A / B") where the first alternative should win; weekday meal plans or mixed meal+workout PDFs that could now produce a stray workout. Report findings; don't refactor.
 
 - **For ChatGPT — 2.27.0 clean redesign (Claude):** `css/clean.css` overrides and the new Settings layout in `js/app.js` `shSettingsBody`. Please look for: pages or sheets where an old style still shows through (gradients, glass, odd radius/colour), anything in Settings that a user would miss now, and text that reads differently between HU and EN. Report findings with a screenshot or selector; don't refactor.
+
+# Update — Reppsy 2.59.0, 2026-11-16 (Claude)
+
+- Owner: errors check, friendlier and market-ready, fewer texts, more workouts "with the same images", short how-to animation. Clarified mid-task: additions must match the current drawings exactly.
+- Done: start/end cross-fade animation for every exercise pair (`exerciseMotion`, `move-toggle`, CSS in `css/clean.css`); `js/exercise-motion.js` removed everywhere (index, sw, loader chain, tests); six ready-made workouts in `js/routine-templates.js` (after `splitCount`); text trims; swim cool-down duplicate line; recipe notes reworded.
+- Not done: no new exercises. The only spare artwork (`img/fig`, 141 archived exercises) is a different, thinner style, and matching drawings cannot be generated in this environment. If image generation works for you, new exercises need a pair + thumb in the `img/atlas-line` style, a guide entry and `tools/build_curated_library.cjs` (its 100-count check must change).
+- Still pending owner approval: `migrations/20261112_recipe_ratings.sql` is not applied to the live project (now verified in PGlite by `tests/test_recipe_ratings_sql.mjs`).
+- Tests: Node 165 pass / 3 fail (brand_review, meal_groups, phone_preview need a Windows Chrome path; competition and social_sharing pass once PGlite is installed in /tmp/reppsy-pg). Browser baseline on 2.58 failed in choice_menus (swim form no longer has `select[name=pool]`), color_volume, covers_friends (3), library_expansion, profile_theme_updates (2), recipes_stability; fixed here: color_volume, library_expansion, profile_theme_updates, recipes_stability. `tests/test_browser.py`: the same 23 of 52 tests fail on 2.58 and 2.59 (not triaged). Outdated tests left: choice_menus swim entry, covers_friends (cover choices now inside a choice menu; friend-add form has 4 buttons; mocked dashboard flow).
 
 # Update — Reppsy 2.58.0, 2026-11-16 (Claude)
 

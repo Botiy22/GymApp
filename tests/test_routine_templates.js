@@ -4,8 +4,8 @@ for(const path of ['data/exercises.js','js/plan.js','js/routine-templates.js'])v
 const R=context.window.RoutineTemplates,clone=x=>JSON.parse(JSON.stringify(x));
 const ids=new Set(context.window.EXERCISES.map(x=>x.id));
 test('all 24 starter sessions have seven distinct real exercises and estimate at least an hour',()=>{
- assert.equal(R.templates.reduce((s,p)=>s+p.days.length,0),24);
- for(const p of R.templates)for(const d of p.days){
+ assert.equal(R.splitCount,5);assert.equal(R.templates.slice(0,5).reduce((s,p)=>s+p.days.length,0),24);
+ for(const p of R.templates.slice(0,5))for(const d of p.days){
   assert.equal(d.items.length,7,`${p.id}: ${d.name.en}`);
   assert.equal(new Set(d.items.map(i=>i.ex)).size,7);
   for(const i of d.items)assert.ok(ids.has(i.ex),i.ex);
@@ -34,4 +34,16 @@ test('customized sessions, original plan and deleted sessions are preserved',()=
 test('video complexes retain stable source identities and are not split sessions',()=>{
  assert.equal(R.isComplex({id:'clip_centr10'}),true);assert.equal(R.isComplex({id:'clip_lat_grips'}),true);assert.equal(R.isComplex({id:'upper'}),false);
  const input=[{id:'clip_centr10',items:[{sets:10,rest:0}]},{id:'clip_lat_grips',items:[{sets:1,reps:'AMRAP'}]}];assert.equal(R.upgradeRoutines(input),input);
+});
+
+vm.runInContext(fs.readFileSync('data/exercises-curated.js','utf8'),context);const curated=new Set(context.window.CURATED_EXERCISES.map(x=>x.id));
+test('ready-made workouts use real exercises, stay within their promised length and have unique names',()=>{
+ const extra=R.templates.slice(R.splitCount);assert.equal(extra.length,6);assert.equal(extra.reduce((s,p)=>s+p.days.length,0),12);
+ assert.equal(new Set(R.templates.map(p=>p.id)).size,R.templates.length);assert.equal(new Set(R.templates.map(p=>p.name.hu)).size,R.templates.length);
+ for(const p of extra)for(const d of p.days){
+  assert.ok(d.items.length>=4&&d.items.length<=6,p.id);assert.equal(new Set(d.items.map(i=>i.ex)).size,d.items.length);
+  for(const i of d.items){assert.ok(curated.has(i.ex),i.ex);assert.ok(i.sets>=2&&i.sets<=3&&i.reps.length<=20);}
+  assert.ok(R.estimateMinutes(d)<=50,`${p.id}: ${d.name.en}`);
+ }
+ const quick=extra.find(p=>p.id==='quick30');for(const d of quick.days)assert.ok(R.estimateMinutes(d)<=35);
 });

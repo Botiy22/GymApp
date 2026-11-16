@@ -53,8 +53,8 @@
     ing: [['sovány darált marhahús (5% zsír)', 'lean minced beef (5% fat)', 250], ['fűszerkeverék, só, bors', 'spice mix, salt, pepper', ['ízlés szerint', 'to taste']],
       ['paradicsomszósz (passata)', 'tomato sauce (passata)', 40], ['sovány sonka, szeletelve', 'lean ham, sliced', 40],
       ['reszelt light mozzarella (30 g bele, 10 g a tetejére)', 'grated light mozzarella (30 g inside, 10 g on top)', 40], ['oregánó vagy bazsalikom', 'oregano or basil', ['ízlés szerint', 'to taste']]],
-    note: { hu: 'A videó nem mutatja a mennyiségeket: ezek a mi javaslataink egy tekercshez. A beküldött videóban 550 kcal és 66 g fehérje szerepel. A hús közepe érje el a 71 °C-ot.',
-      en: 'The clip shows no amounts: these are our suggestion for one roll. The supplied clip states 550 kcal and 66 g protein. Cook the meat to 71 °C in the centre.' },
+    note: { hu: 'A mennyiségek egy tekercsre szóló javaslatok. A hús közepe érje el a 71 °C-ot.',
+      en: 'Amounts are a suggestion for one roll. Cook the meat to 71 °C in the centre.' },
     steps: { hu: [
       'A 250 g darált húst keverd össze a fűszerkeverékkel, egy csipet sóval és borssal, és 1–2 percig gyúrd, amíg összeáll és kissé ragad.',
       'Airfryerbe illő sütőpapíron nyomkodd kb. 20 × 15 cm-es, 1 cm vastag, egyenletes téglalappá; a széle se legyen vékonyabb a közepénél.',
@@ -74,8 +74,8 @@
     ing: [['burgonyás gnocchi (bolti)', 'potato gnocchi (shop-bought)', 400], ['csirkemell, nyersen', 'chicken breast, raw', 650], ['brokkoli', 'broccoli', 250],
       ['zab főzőkrém', 'oat cooking cream', ['300 ml (1½ doboz)', '300 ml (1½ cartons)']], ['reszelt light mozzarella', 'grated light mozzarella', 80],
       ['só, bors, pirospaprika, bazsalikom, fokhagyma, oregánó', 'salt, pepper, paprika, basil, garlic, oregano', ['ízlés szerint', 'to taste']]],
-    note: { hu: 'A gnocchi és a zab főzőkrém általános becsült értékkel szerepel (≈); a saját terméked címkéje pontosabb. A beküldött videóban adagonként 525 kcal és 47 g fehérje szerepel.',
-      en: 'The gnocchi and oat cream use generic estimated values (≈); your product label is more exact. The supplied clip states 525 kcal and 47 g protein per serving.' },
+    note: { hu: 'A gnocchi és a zab főzőkrém értéke becslés (≈); a saját terméked címkéje pontosabb.',
+      en: 'The gnocchi and oat cream values are estimates (≈); your product label is more exact.' },
     steps: { hu: [
       'Melegítsd elő a sütőt 180 °C-ra alsó-felső sütéssel (160 °C légkeveréssel). A csirkét vágd kb. 2 cm-es kockákra, a brokkolit kis rózsákra.',
       'Egy kb. 20 × 30 cm-es sütőtálban forgasd össze a nyers gnocchit, a csirkét és a brokkolit a fűszerekkel. Öntsd rá a főzőkrémet, és keverd át, hogy mindent bevonjon.',
@@ -95,8 +95,8 @@
       ['csicseriborsó, konzerv, lecsepegtetve', 'chickpeas, canned, drained', 500], ['magas hústartalmú sonka vagy felvágott', 'high-meat ham or cold cuts', 100],
       ['rizs főzőkrém', 'rice cooking cream', ['200 ml', '200 ml']], ['csirkealaplé', 'chicken stock', ['150 ml', '150 ml']], ['parmezán, reszelve', 'parmesan, grated', 50],
       ['só, bors', 'salt, pepper', ['ízlés szerint', 'to taste']]],
-    note: { hu: 'A rizs főzőkrém általános becsült értékkel szerepel (≈). A beküldött videóban adagonként 438 kcal és 43 g fehérje szerepel.',
-      en: 'The rice cooking cream uses a generic estimated value (≈). The supplied clip states 438 kcal and 43 g protein per serving.' },
+    note: { hu: 'A rizs főzőkrém értéke becslés (≈); a saját terméked címkéje pontosabb.',
+      en: 'The rice cooking cream value is an estimate (≈); your product label is more exact.' },
     steps: { hu: [
       'A hagymát és a fokhagymát aprítsd fel, a csirkét vágd kb. 2 cm-es kockákra, a felvágottat csíkokra. A csicseriborsót szűrd le és öblítsd át.',
       'Nagy, tapadásmentes serpenyőben 3–4 evőkanál alaplével párold a hagymát közepes lángon 3–4 percig, amíg üveges. Add hozzá a fokhagymát, és fél percig kevergesd.',
@@ -116,8 +116,8 @@
     ing: [['0%-os quark', '0% fat quark', 250], ['tojás (2 db)', 'eggs (2)', 100], ['magas hústartalmú sonka', 'high-meat ham', 100],
       ['reszelt light mozzarella (60 g bele, 15 g a tetejére)', 'grated light mozzarella (60 g inside, 15 g on top)', 75], ['lilahagyma (¼ db), vékony karikákra', 'red onion (¼), thinly sliced', 30],
       ['só, bors, fokhagymagranulátum, oregánó', 'salt, pepper, garlic granules, oregano', ['ízlés szerint', 'to taste']]],
-    note: { hu: 'A 0%-os quark helyett az USDA zsírmentes túró értékével számolunk (≈). A beküldött videóban 88 g fehérje és 12 g szénhidrát szerepel.',
-      en: 'The 0% quark is calculated with the USDA fat-free curd cheese value (≈). The supplied clip states 88 g protein and 12 g carbohydrate.' },
+    note: { hu: 'A quark értéke zsírmentes túróval számolt becslés (≈).',
+      en: 'The quark value is an estimate based on fat-free curd cheese (≈).' },
     steps: { hu: [
       'Melegítsd elő a sütőt 180 °C-ra alsó-felső sütéssel (160 °C légkeveréssel), és bélelj ki egy tepsit sütőpapírral.',
       'Egy tálban keverd simára a quarkot a tojásokkal, majd add hozzá a felkockázott sonkát, a 60 g sajtot, egy csipet sót, borsot, fokhagymagranulátumot és oregánót.',

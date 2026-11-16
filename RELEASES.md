@@ -1,5 +1,17 @@
 # Release versions
 
+## 2.59.0 — 2026-11-16 (build 20261116.2)
+
+Owner: check for errors, make it more user-friendly and market ready, remove unnecessary texts, more workouts with the same images, a short how-to animation per workout. Owner then clarified: new content must match the current drawings exactly, nothing less.
+
+Animation: `exerciseMotion` in `js/app.js` stacks the exercise's start and end pictures and cross-fades them in a 3.2 s CSS loop with start/end labels and a pause button (`move-toggle`); with reduced motion it is still until played. Works for all 100 library exercises (generated line pairs) and any legacy/own pair. `js/exercise-motion.js` (three hand-built rigs) is deleted.
+
+Workouts: 64 archived exercises with older `img/fig` drawings were tried and withdrawn because their style does not match the generated line art; no new drawings can be produced here. Instead `RoutineTemplates.templates` gains six ready-made workouts (12 sessions, 4–6 exercises, 35–50 min estimates) using only library exercises: machines2, dumbbell3, bodyweight2, glutes2, quick30, core1. `splitCount` marks the original five splits; the preview shows the real exercise count. The entry is renamed "Kész edzéstervek / Ready-made workouts".
+
+Errors found and fixed: swim cool-down showed the same sentence twice; recipe notes mentioned "beküldött videó / supplied clip" (failing the user-facing copy test); a leftover library badge referenced the removed motion module (caught by a random-click run). Checked: 3 × 700-step random-click runs in hu/en with no page errors, translations complete (1510 keys each), stale-shell upgrade test extended to RoutineKinds, recipe fixes, ratings and chain menus. New `tests/test_recipe_ratings_sql.mjs` runs the ratings migration in PGlite (anon read of averages only, one rating per user, removal, cascade).
+
+Texts removed: exercise-complex hint, settings subtitle, swim timing note and log hint, shortened estimate notes on four recipes.
+
 ## 2.58.0 — 2026-11-16 (build 20261116.1)
 
 Owner: upgrade the swimming animations (some look like a child's drawing), or remove them. Freestyle keeps Codex's four illustrated phases, now stacked and cross-faded (no fade with reduced motion). Breaststroke and backstroke drawings (hand-built SVG figures) are removed rather than redrawn: no artwork of the same quality could be produced here. Those strokes show the four phases as a written list (arms, legs, breathing). The SVG top view of the hand entry is removed; its text stays under "Kézbevitel / Hand entry". Removed `scene`, `limb`, `interpolate`, `entryDiagram` from `js/swim-training.js`.

@@ -39,7 +39,7 @@ class ChoiceMenus(unittest.TestCase):
             self.assertEqual(p.locator('.workout-menu.on summary span').inner_text(),title)
             self.bounds(p,view)
             self.assertTrue(p.locator('.workout-menu-nav').evaluate('(nav)=>[...nav.querySelectorAll("summary>span,.workout-menu-history>span")].every(e=>e.scrollWidth<=e.clientWidth+1)'),view)
-        select_workout(p,'swim');p.locator('[data-a=cardio-add][data-type=swim]').click()
+        select_workout(p,'swim');p.locator('.swim-tabs [data-sw=page][data-value=history]').click();p.locator('[data-a=cardio-add][data-type=swim]').click()
         self.assertEqual(p.locator('select[name=type]').input_value(),'swim')
         p.locator('input[name=minutes]').fill('40');p.locator('input[name=weight]').fill('80')
         choose(p,'select[name=pool]','50');p.locator('input[name=laps_free]').fill('20')

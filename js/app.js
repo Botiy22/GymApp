@@ -43,7 +43,7 @@
     attempted.add(src);document.head.append(script);
     return;
   }
-  const atlasMissing = !window.ExerciseMotion ? 'js/exercise-motion.js' : !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : window.EXERCISE_GUIDES_VERSION!==2 ? 'data/exercise-guides-extra.js' : !window.GENERATED_EXERCISE_ART ? 'data/generated-exercise-art.js' : window.CURATED_EXERCISES?.length!==100 ? 'data/exercises-curated.js' : window.ExerciseCatalog?.version!==2 ? 'js/exercise-catalog.js' : window.DESSERT_RECIPES_VERSION!==2 ? 'data/dessert-recipes.js' : window.RECIPE_METHODS_VERSION!==2 ? 'data/recipe-methods.js' : '';
+  const atlasMissing = !window.EXERCISE_GUIDES ? 'data/exercise-guides.js' : window.EXERCISE_GUIDES_VERSION!==2 ? 'data/exercise-guides-extra.js' : !window.GENERATED_EXERCISE_ART ? 'data/generated-exercise-art.js' : window.CURATED_EXERCISES?.length!==100 ? 'data/exercises-curated.js' : window.ExerciseCatalog?.version!==2 ? 'js/exercise-catalog.js' : !window.I18N?.en?.movePlay ? 'js/i18n.js' : window.DESSERT_RECIPES_VERSION!==2 ? 'data/dessert-recipes.js' : window.RECIPE_METHODS_VERSION!==2 ? 'data/recipe-methods.js' : '';
   if(atlasMissing){
     const script=document.createElement('script');script.src=atlasMissing+'?release='+encodeURIComponent(window.GYM_RELEASE.cacheId);script.onload=startGymApp;
     script.onerror=()=>{const el=document.getElementById('view');if(el){el.textContent=(navigator.language||'').startsWith('hu')?'Csatlakozz az internethez, majd töltsd újra az alkalmazást.':'Connect to the internet, then reload the app.';}};
@@ -859,7 +859,7 @@
     if(!list.length)return `<div class="exercise-empty"><p class="empty">${esc(t(hidden&&st.q.trim()?'exHiddenByFilters':st.grp==='fav'&&!st.q.trim()&&!st.eq?'favEmpty':'noResults'))}</p>${st.grp||st.mus||st.eq?`<button class="btn ghost" data-a="lib-clear-filters">${esc(t('exClearFilters'))}</button>`:''}</div>`;
     const hint=fuzzy?`<p class="cap exercise-search-hint">${esc(t('exCloseMatches'))}</p>`:'';
     return hint + list.slice(0, st.limit).map(e => {
-      const k = pick ? st.sel.indexOf(e.id) : -1, sub = `<span><b>${esc(exName(e.id))}${isFav(e.id) ? ' <em class="fv" aria-hidden="true">★</em>' : ''}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i>${!pick&&!ownPic(e.id)&&window.ExerciseMotion.entries[e.id]?`<small class="motion-available">${IC.play}${esc(L()==='hu'?'Mozgásbemutató':'Movement demo')}</small>`:''}</span>`;
+      const k = pick ? st.sel.indexOf(e.id) : -1, sub = `<span><b>${esc(exName(e.id))}${isFav(e.id) ? ' <em class="fv" aria-hidden="true">★</em>' : ''}</b><i>${esc(e.p.map(mus).join(', '))} · ${esc(eqp(e.eq))}</i></span>`;
       return pick                                                                     // picker: the photo opens the details, the rest of the row ticks it
         ? `<div class="exrow pickrow${k >= 0 ? ' on' : ''}" data-id="${esc(e.id)}"><button class="pk-img" data-a="ex-open" data-id="${esc(e.id)}" aria-label="${esc(t('details'))}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async"></button><button class="pk-main" data-a="pick" data-id="${esc(e.id)}" aria-pressed="${k >= 0}">${sub}<em class="pk-n">${k >= 0 ? k + 1 : ''}</em></button></div>`
         : `<button class="exrow extile" data-a="ex-open" data-id="${esc(e.id)}"><img src="${thumb(e.id)}" alt="" loading="lazy" decoding="async" width="240" height="160">${sub}</button>`;
@@ -878,7 +878,7 @@
   }
   function complexCards(){
     const rows=D().routines.filter(r=>RoutineTemplates.isComplex(r)&&!r.focus);
-    return rows.length?`<section class="exercise-complexes"><h3>${esc(t('exerciseComplexes'))}</h3><p class="cap">${esc(t('complexHint'))}</p><div class="rlist rgrid">${rows.map(r=>`<button class="rcard rtile ic-${rIcon(r)}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[rIcon(r)]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))} · ${esc(t(r.circuit?'complexRounds':'complexGrips'))}</i></span>${IC.chev}</button>`).join('')}</div></section>`:'';
+    return rows.length?`<section class="exercise-complexes"><h3>${esc(t('exerciseComplexes'))}</h3><div class="rlist rgrid">${rows.map(r=>`<button class="rcard rtile ic-${rIcon(r)}" data-a="r-open" data-id="${esc(r.id)}"><span class="r-ic">${RICON[rIcon(r)]}</span><span class="rc-t"><b>${esc(rName(r))}</b><i>${r.items.length} ${esc(pl(r.items.length,'exercises'))} · ${esc(t(r.circuit?'complexRounds':'complexGrips'))}</i></span>${IC.chev}</button>`).join('')}</div></section>`:'';
   }
   function vLib() { return head(t('tabLib'), window.EXERCISES.length + ' ' + t('exercises')) + complexCards() + libControls() + `<div class="ownrow"><button class="pill" data-a="mx-new">${IC.plus}${esc(t('myExBtn'))}</button></div><div id="lib-list" class="exlist exgrid">${libRows(false)}</div>`; }
 
@@ -1704,8 +1704,14 @@
   function drawingPicture(source, phase, board, label) {
     return `<span class="drawing-picture"><img class="${board ? 'drawing-board phase-' + phase : ''}" src="${esc(source)}" alt="${esc(label)}"></span>`;
   }
+  /* The start and end pictures cross-fade in a loop: a short "how it moves" animation for every exercise with a pair.
+     Pure CSS, so it costs nothing while hidden; with reduced motion it stays still until the user presses play. */
+  function exerciseMotion(id, name, pair) {
+    if (!pair[0] || !pair[1]) return '';
+    return `<div class="move-anim" data-id="${esc(id)}" role="group" aria-label="${esc(t('moveTitle') + ': ' + name)}"><div class="move-stage">${[0, 1].map(k => `<img class="move-frame f${k}" src="${esc(pair[k])}" alt="" decoding="async">`).join('')}<span class="move-label l0">${esc(t('artStart'))}</span><span class="move-label l1">${esc(t('artEnd'))}</span></div><button type="button" class="move-toggle" data-a="move-toggle" aria-label="${esc(t('movePause'))}" data-play="${esc(t('movePlay'))}" data-pause="${esc(t('movePause'))}">${IC.pause || '❚❚'}${IC.play}</button></div>`;
+  }
   function exerciseDrawings(id, name, board, pair, photos) {
-    return `<div class="drawing-pair">${[0, 1].map(phase => {
+    return (board ? '' : exerciseMotion(id, name, pair)) + `<div class="drawing-pair${board ? '' : ' compact'}">${[0, 1].map(phase => {
       const source = board || pair[phase], label = name + ' · ' + t(phase ? 'artEnd' : 'artStart');
       return source ? `<button class="drawing-phase" data-a="fig-big" data-id="${esc(id)}" data-phase="${phase}" data-source="${esc(source)}" data-board="${board ? '1' : '0'}" aria-label="${esc(t(photos ? 'figPhoto' : 'figBig') + ': ' + label)}">${drawingPicture(source, phase, !!board, label)}<span class="drawing-caption">${esc(t(phase ? 'artEnd' : 'artStart'))}</span></button>` : `<div class="drawing-phase"><p class="cap">${esc(t('artUnavailable'))}</p></div>`;
     }).join('')}</div><p class="cap figcap">${photos ? esc(t('figPhoto')) + ' · ' : ''}${esc(t('guideTap'))}</p>`;
@@ -1728,7 +1734,6 @@
       const map = `<section class="muscle-spotlight"><h3>${esc(t('musclesWorked'))}</h3><div class="mm">${MuscleMap.svg(mm[0], mm[1], t('front'), t('backSide'), mapLabel)}</div><p class="cap muscle-legend"><i class="k1"></i>${esc(t('primary'))}<i class="k2"></i>${esc(t('secondary'))}</p>${e.p.length || e.s.length ? `<p class="cap">${esc(t('muscleMapHint'))}</p><div class="muscle-picks"><button class="chip${!focus ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="" aria-pressed="${!focus}">${esc(t('muscleAll'))}</button>${[['primary',e.p],['secondary',e.s]].map(([key,list]) => list.length ? `<div><small>${esc(t(key))}</small><div class="chips">${list.map(m => `<button class="chip${focus === m ? ' on' : ''}" data-a="muscle-focus" data-id="${esc(id)}" data-group="${esc(m)}" aria-pressed="${focus === m}">${esc(muscleName(m))}</button>`).join('')}</div></div>` : '').join('')}</div>` : `<p class="cap">${esc(t('muscleMapEmpty'))}</p>`}<details class="muscle-precision"><summary>${esc(t('muscleMapAbout'))}</summary><p class="cap">${esc(t('musclePrecision'))}</p></details></section>`;
       let h = `<div class="seg exercise-visual-tabs" aria-label="${esc(t('details'))}">${['muscles','movement'].map(mode => `<button class="${visual === mode ? 'on' : ''}" data-a="ex-visual" data-id="${esc(id)}" data-v="${mode}" aria-pressed="${visual === mode}">${esc(t(mode === 'muscles' ? 'muscleMapTitle' : 'movementTitle'))}</button>`).join('')}</div>`;
       h += visual === 'muscles' ? map : ownPic(id) && ownPic(id) !== NOPIC ? `<div class="anim one ownpic"><img src="${esc(ownPic(id))}" alt="${esc(name)}"></div>` : exerciseDrawings(id, name, board, pair, photos);
-      if(visual==='movement'&&!ownPic(id)&&window.ExerciseMotion.entries[id])h+=`<exercise-motion exercise="${esc(id)}" lang="${L()}"></exercise-motion>`;
       if (item && (item.rir || item.note)) h += `<div class="tip"><b>${esc(t('planNote'))}</b>${item.rir ? 'RIR ' + esc(item.rir) + (item.note ? ' · ' : '') : ''}${esc(item.note || '')}</div>`;
       const fav = isFav(id), st = exSteps(id);
       if (routineArt && st.list.length) h += `<section class="card routine-technique"><h3>${esc(t('howTo'))}</h3>${st.own ? '' : `<p class="cap">${esc(t('enOnly'))}</p>`}<ol class="routine-steps">${st.list.map((x,i) => `<li><span aria-hidden="true">${i+1}</span><p>${esc(x)}</p></li>`).join('')}</ol></section>`;
@@ -1754,7 +1759,7 @@
   function shRoutineTemplate(id) {
     return ()=>{
       const p=RoutineTemplates.templates.find(x=>x.id===id);if(!p)return {title:'',html:''};
-      return {title:p.name[L()],html:`<p class="lead">${esc(p.hint[L()])}</p><p class="split-schedule">${IC.cal}${esc(p.schedule[L()])}</p><div class="split-preview">${p.days.map((d,i)=>`<details><summary><span class="r-ic">${RICON[d.icon]}</span><span><small>${esc(t('splitSession',i+1))}</small><b>${esc(d.name[L()])}</b><small>7 ${esc(t('exercises'))} · ~${estMin(d)} ${esc(t('min'))}</small></span>${IC.down}</summary><div>${d.items.map(it=>`<div class="split-exercise"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(it.reps)} · ${clock(it.rest)}</small></div>`).join('')}</div></details>`).join('')}</div><p class="cap">${esc(t('durationHint'))}</p><p class="cap">${esc(t('splitCustomHint'))}</p>`,foot:`<button class="btn primary" data-a="routine-template-add" data-id="${p.id}">${IC.plus}${esc(t('addSplit',p.days.length))}</button>`};
+      return {title:p.name[L()],html:`<p class="lead">${esc(p.hint[L()])}</p><p class="split-schedule">${IC.cal}${esc(p.schedule[L()])}</p><div class="split-preview">${p.days.map((d,i)=>`<details><summary><span class="r-ic">${RICON[d.icon]}</span><span><small>${esc(t('splitSession',i+1))}</small><b>${esc(d.name[L()])}</b><small>${d.items.length} ${esc(t('exercises'))} · ~${estMin(d)} ${esc(t('min'))}</small></span>${IC.down}</summary><div>${d.items.map(it=>`<div class="split-exercise"><b>${esc(exName(it.ex))}</b><small>${it.sets} × ${esc(it.reps)} · ${clock(it.rest)}</small></div>`).join('')}</div></details>`).join('')}</div><p class="cap">${esc(t('durationHint'))}</p><p class="cap">${esc(t('splitCustomHint'))}</p>`,foot:`<button class="btn primary" data-a="routine-template-add" data-id="${p.id}">${IC.plus}${esc(t('addSplit',p.days.length))}</button>`};
     };
   }
   function addRoutineTemplate(id) {
@@ -2328,7 +2333,7 @@
       const body=document.createElement('div');body.className='section-body';body.append(...card.childNodes);details.append(summary,body);card.replaceWith(details);
     }
     content=template.innerHTML;
-    return head(t('settings'),t('settingsIntro'),false,true) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
+    return head(t('settings'),'',false,true) + `<nav class="settings-jumps" aria-label="${esc(t('settings'))}">${['appearance','workout','nutrition','data'].map(key=>`<button class="chip" data-a="settings-jump" data-v="${key}">${esc(t(key))}</button>`).join('')}</nav><div class="settings-content">${content}</div>`;
   }
 
   function shSettings() {
@@ -3051,6 +3056,7 @@
     },
     /* workout */
     'w-open'() { ui.wOpen = true; wake(); renderWorkout(); }, 'w-min'() { leave($('#workout'), 210, () => { ui.wOpen = false; render(); }); },
+    'move-toggle'(el) { const box = el.closest('.move-anim'); if (!box) return; const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, playing = reduced ? !box.classList.contains('playing') : box.classList.contains('paused'); box.classList.toggle('paused', !playing); box.classList.toggle('playing', playing); el.setAttribute('aria-label', el.dataset[playing ? 'pause' : 'play']); },
     'w-start'(el) { const r=getR(el.dataset.id);if(isKind(r)){startKind(r);return;} startWorkout(r); }, 
     'w-quick'() {
       if (D().active && !confirm(t('replaceActive'))) return;

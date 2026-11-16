@@ -31,6 +31,29 @@ window.RoutineTemplates=(()=>{
     const extras=d.icon==='full'?[fullExtras[n]]:d.name.en.startsWith('Chest & back')?['Face_Pull','Straight-Arm_Pulldown']:additions[d.icon];
     return {...d,items:d.items.concat(extras.map(ex=>item(ex))).map(i=>({...i,sets:3,rest:Math.max(i.rest,120)}))};
   })}));
+  /* 2.59: more ready-made workouts, built only from exercises that have the library's own drawings. Added as written
+     (no automatic extras), so short sessions stay short. */
+  const splitCount=templates.length;
+  templates.push(
+    {id:'machines2',name:{hu:'Kezdő · Gépeken',en:'Beginner · Machines'},icon:'full',schedule:{hu:'Heti 2–3 alkalom, felváltva',en:'2–3 times a week, alternating'},hint:{hu:'Vezetett mozgások, könnyen beállítható súly: jó első hetekre.',en:'Guided movements and easy weight changes: good for the first weeks.'},days:[
+      day('Gépek A','Machines A','full',[item('Leg_Press',3,'10–12',120),item('Leverage_Chest_Press',3,'10–12',120),item('Wide-Grip_Lat_Pulldown',3,'10–12',120),item('Seated_Leg_Curl',2,'12–15'),item('Machine_Lateral_Raise',2,'12–15',60),item('Ab_Crunch_Machine',2,'12–15',60)]),
+      day('Gépek B','Machines B','full',[item('Hack_Squat',3,'10–12',120),item('Seated_Cable_Rows',3,'10–12',120),item('Butterfly',3,'12–15'),item('Leg_Extensions',2,'12–15'),item('Reverse_Machine_Flyes',2,'12–15',60),item('Seated_Calf_Raise',2,'12–20',60)])]},
+    {id:'dumbbell3',name:{hu:'Otthon · Kézisúlyzóval',en:'Home · Dumbbells'},icon:'upper',schedule:{hu:'Heti 3 alkalom, egy-egy pihenőnappal',en:'3 times a week with a rest day between'},hint:{hu:'Csak kézisúlyzó és egy pad kell hozzá.',en:'Needs only dumbbells and a bench.'},days:[
+      day('Nyomás','Push','push',[item('Dumbbell_Bench_Press',3,'8–12',120),item('Arnold_Dumbbell_Press',3,'8–12',120),item('Dumbbell_Flyes',2,'10–15'),item('Side_Lateral_Raise',3,'12–20',60),item('Tricep_Dumbbell_Kickback',3,'10–15',60)]),
+      day('Húzás','Pull','pull',[item('One-Arm_Dumbbell_Row',3,'8–12',120),item('Bent-Arm_Dumbbell_Pullover',3,'10–12'),item('Seated_Bent-Over_Rear_Delt_Raise',3,'12–15',60),item('Hammer_Curls',3,'10–12',60),item('Dumbbell_Shrug',2,'12–15',60)]),
+      day('Láb és törzs','Legs & core','legs',[item('Goblet_Squat',3,'10–12',120),item('Dumbbell_Romanian_Deadlift',3,'8–12',120),item('Split_Squat_with_Dumbbells',2,'8–12',120),item('Dumbbell_Step_Ups',2,'10–12'),item('Suitcase_Carry',2,'30–40 m',60)])]},
+    {id:'bodyweight2',name:{hu:'Saját testsúly',en:'Bodyweight'},icon:'full',schedule:{hu:'Heti 2–4 alkalom, felváltva',en:'2–4 times a week, alternating'},hint:{hu:'Eszköz nélkül; a B naphoz húzódzkodórúd kell.',en:'No equipment; day B needs a pull-up bar.'},days:[
+      day('Testsúly A','Bodyweight A','full',[item('Pushups',3,'8–15'),item('Incline_Push-Up',2,'10–15'),item('Plank',3,'30–45 s',60),item('Reverse_Crunch',3,'10–15',60),item('Air_Bike',2,'15–20',60)]),
+      day('Testsúly B','Bodyweight B','full',[item('Chin-Up',3,'4–8',120),item('Decline_Push-Up',3,'8–12'),item('Hanging_Leg_Raise',3,'8–12',60),item('Side_Bridge',2,'20–30 s',60),item('Crunches',2,'15–20',60)])]},
+    {id:'glutes2',name:{hu:'Farizom és láb',en:'Glutes & legs'},icon:'lower',schedule:{hu:'Heti 2 alkalom, legalább 2 nap különbséggel',en:'Twice a week, at least 2 days apart'},hint:{hu:'Csípőemelés, felhúzás és egylábas gyakorlatok.',en:'Hip thrusts, hinges and single-leg work.'},days:[
+      day('Farizom A','Glutes A','lower',[item('Barbell_Hip_Thrust',3,'8–12',150),item('Romanian_Deadlift',3,'8–10',150),item('Split_Squat_with_Dumbbells',3,'8–12',120),item('Thigh_Abductor',3,'12–20',60),item('Seated_Leg_Curl',2,'10–15')]),
+      day('Farizom B','Glutes B','lower',[item('Machine_Hip_Thrust',3,'10–15',120),item('B_Stance_Dumbbell_RDL',3,'8–12',120),item('Dumbbell_Step_Ups',3,'10–12'),item('Barbell_Glute_Bridge',2,'12–15'),item('Hyperextensions_Back_Extensions',2,'12–15',60)])]},
+    {id:'quick30',name:{hu:'Gyors 30 perc',en:'Quick 30 minutes'},icon:'full',schedule:{hu:'Amikor kevés az időd',en:'When you are short on time'},hint:{hu:'Négy nagy gyakorlat, rövid pihenőkkel.',en:'Four big movements with short rests.'},days:[
+      day('Gyors A','Quick A','full',[item('Goblet_Squat',3,'10–12',75),item('Dumbbell_Bench_Press',3,'8–12',75),item('Seated_Cable_Rows',3,'10–12',75),item('Plank',2,'30–45 s',45)]),
+      day('Gyors B','Quick B','full',[item('Leg_Press',3,'10–12',75),item('Wide-Grip_Lat_Pulldown',3,'10–12',75),item('Dumbbell_Shoulder_Press',3,'8–12',75),item('Reverse_Crunch',2,'12–15',45)])]},
+    {id:'core1',name:{hu:'Törzs · 15 perc',en:'Core · 15 minutes'},icon:'full',schedule:{hu:'Bármelyik edzés végére vagy külön',en:'After any workout or on its own'},hint:{hu:'Has, oldalsó törzs és derék röviden.',en:'Abs, obliques and lower back in a short block.'},days:[
+      day('Törzs','Core','full',[item('Plank',3,'30–45 s',45),item('Reverse_Crunch',3,'12–15',45),item('Side_Bridge',2,'20–30 s',45),item('Air_Bike',2,'15–20',45),item('Hyperextensions_Back_Extensions',2,'12–15',45)])]}
+  );
   const isComplex=r=>r.id==='clip_centr10'||r.id==='clip_lat_grips';
   // Approximate session time: 12 min preparation, 2 min per equipment change,
   // 45 sec per working set, programmed rest only BETWEEN sets (including zero).
@@ -53,5 +76,5 @@ window.RoutineTemplates=(()=>{
     });
     return changed?result:routines;
   }
-  return {genericFiveDay:true,templates,isComplex,durationMinutes,estimateMinutes,upgradeRoutines};
+  return {genericFiveDay:true,splitCount,templates,isComplex,durationMinutes,estimateMinutes,upgradeRoutines};
 })();

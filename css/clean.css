@@ -366,3 +366,23 @@ body:has(dialog[open]) #coach .coach-welcome{visibility:hidden;pointer-events:no
 .rate-stars button.on{color:var(--star)}.rate-stars button.on svg{fill:currentColor}
 .rate-stars button:not(:disabled):active{transform:scale(.9)}.rate-stars button:disabled{opacity:.5}
 .rate-stars button:focus-visible{outline:2px solid var(--acc-tx);outline-offset:1px}
+/* 2.59 exercise movement: start and end drawings cross-fade in a loop */
+.move-anim{position:relative;margin:0 0 8px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.move-stage{position:relative;width:100%;aspect-ratio:4/3}
+.move-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;animation:move-a 3.2s ease-in-out infinite}
+.move-frame.f1{animation-name:move-b}
+.move-label{position:absolute;left:10px;bottom:10px;padding:4px 10px;border-radius:999px;background:#14171ccc;color:#fff;font-size:.74rem;font-weight:600;animation:move-a 3.2s ease-in-out infinite}
+.move-label.l1{animation-name:move-b}
+@keyframes move-a{0%,30%{opacity:1}50%,80%{opacity:0}100%{opacity:1}}
+@keyframes move-b{0%,30%{opacity:0}50%,80%{opacity:1}100%{opacity:0}}
+.move-anim.paused .move-frame,.move-anim.paused .move-label{animation-play-state:paused}
+.move-toggle{position:absolute;right:8px;bottom:8px;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:#14171ccc;color:#fff}
+.move-toggle svg{grid-area:1/1;width:18px;height:18px;fill:currentColor;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.move-toggle svg:last-child,.move-anim.paused .move-toggle svg:first-child{display:none}.move-anim.paused .move-toggle svg:last-child{display:block}
+.move-toggle:focus-visible{outline:2px solid var(--acc-tx);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){
+  .move-frame,.move-label{animation-play-state:paused}.move-anim.playing .move-frame,.move-anim.playing .move-label{animation-play-state:running}
+  .move-anim:not(.playing) .move-toggle svg:first-child{display:none}.move-anim:not(.playing) .move-toggle svg:last-child{display:block}
+}
+.drawing-pair.compact{grid-template-columns:repeat(2,minmax(0,1fr));max-width:280px}
+.drawing-pair.compact .drawing-picture{aspect-ratio:4/3}.drawing-pair.compact .drawing-caption{padding:6px;font-size:.72rem}

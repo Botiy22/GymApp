@@ -45,7 +45,8 @@ class ColorVolume(unittest.TestCase):
             self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
             page.reload();page.wait_for_function('()=>!!window.__gym')
             self.assertEqual(page.evaluate('Store.d.settings.hue'),0)
-            page.locator('#tabbar [data-tab=settings]').click();page.locator('[data-section=custom-accent]>summary').click()
+            page.locator('#tabbar [data-tab=settings]').click()
+            if not page.locator('[data-section=custom-accent]').evaluate('d=>d.open'):page.locator('[data-section=custom-accent]>summary').click()   # the open state is remembered
             choose(page,'[data-a=set-palette]')
             self.assertTrue(wheel.is_visible())   # stays open while colours change
             choose(page,'[data-a=set-bg]')
